@@ -5,17 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Rota Certa Pro | Oficial</title>
     
-    <script>
-        // CONFIGURAÇÕES GERAIS
-        const CONFIG_PRECO_MENSAL = "29,90"; 
-        const CONFIG_CHAVE_PIX = "SEU-PIX-AQUI"; 
-        const CONFIG_ADM_WHATSAPP = "55919XXXXXXXX"; 
-    </script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=SUA_CHAVE_AQUI&libraries=places"></script>
 
     <style>
         :root { --green: #2ecc71; --blue: #3498db; --red: #e74c3c; --bg: #000; --card: #111; }
@@ -23,37 +20,23 @@
         .container { padding: 15px; max-width: 500px; margin: auto; }
         .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #222; }
         .logo { font-weight: 900; color: var(--green); font-size: 22px; text-align: center; margin: 20px 0; }
-        
-        /* CORREÇÃO DAS LABELS (NOMES DOS CAMPOS) */
-        label { display: block; font-size: 12px; color: var(--green); margin-top: 10px; margin-bottom: 4px; font-weight: bold; text-transform: uppercase; }
+        label { display: block; font-size: 11px; color: var(--green); margin-top: 10px; margin-bottom: 4px; font-weight: bold; text-transform: uppercase; }
         input, select { width: 100%; padding: 15px; margin-bottom: 5px; border-radius: 12px; border: 1px solid #333; background: #1a1a1a; color: #fff; box-sizing: border-box; font-size: 16px; }
-        
-        .btn { width: 100%; padding: 18px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 16px; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; }
         .btn-green { background: var(--green); color: #000; }
         .btn-blue { background: var(--blue); color: #fff; }
         .nav { position: fixed; bottom: 0; width: 100%; background: #080808; display: flex; border-top: 1px solid #222; z-index: 100; }
         .nav-item { flex: 1; padding: 15px; text-align: center; color: #555; font-size: 10px; font-weight: bold; }
         .nav-item.active { color: var(--green); border-top: 2px solid var(--green); }
         .hidden { display: none !important; }
-        
-        #map { width: 100%; height: 200px; border-radius: 15px; margin-bottom: 15px; background: #222; }
-        
-        #modal-termos, #block-screen, #selector-screen { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:10000; display:flex; align-items:center; justify-content:center; text-align:center; padding:20px; box-sizing: border-box; }
-        .termos-box { background:#111; padding:25px; border-radius:20px; border:1px solid #333; }
-        .luz { width: 50px; height: 50px; border-radius: 50%; background:#333; margin:auto; margin-bottom: 10px; }
+        #map { width: 100%; height: 250px; border-radius: 15px; margin-bottom: 15px; background: #222; z-index: 1; }
+        /* Remove a caixa de texto chata que o motor de rota cria por cima do mapa */
+        .leaflet-routing-container { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="modal-termos" class="hidden">
-        <div class="termos-box">
-            <h2 style="color:var(--green)">Termos e Segurança</h2>
-            <p style="font-size:12px; color:#bbb;">Você aceita que somos apenas uma ferramenta de conexão entre Outeiro e Belém.</p>
-            <button class="btn btn-green" onclick="aceitarTermosFirebase()">CONCORDO E ACEITO</button>
-        </div>
-    </div>
-
-    <div id="selector-screen" class="hidden">
+    <div id="selector-screen" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:10000; display:flex; align-items:center; justify-content:center; text-align:center; padding:20px; box-sizing: border-box;">
         <div>
             <div class="logo">ROTA CERTA PRO</div>
             <h3>Como vai usar o app hoje?</h3>
@@ -62,23 +45,12 @@
         </div>
     </div>
 
-    <div id="block-screen" class="hidden">
-        <div>
-            <h2 style="color:var(--red)">Assinatura Expirada</h2>
-            <div class="card">
-                <span>LICENÇA MENSAL</span><br>
-                <b style="font-size:28px; color:var(--green)">R$ 29,90</b>
-            </div>
-            <button class="btn btn-green" onclick="window.location.href='https://wa.me/'+CONFIG_ADM_WHATSAPP">ENVIAR COMPROVANTE</button>
-        </div>
-    </div>
-
     <div id="app-main" class="container">
         <div class="logo">ROTA CERTA PRO</div>
 
         <div id="tab-ast">
             <div class="card" style="text-align:center;">
-                <div id="semaforo" class="luz"></div>
+                <div id="semaforo" style="width:50px; height:50px; border-radius:50%; background:#333; margin:auto; margin-bottom:10px;"></div>
                 <h3>ASSISTENTE DE LUCRO</h3>
                 <div style="display:flex; justify-content:space-around;">
                     <div>LUCRO:<br><b id="res-lucro" style="color:var(--green)">R$ 0,00</b></div>
@@ -86,7 +58,7 @@
                 </div>
             </div>
             <div class="card">
-                <label>Valor da Corrida (Uber/99)</label>
+                <label>Valor da Corrida</label>
                 <input type="number" id="val-entrada" placeholder="R$ 0,00">
                 <label>Distância da Viagem (KM)</label>
                 <input type="number" id="km-entrada" placeholder="0.0">
@@ -95,20 +67,21 @@
         </div>
 
         <div id="tab-map" class="hidden">
+            <div id="map"></div>
+            
             <div id="area-passageiro">
-                <div id="map"></div>
                 <div class="card">
                     <label>Para onde vamos?</label>
-                    <input type="text" id="destino-input" placeholder="Digite o destino em Outeiro/Belém">
-                    <button class="btn btn-blue" onclick="tracarRota()">TRAÇAR ROTA E VER PREÇOS</button>
+                    <input type="text" id="dest-input" placeholder="Clique no mapa para marcar destino">
+                    <button class="btn btn-blue" onclick="tracarRotaGratis()">CALCULAR ROTA E PREÇOS</button>
                 </div>
                 <div id="lista-motos"></div>
             </div>
-            
+
             <div id="area-motorista" class="hidden">
                 <div class="card" style="text-align:center; border: 1px solid var(--green);">
                     <b style="color:var(--green)">RADAR ATIVO</b>
-                    <p>Motoristas de Outeiro aparecem aqui para os clientes.</p>
+                    <p>Clientes de Outeiro e Belém estão vendo você.</p>
                 </div>
             </div>
         </div>
@@ -116,29 +89,24 @@
         <div id="tab-vei" class="hidden">
             <div class="card">
                 <h3>Meu Perfil</h3>
-                <label>Seu WhatsApp (Ex: 55919...)</label>
-                <input type="number" id="v-zap" placeholder="Número com DDD">
+                <label>Seu WhatsApp</label>
+                <input type="number" id="v-zap" placeholder="5591...">
                 
-                <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
+                <div id="config-motorista-view">
+                    <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
+                    <label>Consumo (KM/L)</label>
+                    <input type="number" id="v-consumo" value="38">
+                    <label>Gasolina (R$)</label>
+                    <input type="number" id="v-gas" value="6.20">
+                    <label>Meta Lucro/KM (R$)</label>
+                    <input type="number" id="v-meta" value="1.80">
+                </div>
+
+                <button class="btn btn-green" onclick="salvarConfig()" style="margin-top:10px">SALVAR CONFIGURAÇÕES</button>
                 
-                <h3>Custo do Veículo</h3>
-                <label>Tipo de Veículo</label>
-                <select id="tipo-v" onchange="setDefaults()">
-                    <option value="moto">MOTO</option>
-                    <option value="carro">CARRO</option>
-                </select>
-                
-                <label>Consumo (KM por Litro)</label>
-                <input type="number" id="v-consumo" value="38">
-                
-                <label>Preço da Gasolina (R$)</label>
-                <input type="number" id="v-gas" value="6.20">
-                
-                <label>Sua Meta (Lucro por KM)</label>
-                <input type="number" id="v-meta" value="1.80">
-                
-                <button class="btn btn-green" onclick="salvarConfig()">SALVAR CONFIGURAÇÕES</button>
-                <button class="btn btn-blue" style="margin-top:15px; padding:10px;" onclick="trocarPerfil()">ALTERAR PARA PASSAGEIRO</button>
+                <div id="box-troca-perfil" class="hidden">
+                    <button class="btn btn-blue" style="margin-top:15px;" onclick="trocarParaPassageiro()">MUDAR PARA PASSAGEIRO</button>
+                </div>
             </div>
         </div>
     </div>
@@ -150,7 +118,6 @@
     </nav>
 
     <script>
-        // Mantenha seu FirebaseConfig exatamente como está
         const firebaseConfig = {
             apiKey: "AIzaSyC2PyMxApIjZ_bEcyV1FdftHQHzi7irM4k",
             authDomain: "rota-certa-861e7.firebaseapp.com",
@@ -163,21 +130,14 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
 
-        let meuPerfil, mLat, mLng, map, directionsService, directionsRenderer;
+        let mapL, routeControl, meuPerfil, mLat, mLng, destLat, destLng;
 
-        // INICIALIZAÇÃO E GPS
         auth.onAuthStateChanged(user => {
             if (user) {
                 db.collection("usuarios").doc(user.uid).onSnapshot(doc => {
                     if (doc.exists) {
-                        const d = doc.data();
-                        meuPerfil = d.perfil;
+                        meuPerfil = doc.data().perfil;
                         document.getElementById('selector-screen').classList.add('hidden');
-                        document.getElementById('modal-termos').classList.toggle('hidden', d.termosAceitos);
-                        if(meuPerfil === 'motorista'){
-                             const exp = new Date(d.dataExpiracao);
-                             document.getElementById('block-screen').classList.toggle('hidden', new Date() < exp);
-                        }
                         atualizarUI();
                         iniciarGPS();
                     } else {
@@ -194,97 +154,108 @@
             });
         }
 
-        // MAPA E ROTA
-        function initMap() {
-            directionsService = new google.maps.DirectionsService();
-            directionsRenderer = new google.maps.DirectionsRenderer();
-            map = new google.maps.Map(document.getElementById("map"), { zoom: 15, disableDefaultUI: true });
-            directionsRenderer.setMap(map);
-        }
-
-        async function tracarRota() {
-            const dest = document.getElementById('destino-input').value;
-            directionsService.route({ origin: {lat: mLat, lng: mLng}, destination: dest, travelMode: 'DRIVING' }, (res, status) => {
-                if(status === 'OK') {
-                    directionsRenderer.setDirections(res);
-                    const km = res.routes[0].legs[0].distance.value / 1000;
-                    buscarNoRadar(km);
-                }
-            });
-        }
-
-        async function buscarNoRadar(kmViagem) {
-            const lista = document.getElementById('lista-motos');
-            lista.innerHTML = "Buscando pilotos...";
-            const snap = await db.collection("usuarios").where("perfil", "==", "motorista").get();
-            lista.innerHTML = "";
-            snap.forEach(doc => {
-                const mot = doc.data();
-                const distAteEle = calcDist(mLat, mLng, mot.lat, mot.lng);
-                if(distAteEle <= 5 && mot.config) {
-                    const valor = ((kmViagem / mot.config.consumo) * mot.config.gas + (kmViagem * mot.config.meta)).toFixed(2);
-                    lista.innerHTML += `
-                        <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
-                            <div><b style="color:var(--green)">R$ ${valor}</b><br><small>A ${distAteEle.toFixed(1)}km de você</small></div>
-                            <button class="btn btn-green" style="width:auto; padding:10px;" onclick="chamar('${doc.id}', '${valor}')">CHAMAR</button>
-                        </div>`;
-                }
-            });
-        }
-
-        // LÓGICA DE CÁLCULO E VOZ (Igual ao seu)
-        function processar() {
-            const v = parseFloat(document.getElementById('val-entrada').value) || 0;
-            const k = parseFloat(document.getElementById('km-entrada').value) || 1;
-            const c = parseFloat(document.getElementById('v-consumo').value);
-            const g = parseFloat(document.getElementById('v-gas').value);
-            const m = parseFloat(document.getElementById('v-meta').value);
-            const lucro = v - (k * (g / c));
-            const rkm = lucro / k;
-            document.getElementById('res-lucro').innerText = "R$ " + lucro.toFixed(2);
-            document.getElementById('res-km').innerText = "R$ " + rkm.toFixed(2);
-            const s = document.getElementById('semaforo');
-            s.style.background = (rkm >= m) ? "var(--green)" : "var(--red)";
-            if(rkm >= m) falar("Aceita que dá lucro!");
-        }
-
-        function falar(t) {
-            const u = new SpeechSynthesisUtterance(t);
-            u.lang = 'pt-BR'; window.speechSynthesis.speak(u);
-        }
-
-        // OUTRAS FUNÇÕES DE APOIO
         function mudarTab(t) {
             document.querySelectorAll('.container > div:not(.logo)').forEach(d => d.classList.add('hidden'));
             document.getElementById('tab-' + t).classList.remove('hidden');
             document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
             document.getElementById('n-' + t).classList.add('active');
-            if(t === 'map' && !map) initMap();
+
+            if(t === 'map' && !mapL) {
+                mapL = L.map('map').setView([mLat || -1.45, mLng || -48.48], 14);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapL);
+                
+                // Clique no mapa para passageiro escolher destino
+                mapL.on('click', function(e) {
+                    if(meuPerfil === 'passageiro') {
+                        destLat = e.latlng.lat;
+                        destLng = e.latlng.lng;
+                        document.getElementById('dest-input').value = destLat.toFixed(5) + ", " + destLng.toFixed(5);
+                        L.marker([destLat, destLng]).addTo(mapL);
+                    }
+                });
+            }
+        }
+
+        function tracarRotaGratis() {
+            if(!destLat) return alert("Clique no mapa para marcar o destino!");
+            
+            if(routeControl) mapL.removeControl(routeControl);
+
+            routeControl = L.Routing.control({
+                waypoints: [ L.latLng(mLat, mLng), L.latLng(destLat, destLng) ],
+                lineOptions: { styles: [{ color: '#2ecc71', weight: 6 }] },
+                createMarker: function() { return null; } 
+            }).on('routesfound', function(e) {
+                const distKM = e.routes[0].summary.totalDistance / 1000;
+                buscarNoRadar(distKM);
+            }).addTo(mapL);
+        }
+
+        async function buscarNoRadar(km) {
+            const lista = document.getElementById('lista-motos');
+            lista.innerHTML = "Calculando preços...";
+            const snap = await db.collection("usuarios").where("perfil", "==", "motorista").get();
+            lista.innerHTML = "";
+            
+            snap.forEach(doc => {
+                const mot = doc.data();
+                if(mot.config) {
+                    const valor = ((km / mot.config.consumo) * mot.config.gas + (km * mot.config.meta)).toFixed(2);
+                    lista.innerHTML += `
+                        <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+                            <div><b style="color:var(--green)">R$ ${valor}</b><br><small>${km.toFixed(1)} KM de viagem</small></div>
+                            <button class="btn btn-green" style="width:auto; padding:8px 15px;" onclick="window.location.href='https://wa.me/${mot.whatsapp}'">CHAMAR</button>
+                        </div>`;
+                }
+            });
+        }
+
+        function processar() {
+            const v = parseFloat(document.getElementById('val-entrada').value) || 0;
+            const k = parseFloat(document.getElementById('km-entrada').value) || 1;
+            const c = parseFloat(document.getElementById('v-consumo').value) || 38;
+            const g = parseFloat(document.getElementById('v-gas').value) || 6.20;
+            const m = parseFloat(document.getElementById('v-meta').value) || 1.80;
+            const lucro = v - (k * (g / c));
+            const rkm = lucro / k;
+            document.getElementById('res-lucro').innerText = "R$ " + lucro.toFixed(2);
+            document.getElementById('res-km').innerText = "R$ " + rkm.toFixed(2);
+            document.getElementById('semaforo').style.background = (rkm >= m) ? "#2ecc71" : "#e74c3c";
+            if(rkm >= m) { const u = new SpeechSynthesisUtterance("Aceita que dá lucro!"); u.lang='pt-BR'; window.speechSynthesis.speak(u); }
         }
 
         function atualizarUI() {
-            document.getElementById('area-motorista').classList.toggle('hidden', meuPerfil !== 'motorista');
-            document.getElementById('area-passageiro').classList.toggle('hidden', meuPerfil !== 'passageiro');
-            document.getElementById('n-ast').classList.toggle('hidden', meuPerfil === 'passageiro');
+            const isMot = (meuPerfil === 'motorista');
+            document.getElementById('n-ast').classList.toggle('hidden', !isMot);
+            document.getElementById('config-motorista-view').classList.toggle('hidden', !isMot);
+            document.getElementById('box-troca-perfil').classList.toggle('hidden', !isMot);
+            document.getElementById('area-motorista').classList.toggle('hidden', !isMot);
+            document.getElementById('area-passageiro').classList.toggle('hidden', isMot);
         }
 
-        function calcDist(lat1, lon1, lat2, lon2) {
-            const R = 6371;
-            const dLat = (lat2-lat1)*Math.PI/180;
-            const dLon = (lon2-lon1)*Math.PI/180;
-            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        async function definirPerfilInicial(p) {
+            await db.collection("usuarios").doc(auth.currentUser.uid).set({ 
+                perfil: p, 
+                termosAceitos: true,
+                dataExpiracao: new Date(Date.now() + 30*24*60*60*1000).toISOString() 
+            }, {merge: true});
         }
-        
+
+        async function trocarParaPassageiro() {
+            if(confirm("Deseja sair do modo motorista?")) {
+                await db.collection("usuarios").doc(auth.currentUser.uid).update({ perfil: 'passageiro' });
+            }
+        }
+
         async function salvarConfig() {
-            await db.collection("usuarios").doc(auth.currentUser.uid).set({
+            await db.collection("usuarios").doc(auth.currentUser.uid).update({
                 whatsapp: document.getElementById('v-zap').value,
                 config: {
                     consumo: parseFloat(document.getElementById('v-consumo').value),
                     gas: parseFloat(document.getElementById('v-gas').value),
                     meta: parseFloat(document.getElementById('v-meta').value)
                 }
-            }, {merge: true});
+            });
             alert("Salvo!");
         }
     </script>
