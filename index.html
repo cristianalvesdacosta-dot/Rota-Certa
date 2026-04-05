@@ -6,7 +6,6 @@
     <title>Rota Certa Pro | Oficial</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
@@ -20,42 +19,22 @@
         .container { padding: 15px; max-width: 500px; margin: auto; }
         .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #222; }
         .logo { font-weight: 900; color: var(--green); font-size: 22px; text-align: center; margin: 20px 0; }
-        label { display: block; font-size: 11px; color: var(--green); margin-top: 10px; margin-bottom: 4px; font-weight: bold; text-transform: uppercase; }
-        input, select { width: 100%; padding: 15px; margin-bottom: 5px; border-radius: 12px; border: 1px solid #333; background: #1a1a1a; color: #fff; box-sizing: border-box; font-size: 16px; }
+        label { display: block; font-size: 11px; color: var(--green); margin: 10px 0 4px 0; font-weight: bold; text-transform: uppercase; }
+        input, textarea { width: 100%; padding: 15px; margin-bottom: 5px; border-radius: 12px; border: 1px solid #333; background: #1a1a1a; color: #fff; box-sizing: border-box; font-size: 16px; }
         .btn { width: 100%; padding: 18px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; }
         .btn-green { background: var(--green); color: #000; }
         .btn-blue { background: var(--blue); color: #fff; }
-        .btn-red { background: var(--red); color: #fff; padding: 8px 12px; font-size: 12px; width: auto; border-radius: 8px; }
         
-        .nav { position: fixed; bottom: 0; width: 100%; background: #080808; display: flex; border-top: 1px solid #222; z-index: 100; }
+        .nav { position: fixed; bottom: 0; width: 100%; background: #080808; display: flex; border-top: 1px solid #222; z-index: 1000; }
         .nav-item { flex: 1; padding: 15px; text-align: center; color: #555; font-size: 10px; font-weight: bold; }
         .nav-item.active { color: var(--green); border-top: 2px solid var(--green); }
-        .hidden { display: none !important; }
         #map { width: 100%; height: 250px; border-radius: 15px; margin-bottom: 15px; background: #222; z-index: 1; }
+        .hidden { display: none !important; }
         
-        /* BARRA DE PROGRESSO */
-        .progress-bg { background: #222; height: 12px; border-radius: 10px; margin: 15px 0; overflow: hidden; border: 1px solid #333; }
-        .progress-fill { background: var(--green); height: 100%; width: 0%; transition: 0.5s; }
-        
-        /* TABELA CRONOGRAMA */
-        .cron-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
-        .cron-table th { color: var(--green); text-align: left; padding: 8px; border-bottom: 1px solid #333; }
-        .cron-table td { padding: 10px 8px; border-bottom: 1px solid #222; }
-
-        .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #222; }
-        .leaflet-routing-container { display: none !important; }
+        .cron-item { margin-bottom: 10px; }
     </style>
 </head>
 <body>
-
-    <div id="selector-screen" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:10000; display:flex; align-items:center; justify-content:center; text-align:center; padding:20px; box-sizing: border-box;">
-        <div>
-            <div class="logo">ROTA CERTA PRO</div>
-            <h3>Como vai usar o app hoje?</h3>
-            <button class="btn btn-green" onclick="definirPerfilInicial('motorista')">SOU MOTORISTA</button>
-            <button class="btn btn-blue" style="margin-top:12px" onclick="definirPerfilInicial('passageiro')">SOU PASSAGEIRO</button>
-        </div>
-    </div>
 
     <div id="app-main" class="container">
         <div class="logo">ROTA CERTA PRO</div>
@@ -64,18 +43,10 @@
             <div class="card">
                 <label>Meta do Dia (R$)</label>
                 <input type="number" id="meta-dia" value="150" onchange="atualizarGanhos()">
-                <div class="progress-bg"><div id="barra-fill" class="progress-fill"></div></div>
+                <div style="background:#222; height:12px; border-radius:10px; margin:15px 0; overflow:hidden;"><div id="barra-fill" style="background:var(--green); height:100%; width:0%;"></div></div>
                 <div style="display:flex; justify-content:space-between; font-size:12px;">
                     <span>Ganhos: <b id="txt-ganho">R$ 0,00</b></span>
                     <span>Falta: <b id="txt-falta" style="color:var(--blue)">R$ 0,00</b></span>
-                </div>
-            </div>
-
-            <div class="card" style="text-align:center;">
-                <div id="semaforo" style="width:40px; height:40px; border-radius:50%; background:#333; margin:auto; margin-bottom:10px;"></div>
-                <div style="display:flex; justify-content:space-around;">
-                    <div>LUCRO:<br><b id="res-lucro" style="color:var(--green)">R$ 0,00</b></div>
-                    <div>POR KM:<br><b id="res-km" style="color:var(--blue)">R$ 0,00</b></div>
                 </div>
             </div>
 
@@ -84,60 +55,36 @@
                 <input type="number" id="val-entrada" placeholder="R$ 0,00">
                 <label>Distância (KM)</label>
                 <input type="number" id="km-entrada" placeholder="0.0">
-                <button class="btn btn-green" onclick="processar()">ANALISAR CORRIDA</button>
-                <button id="btn-salvar" class="btn btn-blue hidden" style="margin-top:10px" onclick="salvarNoHistorico()">ACEITAR E SALVAR</button>
-            </div>
-
-            <div class="card">
-                <h3>Histórico de Hoje</h3>
-                <div id="lista-historico"></div>
-                <button class="btn" style="background:#222; color:#666; margin-top:15px;" onclick="limparHistorico()">REINICIAR DIA</button>
+                <button class="btn btn-green" onclick="processar()">ANALISAR</button>
+                <div id="resultado-rapido" style="margin-top:10px; text-align:center; font-weight:bold;"></div>
             </div>
         </div>
 
         <div id="tab-map" class="hidden">
             <div id="map"></div>
-            <div id="area-passageiro">
-                <div class="card">
-                    <label>Procurar Destino</label>
-                    <div style="display:flex; gap:5px;">
-                        <input type="text" id="dest-input" placeholder="Rua ou Local em Belém/Outeiro">
-                        <button class="btn btn-green" style="width:70px; padding:10px;" onclick="buscarEndereco()">IR</button>
-                    </div>
-                    <button class="btn btn-blue" style="margin-top:10px" onclick="tracarRotaGratis()">CALCULAR ROTA E PREÇOS</button>
-                </div>
-                <div id="lista-motos"></div>
+            <div class="card">
+                <label>Para onde vamos?</label>
+                <input type="text" id="dest-input" placeholder="Destino em Belém/Outeiro">
+                <button class="btn btn-green" onclick="buscarETracar()">CALCULAR ROTA E CUSTO</button>
+                <div id="info-rota" style="margin-top:15px; font-size:14px; line-height:1.6;"></div>
             </div>
         </div>
 
         <div id="tab-vei" class="hidden">
             <div class="card">
-                <h3>Cronograma de Trabalho</h3>
-                <table class="cron-table">
-                    <thead><tr><th>Horário</th><th>Ação / Estratégia</th></tr></thead>
-                    <tbody>
-                        <tr><td>08:00 - 10:00</td><td><b>Pico Manhã:</b> Viagens curtas (Volume)</td></tr>
-                        <tr><td>10:00 - 12:00</td><td><b>Meio-Dia:</b> Foco em Uber Flash / Objetos</td></tr>
-                        <tr><td>12:00 - 14:00</td><td><b>Intervalo:</b> Almoço e Descanso</td></tr>
-                        <tr><td>17:00 - 19:00</td><td><b>Pico Noite:</b> Dinâmica (Saída Trabalho)</td></tr>
-                    </tbody>
-                </table>
+                <h3>Cronograma Editável</h3>
+                <label>Sua Estratégia de Hoje:</label>
+                <textarea id="cron-texto" rows="5" placeholder="Ex: 08:00 - Outeiro Centro&#10;11:00 - Entrega Flash&#10;17:00 - Volta pra Belém"></textarea>
+                <button class="btn btn-blue" onclick="salvarCronograma()">SALVAR CRONOGRAMA</button>
             </div>
 
             <div class="card">
-                <h3>Configuração do Veículo</h3>
-                <label>WhatsApp</label>
-                <input type="number" id="v-zap" placeholder="5591...">
+                <h3>Dados da Moto</h3>
                 <label>Consumo (KM/L)</label>
                 <input type="number" id="v-consumo" value="38">
                 <label>Gasolina (R$)</label>
                 <input type="number" id="v-gas" value="6.20">
-                <label>Meta Lucro/KM (R$)</label>
-                <input type="number" id="v-meta" value="1.80">
-                <button class="btn btn-green" onclick="salvarConfig()" style="margin-top:10px">SALVAR CONFIGURAÇÕES</button>
-                <div id="box-troca-perfil" class="hidden">
-                    <button class="btn btn-blue" style="margin-top:15px;" onclick="trocarParaPassageiro()">MUDAR PARA PASSAGEIRO</button>
-                </div>
+                <button class="btn btn-green" onclick="salvarConfig()">SALVAR CONFIGURAÇÕES</button>
             </div>
         </div>
     </div>
@@ -149,153 +96,92 @@
     </nav>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyC2PyMxApIjZ_bEcyV1FdftHQHzi7irM4k",
-            authDomain: "rota-certa-861e7.firebaseapp.com",
-            projectId: "rota-certa-861e7",
-            storageBucket: "rota-certa-861e7.firebasestorage.app",
-            messagingSenderId: "56675221849",
-            appId: "1:56675221849:web:ebe796a6f2a93cba204c48"
-        };
+        const firebaseConfig = { apiKey: "AIzaSyC2PyMxApIjZ_bEcyV1FdftHQHzi7irM4k", authDomain: "rota-certa-861e7.firebaseapp.com", projectId: "rota-certa-861e7", storageBucket: "rota-certa-861e7.firebasestorage.app", messagingSenderId: "56675221849", appId: "1:56675221849:web:ebe796a6f2a93cba204c48" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        const auth = firebase.auth();
 
-        let mapL, routeControl, meuPerfil, mLat, mLng, destLat, destLng, lucroAtual = 0;
-        let historico = JSON.parse(localStorage.getItem('RC_HISTORICO')) || [];
-
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                db.collection("usuarios").doc(user.uid).onSnapshot(doc => {
-                    if (doc.exists) {
-                        const data = doc.data();
-                        meuPerfil = data.perfil;
-                        if(data.config) {
-                            document.getElementById('v-zap').value = data.whatsapp || '';
-                            document.getElementById('v-consumo').value = data.config.consumo;
-                            document.getElementById('v-gas').value = data.config.gas;
-                            document.getElementById('v-meta').value = data.config.meta;
-                        }
-                        document.getElementById('selector-screen').classList.add('hidden');
-                        atualizarUI();
-                        atualizarGanhos();
-                        iniciarGPS();
-                    } else {
-                        document.getElementById('selector-screen').classList.remove('hidden');
-                    }
-                });
-            }
-        });
-
-        function iniciarGPS() {
-            navigator.geolocation.watchPosition(p => {
-                mLat = p.coords.latitude; mLng = p.coords.longitude;
-                db.collection("usuarios").doc(auth.currentUser.uid).update({ lat: mLat, lng: mLng, ativa: new Date().toISOString() });
-            });
-        }
+        let mapL, routeControl, mLat, mLng;
 
         function mudarTab(t) {
             document.querySelectorAll('.container > div:not(.logo)').forEach(d => d.classList.add('hidden'));
             document.getElementById('tab-' + t).classList.remove('hidden');
             document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
             document.getElementById('n-' + t).classList.add('active');
-
-            if(t === 'map' && !mapL) {
-                mapL = L.map('map').setView([mLat || -1.45, mLng || -48.48], 14);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapL);
-                mapL.on('click', e => {
-                    if(meuPerfil === 'passageiro') {
-                        destLat = e.latlng.lat; destLng = e.latlng.lng;
-                        document.getElementById('dest-input').value = "Local marcado no mapa";
-                        L.marker([destLat, destLng]).addTo(mapL);
-                    }
-                });
-            }
+            if(t === 'map' && !mapL) initMap();
         }
 
-        async function buscarEndereco() {
-            const q = document.getElementById('dest-input').value;
-            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}, Belém`);
+        function initMap() {
+            mapL = L.map('map').setView([-1.45, -48.48], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapL);
+            navigator.geolocation.getCurrentPosition(p => {
+                mLat = p.coords.latitude; mLng = p.coords.longitude;
+                mapL.setView([mLat, mLng], 15);
+                L.marker([mLat, mLng]).addTo(mapL).bindPopup("Você").openPopup();
+            });
+        }
+
+        async function buscarETracar() {
+            const dest = document.getElementById('dest-input').value;
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${dest}, Belém`);
             const data = await res.json();
+            
             if(data[0]) {
-                destLat = data[0].lat; destLng = data[0].lon;
-                mapL.setView([destLat, destLng], 15);
-                L.marker([destLat, destLng]).addTo(mapL);
+                const dLat = data[0].lat; const dLng = data[0].lon;
+                if (routeControl) mapL.removeControl(routeControl);
+
+                routeControl = L.Routing.control({
+                    waypoints: [L.latLng(mLat, mLng), L.latLng(dLat, dLng)],
+                    lineOptions: { styles: [{ color: '#2ecc71', weight: 6 }] },
+                    createMarker: () => null,
+                    addWaypoints: false,
+                    show: false // Oculta painel de texto para não travar
+                }).on('routesfound', function(e) {
+                    const r = e.routes[0];
+                    const dist = (r.summary.totalDistance / 1000).toFixed(1);
+                    const cons = parseFloat(document.getElementById('v-consumo').value);
+                    const gas = parseFloat(document.getElementById('v-gas').value);
+                    const custo = (dist * (gas / cons)).toFixed(2);
+
+                    document.getElementById('info-rota').innerHTML = `
+                        <span style="color:var(--green)">✔ Rota Calculada</span><br>
+                        Distância: <b>${dist} KM</b><br>
+                        Gasto de Gasolina: <b style="color:var(--red)">R$ ${custo}</b>
+                    `;
+                }).addTo(mapL);
             }
         }
+
+        function salvarCronograma() {
+            const texto = document.getElementById('cron-texto').value;
+            localStorage.setItem('RC_CRON_TEXTO', texto);
+            alert("Estratégia salva!");
+        }
+
+        function salvarConfig() {
+            const c = document.getElementById('v-consumo').value;
+            const g = document.getElementById('v-gas').value;
+            localStorage.setItem('RC_CONFIG', JSON.stringify({consumo: c, gas: g}));
+            alert("Dados da moto salvos!");
+        }
+
+        window.onload = () => {
+            const cronSalvo = localStorage.getItem('RC_CRON_TEXTO');
+            if(cronSalvo) document.getElementById('cron-texto').value = cronSalvo;
+
+            const configSalva = JSON.parse(localStorage.getItem('RC_CONFIG'));
+            if(configSalva) {
+                document.getElementById('v-consumo').value = configSalva.consumo;
+                document.getElementById('v-gas').value = configSalva.gas;
+            }
+        };
 
         function processar() {
             const v = parseFloat(document.getElementById('val-entrada').value) || 0;
             const k = parseFloat(document.getElementById('km-entrada').value) || 1;
-            const c = parseFloat(document.getElementById('v-consumo').value) || 38;
-            const g = parseFloat(document.getElementById('v-gas').value) || 6.20;
-            const m = parseFloat(document.getElementById('v-meta').value) || 1.80;
-            lucroAtual = v - (k * (g / c));
-            const rkm = lucroAtual / k;
-            document.getElementById('res-lucro').innerText = "R$ " + lucroAtual.toFixed(2);
-            document.getElementById('res-km').innerText = "R$ " + rkm.toFixed(2);
-            document.getElementById('semaforo').style.background = (rkm >= m) ? "#2ecc71" : "#e74c3c";
-            document.getElementById('btn-salvar').classList.toggle('hidden', rkm < m);
-            if(rkm >= m) { const u = new SpeechSynthesisUtterance("Lucro bom, aceita!"); u.lang='pt-BR'; window.speechSynthesis.speak(u); }
-        }
-
-        function salvarNoHistorico() {
-            const item = { lucro: lucroAtual, hora: new Date().toLocaleTimeString().substring(0,5) };
-            historico.push(item);
-            localStorage.setItem('RC_HISTORICO', JSON.stringify(historico));
-            atualizarGanhos();
-            document.getElementById('btn-salvar').classList.add('hidden');
-            alert("Corrida salva!");
-        }
-
-        function atualizarGanhos() {
-            const lista = document.getElementById('lista-historico');
-            lista.innerHTML = "";
-            let total = 0;
-            historico.forEach((h, i) => {
-                total += h.lucro;
-                lista.innerHTML += `<div class="hist-item">
-                    <span>${h.hora} - <b>R$ ${h.lucro.toFixed(2)}</b></span>
-                    <button class="btn-red" onclick="removerItem(${i})">X</button>
-                </div>`;
-            });
-            const meta = parseFloat(document.getElementById('meta-dia').value) || 1;
-            const perc = Math.min((total / meta) * 100, 100);
-            document.getElementById('barra-fill').style.width = perc + "%";
-            document.getElementById('txt-ganho').innerText = "R$ " + total.toFixed(2);
-            document.getElementById('txt-falta').innerText = "R$ " + Math.max(meta - total, 0).toFixed(2);
-        }
-
-        function removerItem(i) { historico.splice(i, 1); localStorage.setItem('RC_HISTORICO', JSON.stringify(historico)); atualizarGanhos(); }
-        function limparHistorico() { if(confirm("Limpar ganhos de hoje?")) { historico = []; localStorage.removeItem('RC_HISTORICO'); atualizarGanhos(); } }
-
-        function atualizarUI() {
-            const isMot = (meuPerfil === 'motorista');
-            document.getElementById('n-ast').classList.toggle('hidden', !isMot);
-            document.getElementById('box-troca-perfil').classList.toggle('hidden', !isMot);
-            document.getElementById('area-passageiro').classList.toggle('hidden', isMot);
-        }
-
-        async function definirPerfilInicial(p) {
-            await db.collection("usuarios").doc(auth.currentUser.uid).set({ perfil: p, config: { consumo: 38, gas: 6.20, meta: 1.80 } }, {merge: true});
-        }
-
-        async function salvarConfig() {
-            await db.collection("usuarios").doc(auth.currentUser.uid).update({
-                whatsapp: document.getElementById('v-zap').value,
-                config: {
-                    consumo: parseFloat(document.getElementById('v-consumo').value),
-                    gas: parseFloat(document.getElementById('v-gas').value),
-                    meta: parseFloat(document.getElementById('v-meta').value)
-                }
-            });
-            alert("Configurações Salvas!");
-        }
-
-        async function trocarParaPassageiro() {
-            if(confirm("Sair do modo motorista?")) {
-                await db.collection("usuarios").doc(auth.currentUser.uid).update({ perfil: 'passageiro' });
-            }
+            const c = parseFloat(document.getElementById('v-consumo').value);
+            const g = parseFloat(document.getElementById('v-gas').value);
+            const lucro = v - (k * (g / c));
+            document.getElementById('resultado-rapido').innerHTML = `Lucro: <span style="color:var(--green)">R$ ${lucro.toFixed(2)}</span>`;
         }
     </script>
 </body>
