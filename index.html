@@ -6,11 +6,10 @@
     <title>Rota Certa Pro | Oficial</title>
     
     <script>
-        // CONFIGURAÇÕES DO CRISTIAN
+        // CONFIGURAÇÕES GERAIS
         const CONFIG_PRECO_MENSAL = "29,90"; 
         const CONFIG_CHAVE_PIX = "SEU-PIX-AQUI"; 
-        const CONFIG_WHATSAPP = "55919XXXXXXXX"; 
-        const CONFIG_NOME_BANCO = "Seu Banco - Cristian";
+        const CONFIG_ADM_WHATSAPP = "55919XXXXXXXX"; 
     </script>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
@@ -19,29 +18,52 @@
 
     <style>
         :root { --green: #2ecc71; --blue: #3498db; --red: #e74c3c; --bg: #000; --card: #111; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; margin: 0; padding-bottom: 80px; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; margin: 0; padding-bottom: 80px; overflow-x: hidden; }
         .container { padding: 15px; max-width: 500px; margin: auto; }
         .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #222; }
         .logo { font-weight: 900; color: var(--green); font-size: 22px; text-align: center; margin: 20px 0; }
         input, select { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: #1a1a1a; color: #fff; box-sizing: border-box; }
-        .btn { width: 100%; padding: 18px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .btn-green { background: var(--green); color: #000; }
         .btn-blue { background: var(--blue); color: #fff; }
         .nav { position: fixed; bottom: 0; width: 100%; background: #080808; display: flex; border-top: 1px solid #222; z-index: 100; }
         .nav-item { flex: 1; padding: 15px; text-align: center; color: #555; font-size: 10px; font-weight: bold; }
         .nav-item.active { color: var(--green); border-top: 2px solid var(--green); }
         .hidden { display: none !important; }
+        
+        #modal-termos { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.96); z-index:10000; display:flex; align-items:center; justify-content:center; }
+        .termos-box { background:#111; padding:25px; border-radius:20px; border:1px solid #333; max-width:85%; }
+        .termos-text { font-size:12px; color:#bbb; max-height:300px; overflow-y:auto; margin: 15px 0; text-align: left; line-height: 1.4; }
+        .vantagem-box { background: rgba(46, 204, 113, 0.1); border: 1px solid var(--green); padding: 12px; border-radius: 12px; margin-bottom: 15px; }
+
+        #block-screen, #selector-screen { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:9999; display:flex; align-items:center; justify-content:center; text-align:center; padding:20px; box-sizing: border-box; }
         .luz { width: 50px; height: 50px; border-radius: 50%; background:#333; margin:auto; margin-bottom: 10px; }
-        #block-screen { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:9999; display:flex; align-items:center; justify-content:center; text-align:center; padding:20px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
     <div id="modal-termos" class="hidden">
-        <div class="card" style="text-align:center;">
-            <h2>Aviso de Isenção</h2>
-            <p style="font-size:13px; color:#888; text-align:left;">O Rota Certa Pro é apenas um facilitador tecnológico. Pagamentos e segurança são de inteira responsabilidade de motoristas e passageiros.</p>
-            <button class="btn btn-green" onclick="aceitarTermos()">CONCORDO E ACEITO</button>
+        <div class="termos-box">
+            <h2 style="color:var(--green); margin:0; text-align:center;">Termos e Segurança</h2>
+            <div class="termos-text">
+                <div class="vantagem-box">
+                    <b style="color:var(--green);">🚀 VANTAGEM ROTA CERTA:</b><br>
+                    • <b>Motorista:</b> Lucro 100%. Sem taxas por corrida!<br>
+                    • <b>Passageiro:</b> Preço justo baseado no custo real do piloto.
+                </div>
+                <p><b>1. ISENÇÃO:</b> Somos uma ferramenta de aproximação. A negociação e segurança são dos usuários.</p>
+                <p><b>2. GPS:</b> Coletamos localização para o radar e cálculo de rota.</p>
+            </div>
+            <button class="btn btn-green" onclick="aceitarTermosFirebase()">CONCORDO E ACEITO</button>
+        </div>
+    </div>
+
+    <div id="selector-screen" class="hidden">
+        <div>
+            <div class="logo">ROTA CERTA PRO</div>
+            <h3>Como vai usar o app hoje?</h3>
+            <button class="btn btn-green" onclick="definirPerfilInicial('motorista')">SOU MOTORISTA</button>
+            <button class="btn btn-blue" style="margin-top:12px" onclick="definirPerfilInicial('passageiro')">SOU PASSAGEIRO</button>
         </div>
     </div>
 
@@ -49,11 +71,10 @@
         <div>
             <h2 style="color:var(--red)">Assinatura Expirada</h2>
             <div class="card">
-                <span>VALOR MENSAL</span><br>
+                <span>LICENÇA MENSAL</span><br>
                 <b style="font-size:28px; color:var(--green)">R$ <span id="p-val">29,90</span></b>
-                <p style="font-size:12px;">Pix: <b id="p-chave"></b></p>
             </div>
-            <button class="btn btn-green" onclick="window.location.href='https://wa.me/'+CONFIG_WHATSAPP">ENVIAR COMPROVANTE</button>
+            <button class="btn btn-green" onclick="window.location.href='https://wa.me/'+CONFIG_ADM_WHATSAPP">ENVIAR COMPROVANTE</button>
         </div>
     </div>
 
@@ -63,7 +84,7 @@
         <div id="tab-ast">
             <div class="card" style="text-align:center;">
                 <div id="semaforo" class="luz"></div>
-                <h3 id="txt-decisao">AGUARDANDO...</h3>
+                <h3 id="txt-decisao">ASSISTENTE DE LUCRO</h3>
                 <div style="display:flex; justify-content:space-around; font-size:14px;">
                     <div>LUCRO: <br><b id="res-lucro" style="color:var(--green)">R$ 0,00</b></div>
                     <div>POR KM: <br><b id="res-km" style="color:var(--blue)">R$ 0,00</b></div>
@@ -71,58 +92,58 @@
             </div>
             <div class="card">
                 <input type="number" id="val-entrada" placeholder="Valor da Corrida (R$)">
-                <input type="number" id="km-entrada" placeholder="KM Total">
+                <input type="number" id="km-entrada" placeholder="Distância (KM)">
                 <button class="btn btn-green" onclick="processar()">ANALISAR CORRIDA</button>
             </div>
         </div>
 
         <div id="tab-map" class="hidden">
             <div class="card" style="text-align:center;">
-                <h4 id="status-perfil">...</h4>
-                <button class="btn btn-blue" style="padding:10px; font-size:12px;" onclick="trocarPerfil()">TROCAR PARA <span id="btn-troca-txt">...</span></button>
+                <h4 id="status-perfil">MODO: ...</h4>
+                <button class="btn btn-blue" style="padding:10px; font-size:12px;" onclick="trocarPerfil()">ALTERAR MEU PERFIL</button>
             </div>
 
             <div id="area-passageiro" class="hidden">
                 <div class="card">
-                    <b>⭐ Meus Favoritos</b>
-                    <div id="lista-favoritos" style="margin-top:10px; color:#888;">Nenhum favorito.</div>
+                    <b>📍 Para onde vamos?</b>
+                    <input type="number" id="pass-km" placeholder="Distância da viagem (KM)">
+                    <p style="font-size:11px; color:#888;">Informe a distância aproximada para calcular o valor justo.</p>
                 </div>
                 <div class="card">
-                    <b>📍 Pilotos Online (5km)</b>
-                    <div id="lista-motos" style="margin-top:10px;">Buscando pilotos em Belém...</div>
+                    <b>🛵 Pilotos Próximos (Radar 5km)</b>
+                    <div id="lista-motos" style="margin-top:15px;">Buscando pilotos...</div>
                 </div>
             </div>
 
             <div id="area-motorista" class="hidden">
                 <div class="card" style="border: 1px solid var(--green); text-align:center;">
-                    <b style="color:var(--green)">VOCÊ ESTÁ VISÍVEL</b>
-                    <p style="font-size:12px;">Passageiros próximos podem te chamar agora.</p>
+                    <b style="color:var(--green)">RADAR ATIVO</b>
+                    <p style="font-size:12px;">Seu perfil está visível para passageiros em Outeiro/Belém.</p>
                 </div>
             </div>
         </div>
 
         <div id="tab-vei" class="hidden">
             <div class="card">
-                <h3>Configuração do Veículo</h3>
+                <h3>Meu Perfil</h3>
+                <input type="number" id="v-zap" placeholder="Seu WhatsApp (Ex: 55919...)">
+                <h3>Custo do Veículo</h3>
                 <select id="tipo-v" onchange="setDefaults()">
                     <option value="moto">MOTO</option>
                     <option value="carro">CARRO</option>
                 </select>
-                <label><small>Consumo (km/L):</small></label>
-                <input type="number" id="v-consumo" value="38">
-                <label><small>Preço Combustível:</small></label>
-                <input type="number" id="v-gas" value="6.20">
-                <label><small>Sua Meta (R$ por KM):</small></label>
-                <input type="number" id="v-meta" value="1.80">
-                <button class="btn btn-green" onclick="salvarConfig()">SALVAR VEÍCULO</button>
+                <input type="number" id="v-consumo" value="38" placeholder="KM por Litro">
+                <input type="number" id="v-gas" value="6.20" placeholder="Preço Gasolina">
+                <input type="number" id="v-meta" value="1.80" placeholder="Meta de Lucro por KM">
+                <button class="btn btn-green" onclick="salvarConfig()">SALVAR CONFIGURAÇÕES</button>
             </div>
         </div>
     </div>
 
     <nav class="nav">
-        <div class="nav-item active" id="n-ast" onclick="mudarTab('ast')">ASSISTENTE</div>
+        <div class="nav-item active" id="n-ast" onclick="mudarTab('ast')">LUCRO</div>
         <div class="nav-item" id="n-map" onclick="mudarTab('map')">RADAR</div>
-        <div class="nav-item" id="n-vei" onclick="mudarTab('vei')">VEÍCULO</div>
+        <div class="nav-item" id="n-vei" onclick="mudarTab('vei')">PERFIL</div>
     </nav>
 
     <script>
@@ -138,58 +159,136 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
 
-        let meuPerfil = "motorista";
-        document.getElementById('p-chave').innerText = CONFIG_CHAVE_PIX;
+        let meuPerfil = "";
+        let mLat = 0, mLng = 0;
 
-        // LOGIN E LÓGICA DE ASSINATURA (3 DIAS / VIP 1000 DIAS)
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                const docRef = db.collection("usuarios").doc(user.uid);
-                docRef.onSnapshot(async (doc) => {
+                db.collection("usuarios").doc(user.uid).onSnapshot(doc => {
                     if (doc.exists) {
                         const d = doc.data();
-                        meuPerfil = d.perfil || "motorista";
+                        if(!d.termosAceitos) document.getElementById('modal-termos').classList.remove('hidden');
+                        else document.getElementById('modal-termos').classList.add('hidden');
                         
-                        // Verificar Assinatura
-                        if(d.dataExpiracao) {
-                            const expira = new Date(d.dataExpiracao);
-                            if (new Date() > expira) {
-                                document.getElementById('block-screen').classList.remove('hidden');
-                            } else {
-                                document.getElementById('block-screen').classList.add('hidden');
-                            }
+                        meuPerfil = d.perfil;
+                        document.getElementById('selector-screen').classList.add('hidden');
+                        if(meuPerfil === "motorista") {
+                            const exp = new Date(d.dataExpiracao);
+                            document.getElementById('block-screen').classList.toggle('hidden', new Date() < exp);
+                            escutarChamadas();
+                            if(d.whatsapp) document.getElementById('v-zap').value = d.whatsapp;
                         }
                         atualizarInterfacePerfil();
+                        monitorarGPS();
                     } else {
-                        // NOVO USUÁRIO: 3 DIAS / VOCÊ: 1000 DIAS
-                        let diasTeste = (user.email === "cristianalvesdacosta@gmail.com") ? 1000 : 3;
-                        const dataExp = new Date();
-                        dataExp.setDate(dataExp.getDate() + diasTeste);
-                        
-                        await docRef.set({
-                            email: user.email,
-                            perfil: "motorista",
-                            dataExpiracao: dataExp.toISOString(),
-                            criadoEm: new Date().toISOString()
-                        });
+                        document.getElementById('selector-screen').classList.remove('hidden');
                     }
                 });
             }
         });
 
+        async function definirPerfilInicial(p) {
+            let dias = (auth.currentUser.email.includes("cristian")) ? 1000 : 3;
+            const dt = new Date(); dt.setDate(dt.getDate() + dias);
+            await db.collection("usuarios").doc(auth.currentUser.uid).set({
+                email: auth.currentUser.email, perfil: p, dataExpiracao: dt.toISOString(), termosAceitos: false
+            }, {merge: true});
+        }
+
+        async function aceitarTermosFirebase() {
+            await db.collection("usuarios").doc(auth.currentUser.uid).update({ termosAceitos: true, dataAceite: new Date().toISOString() });
+        }
+
+        function monitorarGPS() {
+            navigator.geolocation.watchPosition(pos => {
+                mLat = pos.coords.latitude; mLng = pos.coords.longitude;
+                db.collection("usuarios").doc(auth.currentUser.uid).update({ lat: mLat, lng: mLng, ativa: new Date().toISOString() });
+                if(meuPerfil === 'passageiro') buscarNoRadar();
+            });
+        }
+
+        async function buscarNoRadar() {
+            const lista = document.getElementById('lista-motos');
+            const distViagem = parseFloat(document.getElementById('pass-km').value) || 0;
+            const snap = await db.collection("usuarios").where("perfil", "==", "motorista").get();
+            lista.innerHTML = "";
+            
+            snap.forEach(doc => {
+                const mot = doc.data();
+                const distAtePiloto = calcDist(mLat, mLng, mot.lat, mot.lng);
+                
+                if(distAtePiloto <= 5) {
+                    // CÁLCULO BASEADO NO CADASTRO DO MOTORISTA ESPECÍFICO
+                    let precoSugerido = "Calcule o KM acima";
+                    if(distViagem > 0 && mot.config) {
+                        const custoCombustivel = (distViagem / mot.config.consumo) * mot.config.gas;
+                        const lucroDesejado = distViagem * mot.config.meta;
+                        precoSugerido = "R$ " + (custoCombustivel + lucroDesejado).toFixed(2);
+                    }
+
+                    lista.innerHTML += `
+                        <div class="card" style="margin-bottom:10px;">
+                            <div style="display:flex; justify-content:space-between;">
+                                <b>Piloto Online</b>
+                                <span style="color:var(--green)">${precoSugerido}</span>
+                            </div>
+                            <small>Distância até você: ${distAtePiloto.toFixed(1)} km</small><br>
+                            <button class="btn btn-green" style="margin-top:10px; padding:10px;" onclick="chamar('${doc.id}', '${precoSugerido}')">CHAMAR AGORA</button>
+                        </div>`;
+                }
+            });
+        }
+
+        function calcDist(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2-lat1)*Math.PI/180;
+            const dLon = (lon2-lon1)*Math.PI/180;
+            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+
+        async function chamar(idMot, valor) {
+            const dest = prompt("Diga seu destino (Ex: Praia do Amor):");
+            if(!dest) return;
+            await db.collection("chamadas").add({
+                de: auth.currentUser.email, para: idMot, destino: dest, valorSugerido: valor, status: "pendente", criadoEm: new Date().toISOString()
+            });
+            alert("Chamada enviada com valor sugerido de " + valor);
+        }
+
+        function escutarChamadas() {
+            db.collection("chamadas").where("para", "==", auth.currentUser.uid).where("status", "==", "pendente")
+            .onSnapshot(async snap => {
+                const meuDoc = await db.collection("usuarios").doc(auth.currentUser.uid).get();
+                const d = meuDoc.data();
+                snap.forEach(doc => {
+                    const c = doc.data();
+                    falar("Nova corrida de " + c.valorSugerido);
+                    if(confirm(`NOVA CORRIDA!\nDestino: ${c.destino}\nValor Sugerido: ${c.valorSugerido}\n\nAceitar?`)) {
+                        db.collection("chamadas").doc(doc.id).update({status: "aceito"});
+                        window.location.href = `https://wa.me/${d.whatsapp}?text=Aceitei sua corrida para ${c.destino} por ${c.valorSugerido}. Já estou indo!`;
+                    }
+                });
+            });
+        }
+
         function mudarTab(t) {
-            document.getElementById('tab-ast').classList.add('hidden');
-            document.getElementById('tab-map').classList.add('hidden');
-            document.getElementById('tab-vei').classList.add('hidden');
+            document.querySelectorAll('.container > div:not(.logo)').forEach(d => d.classList.add('hidden'));
             document.getElementById('tab-' + t).classList.remove('hidden');
             document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
             document.getElementById('n-' + t).classList.add('active');
         }
 
-        function setDefaults() {
-            const t = document.getElementById('tipo-v').value;
-            document.getElementById('v-consumo').value = (t === 'moto') ? 38 : 12;
-            document.getElementById('v-meta').value = (t === 'moto') ? 1.80 : 3.50;
+        function atualizarInterfacePerfil() {
+            document.getElementById('status-perfil').innerText = "MODO: " + meuPerfil.toUpperCase();
+            document.getElementById('area-motorista').classList.toggle('hidden', meuPerfil !== 'motorista');
+            document.getElementById('area-passageiro').classList.toggle('hidden', meuPerfil !== 'passageiro');
+            document.getElementById('n-ast').classList.toggle('hidden', meuPerfil === 'passageiro');
+        }
+
+        async function trocarPerfil() {
+            const novo = meuPerfil === "motorista" ? "passageiro" : "motorista";
+            await db.collection("usuarios").doc(auth.currentUser.uid).update({ perfil: novo });
         }
 
         function processar() {
@@ -198,55 +297,37 @@
             const c = parseFloat(document.getElementById('v-consumo').value) || 38;
             const g = parseFloat(document.getElementById('v-gas').value) || 6.20;
             const m = parseFloat(document.getElementById('v-meta').value) || 1.80;
-
             const lucro = v - (k * (g / c));
             const rkm = lucro / k;
-
             const s = document.getElementById('semaforo');
-            if(rkm >= m) { s.style.background = "var(--green)"; falar("Aceita!"); }
-            else if(rkm >= m * 0.7) { s.style.background = "yellow"; }
-            else { s.style.background = "var(--red)"; falar("Recusa!"); }
-
+            s.style.background = (rkm >= m) ? "var(--green)" : (rkm >= m * 0.7) ? "yellow" : "var(--red)";
+            if(rkm >= m) falar("Aceita!");
             document.getElementById('res-lucro').innerText = "R$ " + lucro.toFixed(2);
             document.getElementById('res-km').innerText = "R$ " + rkm.toFixed(2);
         }
 
         function falar(t) {
             const u = new SpeechSynthesisUtterance(t);
-            u.lang = 'pt-BR';
-            window.speechSynthesis.speak(u);
+            u.lang = 'pt-BR'; window.speechSynthesis.speak(u);
         }
-
-        async function trocarPerfil() {
-            const novo = meuPerfil === "motorista" ? "passageiro" : "motorista";
-            await db.collection("usuarios").doc(auth.currentUser.uid).update({ perfil: novo });
-        }
-
-        function atualizarInterfacePerfil() {
-            document.getElementById('status-perfil').innerText = "MODO: " + meuPerfil.toUpperCase();
-            document.getElementById('btn-troca-txt').innerText = meuPerfil === "motorista" ? "PASSAGEIRO" : "MOTORISTA";
-            document.getElementById('area-motorista').classList.toggle('hidden', meuPerfil !== 'motorista');
-            document.getElementById('area-passageiro').classList.toggle('hidden', meuPerfil !== 'passageiro');
-        }
-
-        function aceitarTermos() {
-            document.getElementById('modal-termos').classList.add('hidden');
-            localStorage.setItem('termos_rota', 'ok');
-        }
-        if(localStorage.getItem('termos_rota')) document.getElementById('modal-termos').classList.add('hidden');
 
         async function salvarConfig() {
-            const user = auth.currentUser;
-            if(!user) return;
-            await db.collection("usuarios").doc(user.uid).set({
+            await db.collection("usuarios").doc(auth.currentUser.uid).set({
+                whatsapp: document.getElementById('v-zap').value,
                 config: {
                     tipo: document.getElementById('tipo-v').value,
-                    consumo: document.getElementById('v-consumo').value,
-                    meta: document.getElementById('v-meta').value,
-                    gasolina: document.getElementById('v-gas').value
+                    consumo: parseFloat(document.getElementById('v-consumo').value),
+                    meta: parseFloat(document.getElementById('v-meta').value),
+                    gas: parseFloat(document.getElementById('v-gas').value)
                 }
             }, {merge: true});
             alert("Salvo!");
+        }
+
+        function setDefaults() {
+            const t = document.getElementById('tipo-v').value;
+            document.getElementById('v-consumo').value = (t === 'moto') ? 38 : 12;
+            document.getElementById('v-meta').value = (t === 'moto') ? 1.80 : 3.50;
         }
     </script>
 </body>
