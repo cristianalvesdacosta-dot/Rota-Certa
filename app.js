@@ -1,4 +1,4 @@
-// CONFIGURAÇÕES DO CRISTIAN
+// CONFIGURAÇÕES FIREBASE DO CRISTIAN
 const firebaseConfig = {
   apiKey: "AIzaSyC2PyMxApIjZ_bEcyV1FdftHQHzi7irM4k",
   authDomain: "rota-certa-861e7.firebaseapp.com",
@@ -12,99 +12,91 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-const CUSTO_POR_KM = 0.70; // Média de gasto em Belém (Gasolina + Manutenção)
-const META_MINIMA = 1.80; // Meta por KM limpo
+// Variaveis de Controle
+let metaUsuario = 2.00;
+let custoUsuario = 0.70;
 
-function analisar() {
-    const v = parseFloat(document.getElementById('input-valor').value);
-    const k = parseFloat(document.getElementById('input-km').value);
+// O CORAÇÃO DO ASSISTENTE: Lógica de Monitoramento
+function assistenteAutomatico() {
+    const valor = parseFloat(document.getElementById('sim-valor').value);
+    const km = parseFloat(document.getElementById('sim-km').value);
     
-    if(!v || !k) return;
+    if(!valor || !km) return alert("Insira os dados para simular a leitura");
 
-    const lucroLimp = v - (k * CUSTO_POR_KM);
-    const rKm = lucroLimp / k;
-    
-    // Atualiza Visual
-    document.getElementById('val-km').innerText = `R$ ${rKm.toFixed(2)}`;
-    document.getElementById('val-lucro').innerText = `R$ ${lucroLimp.toFixed(2)}`;
-    
-    const ponteiro = document.getElementById('ponteiro');
-    const txt = document.getElementById('feedback-txt');
+    // Cálculo que o Assistente faz em milissegundos
+    const lucroReal = valor - (km * custoUsuario);
+    const valorKmReal = lucroReal / km;
 
-    // Lógica do Ponteiro (0% a 100% da barra)
-    let pos = (rKm / 3) * 100; 
-    if(pos > 95) pos = 95;
-    ponteiro.style.left = pos + "%";
+    const luz = document.getElementById('luz-indicadora');
+    const txt = document.getElementById('texto-decisao');
 
-    if(rKm >= META_MINIMA) {
-        txt.innerText = "EXCELENTE! ✅";
+    // Decisão do Semáforo
+    if (valorKmReal >= metaUsuario) {
+        luz.style.background = "var(--green)";
+        luz.style.boxShadow = "0 0 40px var(--green)";
+        txt.innerText = "ACEITA! ✅";
         txt.style.color = "var(--green)";
-    } else if (rKm >= 1.2) {
-        txt.innerText = "AVALIE BEM ⚠️";
+        falar("Corrida excelente! Vai que é tua!");
+    } else if (valorKmReal >= (metaUsuario * 0.7)) {
+        luz.style.background = "var(--yellow)";
+        luz.style.boxShadow = "0 0 40px var(--yellow)";
+        txt.innerText = "AVALIE! ⚠️";
         txt.style.color = "var(--yellow)";
     } else {
-        txt.innerText = "PREJUÍZO! ❌";
+        luz.style.background = "var(--red)";
+        luz.style.boxShadow = "0 0 40px var(--red)";
+        txt.innerText = "RECUSA! ❌";
         txt.style.color = "var(--red)";
+        falar("Prejuízo! Não aceita.");
     }
 
-    salvarCorrida(v, k, lucroLimp, txt.innerText);
+    document.getElementById('res-lucro').innerText = "R$ " + lucroReal.toFixed(2);
+    document.getElementById('res-km').innerText = "R$ " + valorKmReal.toFixed(2);
+
+    salvarHistorico(valor, km, lucroReal, txt.innerText);
 }
 
-async function salvarCorrida(v, k, l, s) {
+// Função de Notificação por Voz
+function falar(mensagem) {
+    const msg = new SpeechSynthesisUtterance(mensagem);
+    msg.lang = 'pt-BR';
+    window.speechSynthesis.speak(msg);
+}
+
+async function salvarHistorico(v, k, l, s) {
     const user = auth.currentUser;
-    await db.collection("usuarios").doc(user.uid).collection("corridas").add({
+    await db.collection("usuarios").doc(user.uid).collection("monitoramento").add({
         valor: v, km: k, lucro: l, status: s, data: new Date().toISOString()
     });
 }
 
-async function carregarHistorico() {
-    const user = auth.currentUser;
-    const lista = document.getElementById('lista-historico');
-    lista.innerHTML = "Carregando...";
+// Navegação de Abas
+function mudarTab(aba) {
+    const tabs = ['tab-assistente', 'tab-hist', 'tab-config'];
+    tabs.forEach(t => document.getElementById(t).style.display = 'none');
     
-    const snap = await db.collection("usuarios").doc(user.uid).collection("corridas").orderBy("data","desc").limit(15).get();
-    
-    lista.innerHTML = "";
-    snap.forEach(doc => {
-        const d = doc.data();
-        const cor = d.status.includes("EXCELENTE") ? "var(--green)" : d.status.includes("AVALIE") ? "var(--yellow)" : "var(--red)";
-        lista.innerHTML += `
-            <div class="hist-card" style="border-left-color: ${cor}">
-                <div class="hist-header">
-                    <span>${new Date(d.data).toLocaleTimeString()}</span>
-                    <span>${d.km} KM</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-top:5px;">
-                    <b>Valor: R$ ${d.valor.toFixed(2)}</b>
-                    <b style="color:${cor}">Lucro: R$ ${d.lucro.toFixed(2)}</b>
-                </div>
-            </div>`;
-    });
+    if(aba === 'ast') document.getElementById('tab-assistente').style.display = 'block';
+    if(aba === 'cfg') document.getElementById('tab-config').style.display = 'block';
+    if(aba === 'hist') {
+        document.getElementById('tab-hist').style.display = 'block';
+        carregarHistorico();
+    }
 }
 
-function mudarAba(aba) {
-    document.getElementById('tab-calculo').style.display = aba === 'calc' ? 'block' : 'none';
-    document.getElementById('tab-historico').style.display = aba === 'hist' ? 'block' : 'none';
-    document.getElementById('nav-calc').className = 'nav-item ' + (aba === 'calc' ? 'active' : '');
-    document.getElementById('nav-hist').className = 'nav-item ' + (aba === 'hist' ? 'active' : '');
-    if(aba === 'hist') carregarHistorico();
-}
-
-// Auth e Navegação
-async function entrar() {
-    const e = document.getElementById('email').value;
-    const s = document.getElementById('senha').value;
-    try { await auth.signInWithEmailAndPassword(e, s); } catch(err) { alert("Erro: " + err.message); }
+// Auth
+async function fazerLogin() {
+    const e = document.getElementById('login-email').value;
+    const s = document.getElementById('login-senha').value;
+    try { await auth.signInWithEmailAndPassword(e, s); } catch(err) { alert(err.message); }
 }
 
 auth.onAuthStateChanged(user => {
     if(user) {
-        document.getElementById('auth-screen').style.display = 'none';
-        document.getElementById('app-screen').style.display = 'block';
-    } else {
-        document.getElementById('auth-screen').style.display = 'block';
-        document.getElementById('app-screen').style.display = 'none';
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('main-screen').style.display = 'block';
+        db.collection("usuarios").doc(user.uid).get().then(doc => {
+            const d = doc.data();
+            document.getElementById('badge-val').innerText = "ATÉ " + new Date(d.dataExpiracao).toLocaleDateString();
+        });
     }
 });
-
-function logout() { auth.signOut(); }
