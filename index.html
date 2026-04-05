@@ -5,389 +5,306 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Moto Lucro Profissional</title>
+    <title>Moto Lucro Premium</title>
     <style>
         :root {
-            --bg: #f9fafb;
-            --card: #ffffff;
-            --text-main: #111827;
-            --text-sub: #6b7280;
-            --primary: #f97316; /* Laranja da imagem */
-            --green: #10b981;
-            --red: #ef4444;
-            --border: #e5e7eb;
+            --bg: #000000;
+            --card: #1a1a1a;
+            --primary: #f97316;
+            --text-main: #ffffff;
+            --text-sub: #a1a1aa;
+            --border: #333333;
+            --success: #22c55e;
+            --danger: #ef4444;
         }
 
         body {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, system-ui, sans-serif;
             background-color: var(--bg);
             color: var(--text-main);
             margin: 0;
-            padding-bottom: 80px;
-            overflow-x: hidden;
+            padding-bottom: 90px;
+            user-select: none;
         }
 
-        /* CABEÇALHO ESTILO APP */
+        /* HEADER PREMIUM */
         header {
-            padding: 20px;
-            background: var(--card);
+            padding: 25px 20px;
+            background: linear-gradient(to bottom, #111, #000);
             border-bottom: 1px solid var(--border);
-            position: sticky; top: 0; z-index: 100;
+            text-align: center;
         }
-        header h1 { font-size: 1.4rem; font-weight: 800; margin: 0; }
-        header p { font-size: 0.9rem; color: var(--text-sub); margin: 5px 0 0 0; }
+        header h1 { font-size: 1.2rem; margin: 0; letter-spacing: 1px; color: var(--primary); }
 
-        /* PÁGINAS */
-        .page { display: none; padding: 15px; animation: fadeIn 0.3s ease; }
+        /* NAVEGAÇÃO ENTRE PÁGINAS */
+        .page { display: none; padding: 15px; animation: fadeIn 0.2s ease-in; }
         .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* CARTÕES ESTILO REFERÊNCIA */
+        /* CARDS ESTILO DASHBOARD */
         .card {
             background: var(--card);
             padding: 20px;
-            border-radius: 16px;
+            border-radius: 20px;
             margin-bottom: 15px;
             border: 1px solid var(--border);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        h2.card-title { font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-top: 0; margin-bottom: 15px; }
+        .card-title { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 15px; font-weight: 600; text-transform: uppercase; }
 
-        /* INPUTS */
-        .input-group { margin-bottom: 15px; }
-        label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin-bottom: 6px; }
+        /* INPUTS GRANDES */
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.8rem; margin-bottom: 8px; color: var(--text-sub); }
         input {
             width: 100%;
-            padding: 14px;
-            border-radius: 10px;
+            padding: 16px;
+            border-radius: 12px;
             border: 1px solid var(--border);
-            background: #fff;
-            color: var(--text-main);
-            font-size: 1rem;
+            background: #000;
+            color: #fff;
+            font-size: 1.1rem;
             box-sizing: border-box;
-            transition: 0.2s;
         }
-        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1); }
+        input:focus { border-color: var(--primary); outline: none; }
 
-        /* BOTÕES */
+        /* BOTÕES PREMIUM */
         button {
             width: 100%;
-            padding: 16px;
-            border-radius: 10px;
+            padding: 18px;
+            border-radius: 15px;
             border: none;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 1rem;
             cursor: pointer;
-            transition: opacity 0.2s, transform 0.1s;
+            transition: 0.2s;
         }
-        button:active { transform: scale(0.99); }
-        .btn-main { background-color: var(--primary); color: white; }
-        .btn-save { background-color: var(--green); color: white; margin-top: 10px; }
-        .btn-sub { color: var(--primary); background: none; font-size: 0.9rem; margin-top: 15px; }
+        .btn-primary { background: var(--primary); color: #000; }
+        .btn-success { background: var(--success); color: #fff; margin-top: 15px; }
+        .btn-danger { background: var(--danger); color: #fff; }
 
-        /* PAINEL DE DADOS (ESTILO IMAGEM) */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .data-box {
-            background: #f3f4f6;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: left;
-        }
-        .data-label { font-size: 0.8rem; color: var(--text-sub); }
-        .data-value { font-size: 1.1rem; font-weight: 700; margin-top: 3px; }
+        /* RESULTADOS GRID */
+        .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .stat-box { background: #000; padding: 15px; border-radius: 15px; border: 1px solid var(--border); }
+        .stat-label { font-size: 0.7rem; color: var(--text-sub); margin-bottom: 5px; }
+        .stat-value { font-size: 1rem; font-weight: 700; }
 
-        /* BARRA DE PROGRESSO */
-        .progress-container { background: #e5e7eb; border-radius: 10px; height: 10px; margin: 15px 0; overflow: hidden; }
-        #progress-bar { background: var(--primary); height: 100%; width: 0%; border-radius: 10px; transition: width 0.5s ease; }
+        /* PROGRESSO META */
+        .progress-bg { background: #333; height: 12px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        #progress-bar { background: var(--primary); height: 100%; width: 0%; transition: 0.5s; }
 
-        /* HISTÓRICO DE CUSTOS E CORRIDAS */
-        .cost-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .cost-icon { font-size: 1.2rem; margin-right: 12px; }
-        .cost-name { font-weight: 600; flex-grow: 1; }
-        .cost-value { font-weight: 700; margin-left: 10px; }
-
-        /* MENU INFERIOR */
+        /* MENU INFERIOR FIXO */
         nav {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: var(--card);
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px);
             display: flex; justify-content: space-around;
-            padding: 12px 0;
-            border-top: 1px solid var(--border);
-            z-index: 200;
+            padding: 15px 0; border-top: 1px solid var(--border);
         }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            color: var(--text-sub);
-            text-decoration: none; font-size: 0.75rem; font-weight: 600;
-            background: none; border: none; padding: 5px;
+        .nav-btn { background: none; border: none; color: var(--text-sub); font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; width: auto; padding: 0; }
+        .nav-btn.active { color: var(--primary); }
+        .nav-btn i { font-style: normal; font-size: 1.4rem; margin-bottom: 5px; }
+
+        /* LISTA DE CORRIDAS */
+        .item-corrida {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px; background: #000; border-radius: 12px; margin-bottom: 10px;
         }
-        .nav-item.active-nav { color: var(--primary); }
-        .nav-item i { font-size: 1.5rem; margin-bottom: 4px; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Lucro Líquido Moto</h1>
-    <p>Simulador e Calculadora Profissional</p>
+    <h1>MOTO LUCRO PREMIUM</h1>
 </header>
 
-<div id="p-calc" class="page active">
+<div id="page-calc" class="page active">
     <div class="card">
-        <h2 class="card-title">Simular Nova Corrida</h2>
+        <div class="card-title">Simulador de Viagem</div>
         <div class="input-group">
-            <label>Valor Oferecido pelo App (R$)</label>
-            <input type="number" id="v-corr" inputmode="decimal" placeholder="0,00">
+            <label>Valor da Corrida (R$)</label>
+            <input type="number" id="v-corrida" inputmode="decimal" placeholder="0.00">
         </div>
         <div class="input-group">
-            <label>Distância Total da Viagem (KM)</label>
-            <input type="number" id="k-corr" inputmode="decimal" placeholder="0.0">
+            <label>KM Total (Até o cliente + Entrega)</label>
+            <input type="number" id="k-corrida" inputmode="decimal" placeholder="0.0">
         </div>
-        <button class="btn-main" onclick="analisarCorrida()">ANALISAR GANHO</button>
-        
-        <div id="res-calc" style="display:none; margin-top:20px; text-align:center;" class="data-box">
-            <span id="res-txt"></span>
-            <button class="btn-save" id="btn-salvar" onclick="salvarGanhos()">ACEITAR E REGISTRAR</button>
-        </div>
-    </div>
-</div>
+        <button class="btn-primary" onclick="calcular()">CALCULAR LUCRO</button>
 
-<div id="p-metas" class="page">
-    <div class="card">
-        <h2 class="card-title">Meus Ganhos do Dia</h2>
-        <div class="input-group">
-            <label>Meta de Ganhos Brutos (R$)</label>
-            <input type="number" id="m-dia" value="200" oninput="atualizarTelaGanhos()">
-        </div>
-        <div class="progress-container"><div id="progress-bar"></div></div>
-        <div style="display: flex; justify-content: space-between; font-weight:700;">
-            <span>Ganhos: R$ <b id="t-hoje" style="color:var(--green)">0.00</b></span>
-            <span id="p-meta">0%</span>
-        </div>
-    </div>
-
-    <div id="lista-ganhos" class="card" style="padding:10px;">
-        <h2 class="card-title" style="margin-left:10px">Histórico de Corridas</h2>
-        </div>
-    <button onclick="zerarTudo()" class="btn-sub">Limpar todos os dados de hoje</button>
-</div>
-
-<div id="p-relat" class="page">
-    <div class="card">
-        <h2 class="card-title">Resumo do Mês</h2>
-        <div class="data-box" style="text-align: center;">
-            <div class="data-label">Custos Totais Fixos (Mês)</div>
-            <div class="data-value" style="color:var(--red); font-size:1.4rem;">R$ <span id="rel-custo-fixo">0.00</span></div>
-        </div>
-        <div class="dashboard-grid">
-            <div class="data-box">
-                <div class="data-label">Ganhos Brutos</div>
-                <div class="data-value" style="color:var(--green)">R$ <span id="rel-ganho-bruto">0.00</span></div>
+        <div id="resultado" style="display:none; margin-top:20px;">
+            <div class="stat-box" style="text-align:center; border-color: var(--primary);">
+                <div class="stat-label">LUCRO LÍQUIDO ESTIMADO</div>
+                <div id="lucro-valor" class="stat-value" style="font-size: 1.8rem; color: var(--success);">R$ 0.00</div>
             </div>
-            <div class="data-box">
-                <div class="data-label">Lucro Líquido Estimado</div>
-                <div class="data-value">R$ <span id="rel-lucro-liq">0.00</span></div>
-            </div>
+            <button class="btn-success" onclick="salvar()">ACEITAR E SALVAR</button>
         </div>
     </div>
 </div>
 
-<div id="p-perfil" class="page">
+<div id="page-ganhos" class="page">
     <div class="card">
-        <h2 class="card-title">Seu Custo Real por KM</h2>
-        <div class="data-box" style="text-align: center; border-left: 4px solid var(--primary);">
-            <div class="data-label">Custo do seu KM (Combustível + Fixos)</div>
-            <div class="data-value" style="color:var(--primary); font-size:1.4rem;">R$ <span id="c-real-km">0.00</span></div>
+        <div class="card-title">Meta Diária</div>
+        <div class="progress-bg"><div id="progress-bar"></div></div>
+        <div style="display:flex; justify-content:space-between; font-weight:700;">
+            <span id="txt-ganho">R$ 0.00</span>
+            <span id="txt-meta-perc" style="color:var(--primary)">0%</span>
+        </div>
+    </div>
+
+    <div id="historico-lista">
+        </div>
+    
+    <button onclick="limparTudo()" style="background:none; color:var(--danger); font-size:0.8rem; margin-top:20px;">Zerar todos os registros</button>
+</div>
+
+<div id="page-perfil" class="page">
+    <div class="card">
+        <div class="card-title">Minha Moto & Custos</div>
+        <div class="input-group">
+            <label>Consumo (KM/L)</label>
+            <input type="number" id="cfg-cons" value="35" oninput="saveConfig()">
+        </div>
+        <div class="input-group">
+            <label>Preço Gasolina (R$)</label>
+            <input type="number" id="cfg-prec" value="5.80" oninput="saveConfig()">
+        </div>
+        <div class="input-group">
+            <label>Custos Fixos Mes (Financ/Manut)</label>
+            <input type="number" id="cfg-fixo" value="450" oninput="saveConfig()">
+        </div>
+        <div class="input-group">
+            <label>Meta Diária (R$)</label>
+            <input type="number" id="cfg-meta" value="200" oninput="saveConfig()">
         </div>
     </div>
 
     <div class="card">
-        <h2 class="card-title">Configurações de Combustível</h2>
-        <div class="input-group"><label>Consumo da Moto (KM/L)</label><input type="number" id="m-cons" value="35" oninput="salvarPerfil()"></div>
-        <div class="input-group"><label>Preço do Litro (R$)</label><input type="number" id="m-prec" value="5.80" oninput="salvarPerfil()"></div>
-    </div>
-
-    <div class="card">
-        <h2 class="card-title">Custos Mensais Fixos (Como na Imagem)</h2>
-        <div class="cost-item"><span class="cost-icon">⛽</span><span class="cost-name">Combustível Estimado</span><span class="cost-value">R$ <span id="c-f-comb">0.00</span></span></div>
-        <div class="cost-item"><span class="cost-icon">🏦</span><span class="cost-name">Financiamento/Seguro</span><span class="cost-value">R$ <span id="c-f-seg">0.00</span></span></div>
-        <div class="cost-item"><span class="cost-icon">🔧</span><span class="cost-name">Manutenção Prevista</span><span class="cost-value">R$ <span id="c-f-manut">0.00</span></span></div>
-    </div>
-
-    <div class="card">
-        <h2 class="card-title">Editar Custos Fixos (Mês)</h2>
-        <div class="input-group"><label>Financiamento/Seguro (R$/Mês)</label><input type="number" id="m-f-seg" value="300" oninput="salvarPerfil()"></div>
-        <div class="input-group"><label>Manutenção Prevista (R$/Mês)</label><input type="number" id="m-f-manut" value="150" oninput="salvarPerfil()"></div>
+        <div class="card-title">Seu custo atual</div>
+        <div class="grid-stats">
+            <div class="stat-box">
+                <div class="stat-label">Custo por KM</div>
+                <div id="res-custo-km" class="stat-value">R$ 0.00</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Meta Batida</div>
+                <div id="res-total-dia" class="stat-value">R$ 0.00</div>
+            </div>
+        </div>
     </div>
 </div>
 
 <nav>
-    <button class="nav-item active-nav" onclick="navegarPara('p-calc', this)"><i>📊</i>Calculadora</button>
-    <button class="nav-item" onclick="navegarPara('p-metas', this)"><i>💰</i>Ganhos</button>
-    <button class="nav-item" onclick="navegarPara('p-relat', this)"><i>📄</i>Relatórios</button>
-    <button class="nav-item" onclick="navegarPara('p-perfil', this)"><i>⚙️</i>Perfil/Moto</button>
+    <button class="nav-btn active" onclick="nav('page-calc', this)"><i>📊</i>Calculadora</button>
+    <button class="nav-btn" onclick="nav('page-ganhos', this)"><i>💰</i>Ganhos</button>
+    <button class="nav-btn" onclick="nav('page-perfil', this)"><i>⚙️</i>Perfil</button>
 </nav>
 
 <script>
-    let ganhos = JSON.parse(localStorage.getItem('ml_ganhos')) || [];
-    let custoKmReal = 0;
-    let custosFixosMes = 0;
+    let corridas = JSON.parse(localStorage.getItem('m_premium_corridas')) || [];
+    let config = JSON.parse(localStorage.getItem('m_premium_cfg')) || {c: 35, p: 5.80, f: 450, m: 200};
+    let custoKm = 0;
 
-    // Navegação entre as "páginas"
-    function navegarPara(id, el) {
+    function nav(id, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
-        el.classList.add('active-nav');
-        if(id === 'p-metas') atualizarTelaGanhos();
-        if(id === 'p-relat') atualizarRelatorio();
+        btn.classList.add('active');
+        if(id === 'page-ganhos') renderGanhos();
+        if(id === 'page-perfil') renderPerfil();
     }
 
-    // Perfil e Cálculo de Custo KM Real (Ajustado)
-    function salvarPerfil() {
-        const cons = document.getElementById('m-cons').value || 1;
-        const prec = document.getElementById('m-prec').value || 0;
-        const fixoSeg = parseFloat(document.getElementById('m-f-seg').value) || 0;
-        const fixoManut = parseFloat(document.getElementById('m-f-manut').value) || 0;
-
-        // Custo Combustível por KM
-        const custoCombKm = prec / cons;
-
-        // Custos Fixos Mensais Totais
-        custosFixosMes = fixoSeg + fixoManut;
-
-        // Estimativa de custo de KM total (Combustível + Fixos diluídos em 3000km estimados)
-        // Você pode ajustar o "3000" para sua média de KM mensal
-        custoKmReal = custoCombKm + (custosFixosMes / 3000);
-
-        document.getElementById('c-real-km').innerText = custoKmReal.toFixed(2);
-        document.getElementById('c-f-comb').innerText = (custoCombKm * 3000).toFixed(2); // Estimativa mensal
-        document.getElementById('c-f-seg').innerText = fixoSeg.toFixed(2);
-        document.getElementById('c-f-manut').innerText = fixoManut.toFixed(2);
-        
-        localStorage.setItem('ml_perfil', JSON.stringify({c: cons, p: prec, fs: fixoSeg, fm: fixoManut}));
+    function saveConfig() {
+        config = {
+            c: parseFloat(document.getElementById('cfg-cons').value) || 1,
+            p: parseFloat(document.getElementById('cfg-prec').value) || 0,
+            f: parseFloat(document.getElementById('cfg-fixo').value) || 0,
+            m: parseFloat(document.getElementById('cfg-meta').value) || 0
+        };
+        localStorage.setItem('m_premium_cfg', JSON.stringify(config));
+        calcCustoFixo();
     }
 
-    // Analisador de Corrida (Página 1)
-    function analisarCorrida() {
-        const val = parseFloat(document.getElementById('v-corr').value);
-        const km = parseFloat(document.getElementById('k-corr').value);
-        if(!val || !km) return;
-
-        // Gasto real (KM total * custo km real)
-        const gastoEst = km * custoKmReal;
-        const lucroLimpo = val - gastoEst;
-        
-        const resCalc = document.getElementById('res-calc');
-        const resTxt = document.getElementById('res-txt');
-        resCalc.style.display = 'block';
-        
-        const corLucro = lucroLimpo > (val * 0.45) ? var(--green) : var(--red);
-        const emoji = lucroLimpo > (val * 0.45) ? '✅ BOA' : '⚠️ BAIXA';
-
-        resTxt.innerHTML = `
-            <div class="data-label">Seu Lucro Líquido Estimado</div>
-            <div class="data-value" style="color:${corLucro}">${emoji} R$ ${lucroLimpo.toFixed(2)}</div>
-            <div class="data-label">Seu KM nesta corrida: R$ ${(val/km).toFixed(2)}/KM</div>
-        `;
+    function calcCustoFixo() {
+        // Custo gasosa + diluição de custos fixos em 2500km rodados/mês
+        custoKm = (config.p / config.c) + (config.f / 2500);
+        const el = document.getElementById('res-custo-km');
+        if(el) el.innerText = "R$ " + custoKm.toFixed(2);
     }
 
-    // Registrar Ganhos (Página 2)
-    function salvarGanhos() {
-        const val = parseFloat(document.getElementById('v-corr').value);
-        const km = parseFloat(document.getElementById('k-corr').value);
-        
-        ganhos.push({v: val, k: km, t: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), id: Date.now()});
-        localStorage.setItem('ml_ganhos', JSON.stringify(ganhos));
-        
-        document.getElementById('v-corr').value = '';
-        document.getElementById('k-corr').value = '';
-        document.getElementById('res-calc').style.display = 'none';
-        
-        alert("Corrida registrada!");
-        atualizarTelaGanhos();
+    function calcular() {
+        const v = parseFloat(document.getElementById('v-corrida').value);
+        const k = parseFloat(document.getElementById('k-corrida').value);
+        if(!v || !k) return;
+
+        const lucro = v - (k * custoKm);
+        document.getElementById('resultado').style.display = 'block';
+        const elLucro = document.getElementById('lucro-valor');
+        elLucro.innerText = "R$ " + lucro.toFixed(2);
+        elLucro.style.color = lucro > (v * 0.4) ? "#22c55e" : "#ef4444";
     }
 
-    // Atualizar Tela de Ganhos (Meta e Histórico)
-    function atualizarTelaGanhos() {
-        const meta = parseFloat(document.getElementById('m-dia').value) || 1;
-        const total = ganhos.reduce((a, b) => a + b.v, 0);
-        const perc = Math.min((total/meta)*100, 100);
+    function salvar() {
+        const v = parseFloat(document.getElementById('v-corrida').value);
+        const k = parseFloat(document.getElementById('k-corrida').value);
+        corridas.push({v, k, id: Date.now(), t: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})});
+        localStorage.setItem('m_premium_corridas', JSON.stringify(corridas));
         
-        document.getElementById('t-hoje').innerText = total.toFixed(2);
-        document.getElementById('progress-bar').style.width = perc + '%';
-        document.getElementById('p-meta').innerText = Math.round(perc) + '%';
+        document.getElementById('v-corrida').value = '';
+        document.getElementById('k-corrida').value = '';
+        document.getElementById('resultado').style.display = 'none';
+        alert("Corrida Salva!");
+    }
 
-        const lista = document.getElementById('lista-ganhos');
-        // Mantém o título
-        lista.innerHTML = '<h2 class="card-title" style="margin-left:10px">Histórico de Corridas</h2>';
+    function renderGanhos() {
+        const total = corridas.reduce((a, b) => a + b.v, 0);
+        const perc = Math.min((total / config.m) * 100, 100);
         
-        [...ganhos].reverse().forEach(corr => {
+        document.getElementById('txt-ganho').innerText = "R$ " + total.toFixed(2);
+        document.getElementById('txt-meta-perc').innerText = Math.round(perc) + "%";
+        document.getElementById('progress-bar').style.width = perc + "%";
+
+        const lista = document.getElementById('historico-lista');
+        lista.innerHTML = '<div class="card-title">Corridas de Hoje</div>';
+        
+        [...corridas].reverse().forEach(c => {
             lista.innerHTML += `
-                <div class="cost-item" style="padding:15px; margin-bottom:5px; border-radius:8px; border:1px solid var(--border)">
-                    <span><strong>${corr.t}</strong>: R$ ${corr.v.toFixed(2)} (${corr.k}km)</span>
-                    <button onclick="removerGanhos(${corr.id})" style="width:auto; padding:8px 15px; background:var(--red); color:white; font-size:12px">APAGAR</button>
+                <div class="item-corrida">
+                    <div>
+                        <div style="font-weight:700">R$ ${c.v.toFixed(2)}</div>
+                        <div style="font-size:0.7rem; color:var(--text-sub)">${c.t} • ${c.k} KM</div>
+                    </div>
+                    <button onclick="remover(${c.id})" style="width:auto; background:none; color:var(--danger); padding:5px;">Apagar</button>
                 </div>
             `;
         });
     }
 
-    // Remover um item do histórico
-    function removerGanhos(id) {
-        ganhos = ganhos.filter(x => x.id !== id);
-        localStorage.setItem('ml_ganhos', JSON.stringify(ganhos));
-        atualizarTelaGanhos();
+    function remover(id) {
+        corridas = corridas.filter(c => c.id !== id);
+        localStorage.setItem('m_premium_corridas', JSON.stringify(corridas));
+        renderGanhos();
     }
 
-    // Atualizar Relatório (Página 3)
-    function atualizarRelatorio() {
-        document.getElementById('rel-custo-fixo').innerText = custosFixosMes.toFixed(2);
-        const totalGanhos = ganhos.reduce((a, b) => a + b.v, 0);
-        const totalKm = ganhos.reduce((a, b) => a + b.k, 0);
-        
-        // Lucro estimado (Ganhos Totais - Gasto Real Estimado)
-        const lucroEst = totalGanhos - (totalKm * custoKmReal);
-        
-        document.getElementById('rel-ganho-bruto').innerText = totalGanhos.toFixed(2);
-        document.getElementById('rel-lucro-liq').innerText = lucroEst.toFixed(2);
+    function renderPerfil() {
+        document.getElementById('cfg-cons').value = config.c;
+        document.getElementById('cfg-prec').value = config.p;
+        document.getElementById('cfg-fixo').value = config.f;
+        document.getElementById('cfg-meta').value = config.m;
+        document.getElementById('res-total-dia').innerText = "R$ " + corridas.reduce((a, b) => a + b.v, 0).toFixed(2);
+        calcCustoFixo();
     }
 
-    // Zerar todos os dados do dia
-    function zerarTudo() {
-        if(confirm("Tem certeza que deseja apagar todas as corridas e ganhos de hoje?")) {
-            ganhos = [];
-            localStorage.removeItem('ml_ganhos');
-            atualizarTelaGanhos();
-            alert("Dados limpos!");
+    function limparTudo() {
+        if(confirm("Deseja apagar todos os registros de hoje?")) {
+            corridas = [];
+            localStorage.removeItem('m_premium_corridas');
+            renderGanhos();
         }
     }
 
-    // Carregar dados salvos ao abrir
     window.onload = () => {
-        const perf = JSON.parse(localStorage.getItem('ml_perfil'));
-        if(perf) {
-            document.getElementById('m-cons').value = perf.c;
-            document.getElementById('m-prec').value = perf.p;
-            document.getElementById('m-f-seg').value = perf.fs;
-            document.getElementById('m-f-manut').value = perf.fm;
-        }
-        salvarPerfil(); // Inicializa custos
-        atualizarTelaGanhos(); // Inicializa ganhos
+        renderPerfil();
+        calcCustoFixo();
     }
 </script>
-
 </body>
 </html>
