@@ -1,80 +1,23 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <script>
-        const CONFIG_PRECO_MENSAL = "29,90";
-        const CONFIG_PRECO_TRIMESTRAL = "79,90";
-        const CONFIG_CHAVE_PIX = "SEU-PIX-AQUI"; 
-        const CONFIG_WHATSAPP = "5591900000000"; // 55 + DDD + Numero (Sem espaços)
-    </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Rota Certa Pro</title>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
-    <style>
-        :root { --primary: #2ecc71; --bg: #121212; --card: #1e1e1e; --text: #ffffff; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .app-container { width: 100%; max-width: 450px; padding: 20px; box-sizing: border-box; }
-        .card { background: var(--card); border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #333; text-align: center; position: relative; }
-        .logo { font-size: 28px; font-weight: 800; color: var(--primary); letter-spacing: -1px; margin-bottom: 5px; }
-        .badge-teste { background: #ea1d2c; color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); }
-        input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: #252525; color: white; box-sizing: border-box; font-size: 16px; }
-        .plan-box { display: flex; gap: 10px; margin: 20px 0; }
-        .plan-option { flex: 1; padding: 15px; border: 2px solid #333; border-radius: 12px; cursor: pointer; }
-        .plan-option.active { border-color: var(--primary); background: rgba(46, 204, 113, 0.1); }
-        .btn-main { width: 100%; padding: 18px; background: var(--primary); border: none; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; }
-        .pix-box { background: #111; padding: 15px; border-radius: 10px; margin: 20px 0; border: 1px dashed #444; }
-    </style>
-</head>
-<body>
-    <div class="app-container">
-        <div id="auth-section" class="card">
-            <div class="badge-teste">3 DIAS GRÁTIS</div>
-            <div class="logo">ROTA CERTA PRO</div>
-            <p style="color:#888; font-size: 14px;">Ganhe mais em cada quilômetro</p>
-            <input type="email" id="email" placeholder="Seu E-mail">
-            <input type="password" id="senha" placeholder="Senha">
-            <input type="number" id="metaKm" placeholder="Meta R$ por KM">
-            <button class="btn-main" onclick="cadastrarMotorista()">ATIVAR TESTE AGORA</button>
-        </div>
-
-        <div id="bloqueio-section" class="card" style="display:none;">
-            <h2 style="color:#ea1d2c;">Acesso Expirado 🛑</h2>
-            <p style="font-size:14px; color:#aaa;">Escolha seu plano para renovar:</p>
-            <div class="plan-box">
-                <div id="opt-mensal" class="plan-option active" onclick="setPlano('Mensal')">
-                    <span style="font-size:12px;">MENSAL</span><br>
-                    <b style="color:var(--primary)" id="txt-preco-m"></b>
-                </div>
-                <div id="opt-trim" class="plan-option" onclick="setPlano('Trimestral')">
-                    <span style="font-size:12px;">3 MESES</span><br>
-                    <b style="color:var(--primary)" id="txt-preco-t"></b>
-                </div>
-            </div>
-            <div class="pix-box">
-                <p style="font-size:12px; margin:0;">Chave Pix:</p>
-                <b id="exibir-pix" style="color:var(--primary)"></b><br>
-                <button onclick="copiarPix()" style="margin-top:10px; font-size:11px; background:#333; color:white; border:none; padding:5px 10px; border-radius:5px;">Copiar Chave</button>
-            </div>
-            <button class="btn-main" style="background:#25d366; color:white;" onclick="enviarWhatsapp()">ENVIAR COMPROVANTE</button>
-        </div>
-
-        <div id="main-app" class="card" style="display:none;">
-            <div style="font-size:40px;">🟢</div>
-            <h2 style="color:var(--primary)">Semáforo Ativo</h2>
-            <div id="display-meta" style="font-size:20px; margin:15px 0;"></div>
-            <p id="status-validade" style="font-size:12px; color:#888;"></p>
-        </div>
+<div id="calculadora-lucro" class="card" style="margin-top:20px;">
+    <h3>Calculadora de Lucro Real</h3>
+    <input type="number" id="valorCorrida" placeholder="Valor Bruto (R$)">
+    <input type="number" id="distanciaCorrida" placeholder="Distância Total (KM)">
+    
+    <div style="display:flex; gap:10px; margin-bottom:10px;">
+        <input type="number" id="custoCombustivel" placeholder="Custo p/ KM (Ex: 0.50)" style="font-size:12px;">
     </div>
 
-    <script src="app.js"></script>
-    <script>
-        // Aplica as configurações na tela
-        document.getElementById('txt-preco-m').innerText = "R$ " + CONFIG_PRECO_MENSAL;
-        document.getElementById('txt-preco-t').innerText = "R$ " + CONFIG_PRECO_TRIMESTRAL;
-        document.getElementById('exibir-pix').innerText = CONFIG_CHAVE_PIX;
-    </script>
-</body>
-</html>
+    <button class="btn-main" onclick="calcularLucroReal()">CALCULAR AGORA</button>
+
+    <div id="resultado-semaforo" style="margin-top:20px; display:none;">
+        <div id="bola-semaforo" style="width:80px; height:80px; border-radius:50%; margin: 0 auto; border: 5px solid #333;"></div>
+        <h2 id="msg-resultado"></h2>
+        <p id="detalhe-lucro" style="font-size:14px; color:#aaa;"></p>
+    </div>
+</div>
+
+<div class="card" style="margin-top:20px; text-align:left;">
+    <h3>Meu Histórico</h3>
+    <div id="lista-historico" style="font-size:13px; max-height:200px; overflow-y:auto;">
+        </div>
+</div>
