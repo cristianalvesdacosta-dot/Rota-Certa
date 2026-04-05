@@ -18,76 +18,88 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 // ==========================================
-// MONITOR DE ASSINATURA (BLOQUEIO AUTOMÁTICO)
+// MONITOR DE ACESSO (TRAVA PIX E PERFIL)
 // ==========================================
 auth.onAuthStateChanged(user => {
     if (user) {
-        // Se o motorista estiver logado, verifica a validade no seu banco
         db.collection("usuarios").doc(user.uid).onSnapshot(doc => {
             if (doc.exists) {
                 const dados = doc.data();
                 const hoje = new Date();
                 const expira = new Date(dados.dataExpiracao);
 
-                // Se hoje passou da data de expiração, mostra a tela de bloqueio
+                // Bloqueio por falta de pagamento (Pix)
                 if (hoje > expira) {
-                    document.getElementById('block-screen').style.display = 'block';
-                    document.getElementById('app-content').style.opacity = '0.1';
-                    document.getElementById('app-content').style.pointerEvents = 'none';
+                    document.getElementById('block-screen').classList.remove('hidden');
+                    document.getElementById('app-main').style.opacity = '0.1';
+                    document.getElementById('app-main').style.pointerEvents = 'none';
                 } else {
-                    document.getElementById('block-screen').style.display = 'none';
-                    document.getElementById('app-content').style.opacity = '1';
-                    document.getElementById('app-content').style.pointerEvents = 'auto';
+                    document.getElementById('block-screen').classList.add('hidden');
+                    document.getElementById('app-main').style.opacity = '1';
+                    document.getElementById('app-main').style.pointerEvents = 'auto';
+                }
+                
+                // Carrega as configurações salvas (Moto ou Carro)
+                if(dados.configVeiculo) {
+                    document.getElementById('tipo-v').value = dados.configVeiculo.tipo;
+                    document.getElementById('v-consumo').value = dados.configVeiculo.consumo;
+                    document.getElementById('v-meta').value = dados.configVeiculo.meta;
                 }
             } else {
-                // Se o usuário não existe no banco, cria um perfil de teste de 3 dias
-                criarPerfilTeste(user);
+                criarNovoPerfil(user);
             }
         });
-    } else {
-        // Se não estiver logado, você pode redirecionar para uma tela de login
-        console.log("Usuário deslogado");
     }
 });
 
-// Função para dar 3 dias de teste para novos motoristas de Belém
-async function criarPerfilTeste(user) {
+// Criar perfil com 3 dias de teste para novos motoristas
+async function criarNovoPerfil(user) {
     const dataExpira = new Date();
-    dataExpira.setDate(dataExpira.getDate() + 3); // 3 dias grátis
+    dataExpira.setDate(dataExpira.getDate() + 3); 
 
     await db.collection("usuarios").doc(user.uid).set({
         email: user.email,
         dataExpiracao: dataExpira.toISOString(),
-        plano: "Teste Gratis",
+        perfil: "motorista", // Padrão inicial
         criadoEm: new Date().toISOString()
     });
 }
 
 // ==========================================
-// SALVAR CONFIGURAÇÕES DA MOTO NO FIREBASE
+// FUNÇÃO PARA O ROBO (SKETCHWARE / ANDROID STUDIO)
 // ==========================================
-async function salvarConfig() {
-    const user = auth.currentUser;
-    if (!user) return alert("Faça login para salvar!");
+// Esta função é chamada automaticamente pelo APK quando lê a Uber
+function receberDadosAutomáticos(valorLido, kmLido) {
+    document.getElementById('val-entrada').value = valorLido;
+    document.getElementById('km-entrada').value = kmLido;
+    
+    // Chama a função de processar que está no index.html
+    if (typeof processar === "function") {
+        processar(); 
+    }
+}
 
-    const dadosMoto = {
-        consumo: document.getElementById('moto-consumo').value,
-        tanque: document.getElementById('moto-tanque').value,
-        gasolina: document.getElementById('gas-preco').value,
-        metaKm: document.getElementById('user-meta').value,
-        categoria: document.getElementById('select-moto').value
+// ==========================================
+// SALVAR VEÍCULO E LOCALIZAÇÃO (RADAR 5KM)
+// ==========================================
+async function salvarConfiguracoes() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const dados = {
+        configVeiculo: {
+            tipo: document.getElementById('tipo-v').value,
+            consumo: document.getElementById('v-consumo').value,
+            meta: document.getElementById('v-meta').value,
+            gasolina: document.getElementById('v-gas').value
+        },
+        ultimaAtu: new Date().toISOString()
     };
 
     try {
-        await db.collection("usuarios").doc(user.uid).update({
-            configuracaoVeiculo: dadosMoto
-        });
-        alert("Configurações da sua moto salvas com sucesso!");
-    } catch (error) {
-        // Se o documento não permitir update, tenta set
-        await db.collection("usuarios").doc(user.uid).set({
-            configuracaoVeiculo: dadosMoto
-        }, { merge: true });
-        alert("Configurações salvas!");
+        await db.collection("usuarios").doc(user.uid).update(dados);
+        alert("Configurações salvas no seu perfil!");
+    } catch (e) {
+        await db.collection("usuarios").doc(user.uid).set(dados, { merge: true });
     }
 }
