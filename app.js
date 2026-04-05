@@ -1,4 +1,6 @@
-// CONFIGURAÇÕES FIREBASE DO CRISTIAN
+// ==========================================
+// CONFIGURAÇÃO FIREBASE DO CRISTIAN
+// ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyC2PyMxApIjZ_bEcyV1FdftHQHzi7irM4k",
   authDomain: "rota-certa-861e7.firebaseapp.com",
@@ -8,95 +10,84 @@ const firebaseConfig = {
   appId: "1:56675221849:web:ebe796a6f2a93cba204c48"
 };
 
-firebase.initializeApp(firebaseConfig);
+// Inicializa o Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// Variaveis de Controle
-let metaUsuario = 2.00;
-let custoUsuario = 0.70;
+// ==========================================
+// MONITOR DE ASSINATURA (BLOQUEIO AUTOMÁTICO)
+// ==========================================
+auth.onAuthStateChanged(user => {
+    if (user) {
+        // Se o motorista estiver logado, verifica a validade no seu banco
+        db.collection("usuarios").doc(user.uid).onSnapshot(doc => {
+            if (doc.exists) {
+                const dados = doc.data();
+                const hoje = new Date();
+                const expira = new Date(dados.dataExpiracao);
 
-// O CORAÇÃO DO ASSISTENTE: Lógica de Monitoramento
-function assistenteAutomatico() {
-    const valor = parseFloat(document.getElementById('sim-valor').value);
-    const km = parseFloat(document.getElementById('sim-km').value);
-    
-    if(!valor || !km) return alert("Insira os dados para simular a leitura");
-
-    // Cálculo que o Assistente faz em milissegundos
-    const lucroReal = valor - (km * custoUsuario);
-    const valorKmReal = lucroReal / km;
-
-    const luz = document.getElementById('luz-indicadora');
-    const txt = document.getElementById('texto-decisao');
-
-    // Decisão do Semáforo
-    if (valorKmReal >= metaUsuario) {
-        luz.style.background = "var(--green)";
-        luz.style.boxShadow = "0 0 40px var(--green)";
-        txt.innerText = "ACEITA! ✅";
-        txt.style.color = "var(--green)";
-        falar("Corrida excelente! Vai que é tua!");
-    } else if (valorKmReal >= (metaUsuario * 0.7)) {
-        luz.style.background = "var(--yellow)";
-        luz.style.boxShadow = "0 0 40px var(--yellow)";
-        txt.innerText = "AVALIE! ⚠️";
-        txt.style.color = "var(--yellow)";
+                // Se hoje passou da data de expiração, mostra a tela de bloqueio
+                if (hoje > expira) {
+                    document.getElementById('block-screen').style.display = 'block';
+                    document.getElementById('app-content').style.opacity = '0.1';
+                    document.getElementById('app-content').style.pointerEvents = 'none';
+                } else {
+                    document.getElementById('block-screen').style.display = 'none';
+                    document.getElementById('app-content').style.opacity = '1';
+                    document.getElementById('app-content').style.pointerEvents = 'auto';
+                }
+            } else {
+                // Se o usuário não existe no banco, cria um perfil de teste de 3 dias
+                criarPerfilTeste(user);
+            }
+        });
     } else {
-        luz.style.background = "var(--red)";
-        luz.style.boxShadow = "0 0 40px var(--red)";
-        txt.innerText = "RECUSA! ❌";
-        txt.style.color = "var(--red)";
-        falar("Prejuízo! Não aceita.");
+        // Se não estiver logado, você pode redirecionar para uma tela de login
+        console.log("Usuário deslogado");
     }
+});
 
-    document.getElementById('res-lucro').innerText = "R$ " + lucroReal.toFixed(2);
-    document.getElementById('res-km').innerText = "R$ " + valorKmReal.toFixed(2);
+// Função para dar 3 dias de teste para novos motoristas de Belém
+async function criarPerfilTeste(user) {
+    const dataExpira = new Date();
+    dataExpira.setDate(dataExpira.getDate() + 3); // 3 dias grátis
 
-    salvarHistorico(valor, km, lucroReal, txt.innerText);
-}
-
-// Função de Notificação por Voz
-function falar(mensagem) {
-    const msg = new SpeechSynthesisUtterance(mensagem);
-    msg.lang = 'pt-BR';
-    window.speechSynthesis.speak(msg);
-}
-
-async function salvarHistorico(v, k, l, s) {
-    const user = auth.currentUser;
-    await db.collection("usuarios").doc(user.uid).collection("monitoramento").add({
-        valor: v, km: k, lucro: l, status: s, data: new Date().toISOString()
+    await db.collection("usuarios").doc(user.uid).set({
+        email: user.email,
+        dataExpiracao: dataExpira.toISOString(),
+        plano: "Teste Gratis",
+        criadoEm: new Date().toISOString()
     });
 }
 
-// Navegação de Abas
-function mudarTab(aba) {
-    const tabs = ['tab-assistente', 'tab-hist', 'tab-config'];
-    tabs.forEach(t => document.getElementById(t).style.display = 'none');
-    
-    if(aba === 'ast') document.getElementById('tab-assistente').style.display = 'block';
-    if(aba === 'cfg') document.getElementById('tab-config').style.display = 'block';
-    if(aba === 'hist') {
-        document.getElementById('tab-hist').style.display = 'block';
-        carregarHistorico();
-    }
-}
+// ==========================================
+// SALVAR CONFIGURAÇÕES DA MOTO NO FIREBASE
+// ==========================================
+async function salvarConfig() {
+    const user = auth.currentUser;
+    if (!user) return alert("Faça login para salvar!");
 
-// Auth
-async function fazerLogin() {
-    const e = document.getElementById('login-email').value;
-    const s = document.getElementById('login-senha').value;
-    try { await auth.signInWithEmailAndPassword(e, s); } catch(err) { alert(err.message); }
-}
+    const dadosMoto = {
+        consumo: document.getElementById('moto-consumo').value,
+        tanque: document.getElementById('moto-tanque').value,
+        gasolina: document.getElementById('gas-preco').value,
+        metaKm: document.getElementById('user-meta').value,
+        categoria: document.getElementById('select-moto').value
+    };
 
-auth.onAuthStateChanged(user => {
-    if(user) {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('main-screen').style.display = 'block';
-        db.collection("usuarios").doc(user.uid).get().then(doc => {
-            const d = doc.data();
-            document.getElementById('badge-val').innerText = "ATÉ " + new Date(d.dataExpiracao).toLocaleDateString();
+    try {
+        await db.collection("usuarios").doc(user.uid).update({
+            configuracaoVeiculo: dadosMoto
         });
+        alert("Configurações da sua moto salvas com sucesso!");
+    } catch (error) {
+        // Se o documento não permitir update, tenta set
+        await db.collection("usuarios").doc(user.uid).set({
+            configuracaoVeiculo: dadosMoto
+        }, { merge: true });
+        alert("Configurações salvas!");
     }
-});
+}
