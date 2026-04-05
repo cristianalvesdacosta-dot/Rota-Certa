@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rota Certa_app</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <style>
+        body { font-family: sans-serif; background: #121212; color: white; text-align: center; padding: 20px; }
+        .card { background: #1e1e1e; padding: 20px; border-radius: 15px; max-width: 400px; margin: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; background: #333; color: white; }
+        button { width: 95%; padding: 15px; background: #2ecc71; border: none; border-radius: 8px; font-weight: bold; color: black; cursor: pointer; }
+        .logo { font-size: 24px; color: #2ecc71; font-weight: bold; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div id="auth-section" class="card">
+        <div class="logo">ROTA CERTA</div>
+        <p>Inteligência para Motoristas</p>
+        <input type="email" id="email" placeholder="E-mail">
+        <input type="password" id="senha" placeholder="Senha">
+        <input type="number" id="metaKm" placeholder="Meta R$ por KM (ex: 2.00)">
+        <button onclick="cadastrarMotorista()">ATIVAR MEU ACESSO</button>
+    </div>
+
+    <div id="main-app" class="card" style="display:none;">
+        <h2 style="color: #2ecc71;">Semáforo Ativo 🟢</h2>
+        <p>O Rota Certa está monitorando suas notificações.</p>
+        <div id="display-meta"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
