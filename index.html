@@ -52,7 +52,7 @@
         <div id="tab-map" class="hidden">
             <div id="map"></div>
             <div class="card">
-                <label>Destino (Belém/Outeiro)</label>
+                <label>Destino em Belém/Outeiro</label>
                 <input type="text" id="dest-input" placeholder="Ex: Praia do Amor">
                 <button class="btn btn-green" onclick="buscarETracar()">CALCULAR ROTA</button>
                 <div id="info-rota" style="margin-top:15px; font-size:14px;"></div>
@@ -61,20 +61,23 @@
 
         <div id="tab-vei" class="hidden">
             <div class="card">
-                <h3>Cronograma de Hoje</h3>
-                <textarea id="cron-texto" rows="4" placeholder="Escreva sua estratégia..."></textarea>
-                <button class="btn btn-blue" onclick="salvarTudo()">GUARDAR ALTERAÇÕES</button>
+                <h3>Cronograma de Trabalho</h3>
+                <label>Estratégia Editável (Horários e Locais)</label>
+                <textarea id="cron-texto" rows="6" placeholder="08:00 - Início Outeiro&#10;12:00 - Almoço&#10;17:00 - Pico Belém"></textarea>
+                <button class="btn btn-blue" onclick="salvarTudo()">SALVAR CRONOGRAMA</button>
             </div>
 
             <div class="card">
                 <h3>Configuração do Veículo</h3>
+                <label>WhatsApp (Ex: 55919...)</label>
+                <input type="number" id="v-zap" placeholder="5591...">
                 <label>Consumo (KM/L)</label>
                 <input type="number" id="v-consumo" value="38">
                 <label>Gasolina (R$)</label>
                 <input type="number" id="v-gas" value="6.20">
-                <label>WhatsApp (91...)</label>
-                <input type="number" id="v-zap" placeholder="5591...">
-                <button class="btn btn-green" onclick="salvarTudo()">SALVAR DADOS DA MOTO</button>
+                <label>Meta Lucro/KM (R$)</label>
+                <input type="number" id="v-meta" value="1.80">
+                <button class="btn btn-green" onclick="salvarTudo()">SALVAR CONFIGURAÇÕES</button>
             </div>
         </div>
     </div>
@@ -129,7 +132,6 @@
                     const r = e.routes[0];
                     const dist = (r.summary.totalDistance / 1000).toFixed(1);
                     
-                    // PEGA OS DADOS DO PERFIL NA HORA
                     const cons = parseFloat(document.getElementById('v-consumo').value) || 38;
                     const gas = parseFloat(document.getElementById('v-gas').value) || 6.20;
                     const custo = (dist * (gas / cons)).toFixed(2);
@@ -145,31 +147,32 @@
         function processar() {
             const v = parseFloat(document.getElementById('val-entrada').value) || 0;
             const k = parseFloat(document.getElementById('km-entrada').value) || 1;
-            const cons = parseFloat(document.getElementById('v-consumo').value);
-            const gas = parseFloat(document.getElementById('v-gas').value);
+            const cons = parseFloat(document.getElementById('v-consumo').value) || 38;
+            const gas = parseFloat(document.getElementById('v-gas').value) || 6.20;
             const lucro = v - (k * (gas / cons));
             document.getElementById('res-lucro').innerHTML = `LUCRO: <span style="color:var(--green)">R$ ${lucro.toFixed(2)}</span>`;
         }
 
-        // SALVA TUDO NO FIREBASE E LOCAL
         async function salvarTudo() {
-            const dados = {
+            const config = {
                 cron: document.getElementById('cron-texto').value,
                 consumo: document.getElementById('v-consumo').value,
                 gas: document.getElementById('v-gas').value,
-                zap: document.getElementById('v-zap').value
+                zap: document.getElementById('v-zap').value,
+                meta: document.getElementById('v-meta').value
             };
             
-            localStorage.setItem('RC_USER_DATA', JSON.stringify(dados));
+            // Salva Local
+            localStorage.setItem('RC_USER_DATA', JSON.stringify(config));
             
+            // Salva Firebase
             const user = firebase.auth().currentUser;
             if(user) {
-                await db.collection("usuarios").doc(user.uid).set({ config: dados }, {merge: true});
+                await db.collection("usuarios").doc(user.uid).set({ config: config }, {merge: true});
             }
-            alert("✅ Tudo salvo com sucesso!");
+            alert("✅ Dados e Cronograma salvos!");
         }
 
-        // CARREGA OS DADOS AO ABRIR
         window.onload = () => {
             const salvo = JSON.parse(localStorage.getItem('RC_USER_DATA'));
             if(salvo) {
@@ -177,6 +180,7 @@
                 document.getElementById('v-consumo').value = salvo.consumo || 38;
                 document.getElementById('v-gas').value = salvo.gas || 6.20;
                 document.getElementById('v-zap').value = salvo.zap || '';
+                document.getElementById('v-meta').value = salvo.meta || 1.80;
             }
         };
     </script>
