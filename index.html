@@ -19,19 +19,36 @@
         .container { padding: 15px; max-width: 500px; margin: auto; }
         .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #222; }
         .logo { font-weight: 900; color: var(--green); font-size: 22px; text-align: center; margin: 20px 0; }
-        label { display: block; font-size: 11px; color: var(--green); margin: 10px 0 4px 0; font-weight: bold; text-transform: uppercase; }
-        input, textarea { width: 100%; padding: 15px; margin-bottom: 5px; border-radius: 12px; border: 1px solid #333; background: #1a1a1a; color: #fff; box-sizing: border-box; font-size: 16px; }
-        .btn { width: 100%; padding: 18px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        label { display: block; font-size: 11px; color: var(--green); margin-top: 10px; margin-bottom: 4px; font-weight: bold; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 15px; margin-bottom: 5px; border-radius: 12px; border: 1px solid #333; background: #1a1a1a; color: #fff; box-sizing: border-box; font-size: 16px; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; }
         .btn-green { background: var(--green); color: #000; }
         .btn-blue { background: var(--blue); color: #fff; }
-        .nav { position: fixed; bottom: 0; width: 100%; background: #080808; display: flex; border-top: 1px solid #222; z-index: 1000; }
+        .btn-red { background: var(--red); color: #fff; padding: 8px 12px; font-size: 12px; width: auto; border-radius: 8px; }
+        
+        .nav { position: fixed; bottom: 0; width: 100%; background: #080808; display: flex; border-top: 1px solid #222; z-index: 100; }
         .nav-item { flex: 1; padding: 15px; text-align: center; color: #555; font-size: 10px; font-weight: bold; }
         .nav-item.active { color: var(--green); border-top: 2px solid var(--green); }
-        #map { width: 100%; height: 250px; border-radius: 15px; margin-bottom: 15px; background: #222; }
         .hidden { display: none !important; }
+        #map { width: 100%; height: 250px; border-radius: 15px; margin-bottom: 15px; background: #222; z-index: 1; }
+        
+        .progress-bg { background: #222; height: 12px; border-radius: 10px; margin: 15px 0; overflow: hidden; border: 1px solid #333; }
+        .progress-fill { background: var(--green); height: 100%; width: 0%; transition: 0.5s; }
+        
+        .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #222; }
+        .leaflet-routing-container { display: none !important; }
     </style>
 </head>
 <body>
+
+    <div id="selector-screen" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:10000; display:flex; align-items:center; justify-content:center; text-align:center; padding:20px; box-sizing: border-box;">
+        <div>
+            <div class="logo">ROTA CERTA PRO</div>
+            <h3>Como vai usar o app hoje?</h3>
+            <button class="btn btn-green" onclick="definirPerfilInicial('motorista')">SOU MOTORISTA</button>
+            <button class="btn btn-blue" style="margin-top:12px" onclick="definirPerfilInicial('passageiro')">SOU PASSAGEIRO</button>
+        </div>
+    </div>
 
     <div id="app-main" class="container">
         <div class="logo">ROTA CERTA PRO</div>
@@ -39,37 +56,63 @@
         <div id="tab-ast">
             <div class="card">
                 <label>Meta do Dia (R$)</label>
-                <input type="number" id="meta-dia" value="150">
+                <input type="number" id="meta-dia" value="150" onchange="atualizarGanhos()">
+                <div class="progress-bg"><div id="barra-fill" class="progress-fill"></div></div>
+                <div style="display:flex; justify-content:space-between; font-size:12px;">
+                    <span>Ganhos: <b id="txt-ganho">R$ 0,00</b></span>
+                    <span>Falta: <b id="txt-falta" style="color:var(--blue)">R$ 0,00</b></span>
+                </div>
+            </div>
+
+            <div class="card" style="text-align:center;">
+                <div id="semaforo" style="width:40px; height:40px; border-radius:50%; background:#333; margin:auto; margin-bottom:10px;"></div>
+                <div style="display:flex; justify-content:space-around;">
+                    <div>LUCRO:<br><b id="res-lucro" style="color:var(--green)">R$ 0,00</b></div>
+                    <div>POR KM:<br><b id="res-km" style="color:var(--blue)">R$ 0,00</b></div>
+                </div>
+            </div>
+
+            <div class="card">
                 <label>Valor da Corrida</label>
                 <input type="number" id="val-entrada" placeholder="R$ 0,00">
                 <label>Distância (KM)</label>
                 <input type="number" id="km-entrada" placeholder="0.0">
                 <button class="btn btn-green" onclick="processar()">ANALISAR CORRIDA</button>
-                <div id="res-lucro" style="margin-top:15px; text-align:center; font-size:18px; font-weight:bold;"></div>
+                <button id="btn-salvar" class="btn btn-blue hidden" style="margin-top:10px" onclick="salvarNoHistorico()">ACEITAR E SALVAR</button>
+            </div>
+
+            <div class="card">
+                <h3>Histórico de Hoje</h3>
+                <div id="lista-historico"></div>
+                <button class="btn" style="background:#222; color:#666; margin-top:15px;" onclick="limparHistorico()">REINICIAR DIA</button>
             </div>
         </div>
 
         <div id="tab-map" class="hidden">
             <div id="map"></div>
             <div class="card">
-                <label>Destino em Belém/Outeiro</label>
-                <input type="text" id="dest-input" placeholder="Ex: Praia do Amor">
-                <button class="btn btn-green" onclick="buscarETracar()">CALCULAR ROTA</button>
-                <div id="info-rota" style="margin-top:15px; font-size:14px;"></div>
+                <label>Procurar Destino</label>
+                <input type="text" id="dest-input" placeholder="Rua ou Local em Belém/Outeiro">
+                <button class="btn btn-green" style="margin-top:10px" onclick="buscarETracar()">CALCULAR ROTA E PREÇO</button>
+                <div id="info-rota" style="margin-top:15px; font-size:14px; color:var(--blue); font-weight:bold;"></div>
             </div>
         </div>
 
         <div id="tab-vei" class="hidden">
             <div class="card">
                 <h3>Cronograma de Trabalho</h3>
-                <label>Estratégia Editável (Horários e Locais)</label>
-                <textarea id="cron-texto" rows="6" placeholder="08:00 - Início Outeiro&#10;12:00 - Almoço&#10;17:00 - Pico Belém"></textarea>
-                <button class="btn btn-blue" onclick="salvarTudo()">SALVAR CRONOGRAMA</button>
+                <label>Sua Estratégia (Editável)</label>
+                <textarea id="cron-texto" rows="6" placeholder="Edite seus horários aqui...">
+08:00 - 10:00: Pico Manhã
+10:00 - 12:00: Uber Flash
+12:00 - 14:00: Intervalo
+17:00 - 19:00: Pico Noite</textarea>
+                <button class="btn btn-blue" onclick="salvarConfig()">SALVAR CRONOGRAMA</button>
             </div>
 
             <div class="card">
                 <h3>Configuração do Veículo</h3>
-                <label>WhatsApp (Ex: 55919...)</label>
+                <label>WhatsApp</label>
                 <input type="number" id="v-zap" placeholder="5591...">
                 <label>Consumo (KM/L)</label>
                 <input type="number" id="v-consumo" value="38">
@@ -77,7 +120,8 @@
                 <input type="number" id="v-gas" value="6.20">
                 <label>Meta Lucro/KM (R$)</label>
                 <input type="number" id="v-meta" value="1.80">
-                <button class="btn btn-green" onclick="salvarTudo()">SALVAR CONFIGURAÇÕES</button>
+                <button class="btn btn-green" onclick="salvarConfig()" style="margin-top:10px">SALVAR CONFIGURAÇÕES</button>
+                <button class="btn btn-blue" style="margin-top:15px;" onclick="trocarParaPassageiro()">MUDAR PARA PASSAGEIRO</button>
             </div>
         </div>
     </div>
@@ -92,54 +136,73 @@
         const firebaseConfig = { apiKey: "AIzaSyC2PyMxApIjZ_bEcyV1FdftHQHzi7irM4k", authDomain: "rota-certa-861e7.firebaseapp.com", projectId: "rota-certa-861e7", storageBucket: "rota-certa-861e7.firebasestorage.app", messagingSenderId: "56675221849", appId: "1:56675221849:web:ebe796a6f2a93cba204c48" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const auth = firebase.auth();
 
-        let mapL, routeControl, mLat, mLng;
+        let mapL, routeControl, meuPerfil, mLat, mLng, lucroAtual = 0;
+        let historico = JSON.parse(localStorage.getItem('RC_HISTORICO')) || [];
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                db.collection("usuarios").doc(user.uid).onSnapshot(doc => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        meuPerfil = data.perfil;
+                        if(data.config) {
+                            document.getElementById('v-zap').value = data.whatsapp || '';
+                            document.getElementById('v-consumo').value = data.config.consumo;
+                            document.getElementById('v-gas').value = data.config.gas;
+                            document.getElementById('v-meta').value = data.config.meta;
+                            if(data.config.cron) document.getElementById('cron-texto').value = data.config.cron;
+                        }
+                        document.getElementById('selector-screen').classList.add('hidden');
+                        atualizarUI();
+                        atualizarGanhos();
+                        iniciarGPS();
+                    } else {
+                        document.getElementById('selector-screen').classList.remove('hidden');
+                    }
+                });
+            }
+        });
+
+        function iniciarGPS() {
+            navigator.geolocation.watchPosition(p => {
+                mLat = p.coords.latitude; mLng = p.coords.longitude;
+                if(auth.currentUser) db.collection("usuarios").doc(auth.currentUser.uid).update({ lat: mLat, lng: mLng, ativa: new Date().toISOString() });
+            });
+        }
 
         function mudarTab(t) {
             document.querySelectorAll('.container > div:not(.logo)').forEach(d => d.classList.add('hidden'));
             document.getElementById('tab-' + t).classList.remove('hidden');
             document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
             document.getElementById('n-' + t).classList.add('active');
-            if(t === 'map' && !mapL) initMap();
-        }
-
-        function initMap() {
-            mapL = L.map('map').setView([-1.45, -48.48], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapL);
-            navigator.geolocation.getCurrentPosition(p => {
-                mLat = p.coords.latitude; mLng = p.coords.longitude;
-                mapL.setView([mLat, mLng], 15);
-                L.marker([mLat, mLng]).addTo(mapL);
-            });
+            if(t === 'map' && !mapL) {
+                mapL = L.map('map').setView([mLat || -1.45, mLng || -48.48], 14);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapL);
+            }
         }
 
         async function buscarETracar() {
-            const dest = document.getElementById('dest-input').value;
-            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${dest}, Belém`);
+            const q = document.getElementById('dest-input').value;
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}, Belém`);
             const data = await res.json();
-            
             if(data[0]) {
                 const dLat = data[0].lat; const dLng = data[0].lon;
                 if (routeControl) mapL.removeControl(routeControl);
-
                 routeControl = L.Routing.control({
                     waypoints: [L.latLng(mLat, mLng), L.latLng(dLat, dLng)],
-                    lineOptions: { styles: [{ color: '#2ecc71', weight: 6 }] },
+                    lineOptions: { styles: [{ color: '#3498db', weight: 5 }] },
                     createMarker: () => null,
                     addWaypoints: false,
                     show: false 
                 }).on('routesfound', function(e) {
                     const r = e.routes[0];
                     const dist = (r.summary.totalDistance / 1000).toFixed(1);
-                    
-                    const cons = parseFloat(document.getElementById('v-consumo').value) || 38;
-                    const gas = parseFloat(document.getElementById('v-gas').value) || 6.20;
+                    const cons = parseFloat(document.getElementById('v-consumo').value);
+                    const gas = parseFloat(document.getElementById('v-gas').value);
                     const custo = (dist * (gas / cons)).toFixed(2);
-
-                    document.getElementById('info-rota').innerHTML = `
-                        <b>Distância:</b> ${dist} KM<br>
-                        <b>Custo Gasolina:</b> <span style="color:var(--red)">R$ ${custo}</span>
-                    `;
+                    document.getElementById('info-rota').innerHTML = `Distância: ${dist} KM | Custo: R$ ${custo}`;
                 }).addTo(mapL);
             }
         }
@@ -147,42 +210,67 @@
         function processar() {
             const v = parseFloat(document.getElementById('val-entrada').value) || 0;
             const k = parseFloat(document.getElementById('km-entrada').value) || 1;
-            const cons = parseFloat(document.getElementById('v-consumo').value) || 38;
-            const gas = parseFloat(document.getElementById('v-gas').value) || 6.20;
-            const lucro = v - (k * (gas / cons));
-            document.getElementById('res-lucro').innerHTML = `LUCRO: <span style="color:var(--green)">R$ ${lucro.toFixed(2)}</span>`;
+            const c = parseFloat(document.getElementById('v-consumo').value) || 38;
+            const g = parseFloat(document.getElementById('v-gas').value) || 6.20;
+            const m = parseFloat(document.getElementById('v-meta').value) || 1.80;
+            lucroAtual = v - (k * (g / c));
+            const rkm = lucroAtual / k;
+            document.getElementById('res-lucro').innerText = "R$ " + lucroAtual.toFixed(2);
+            document.getElementById('res-km').innerText = "R$ " + rkm.toFixed(2);
+            document.getElementById('semaforo').style.background = (rkm >= m) ? "#2ecc71" : "#e74c3c";
+            document.getElementById('btn-salvar').classList.toggle('hidden', rkm < m);
+            if(rkm >= m) { const u = new SpeechSynthesisUtterance("Lucro bom!"); u.lang='pt-BR'; window.speechSynthesis.speak(u); }
         }
 
-        async function salvarTudo() {
-            const config = {
-                cron: document.getElementById('cron-texto').value,
-                consumo: document.getElementById('v-consumo').value,
-                gas: document.getElementById('v-gas').value,
-                zap: document.getElementById('v-zap').value,
-                meta: document.getElementById('v-meta').value
-            };
-            
-            // Salva Local
-            localStorage.setItem('RC_USER_DATA', JSON.stringify(config));
-            
-            // Salva Firebase
-            const user = firebase.auth().currentUser;
-            if(user) {
-                await db.collection("usuarios").doc(user.uid).set({ config: config }, {merge: true});
-            }
-            alert("✅ Dados e Cronograma salvos!");
+        function salvarNoHistorico() {
+            historico.push({ lucro: lucroAtual, hora: new Date().toLocaleTimeString().substring(0,5) });
+            localStorage.setItem('RC_HISTORICO', JSON.stringify(historico));
+            atualizarGanhos();
+            document.getElementById('btn-salvar').classList.add('hidden');
+            alert("Corrida salva!");
         }
 
-        window.onload = () => {
-            const salvo = JSON.parse(localStorage.getItem('RC_USER_DATA'));
-            if(salvo) {
-                document.getElementById('cron-texto').value = salvo.cron || '';
-                document.getElementById('v-consumo').value = salvo.consumo || 38;
-                document.getElementById('v-gas').value = salvo.gas || 6.20;
-                document.getElementById('v-zap').value = salvo.zap || '';
-                document.getElementById('v-meta').value = salvo.meta || 1.80;
-            }
-        };
+        function atualizarGanhos() {
+            const lista = document.getElementById('lista-historico');
+            lista.innerHTML = ""; let total = 0;
+            historico.forEach((h, i) => {
+                total += h.lucro;
+                lista.innerHTML += `<div class="hist-item"><span>${h.hora} - <b>R$ ${h.lucro.toFixed(2)}</b></span><button class="btn-red" onclick="removerItem(${i})">X</button></div>`;
+            });
+            const meta = parseFloat(document.getElementById('meta-dia').value) || 1;
+            document.getElementById('barra-fill').style.width = Math.min((total / meta) * 100, 100) + "%";
+            document.getElementById('txt-ganho').innerText = "R$ " + total.toFixed(2);
+            document.getElementById('txt-falta').innerText = "R$ " + Math.max(meta - total, 0).toFixed(2);
+        }
+
+        function removerItem(i) { historico.splice(i, 1); localStorage.setItem('RC_HISTORICO', JSON.stringify(historico)); atualizarGanhos(); }
+        function limparHistorico() { if(confirm("Reiniciar dia?")) { historico = []; localStorage.removeItem('RC_HISTORICO'); atualizarGanhos(); } }
+
+        function atualizarUI() {
+            const isMot = (meuPerfil === 'motorista');
+            document.getElementById('n-ast').classList.toggle('hidden', !isMot);
+        }
+
+        async function definirPerfilInicial(p) {
+            await db.collection("usuarios").doc(auth.currentUser.uid).set({ perfil: p, config: { consumo: 38, gas: 6.20, meta: 1.80, cron: "" } }, {merge: true});
+        }
+
+        async function salvarConfig() {
+            await db.collection("usuarios").doc(auth.currentUser.uid).update({
+                whatsapp: document.getElementById('v-zap').value,
+                config: {
+                    consumo: parseFloat(document.getElementById('v-consumo').value),
+                    gas: parseFloat(document.getElementById('v-gas').value),
+                    meta: parseFloat(document.getElementById('v-meta').value),
+                    cron: document.getElementById('cron-texto').value
+                }
+            });
+            alert("Configurações e Cronograma Salvos!");
+        }
+
+        async function trocarParaPassageiro() {
+            if(confirm("Mudar perfil?")) await db.collection("usuarios").doc(auth.currentUser.uid).update({ perfil: 'passageiro' });
+        }
     </script>
 </body>
 </html>
