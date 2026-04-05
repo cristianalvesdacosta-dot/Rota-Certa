@@ -6,6 +6,7 @@
     <title>Rota Certa Pro | Oficial</title>
     
     <script>
+        // CONFIGURAÇÕES DO CRISTIAN
         const CONFIG_PRECO_MENSAL = "29,90"; 
         const CONFIG_CHAVE_PIX = "SEU-PIX-AQUI"; 
         const CONFIG_WHATSAPP = "55919XXXXXXXX"; 
@@ -18,34 +19,29 @@
 
     <style>
         :root { --green: #2ecc71; --blue: #3498db; --red: #e74c3c; --bg: #000; --card: #111; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; margin: 0; padding-bottom: 80px; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; margin: 0; padding-bottom: 80px; }
         .container { padding: 15px; max-width: 500px; margin: auto; }
-        .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #222; position: relative; }
+        .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #222; }
         .logo { font-weight: 900; color: var(--green); font-size: 22px; text-align: center; margin: 20px 0; }
-        input, select { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: #1a1a1a; color: #fff; box-sizing: border-box; font-size: 16px; }
-        .btn { width: 100%; padding: 18px; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        input, select { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: #1a1a1a; color: #fff; box-sizing: border-box; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
         .btn-green { background: var(--green); color: #000; }
         .btn-blue { background: var(--blue); color: #fff; }
-        .luz { width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 15px; border: 4px solid #222; }
         .nav { position: fixed; bottom: 0; width: 100%; background: #080808; display: flex; border-top: 1px solid #222; z-index: 100; }
         .nav-item { flex: 1; padding: 15px; text-align: center; color: #555; font-size: 10px; font-weight: bold; }
         .nav-item.active { color: var(--green); border-top: 2px solid var(--green); }
-        #modal-termos, #block-screen { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:9999; display:flex; align-items:center; justify-content:center; padding:20px; box-sizing: border-box; text-align:center; }
         .hidden { display: none; }
+        .luz { width: 50px; height: 50px; border-radius: 50%; background:#333; margin:auto; margin-bottom: 10px; }
+        #block-screen { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:9999; display:flex; align-items:center; justify-content:center; text-align:center; padding:20px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
     <div id="modal-termos">
-        <div class="card">
-            <h2 style="color:var(--green)">Aviso de Isenção</h2>
-            <p style="font-size:13px; color:#888; text-align:left;">
-                O <b>Rota Certa Pro</b> é uma ferramenta de software. <br><br>
-                - Não cobramos taxas por corridas.<br>
-                - Pagamentos são feitos diretamente ao motorista.<br>
-                - Não nos responsabilizamos por condutas ou acidentes.
-            </p>
-            <button class="btn btn-green" onclick="aceitarTermos()">LI E CONCORDO</button>
+        <div class="card" style="text-align:center;">
+            <h2>Aviso de Isenção</h2>
+            <p style="font-size:13px; color:#888; text-align:left;">O Rota Certa Pro é apenas um facilitador tecnológico. Pagamentos e segurança são de inteira responsabilidade de motoristas e passageiros.</p>
+            <button class="btn btn-green" onclick="aceitarTermos()">CONCORDO E ACEITO</button>
         </div>
     </div>
 
@@ -53,9 +49,9 @@
         <div>
             <h2 style="color:var(--red)">Assinatura Expirada</h2>
             <div class="card">
-                <span>RENOVAÇÃO MENSAL</span><br>
-                <b style="font-size:28px; color:var(--green)">R$ <span id="p-val"></span></b>
-                <p style="font-size:12px;">Pix: <b id="p-chave"></b><br><small id="p-banco"></small></p>
+                <span>VALOR MENSAL</span><br>
+                <b style="font-size:28px; color:var(--green)">R$ <span id="p-val">29,90</span></b>
+                <p style="font-size:12px;">Pix: <b id="p-chave"></b></p>
             </div>
             <button class="btn btn-green" onclick="window.location.href='https://wa.me/'+CONFIG_WHATSAPP">ENVIAR COMPROVANTE</button>
         </div>
@@ -66,69 +62,100 @@
 
         <div id="tab-ast">
             <div class="card" style="text-align:center;">
-                <div id="semaforo" class="luz" style="background:#333;"></div>
+                <div id="semaforo" class="luz"></div>
                 <h3 id="txt-decisao">AGUARDANDO...</h3>
-                <div style="display:flex; justify-content:space-around;">
-                    <div><small>LUCRO</small><br><b id="res-lucro">R$ 0,00</b></div>
-                    <div><small>GANHO/KM</small><br><b id="res-km">R$ 0,00</b></div>
+                <div style="display:flex; justify-content:space-around; font-size:14px;">
+                    <div>LUCRO: <br><b id="res-lucro" style="color:var(--green)">R$ 0,00</b></div>
+                    <div>POR KM: <br><b id="res-km" style="color:var(--blue)">R$ 0,00</b></div>
                 </div>
             </div>
             <div class="card">
                 <input type="number" id="val-entrada" placeholder="Valor da Corrida (R$)">
                 <input type="number" id="km-entrada" placeholder="KM Total">
-                <input type="text" id="end-destino" placeholder="Destino (Para o GPS)">
-                <button class="btn btn-green" onclick="processar()">ANALISAR E ABRIR ROTA</button>
+                <button class="btn btn-green" onclick="processar()">ANALISAR CORRIDA</button>
             </div>
         </div>
 
         <div id="tab-map" class="hidden">
-            <div class="card">
-                <select id="perfil-usuario" onchange="alternarPerfil()">
-                    <option value="motorista">ESTOU COMO PILOTO</option>
-                    <option value="passageiro">ESTOU COMO PASSAGEIRO</option>
-                </select>
-                <div id="area-passageiro" class="hidden">
-                    <p style="font-size:12px; color:var(--blue)">Buscando motoristas num raio de 5km...</p>
-                    <div id="lista-motos"></div>
+            <div class="card" style="text-align:center;">
+                <h4 id="status-perfil">...</h4>
+                <button class="btn btn-blue" style="padding:10px; font-size:12px;" onclick="trocarPerfil()">TROCAR PARA <span id="btn-troca-txt">...</span></button>
+            </div>
+
+            <div id="area-passageiro" class="hidden">
+                <div class="card">
+                    <b>⭐ Meus Favoritos</b>
+                    <div id="lista-favoritos" style="margin-top:10px; color:#888;">Nenhum favorito.</div>
                 </div>
-                <div id="area-motorista">
-                    <p style="color:var(--green)">Sua localização está ativa para clientes próximos.</p>
+                <div class="card">
+                    <b>📍 Pilotos Online (5km)</b>
+                    <div id="lista-motos" style="margin-top:10px;">Buscando pilotos em Belém...</div>
+                </div>
+            </div>
+
+            <div id="area-motorista" class="hidden">
+                <div class="card" style="border: 1px solid var(--green); text-align:center;">
+                    <b style="color:var(--green)">VOCÊ ESTÁ VISÍVEL</b>
+                    <p style="font-size:12px;">Passageiros próximos podem te chamar agora.</p>
                 </div>
             </div>
         </div>
 
         <div id="tab-vei" class="hidden">
             <div class="card">
-                <h3>Configuração</h3>
+                <h3>Configuração do Veículo</h3>
                 <select id="tipo-v" onchange="setDefaults()">
                     <option value="moto">MOTO</option>
                     <option value="carro">CARRO</option>
                 </select>
-                <input type="number" id="v-consumo" placeholder="Consumo (KM/L)">
+                <label><small>Consumo (km/L):</small></label>
+                <input type="number" id="v-consumo" value="38">
+                <label><small>Preço Combustível:</small></label>
                 <input type="number" id="v-gas" value="6.20">
-                <input type="number" id="v-meta" placeholder="Meta Ganho/KM">
-                <button class="btn btn-green" onclick="alert('Salvo!')">SALVAR VEÍCULO</button>
+                <label><small>Sua Meta (R$ por KM):</small></label>
+                <input type="number" id="v-meta" value="1.80">
+                <button class="btn btn-green" onclick="salvarConfig()">SALVAR VEÍCULO</button>
             </div>
         </div>
     </div>
 
     <nav class="nav">
         <div class="nav-item active" id="n-ast" onclick="mudarTab('ast')">ASSISTENTE</div>
-        <div class="nav-item" id="n-map" onclick="mudarTab('map')">RADAR 5KM</div>
+        <div class="nav-item" id="n-map" onclick="mudarTab('map')">RADAR</div>
         <div class="nav-item" id="n-vei" onclick="mudarTab('vei')">VEÍCULO</div>
     </nav>
 
     <script>
-        // CONFIGURAÇÕES INICIAIS
-        document.getElementById('p-val').innerText = CONFIG_PRECO_MENSAL;
-        document.getElementById('p-chave').innerText = CONFIG_CHAVE_PIX;
-        document.getElementById('p-banco').innerText = CONFIG_NOME_BANCO;
+        // CONFIG FIREBASE (COLOQUE AS SUAS AQUI)
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2PyMxApIjZ_bEcyV1FdftHQHzi7irM4k",
+            authDomain: "rota-certa-861e7.firebaseapp.com",
+            projectId: "rota-certa-861e7",
+            storageBucket: "rota-certa-861e7.firebasestorage.app",
+            messagingSenderId: "56675221849",
+            appId: "1:56675221849:web:ebe796a6f2a93cba204c48"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
 
-        function aceitarTermos() {
-            document.getElementById('modal-termos').classList.add('hidden');
-            localStorage.setItem('termos_rota', 'ok');
-        }
-        if(localStorage.getItem('termos_rota')) document.getElementById('modal-termos').classList.add('hidden');
+        let meuPerfil = "motorista";
+        document.getElementById('p-chave').innerText = CONFIG_CHAVE_PIX;
+
+        // LOGIN E PERFIL
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                db.collection("usuarios").doc(user.uid).onSnapshot(doc => {
+                    if (doc.exists) {
+                        const d = doc.data();
+                        meuPerfil = d.perfil || "motorista";
+                        // SE QUISER ATIVAR A COBRANÇA, DESCOMENTE A LINHA ABAIXO NO FUTURO
+                        // verificarAssinatura(d.dataExpiracao);
+                        atualizarInterfacePerfil();
+                    }
+                });
+            }
+        });
 
         function mudarTab(t) {
             document.getElementById('tab-ast').classList.add('hidden');
@@ -148,23 +175,21 @@
         function processar() {
             const v = parseFloat(document.getElementById('val-entrada').value);
             const k = parseFloat(document.getElementById('km-entrada').value);
-            const c = parseFloat(document.getElementById('v-consumo').value) || 35;
+            const c = parseFloat(document.getElementById('v-consumo').value);
             const g = parseFloat(document.getElementById('v-gas').value);
-            const m = parseFloat(document.getElementById('v-meta').value) || 2.00;
+            const m = parseFloat(document.getElementById('v-meta').value);
 
-            const lucro = v - (k * (g/c));
+            const custoTotal = k * (g / c);
+            const lucro = v - custoTotal;
             const rkm = lucro / k;
 
             const s = document.getElementById('semaforo');
             if(rkm >= m) { s.style.background = "var(--green)"; falar("Aceita!"); }
-            else if(rkm >= m*0.7) { s.style.background = "var(--yellow)"; }
+            else if(rkm >= m * 0.7) { s.style.background = "yellow"; }
             else { s.style.background = "var(--red)"; falar("Recusa!"); }
 
             document.getElementById('res-lucro').innerText = "R$ " + lucro.toFixed(2);
             document.getElementById('res-km').innerText = "R$ " + rkm.toFixed(2);
-
-            const dest = document.getElementById('end-destino').value;
-            if(dest) window.location.href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}`;
         }
 
         function falar(t) {
@@ -173,11 +198,37 @@
             window.speechSynthesis.speak(u);
         }
 
-        function alternarPerfil() {
-            const p = document.getElementById('perfil-usuario').value;
-            document.getElementById('area-passageiro').classList.toggle('hidden', p !== 'passageiro');
-            document.getElementById('area-motorista').classList.toggle('hidden', p !== 'motorista');
+        async function trocarPerfil() {
+            const novo = meuPerfil === "motorista" ? "passageiro" : "motorista";
+            await db.collection("usuarios").doc(auth.currentUser.uid).update({ perfil: novo });
         }
+
+        function atualizarInterfacePerfil() {
+            document.getElementById('status-perfil').innerText = "MODO: " + meuPerfil.toUpperCase();
+            document.getElementById('btn-troca-txt').innerText = meuPerfil === "motorista" ? "PASSAGEIRO" : "MOTORISTA";
+            document.getElementById('area-motorista').classList.toggle('hidden', meuPerfil !== 'motorista');
+            document.getElementById('area-passageiro').classList.toggle('hidden', meuPerfil !== 'passageiro');
+        }
+
+        function aceitarTermos() {
+            document.getElementById('modal-termos').classList.add('hidden');
+            localStorage.setItem('termos_rota', 'ok');
+        }
+        if(localStorage.getItem('termos_rota')) document.getElementById('modal-termos').classList.add('hidden');
+
+        async function salvarConfig() {
+            const user = auth.currentUser;
+            if(!user) return;
+            await db.collection("usuarios").doc(user.uid).update({
+                config: {
+                    tipo: document.getElementById('tipo-v').value,
+                    consumo: document.getElementById('v-consumo').value,
+                    meta: document.getElementById('v-meta').value
+                }
+            });
+            alert("Salvo!");
+        }
+
     </script>
 </body>
 </html>
