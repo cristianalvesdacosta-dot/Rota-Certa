@@ -21,17 +21,14 @@
         .logo { font-weight: 900; color: var(--green); font-size: 22px; text-align: center; margin: 20px 0; }
         label { display: block; font-size: 11px; color: var(--green); margin: 10px 0 4px 0; font-weight: bold; text-transform: uppercase; }
         input, textarea { width: 100%; padding: 15px; margin-bottom: 5px; border-radius: 12px; border: 1px solid #333; background: #1a1a1a; color: #fff; box-sizing: border-box; font-size: 16px; }
-        .btn { width: 100%; padding: 18px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
         .btn-green { background: var(--green); color: #000; }
         .btn-blue { background: var(--blue); color: #fff; }
-        
         .nav { position: fixed; bottom: 0; width: 100%; background: #080808; display: flex; border-top: 1px solid #222; z-index: 1000; }
         .nav-item { flex: 1; padding: 15px; text-align: center; color: #555; font-size: 10px; font-weight: bold; }
         .nav-item.active { color: var(--green); border-top: 2px solid var(--green); }
-        #map { width: 100%; height: 250px; border-radius: 15px; margin-bottom: 15px; background: #222; z-index: 1; }
+        #map { width: 100%; height: 250px; border-radius: 15px; margin-bottom: 15px; background: #222; }
         .hidden { display: none !important; }
-        
-        .cron-item { margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -42,49 +39,42 @@
         <div id="tab-ast">
             <div class="card">
                 <label>Meta do Dia (R$)</label>
-                <input type="number" id="meta-dia" value="150" onchange="atualizarGanhos()">
-                <div style="background:#222; height:12px; border-radius:10px; margin:15px 0; overflow:hidden;"><div id="barra-fill" style="background:var(--green); height:100%; width:0%;"></div></div>
-                <div style="display:flex; justify-content:space-between; font-size:12px;">
-                    <span>Ganhos: <b id="txt-ganho">R$ 0,00</b></span>
-                    <span>Falta: <b id="txt-falta" style="color:var(--blue)">R$ 0,00</b></span>
-                </div>
-            </div>
-
-            <div class="card">
+                <input type="number" id="meta-dia" value="150">
                 <label>Valor da Corrida</label>
                 <input type="number" id="val-entrada" placeholder="R$ 0,00">
                 <label>Distância (KM)</label>
                 <input type="number" id="km-entrada" placeholder="0.0">
-                <button class="btn btn-green" onclick="processar()">ANALISAR</button>
-                <div id="resultado-rapido" style="margin-top:10px; text-align:center; font-weight:bold;"></div>
+                <button class="btn btn-green" onclick="processar()">ANALISAR CORRIDA</button>
+                <div id="res-lucro" style="margin-top:15px; text-align:center; font-size:18px; font-weight:bold;"></div>
             </div>
         </div>
 
         <div id="tab-map" class="hidden">
             <div id="map"></div>
             <div class="card">
-                <label>Para onde vamos?</label>
-                <input type="text" id="dest-input" placeholder="Destino em Belém/Outeiro">
-                <button class="btn btn-green" onclick="buscarETracar()">CALCULAR ROTA E CUSTO</button>
-                <div id="info-rota" style="margin-top:15px; font-size:14px; line-height:1.6;"></div>
+                <label>Destino (Belém/Outeiro)</label>
+                <input type="text" id="dest-input" placeholder="Ex: Praia do Amor">
+                <button class="btn btn-green" onclick="buscarETracar()">CALCULAR ROTA</button>
+                <div id="info-rota" style="margin-top:15px; font-size:14px;"></div>
             </div>
         </div>
 
         <div id="tab-vei" class="hidden">
             <div class="card">
-                <h3>Cronograma Editável</h3>
-                <label>Sua Estratégia de Hoje:</label>
-                <textarea id="cron-texto" rows="5" placeholder="Ex: 08:00 - Outeiro Centro&#10;11:00 - Entrega Flash&#10;17:00 - Volta pra Belém"></textarea>
-                <button class="btn btn-blue" onclick="salvarCronograma()">SALVAR CRONOGRAMA</button>
+                <h3>Cronograma de Hoje</h3>
+                <textarea id="cron-texto" rows="4" placeholder="Escreva sua estratégia..."></textarea>
+                <button class="btn btn-blue" onclick="salvarTudo()">GUARDAR ALTERAÇÕES</button>
             </div>
 
             <div class="card">
-                <h3>Dados da Moto</h3>
+                <h3>Configuração do Veículo</h3>
                 <label>Consumo (KM/L)</label>
                 <input type="number" id="v-consumo" value="38">
                 <label>Gasolina (R$)</label>
                 <input type="number" id="v-gas" value="6.20">
-                <button class="btn btn-green" onclick="salvarConfig()">SALVAR CONFIGURAÇÕES</button>
+                <label>WhatsApp (91...)</label>
+                <input type="number" id="v-zap" placeholder="5591...">
+                <button class="btn btn-green" onclick="salvarTudo()">SALVAR DADOS DA MOTO</button>
             </div>
         </div>
     </div>
@@ -116,7 +106,7 @@
             navigator.geolocation.getCurrentPosition(p => {
                 mLat = p.coords.latitude; mLng = p.coords.longitude;
                 mapL.setView([mLat, mLng], 15);
-                L.marker([mLat, mLng]).addTo(mapL).bindPopup("Você").openPopup();
+                L.marker([mLat, mLng]).addTo(mapL);
             });
         }
 
@@ -134,55 +124,61 @@
                     lineOptions: { styles: [{ color: '#2ecc71', weight: 6 }] },
                     createMarker: () => null,
                     addWaypoints: false,
-                    show: false // Oculta painel de texto para não travar
+                    show: false 
                 }).on('routesfound', function(e) {
                     const r = e.routes[0];
                     const dist = (r.summary.totalDistance / 1000).toFixed(1);
-                    const cons = parseFloat(document.getElementById('v-consumo').value);
-                    const gas = parseFloat(document.getElementById('v-gas').value);
+                    
+                    // PEGA OS DADOS DO PERFIL NA HORA
+                    const cons = parseFloat(document.getElementById('v-consumo').value) || 38;
+                    const gas = parseFloat(document.getElementById('v-gas').value) || 6.20;
                     const custo = (dist * (gas / cons)).toFixed(2);
 
                     document.getElementById('info-rota').innerHTML = `
-                        <span style="color:var(--green)">✔ Rota Calculada</span><br>
-                        Distância: <b>${dist} KM</b><br>
-                        Gasto de Gasolina: <b style="color:var(--red)">R$ ${custo}</b>
+                        <b>Distância:</b> ${dist} KM<br>
+                        <b>Custo Gasolina:</b> <span style="color:var(--red)">R$ ${custo}</span>
                     `;
                 }).addTo(mapL);
             }
         }
 
-        function salvarCronograma() {
-            const texto = document.getElementById('cron-texto').value;
-            localStorage.setItem('RC_CRON_TEXTO', texto);
-            alert("Estratégia salva!");
-        }
-
-        function salvarConfig() {
-            const c = document.getElementById('v-consumo').value;
-            const g = document.getElementById('v-gas').value;
-            localStorage.setItem('RC_CONFIG', JSON.stringify({consumo: c, gas: g}));
-            alert("Dados da moto salvos!");
-        }
-
-        window.onload = () => {
-            const cronSalvo = localStorage.getItem('RC_CRON_TEXTO');
-            if(cronSalvo) document.getElementById('cron-texto').value = cronSalvo;
-
-            const configSalva = JSON.parse(localStorage.getItem('RC_CONFIG'));
-            if(configSalva) {
-                document.getElementById('v-consumo').value = configSalva.consumo;
-                document.getElementById('v-gas').value = configSalva.gas;
-            }
-        };
-
         function processar() {
             const v = parseFloat(document.getElementById('val-entrada').value) || 0;
             const k = parseFloat(document.getElementById('km-entrada').value) || 1;
-            const c = parseFloat(document.getElementById('v-consumo').value);
-            const g = parseFloat(document.getElementById('v-gas').value);
-            const lucro = v - (k * (g / c));
-            document.getElementById('resultado-rapido').innerHTML = `Lucro: <span style="color:var(--green)">R$ ${lucro.toFixed(2)}</span>`;
+            const cons = parseFloat(document.getElementById('v-consumo').value);
+            const gas = parseFloat(document.getElementById('v-gas').value);
+            const lucro = v - (k * (gas / cons));
+            document.getElementById('res-lucro').innerHTML = `LUCRO: <span style="color:var(--green)">R$ ${lucro.toFixed(2)}</span>`;
         }
+
+        // SALVA TUDO NO FIREBASE E LOCAL
+        async function salvarTudo() {
+            const dados = {
+                cron: document.getElementById('cron-texto').value,
+                consumo: document.getElementById('v-consumo').value,
+                gas: document.getElementById('v-gas').value,
+                zap: document.getElementById('v-zap').value
+            };
+            
+            localStorage.setItem('RC_USER_DATA', JSON.stringify(dados));
+            
+            const user = firebase.auth().currentUser;
+            if(user) {
+                await db.collection("usuarios").doc(user.uid).set({ config: dados }, {merge: true});
+            }
+            alert("✅ Tudo salvo com sucesso!");
+        }
+
+        // CARREGA OS DADOS AO ABRIR
+        window.onload = () => {
+            const salvo = JSON.parse(localStorage.getItem('RC_USER_DATA'));
+            if(salvo) {
+                document.getElementById('cron-texto').value = salvo.cron || '';
+                document.getElementById('v-consumo').value = salvo.consumo || 38;
+                document.getElementById('v-gas').value = salvo.gas || 6.20;
+                document.getElementById('v-zap').value = salvo.zap || '';
+            }
+        };
     </script>
 </body>
 </html>
