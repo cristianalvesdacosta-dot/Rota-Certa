@@ -30,14 +30,14 @@
         .nav { position: fixed; bottom: 0; width: 100%; background: #080808; display: flex; border-top: 1px solid #222; z-index: 100; }
         .nav-item { flex: 1; padding: 15px; text-align: center; color: #555; font-size: 10px; font-weight: bold; }
         .nav-item.active { color: var(--green); border-top: 2px solid var(--green); }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
         .luz { width: 50px; height: 50px; border-radius: 50%; background:#333; margin:auto; margin-bottom: 10px; }
         #block-screen { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:9999; display:flex; align-items:center; justify-content:center; text-align:center; padding:20px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-    <div id="modal-termos">
+    <div id="modal-termos" class="hidden">
         <div class="card" style="text-align:center;">
             <h2>Aviso de Isenção</h2>
             <p style="font-size:13px; color:#888; text-align:left;">O Rota Certa Pro é apenas um facilitador tecnológico. Pagamentos e segurança são de inteira responsabilidade de motoristas e passageiros.</p>
@@ -126,7 +126,6 @@
     </nav>
 
     <script>
-        // CONFIG FIREBASE (COLOQUE AS SUAS AQUI)
         const firebaseConfig = {
             apiKey: "AIzaSyC2PyMxApIjZ_bEcyV1FdftHQHzi7irM4k",
             authDomain: "rota-certa-861e7.firebaseapp.com",
@@ -142,16 +141,37 @@
         let meuPerfil = "motorista";
         document.getElementById('p-chave').innerText = CONFIG_CHAVE_PIX;
 
-        // LOGIN E PERFIL
-        auth.onAuthStateChanged(user => {
+        // LOGIN E LÓGICA DE ASSINATURA (3 DIAS / VIP 1000 DIAS)
+        auth.onAuthStateChanged(async (user) => {
             if (user) {
-                db.collection("usuarios").doc(user.uid).onSnapshot(doc => {
+                const docRef = db.collection("usuarios").doc(user.uid);
+                docRef.onSnapshot(async (doc) => {
                     if (doc.exists) {
                         const d = doc.data();
                         meuPerfil = d.perfil || "motorista";
-                        // SE QUISER ATIVAR A COBRANÇA, DESCOMENTE A LINHA ABAIXO NO FUTURO
-                        // verificarAssinatura(d.dataExpiracao);
+                        
+                        // Verificar Assinatura
+                        if(d.dataExpiracao) {
+                            const expira = new Date(d.dataExpiracao);
+                            if (new Date() > expira) {
+                                document.getElementById('block-screen').classList.remove('hidden');
+                            } else {
+                                document.getElementById('block-screen').classList.add('hidden');
+                            }
+                        }
                         atualizarInterfacePerfil();
+                    } else {
+                        // NOVO USUÁRIO: 3 DIAS / VOCÊ: 1000 DIAS
+                        let diasTeste = (user.email === "cristianalvesdacosta@gmail.com") ? 1000 : 3;
+                        const dataExp = new Date();
+                        dataExp.setDate(dataExp.getDate() + diasTeste);
+                        
+                        await docRef.set({
+                            email: user.email,
+                            perfil: "motorista",
+                            dataExpiracao: dataExp.toISOString(),
+                            criadoEm: new Date().toISOString()
+                        });
                     }
                 });
             }
@@ -173,14 +193,13 @@
         }
 
         function processar() {
-            const v = parseFloat(document.getElementById('val-entrada').value);
-            const k = parseFloat(document.getElementById('km-entrada').value);
-            const c = parseFloat(document.getElementById('v-consumo').value);
-            const g = parseFloat(document.getElementById('v-gas').value);
-            const m = parseFloat(document.getElementById('v-meta').value);
+            const v = parseFloat(document.getElementById('val-entrada').value) || 0;
+            const k = parseFloat(document.getElementById('km-entrada').value) || 1;
+            const c = parseFloat(document.getElementById('v-consumo').value) || 38;
+            const g = parseFloat(document.getElementById('v-gas').value) || 6.20;
+            const m = parseFloat(document.getElementById('v-meta').value) || 1.80;
 
-            const custoTotal = k * (g / c);
-            const lucro = v - custoTotal;
+            const lucro = v - (k * (g / c));
             const rkm = lucro / k;
 
             const s = document.getElementById('semaforo');
@@ -219,16 +238,16 @@
         async function salvarConfig() {
             const user = auth.currentUser;
             if(!user) return;
-            await db.collection("usuarios").doc(user.uid).update({
+            await db.collection("usuarios").doc(user.uid).set({
                 config: {
                     tipo: document.getElementById('tipo-v').value,
                     consumo: document.getElementById('v-consumo').value,
-                    meta: document.getElementById('v-meta').value
+                    meta: document.getElementById('v-meta').value,
+                    gasolina: document.getElementById('v-gas').value
                 }
-            });
+            }, {merge: true});
             alert("Salvo!");
         }
-
     </script>
 </body>
 </html>
