@@ -3,106 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Rota Certa Pro | Premium</title>
+    <title>Rota Certa Pro | Assistente</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 
     <style>
-        :root { --green: #2ecc71; --yellow: #f1c40f; --red: #ea1d2c; --bg: #000000; --card: #121212; --text: #ffffff; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 70px; }
+        :root { --green: #2ecc71; --yellow: #f1c40f; --red: #e74c3c; --bg: #000; --card: #111; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; margin: 0; padding-bottom: 80px; }
         
-        .header { padding: 20px; text-align: center; border-bottom: 1px solid #222; }
-        .logo { color: var(--green); font-weight: 800; font-size: 20px; }
-        
-        .container { padding: 15px; max-width: 450px; margin: auto; }
-        .card { background: var(--card); border-radius: 15px; padding: 20px; margin-bottom: 15px; border: 1px solid #222; }
-        
-        /* Semáforo Estilo Barra */
-        .semaforo-container { text-align: center; }
-        .bar-bg { height: 10px; background: #333; border-radius: 5px; margin: 20px 0; position: relative; display: flex; }
-        .bar-segment { height: 100%; flex: 1; }
-        .pointer { position: absolute; top: -10px; width: 4px; height: 30px; background: white; transition: 0.5s; box-shadow: 0 0 10px white; }
-        
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
-        .stat-item { background: #1a1a1a; padding: 10px; border-radius: 10px; text-align: center; }
-        .stat-label { font-size: 11px; color: #888; display: block; }
-        .stat-value { font-size: 18px; font-weight: bold; }
+        .header { padding: 25px 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 900; color: var(--green); font-size: 20px; }
+        .status-badge { background: #222; padding: 5px 12px; border-radius: 20px; font-size: 11px; color: var(--green); border: 1px solid var(--green); }
 
-        input { width: 100%; padding: 12px; margin: 5px 0; border-radius: 8px; border: 1px solid #333; background: #1a1a1a; color: white; box-sizing: border-box; }
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-primary { background: var(--green); color: black; }
+        .container { padding: 15px; max-width: 500px; margin: auto; }
+        .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #222; }
         
-        /* Nav Inferior */
-        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #080808; display: flex; border-top: 1px solid #222; }
-        .nav-item { flex: 1; padding: 15px; text-align: center; font-size: 12px; color: #666; cursor: pointer; }
-        .nav-item.active { color: var(--green); border-top: 2px solid var(--green); }
+        /* Semáforo de Decisão */
+        .decision-area { text-align: center; padding: 10px 0; }
+        .luz { width: 120px; height: 120px; border-radius: 50%; margin: 15px auto; border: 8px solid #222; transition: 0.5s; }
+        .result-text { font-size: 28px; font-weight: 900; letter-spacing: 1px; }
 
-        /* Histórico Style */
-        .hist-card { border-left: 4px solid var(--green); padding: 12px; margin-bottom: 10px; background: #181818; border-radius: 0 10px 10px 0; }
-        .hist-header { display: flex; justify-content: space-between; font-size: 12px; color: #888; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .stat-box { background: #1a1a1a; padding: 15px; border-radius: 15px; text-align: center; }
+        .stat-box span { font-size: 11px; color: #888; display: block; margin-bottom: 5px; }
+        .stat-box strong { font-size: 18px; color: #fff; }
+
+        input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: #1a1a1a; color: #fff; box-sizing: border-box; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .btn-green { background: var(--green); color: #000; }
+        
+        /* Menu Inferior Estilo App */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #080808; display: flex; border-top: 1px solid #222; z-index: 100; }
+        .nav-link { flex: 1; padding: 18px; text-align: center; color: #555; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .nav-link.active { color: var(--green); border-top: 2px solid var(--green); }
+
+        /* Histórico */
+        .hist-item { padding: 15px; background: #151515; border-radius: 15px; margin-bottom: 10px; border-left: 5px solid var(--green); }
     </style>
 </head>
 <body>
 
-    <div id="auth-screen" class="container">
-        <div class="card" style="margin-top: 50px;">
-            <div class="logo">ROTA CERTA PRO</div>
-            <p style="text-align: center; color: #888;">Versão Premium Ativada</p>
-            <input type="email" id="email" placeholder="Seu E-mail">
-            <input type="password" id="senha" placeholder="Sua Senha">
-            <button class="btn btn-primary" onclick="entrar()">ENTRAR NO PAINEL</button>
-            <p onclick="irParaCadastro()" style="text-align:center; font-size:12px; margin-top:15px;">Novo por aqui? Criar conta teste</p>
+    <div id="login-screen" class="container" style="margin-top: 50px;">
+        <div class="card">
+            <div class="logo" style="text-align: center; margin-bottom: 30px;">ROTA CERTA PRO</div>
+            <input type="email" id="login-email" placeholder="E-mail">
+            <input type="password" id="login-senha" placeholder="Senha">
+            <button class="btn btn-green" onclick="fazerLogin()">ENTRAR NO ASSISTENTE</button>
+            <p style="text-align:center; font-size:12px; color:#888; margin-top:20px;" onclick="irCadastro()">Criar conta teste (3 dias)</p>
         </div>
     </div>
 
-    <div id="app-screen" style="display:none;">
+    <div id="main-screen" style="display:none;">
         <div class="header">
-            <span class="logo">ROTA CERTA PRO</span>
+            <div class="logo">ROTA CERTA PRO</div>
+            <div class="status-badge" id="badge-val">TESTE ATIVO</div>
         </div>
 
-        <div id="tab-calculo" class="container">
-            <div class="card semaforo-container">
-                <h3>Análise de Ganho Líquido</h3>
+        <div id="tab-assistente" class="container">
+            <div class="card decision-area">
+                <div id="luz-indicadora" class="luz" style="background: #333;"></div>
+                <div id="texto-decisao" class="result-text">MONITORANDO...</div>
                 <div class="stats-grid">
-                    <div class="stat-item">
-                        <span class="stat-label">R$ / KM</span>
-                        <span class="stat-value" id="val-km">R$ 0,00</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">LUCRO REAL</span>
-                        <span class="stat-value" id="val-lucro">R$ 0,00</span>
-                    </div>
+                    <div class="stat-box"><span>LUCRO LÍQUIDO</span><strong id="res-lucro">R$ 0,00</strong></div>
+                    <div class="stat-box"><span>R$ / KM</span><strong id="res-km">R$ 0,00</strong></div>
                 </div>
-
-                <div class="bar-bg">
-                    <div class="bar-segment" style="background: var(--red); border-radius: 5px 0 0 5px;"></div>
-                    <div class="bar-segment" style="background: var(--yellow);"></div>
-                    <div class="bar-segment" style="background: var(--green); border-radius: 0 5px 5px 0;"></div>
-                    <div id="ponteiro" class="pointer" style="left: 0%;"></div>
-                </div>
-                <div id="feedback-txt" style="font-weight: bold; font-size: 20px;">--</div>
             </div>
 
             <div class="card">
-                <label style="font-size: 12px; color: #888;">VALOR DA OFERTA (R$)</label>
-                <input type="number" id="input-valor" placeholder="Ex: 18.50">
-                <label style="font-size: 12px; color: #888;">DISTÂNCIA TOTAL (KM)</label>
-                <input type="number" id="input-km" placeholder="Ex: 5.2">
-                <button class="btn btn-primary" style="margin-top: 10px;" onclick="analisar()">ANALISAR CORRIDA</button>
+                <h4 style="margin:0 0 15px 0; color:var(--green)">Simular Corrida Uber/99</h4>
+                <input type="number" id="sim-valor" placeholder="Valor que apareceu na tela">
+                <input type="number" id="sim-km" placeholder="KM que apareceu na tela">
+                <button class="btn btn-green" onclick="assistenteAutomatico()">SIMULAR LEITURA</button>
             </div>
         </div>
 
-        <div id="tab-historico" class="container" style="display:none;">
-            <h3>Histórico de Hoje</h3>
+        <div id="tab-config" class="container" style="display:none;">
+            <div class="card">
+                <h3>Minhas Metas</h3>
+                <label style="font-size:12px; color:#888;">Minha Meta por KM (R$)</label>
+                <input type="number" id="config-meta" value="2.00">
+                
+                <label style="font-size:12px; color:#888;">Custo do meu Carro/Moto p/ KM</label>
+                <input type="number" id="config-custo" value="0.70">
+                
+                <button class="btn btn-green" onclick="salvarConfig()">SALVAR METAS</button>
+            </div>
+        </div>
+
+        <div id="tab-hist" class="container" style="display:none;">
+            <h3>Histórico de Monitoramento</h3>
             <div id="lista-historico"></div>
         </div>
 
-        <nav class="nav-bottom">
-            <div class="nav-item active" id="nav-calc" onclick="mudarAba('calc')">CALCULAR</div>
-            <div class="nav-item" id="nav-hist" onclick="mudarAba('hist')">HISTÓRICO</div>
-            <div class="nav-item" onclick="logout()">SAIR</div>
+        <nav class="bottom-nav">
+            <div class="nav-link active" id="n-ast" onclick="mudarTab('ast')">ASSISTENTE</div>
+            <div class="nav-link" id="n-hist" onclick="mudarTab('hist')">HISTÓRICO</div>
+            <div class="nav-link" id="n-cfg" onclick="mudarTab('cfg')">METAS</div>
         </nav>
     </div>
 
