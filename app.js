@@ -1,19 +1,22 @@
-// Substitua pela sua apiKey real
+// CONFIGURAÇÕES DO CRISTIAN (COPIADAS DO FIREBASE)
 const firebaseConfig = {
-  apiKey: "Njw5x4SWIEtu-h2-BLJJ-6jOZenaXSKlr2xYp9-sXg8",
-  authDomain: "rota-certa-app.firebaseapp.com",
-  projectId: "rota-certa-app",
-  storageBucket: "rota-certa-app.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:12345:web:abcde"
+  apiKey: "AIzaSyC2PyMxApIjZ_bEcyV1FdftHQHzi7irM4k",
+  authDomain: "rota-certa-861e7.firebaseapp.com",
+  projectId: "rota-certa-861e7",
+  storageBucket: "rota-certa-861e7.firebasestorage.app",
+  messagingSenderId: "56675221849",
+  appId: "1:56675221849:web:ebe796a6f2a93cba204c48",
+  measurementId: "G-EZQYY93VGN"
 };
 
+// INICIALIZAÇÃO (VERSÃO COMPAT)
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 let planoNome = "Mensal";
 
+// FUNÇÕES DE INTERAÇÃO
 function setPlano(nome) {
     planoNome = nome;
     document.getElementById('opt-mensal').classList.toggle('active', nome === 'Mensal');
@@ -32,38 +35,54 @@ function enviarWhatsapp() {
     window.location.href = `https://wa.me/${CONFIG_WHATSAPP}?text=${msg}`;
 }
 
-// Funções de Cadastro e Verificação (Mesma lógica anterior)
+// CADASTRO DE MOTORISTA (COM TESTE DE 3 DIAS)
 async function cadastrarMotorista() {
     const email = document.getElementById('email').value;
     const senha = document.getElementById('senha').value;
     const meta = document.getElementById('metaKm').value;
 
+    if(!email || !senha || !meta) return alert("Preencha todos os campos!");
+
     try {
         const cred = await auth.createUserWithEmailAndPassword(email, senha);
         const exp = new Date();
-        exp.setDate(exp.getDate() + 3);
+        exp.setDate(exp.getDate() + 3); // 3 dias de teste automático
 
         await db.collection("usuarios").doc(cred.user.uid).set({
-            email, metaKm: parseFloat(meta), dataExpiracao: exp.toISOString()
+            email: email,
+            metaKm: parseFloat(meta),
+            dataExpiracao: exp.toISOString()
         });
+        
+        alert("Teste de 3 dias ativado com sucesso!");
         location.reload();
-    } catch (e) { alert(e.message); }
+    } catch (e) { 
+        alert("Erro ao cadastrar: " + e.message); 
+    }
 }
 
-// Verifica acesso ao carregar
+// VERIFICAÇÃO DE ACESSO AO CARREGAR O APP
 auth.onAuthStateChanged(user => {
     if (user) {
         db.collection("usuarios").doc(user.uid).get().then(doc => {
-            const dados = doc.data();
-            const exp = new Date(dados.dataExpiracao);
-            if (new Date() > exp) {
-                document.getElementById('auth-section').style.display = 'none';
-                document.getElementById('bloqueio-section').style.display = 'block';
-            } else {
-                document.getElementById('auth-section').style.display = 'none';
-                document.getElementById('main-app').style.display = 'block';
-                document.getElementById('display-meta').innerText = "Meta: R$ " + dados.metaKm.toFixed(2) + "/km";
-                document.getElementById('status-validade').innerText = "Válido até: " + exp.toLocaleDateString();
+            if (doc.exists) {
+                const dados = doc.data();
+                const exp = new Date(dados.dataExpiracao);
+                const hoje = new Date();
+
+                if (hoje > exp) {
+                    // BLOQUEADO - MOSTRA TELA DE PAGAMENTO
+                    document.getElementById('auth-section').style.display = 'none';
+                    document.getElementById('bloqueio-section').style.display = 'block';
+                    document.getElementById('main-app').style.display = 'none';
+                } else {
+                    // LIBERADO - MOSTRA O SEMÁFORO
+                    document.getElementById('auth-section').style.display = 'none';
+                    document.getElementById('bloqueio-section').style.display = 'none';
+                    document.getElementById('main-app').style.display = 'block';
+                    document.getElementById('display-meta').innerText = "Sua Meta: R$ " + dados.metaKm.toFixed(2) + "/km";
+                    document.getElementById('status-validade').innerText = "Acesso garantido até: " + exp.toLocaleDateString();
+                }
             }
         });
     }
