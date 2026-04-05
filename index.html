@@ -5,105 +5,184 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Rota Certa Pro | Assistente</title>
     
+    <script>
+        const CONFIG_PRECO_MENSAL = "29,90"; 
+        const CONFIG_CHAVE_PIX = "SEU-PIX-AQUI"; 
+        const CONFIG_WHATSAPP = "55919XXXXXXXX"; 
+        const CONFIG_NOME_BANCO = "Nubank - Cristian Alves";
+    </script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 
     <style>
-        :root { --green: #2ecc71; --yellow: #f1c40f; --red: #e74c3c; --bg: #000; --card: #111; }
+        :root { --green: #2ecc71; --red: #e74c3c; --bg: #000; --card: #111; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; margin: 0; padding-bottom: 80px; }
-        
-        .header { padding: 25px 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-weight: 900; color: var(--green); font-size: 20px; }
-        .status-badge { background: #222; padding: 5px 12px; border-radius: 20px; font-size: 11px; color: var(--green); border: 1px solid var(--green); }
-
         .container { padding: 15px; max-width: 500px; margin: auto; }
         .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #222; }
-        
-        /* Semáforo de Decisão */
-        .decision-area { text-align: center; padding: 10px 0; }
-        .luz { width: 120px; height: 120px; border-radius: 50%; margin: 15px auto; border: 8px solid #222; transition: 0.5s; }
-        .result-text { font-size: 28px; font-weight: 900; letter-spacing: 1px; }
-
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
-        .stat-box { background: #1a1a1a; padding: 15px; border-radius: 15px; text-align: center; }
-        .stat-box span { font-size: 11px; color: #888; display: block; margin-bottom: 5px; }
-        .stat-box strong { font-size: 18px; color: #fff; }
-
-        input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: #1a1a1a; color: #fff; box-sizing: border-box; }
-        .btn { width: 100%; padding: 18px; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
-        .btn-green { background: var(--green); color: #000; }
-        
-        /* Menu Inferior Estilo App */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #080808; display: flex; border-top: 1px solid #222; z-index: 100; }
-        .nav-link { flex: 1; padding: 18px; text-align: center; color: #555; font-size: 12px; font-weight: bold; cursor: pointer; }
-        .nav-link.active { color: var(--green); border-top: 2px solid var(--green); }
-
-        /* Histórico */
-        .hist-item { padding: 15px; background: #151515; border-radius: 15px; margin-bottom: 10px; border-left: 5px solid var(--green); }
+        .logo { font-weight: 900; color: var(--green); font-size: 22px; text-align: center; margin: 20px 0; }
+        input, select { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: #1a1a1a; color: #fff; box-sizing: border-box; font-size: 16px; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .btn-green { background: var(--green); color: #000; margin-top: 10px; }
+        .luz { width: 80px; height: 80px; border-radius: 50%; margin: 10px auto; border: 5px solid #222; transition: 0.5s; }
+        .nav { position: fixed; bottom: 0; width: 100%; background: #080808; display: flex; border-top: 1px solid #222; z-index: 100; }
+        .nav-item { flex: 1; padding: 18px; text-align: center; color: #555; font-size: 11px; font-weight: bold; }
+        .nav-item.active { color: var(--green); border-top: 2px solid var(--green); }
+        .hint { font-size: 11px; color: var(--green); margin-bottom: 10px; display: block; }
+        #block-screen { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:9999; display:none; padding:30px; text-align:center; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-    <div id="login-screen" class="container" style="margin-top: 50px;">
+    <div id="block-screen">
+        <h2 style="color:var(--red); margin-top:50px;">Acesso Expirado</h2>
         <div class="card">
-            <div class="logo" style="text-align: center; margin-bottom: 30px;">ROTA CERTA PRO</div>
-            <input type="email" id="login-email" placeholder="E-mail">
-            <input type="password" id="login-senha" placeholder="Senha">
-            <button class="btn btn-green" onclick="fazerLogin()">ENTRAR NO ASSISTENTE</button>
-            <p style="text-align:center; font-size:12px; color:#888; margin-top:20px;" onclick="irCadastro()">Criar conta teste (3 dias)</p>
+            <span>ASSINATURA MENSAL</span><br>
+            <b style="font-size:32px; color:var(--green)">R$ <span id="val-exibido"></span></b>
         </div>
+        <p>Pix: <b id="pix-exibido" style="color:var(--green)"></b><br><small id="banco-exibido"></small></p>
+        <button class="btn btn-green" style="background:#25d366; color:#fff;" onclick="window.location.href='https://wa.me/'+CONFIG_WHATSAPP">RENOVAR NO WHATSAPP</button>
     </div>
 
-    <div id="main-screen" style="display:none;">
-        <div class="header">
-            <div class="logo">ROTA CERTA PRO</div>
-            <div class="status-badge" id="badge-val">TESTE ATIVO</div>
-        </div>
+    <div id="app-content">
+        <div class="logo">ROTA CERTA PRO</div>
 
-        <div id="tab-assistente" class="container">
-            <div class="card decision-area">
-                <div id="luz-indicadora" class="luz" style="background: #333;"></div>
-                <div id="texto-decisao" class="result-text">MONITORANDO...</div>
-                <div class="stats-grid">
-                    <div class="stat-box"><span>LUCRO LÍQUIDO</span><strong id="res-lucro">R$ 0,00</strong></div>
-                    <div class="stat-box"><span>R$ / KM</span><strong id="res-km">R$ 0,00</strong></div>
+        <div id="tab-ast" class="container">
+            <div class="card" style="text-align:center;">
+                <div id="semaforo" class="luz" style="background:#333;"></div>
+                <h3 id="txt-decisao">MONITORANDO...</h3>
+                <div style="display:flex; justify-content:space-around;">
+                    <div><small style="color:#888;">LUCRO REAL</small><br><b id="res-lucro">R$ 0,00</b></div>
+                    <div><small style="color:#888;">GANHO/KM</small><br><b id="res-km">R$ 0,00</b></div>
                 </div>
             </div>
 
             <div class="card">
-                <h4 style="margin:0 0 15px 0; color:var(--green)">Simular Corrida Uber/99</h4>
-                <input type="number" id="sim-valor" placeholder="Valor que apareceu na tela">
-                <input type="number" id="sim-km" placeholder="KM que apareceu na tela">
-                <button class="btn btn-green" onclick="assistenteAutomatico()">SIMULAR LEITURA</button>
+                <select id="modo-trabalho">
+                    <option value="app">MODO APP (UBER/99/IND)</option>
+                    <option value="particular">MODO PARTICULAR (MOTOTÁXI)</option>
+                </select>
+                <input type="number" id="val-entrada" placeholder="Valor da Corrida (R$)">
+                <input type="number" id="km-entrada" placeholder="KM Total">
+                <input type="text" id="end-destino" placeholder="Destino para o GPS">
+                <button class="btn btn-green" onclick="processar()">ANALISAR E ABRIR ROTA</button>
             </div>
         </div>
 
-        <div id="tab-config" class="container" style="display:none;">
+        <div id="tab-veiculo" class="container" style="display:none;">
             <div class="card">
-                <h3>Minhas Metas</h3>
-                <label style="font-size:12px; color:#888;">Minha Meta por KM (R$)</label>
-                <input type="number" id="config-meta" value="2.00">
+                <h3 style="color:var(--green)">Perfil do Veículo</h3>
                 
-                <label style="font-size:12px; color:#888;">Custo do meu Carro/Moto p/ KM</label>
-                <input type="number" id="config-custo" value="0.70">
+                <label style="font-size:12px; color:#888;">Selecione sua Categoria:</label>
+                <select id="select-moto" onchange="sugerirValores()">
+                    <option value="custom">Personalizado</option>
+                    <option value="160">Moto 160cc (Titan/Bros/Fan)</option>
+                    <option value="250">Moto 250cc (Twister/Fazer)</option>
+                    <option value="carro">Carro Econômico</option>
+                </select>
+
+                <span id="msg-sugestao" class="hint" style="display:none;">✨ Sugerimos estes valores para sua categoria, mas você pode mudar!</span>
+
+                <label>Consumo (KM por Litro)</label>
+                <input type="number" id="moto-consumo" placeholder="Ex: 35">
                 
-                <button class="btn btn-green" onclick="salvarConfig()">SALVAR METAS</button>
+                <label>Preço da Gasolina (R$)</label>
+                <input type="number" id="gas-preco" value="6.20">
+                
+                <label>Sua Meta (R$ limpo por KM)</label>
+                <input type="number" id="user-meta" placeholder="Ex: 2.00">
+                
+                <button class="btn btn-green" onclick="salvarConfig()">SALVAR CONFIGURAÇÃO</button>
             </div>
         </div>
-
-        <div id="tab-hist" class="container" style="display:none;">
-            <h3>Histórico de Monitoramento</h3>
-            <div id="lista-historico"></div>
-        </div>
-
-        <nav class="bottom-nav">
-            <div class="nav-link active" id="n-ast" onclick="mudarTab('ast')">ASSISTENTE</div>
-            <div class="nav-link" id="n-hist" onclick="mudarTab('hist')">HISTÓRICO</div>
-            <div class="nav-link" id="n-cfg" onclick="mudarTab('cfg')">METAS</div>
-        </nav>
     </div>
 
-    <script src="app.js"></script>
+    <nav class="nav">
+        <div class="nav-item active" id="n-ast" onclick="mudarTab('ast')">ASSISTENTE</div>
+        <div class="nav-item" id="n-vei" onclick="mudarTab('vei')">VEÍCULO</div>
+    </nav>
+
+    <script>
+        // FIREBASE E CONFIG INICIAL
+        document.getElementById('val-exibido').innerText = CONFIG_PRECO_MENSAL;
+        document.getElementById('pix-exibido').innerText = CONFIG_CHAVE_PIX;
+        document.getElementById('banco-exibido').innerText = CONFIG_NOME_BANCO;
+
+        function sugerirValores() {
+            const cat = document.getElementById('select-moto').value;
+            const msg = document.getElementById('msg-sugestao');
+            
+            if(cat === '160') {
+                document.getElementById('moto-consumo').value = 38;
+                document.getElementById('user-meta').value = 1.80;
+                msg.style.display = 'block';
+            } else if(cat === '250') {
+                document.getElementById('moto-consumo').value = 30;
+                document.getElementById('user-meta').value = 2.20;
+                msg.style.display = 'block';
+            } else if(cat === 'carro') {
+                document.getElementById('moto-consumo').value = 12;
+                document.getElementById('user-meta').value = 2.50;
+                msg.style.display = 'block';
+            } else {
+                msg.style.display = 'none';
+            }
+        }
+
+        function processar() {
+            const v = parseFloat(document.getElementById('val-entrada').value);
+            const k = parseFloat(document.getElementById('km-entrada').value);
+            const consumo = parseFloat(document.getElementById('moto-consumo').value) || 35;
+            const gas = parseFloat(document.getElementById('gas-preco').value) || 6.20;
+            const meta = parseFloat(document.getElementById('user-meta').value) || 2.00;
+
+            if(!v || !k) return alert("Preencha Valor e KM!");
+
+            const custoKm = gas / consumo;
+            const lucro = v - (k * custoKm);
+            const rKm = lucro / k;
+
+            const semaforo = document.getElementById('semaforo');
+            const txt = document.getElementById('txt-decisao');
+
+            if (rKm >= meta) {
+                semaforo.style.background = "var(--green)";
+                txt.innerText = "ACEITA! ✅";
+                falar("Corrida boa! Pode aceitar.");
+            } else if (rKm >= (meta * 0.7)) {
+                semaforo.style.background = "var(--yellow)";
+                txt.innerText = "AVALIE ⚠️";
+            } else {
+                semaforo.style.background = "var(--red)";
+                txt.innerText = "RECUSE! ❌";
+                falar("Cuidado, lucro muito baixo.");
+            }
+
+            document.getElementById('res-lucro').innerText = "R$ " + lucro.toFixed(2);
+            document.getElementById('res-km').innerText = "R$ " + rKm.toFixed(2);
+
+            const destino = document.getElementById('end-destino').value;
+            if(destino) {
+                setTimeout(() => {
+                    window.location.href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destino)}`;
+                }, 1500);
+            }
+        }
+
+        function mudarTab(t) {
+            document.getElementById('tab-ast').style.display = t === 'ast' ? 'block' : 'none';
+            document.getElementById('tab-veiculo').style.display = t === 'vei' ? 'block' : 'none';
+            document.getElementById('n-ast').classList.toggle('active', t === 'ast');
+            document.getElementById('n-vei').classList.toggle('active', t === 'vei');
+        }
+
+        function falar(m) {
+            const ut = new SpeechSynthesisUtterance(m);
+            ut.lang = 'pt-BR';
+            window.speechSynthesis.speak(ut);
+        }
+
+        function salvarConfig() { alert("Configuração Salva!"); }
+    </script>
 </body>
 </html>
