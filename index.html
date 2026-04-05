@@ -5,17 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Moto Lucro Premium</title>
+    <title>Moto Lucro Ultra</title>
     <style>
         :root {
             --bg: #000000;
-            --card: #1a1a1a;
+            --card: #141414;
             --primary: #f97316;
             --text-main: #ffffff;
             --text-sub: #a1a1aa;
-            --border: #333333;
+            --border: #262626;
             --success: #22c55e;
             --danger: #ef4444;
+            --blue: #3b82f6;
         }
 
         body {
@@ -23,256 +24,270 @@
             background-color: var(--bg);
             color: var(--text-main);
             margin: 0;
-            padding-bottom: 90px;
-            user-select: none;
+            padding-bottom: 100px;
         }
 
-        /* HEADER PREMIUM */
         header {
-            padding: 25px 20px;
-            background: linear-gradient(to bottom, #111, #000);
+            padding: 20px;
+            background: #000;
             border-bottom: 1px solid var(--border);
             text-align: center;
         }
-        header h1 { font-size: 1.2rem; margin: 0; letter-spacing: 1px; color: var(--primary); }
+        header h1 { font-size: 1.1rem; margin: 0; color: var(--primary); letter-spacing: 1px; }
 
-        /* NAVEGAÇÃO ENTRE PÁGINAS */
-        .page { display: none; padding: 15px; animation: fadeIn 0.2s ease-in; }
+        .page { display: none; padding: 15px; animation: fadeIn 0.2s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* CARDS ESTILO DASHBOARD */
         .card {
             background: var(--card);
-            padding: 20px;
+            padding: 18px;
             border-radius: 20px;
             margin-bottom: 15px;
             border: 1px solid var(--border);
         }
 
-        .card-title { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 15px; font-weight: 600; text-transform: uppercase; }
+        .card-title { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 12px; font-weight: 700; text-transform: uppercase; }
 
-        /* INPUTS GRANDES */
-        .input-group { margin-bottom: 20px; }
-        label { display: block; font-size: 0.8rem; margin-bottom: 8px; color: var(--text-sub); }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 0.75rem; margin-bottom: 6px; color: var(--text-sub); }
         input {
             width: 100%;
-            padding: 16px;
-            border-radius: 12px;
+            padding: 14px;
+            border-radius: 10px;
             border: 1px solid var(--border);
             background: #000;
             color: #fff;
-            font-size: 1.1rem;
+            font-size: 1rem;
             box-sizing: border-box;
         }
-        input:focus { border-color: var(--primary); outline: none; }
 
-        /* BOTÕES PREMIUM */
         button {
             width: 100%;
-            padding: 18px;
-            border-radius: 15px;
+            padding: 16px;
+            border-radius: 12px;
             border: none;
             font-weight: 800;
-            font-size: 1rem;
             cursor: pointer;
-            transition: 0.2s;
         }
         .btn-primary { background: var(--primary); color: #000; }
-        .btn-success { background: var(--success); color: #fff; margin-top: 15px; }
-        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-success { background: var(--success); color: #fff; margin-top: 10px; }
 
-        /* RESULTADOS GRID */
-        .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
-        .stat-box { background: #000; padding: 15px; border-radius: 15px; border: 1px solid var(--border); }
-        .stat-label { font-size: 0.7rem; color: var(--text-sub); margin-bottom: 5px; }
-        .stat-value { font-size: 1rem; font-weight: 700; }
+        /* GRID DE RESULTADOS ANALÍTICOS */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .stat-item {
+            background: #000;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .stat-label { font-size: 0.65rem; color: var(--text-sub); display: block; margin-bottom: 4px; }
+        .stat-value { font-size: 0.95rem; font-weight: 700; color: var(--primary); }
 
-        /* PROGRESSO META */
-        .progress-bg { background: #333; height: 12px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        /* PROGRESSO */
+        .progress-bg { background: #262626; height: 8px; border-radius: 10px; margin: 10px 0; overflow: hidden; }
         #progress-bar { background: var(--primary); height: 100%; width: 0%; transition: 0.5s; }
 
-        /* MENU INFERIOR FIXO */
+        /* NAV BAR */
         nav {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(20, 20, 20, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(10, 10, 10, 0.98);
             display: flex; justify-content: space-around;
-            padding: 15px 0; border-top: 1px solid var(--border);
+            padding: 12px 0; border-top: 1px solid var(--border);
         }
-        .nav-btn { background: none; border: none; color: var(--text-sub); font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; width: auto; padding: 0; }
+        .nav-btn { background: none; border: none; color: var(--text-sub); font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; }
         .nav-btn.active { color: var(--primary); }
-        .nav-btn i { font-style: normal; font-size: 1.4rem; margin-bottom: 5px; }
 
-        /* LISTA DE CORRIDAS */
         .item-corrida {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px; background: #000; border-radius: 12px; margin-bottom: 10px;
+            background: var(--card);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>MOTO LUCRO PREMIUM</h1>
-</header>
+<header><h1>MOTO ANALYTICS PREMIUM</h1></header>
 
-<div id="page-calc" class="page active">
+<div id="p-calc" class="page active">
     <div class="card">
-        <div class="card-title">Simulador de Viagem</div>
+        <div class="card-title">Nova Simulação</div>
         <div class="input-group">
-            <label>Valor da Corrida (R$)</label>
-            <input type="number" id="v-corrida" inputmode="decimal" placeholder="0.00">
+            <label>Valor Bruto (R$)</label>
+            <input type="number" id="v-val" inputmode="decimal" placeholder="Ex: 15.50">
         </div>
         <div class="input-group">
-            <label>KM Total (Até o cliente + Entrega)</label>
-            <input type="number" id="k-corrida" inputmode="decimal" placeholder="0.0">
+            <label>Distância Total (KM)</label>
+            <input type="number" id="v-km" inputmode="decimal" placeholder="Ex: 6.2">
         </div>
-        <button class="btn-primary" onclick="calcular()">CALCULAR LUCRO</button>
+        <div class="input-group">
+            <label>Tempo Estimado (Minutos)</label>
+            <input type="number" id="v-min" inputmode="numeric" placeholder="Ex: 15">
+        </div>
+        <button class="btn-primary" onclick="analisar()">ANALISAR DESEMPENHO</button>
 
-        <div id="resultado" style="display:none; margin-top:20px;">
-            <div class="stat-box" style="text-align:center; border-color: var(--primary);">
-                <div class="stat-label">LUCRO LÍQUIDO ESTIMADO</div>
-                <div id="lucro-valor" class="stat-value" style="font-size: 1.8rem; color: var(--success);">R$ 0.00</div>
+        <div id="res-box" style="display:none; margin-top:20px;">
+            <div class="analytics-grid">
+                <div class="stat-item">
+                    <span class="stat-label">LUCRO REAL</span>
+                    <span id="res-lucro" class="stat-value">R$ 0.00</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">GANHO/KM</span>
+                    <span id="res-gkm" class="stat-value">R$ 0.00</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">GANHO/HORA</span>
+                    <span id="res-ghora" class="stat-value">R$ 0.00</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">GANHO/MIN</span>
+                    <span id="res-gmin" class="stat-value">R$ 0.00</span>
+                </div>
             </div>
-            <button class="btn-success" onclick="salvar()">ACEITAR E SALVAR</button>
+            <button class="btn-success" onclick="salvar()">REGISTRAR CORRIDA</button>
         </div>
     </div>
 </div>
 
-<div id="page-ganhos" class="page">
+<div id="p-ganhos" class="page">
     <div class="card">
-        <div class="card-title">Meta Diária</div>
+        <div class="card-title">Resumo do Dia</div>
         <div class="progress-bg"><div id="progress-bar"></div></div>
-        <div style="display:flex; justify-content:space-between; font-weight:700;">
-            <span id="txt-ganho">R$ 0.00</span>
-            <span id="txt-meta-perc" style="color:var(--primary)">0%</span>
+        <div style="display:flex; justify-content:space-between; font-weight:bold;">
+            <span id="txt-total">R$ 0.00</span>
+            <span id="txt-perc" style="color:var(--primary)">0%</span>
+        </div>
+        
+        <div class="analytics-grid" style="margin-top:15px;">
+            <div class="stat-item">
+                <span class="stat-label">MÉDIA R$/KM</span>
+                <span id="med-km" class="stat-value">R$ 0.00</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">MÉDIA R$/HORA</span>
+                <span id="med-hora" class="stat-value">R$ 0.00</span>
+            </div>
         </div>
     </div>
 
-    <div id="historico-lista">
-        </div>
-    
-    <button onclick="limparTudo()" style="background:none; color:var(--danger); font-size:0.8rem; margin-top:20px;">Zerar todos os registros</button>
+    <div id="lista"></div>
+    <button onclick="limpar()" style="background:none; color:gray; font-size:0.7rem; margin-top:20px;">Zerar histórico</button>
 </div>
 
-<div id="page-perfil" class="page">
+<div id="p-perfil" class="page">
     <div class="card">
-        <div class="card-title">Minha Moto & Custos</div>
-        <div class="input-group">
-            <label>Consumo (KM/L)</label>
-            <input type="number" id="cfg-cons" value="35" oninput="saveConfig()">
-        </div>
-        <div class="input-group">
-            <label>Preço Gasolina (R$)</label>
-            <input type="number" id="cfg-prec" value="5.80" oninput="saveConfig()">
-        </div>
-        <div class="input-group">
-            <label>Custos Fixos Mes (Financ/Manut)</label>
-            <input type="number" id="cfg-fixo" value="450" oninput="saveConfig()">
-        </div>
-        <div class="input-group">
-            <label>Meta Diária (R$)</label>
-            <input type="number" id="cfg-meta" value="200" oninput="saveConfig()">
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-title">Seu custo atual</div>
-        <div class="grid-stats">
-            <div class="stat-box">
-                <div class="stat-label">Custo por KM</div>
-                <div id="res-custo-km" class="stat-value">R$ 0.00</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">Meta Batida</div>
-                <div id="res-total-dia" class="stat-value">R$ 0.00</div>
-            </div>
-        </div>
+        <div class="card-title">Configurações Base</div>
+        <div class="input-group"><label>Consumo (KM/L)</label><input type="number" id="c-cons" value="35"></div>
+        <div class="input-group"><label>Preço Gasosa (R$)</label><input type="number" id="c-prec" value="5.80"></div>
+        <div class="input-group"><label>Custo Fixo Mês (Manut/Seg)</label><input type="number" id="c-fixo" value="400"></div>
+        <div class="input-group"><label>Meta Diária (R$)</label><input type="number" id="c-meta" value="200"></div>
+        <button class="btn-primary" onclick="salvarConfigs()">SALVAR AJUSTES</button>
     </div>
 </div>
 
 <nav>
-    <button class="nav-btn active" onclick="nav('page-calc', this)"><i>📊</i>Calculadora</button>
-    <button class="nav-btn" onclick="nav('page-ganhos', this)"><i>💰</i>Ganhos</button>
-    <button class="nav-btn" onclick="nav('page-perfil', this)"><i>⚙️</i>Perfil</button>
+    <button class="nav-btn active" onclick="tab('p-calc', this)"><i>📊</i>Calc</button>
+    <button class="nav-btn" onclick="tab('p-ganhos', this)"><i>💰</i>Ganhos</button>
+    <button class="nav-btn" onclick="tab('p-perfil', this)"><i>⚙️</i>Perfil</button>
 </nav>
 
 <script>
-    let corridas = JSON.parse(localStorage.getItem('m_premium_corridas')) || [];
-    let config = JSON.parse(localStorage.getItem('m_premium_cfg')) || {c: 35, p: 5.80, f: 450, m: 200};
-    let custoKm = 0;
+    let corridas = JSON.parse(localStorage.getItem('m_ultra_data')) || [];
+    let config = JSON.parse(localStorage.getItem('m_ultra_cfg')) || {c: 35, p: 5.8, f: 400, m: 200};
+    let custoPorKm = 0;
 
-    function nav(id, btn) {
+    function tab(id, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         btn.classList.add('active');
-        if(id === 'page-ganhos') renderGanhos();
-        if(id === 'page-perfil') renderPerfil();
+        if(id === 'p-ganhos') renderGanhos();
     }
 
-    function saveConfig() {
-        config = {
-            c: parseFloat(document.getElementById('cfg-cons').value) || 1,
-            p: parseFloat(document.getElementById('cfg-prec').value) || 0,
-            f: parseFloat(document.getElementById('cfg-fixo').value) || 0,
-            m: parseFloat(document.getElementById('cfg-meta').value) || 0
-        };
-        localStorage.setItem('m_premium_cfg', JSON.stringify(config));
-        calcCustoFixo();
+    function salvarConfigs() {
+        config.c = parseFloat(document.getElementById('c-cons').value);
+        config.p = parseFloat(document.getElementById('c-prec').value);
+        config.f = parseFloat(document.getElementById('c-fixo').value);
+        config.m = parseFloat(document.getElementById('c-meta').value);
+        localStorage.setItem('m_ultra_cfg', JSON.stringify(config));
+        calcularCustoBase();
+        alert("Configurações atualizadas!");
     }
 
-    function calcCustoFixo() {
-        // Custo gasosa + diluição de custos fixos em 2500km rodados/mês
-        custoKm = (config.p / config.c) + (config.f / 2500);
-        const el = document.getElementById('res-custo-km');
-        if(el) el.innerText = "R$ " + custoKm.toFixed(2);
+    function calcularCustoBase() {
+        custoPorKm = (config.p / config.c) + (config.f / 2500); // 2500km base/mês
     }
 
-    function calcular() {
-        const v = parseFloat(document.getElementById('v-corrida').value);
-        const k = parseFloat(document.getElementById('k-corrida').value);
-        if(!v || !k) return;
+    function analisar() {
+        const v = parseFloat(document.getElementById('v-val').value);
+        const k = parseFloat(document.getElementById('v-km').value);
+        const m = parseFloat(document.getElementById('v-min').value);
+        if(!v || !k || !m) return;
 
-        const lucro = v - (k * custoKm);
-        document.getElementById('resultado').style.display = 'block';
-        const elLucro = document.getElementById('lucro-valor');
-        elLucro.innerText = "R$ " + lucro.toFixed(2);
-        elLucro.style.color = lucro > (v * 0.4) ? "#22c55e" : "#ef4444";
+        const lucro = v - (k * custoPorKm);
+        const gKm = v / k;
+        const gMin = v / m;
+        const gHora = gMin * 60;
+
+        document.getElementById('res-box').style.display = 'block';
+        document.getElementById('res-lucro').innerText = "R$ " + lucro.toFixed(2);
+        document.getElementById('res-gkm').innerText = "R$ " + gKm.toFixed(2);
+        document.getElementById('res-ghora').innerText = "R$ " + gHora.toFixed(2);
+        document.getElementById('res-gmin').innerText = "R$ " + gMin.toFixed(2);
+        
+        document.getElementById('res-lucro').style.color = lucro > (v*0.4) ? "var(--success)" : "var(--danger)";
     }
 
     function salvar() {
-        const v = parseFloat(document.getElementById('v-corrida').value);
-        const k = parseFloat(document.getElementById('k-corrida').value);
-        corridas.push({v, k, id: Date.now(), t: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})});
-        localStorage.setItem('m_premium_corridas', JSON.stringify(corridas));
+        const v = parseFloat(document.getElementById('v-val').value);
+        const k = parseFloat(document.getElementById('v-km').value);
+        const m = parseFloat(document.getElementById('v-min').value);
         
-        document.getElementById('v-corrida').value = '';
-        document.getElementById('k-corrida').value = '';
-        document.getElementById('resultado').style.display = 'none';
-        alert("Corrida Salva!");
+        corridas.push({v, k, m, id: Date.now(), t: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})});
+        localStorage.setItem('m_ultra_data', JSON.stringify(corridas));
+        
+        document.getElementById('res-box').style.display = 'none';
+        document.getElementById('v-val').value = '';
+        document.getElementById('v-km').value = '';
+        document.getElementById('v-min').value = '';
+        alert("Corrida registrada!");
     }
 
     function renderGanhos() {
         const total = corridas.reduce((a, b) => a + b.v, 0);
-        const perc = Math.min((total / config.m) * 100, 100);
+        const totalKm = corridas.reduce((a, b) => a + b.k, 0);
+        const totalMin = corridas.reduce((a, b) => a + b.m, 0);
         
-        document.getElementById('txt-ganho').innerText = "R$ " + total.toFixed(2);
-        document.getElementById('txt-meta-perc').innerText = Math.round(perc) + "%";
+        const perc = Math.min((total / config.m) * 100, 100);
+        document.getElementById('txt-total').innerText = "R$ " + total.toFixed(2);
+        document.getElementById('txt-perc').innerText = Math.round(perc) + "%";
         document.getElementById('progress-bar').style.width = perc + "%";
 
-        const lista = document.getElementById('historico-lista');
-        lista.innerHTML = '<div class="card-title">Corridas de Hoje</div>';
-        
+        document.getElementById('med-km').innerText = totalKm > 0 ? "R$ " + (total/totalKm).toFixed(2) : "R$ 0.00";
+        document.getElementById('med-hora').innerText = totalMin > 0 ? "R$ " + ((total/totalMin)*60).toFixed(2) : "R$ 0.00";
+
+        const lista = document.getElementById('lista');
+        lista.innerHTML = '<div class="card-title">Histórico de Hoje</div>';
         [...corridas].reverse().forEach(c => {
             lista.innerHTML += `
                 <div class="item-corrida">
                     <div>
-                        <div style="font-weight:700">R$ ${c.v.toFixed(2)}</div>
-                        <div style="font-size:0.7rem; color:var(--text-sub)">${c.t} • ${c.k} KM</div>
+                        <div style="font-weight:bold; font-size:1.1rem">R$ ${c.v.toFixed(2)}</div>
+                        <div style="font-size:0.7rem; color:var(--text-sub)">${c.t} • ${c.k}km • ${c.m}min</div>
                     </div>
-                    <button onclick="remover(${c.id})" style="width:auto; background:none; color:var(--danger); padding:5px;">Apagar</button>
+                    <button onclick="remover(${c.id})" style="width:auto; background:none; color:var(--danger); font-size:12px;">Apagar</button>
                 </div>
             `;
         });
@@ -280,30 +295,18 @@
 
     function remover(id) {
         corridas = corridas.filter(c => c.id !== id);
-        localStorage.setItem('m_premium_corridas', JSON.stringify(corridas));
+        localStorage.setItem('m_ultra_data', JSON.stringify(corridas));
         renderGanhos();
     }
 
-    function renderPerfil() {
-        document.getElementById('cfg-cons').value = config.c;
-        document.getElementById('cfg-prec').value = config.p;
-        document.getElementById('cfg-fixo').value = config.f;
-        document.getElementById('cfg-meta').value = config.m;
-        document.getElementById('res-total-dia').innerText = "R$ " + corridas.reduce((a, b) => a + b.v, 0).toFixed(2);
-        calcCustoFixo();
-    }
-
-    function limparTudo() {
-        if(confirm("Deseja apagar todos os registros de hoje?")) {
-            corridas = [];
-            localStorage.removeItem('m_premium_corridas');
-            renderGanhos();
-        }
-    }
+    function limpar() { if(confirm("Zerar hoje?")) { corridas = []; localStorage.removeItem('m_ultra_data'); renderGanhos(); } }
 
     window.onload = () => {
-        renderPerfil();
-        calcCustoFixo();
+        document.getElementById('c-cons').value = config.c;
+        document.getElementById('c-prec').value = config.p;
+        document.getElementById('c-fixo').value = config.f;
+        document.getElementById('c-meta').value = config.m;
+        calcularCustoBase();
     }
 </script>
 </body>
