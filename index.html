@@ -3,42 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <title>Moto Lucro Ultra</title>
+    <title>Moto Gestão Pro - Pará</title>
     <style>
         :root {
-            --bg: #000000;
-            --card: #141414;
+            --bg: #0a0a0a;
+            --card: #161616;
             --primary: #f97316;
-            --text-main: #ffffff;
-            --text-sub: #a1a1aa;
+            --text: #ffffff;
+            --sub: #a1a1aa;
             --border: #262626;
-            --success: #22c55e;
-            --danger: #ef4444;
-            --blue: #3b82f6;
+            --green: #22c55e;
+            --red: #ef4444;
         }
 
         body {
             font-family: -apple-system, system-ui, sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
+            background: var(--bg);
+            color: var(--text);
             margin: 0;
-            padding-bottom: 100px;
+            padding-bottom: 90px;
         }
 
+        /* HEADER */
         header {
             padding: 20px;
             background: #000;
             border-bottom: 1px solid var(--border);
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        header h1 { font-size: 1.1rem; margin: 0; color: var(--primary); letter-spacing: 1px; }
+        .month-badge { background: var(--primary); color: #000; padding: 4px 10px; border-radius: 20px; font-weight: 800; font-size: 0.7rem; }
 
+        /* PAGINAÇÃO */
         .page { display: none; padding: 15px; animation: fadeIn 0.2s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+        /* CARDS */
         .card {
             background: var(--card);
             padding: 18px;
@@ -46,268 +48,272 @@
             margin-bottom: 15px;
             border: 1px solid var(--border);
         }
+        .card-title { font-size: 0.75rem; color: var(--sub); font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
 
-        .card-title { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 12px; font-weight: 700; text-transform: uppercase; }
-
-        .input-group { margin-bottom: 15px; }
-        label { display: block; font-size: 0.75rem; margin-bottom: 6px; color: var(--text-sub); }
-        input {
-            width: 100%;
-            padding: 14px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            background: #000;
-            color: #fff;
-            font-size: 1rem;
-            box-sizing: border-box;
+        /* INPUTS */
+        .input-group { margin-bottom: 12px; }
+        label { display: block; font-size: 0.7rem; color: var(--sub); margin-bottom: 4px; }
+        input, select {
+            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border);
+            background: #000; color: #fff; font-size: 1rem; box-sizing: border-box;
         }
 
-        button {
-            width: 100%;
-            padding: 16px;
-            border-radius: 12px;
-            border: none;
-            font-weight: 800;
-            cursor: pointer;
-        }
-        .btn-primary { background: var(--primary); color: #000; }
-        .btn-success { background: var(--success); color: #fff; margin-top: 10px; }
+        /* BOTÕES */
+        button { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .btn-main { background: var(--primary); color: #000; }
+        .btn-outline { background: none; border: 1px solid var(--primary); color: var(--primary); }
+        .btn-stop { background: var(--red); color: #fff; }
 
-        /* GRID DE RESULTADOS ANALÍTICOS */
-        .analytics-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .stat-item {
-            background: #000;
-            padding: 12px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            text-align: center;
-        }
-        .stat-label { font-size: 0.65rem; color: var(--text-sub); display: block; margin-bottom: 4px; }
-        .stat-value { font-size: 0.95rem; font-weight: 700; color: var(--primary); }
+        /* GRID */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stat { background: #000; padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
+        .stat-val { display: block; font-size: 1rem; font-weight: 800; color: var(--primary); }
+        .stat-lab { font-size: 0.6rem; color: var(--sub); text-transform: uppercase; }
 
-        /* PROGRESSO */
-        .progress-bg { background: #262626; height: 8px; border-radius: 10px; margin: 10px 0; overflow: hidden; }
-        #progress-bar { background: var(--primary); height: 100%; width: 0%; transition: 0.5s; }
-
-        /* NAV BAR */
+        /* NAV */
         nav {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(10, 10, 10, 0.98);
-            display: flex; justify-content: space-around;
-            padding: 12px 0; border-top: 1px solid var(--border);
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
+            display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid var(--border);
         }
-        .nav-btn { background: none; border: none; color: var(--text-sub); font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; }
-        .nav-btn.active { color: var(--primary); }
+        .nav-item { background: none; border: none; color: var(--sub); font-size: 0.65rem; display: flex; flex-direction: column; align-items: center; width: auto; }
+        .nav-item.active { color: var(--primary); }
+        .nav-item i { font-size: 1.4rem; font-style: normal; margin-bottom: 4px; }
 
-        .item-corrida {
-            background: var(--card);
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 10px;
-            border: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        /* LISTA HISTORICO */
+        .log-item { background: #000; padding: 12px; border-radius: 10px; margin-bottom: 8px; border-left: 3px solid var(--primary); font-size: 0.85rem; }
     </style>
 </head>
 <body>
 
-<header><h1>MOTO ANALYTICS PREMIUM</h1></header>
+<header>
+    <div style="font-weight: 900; font-size: 1rem;">MOTO GESTÃO <span style="color:var(--primary)">PRO</span></div>
+    <div id="display-mes" class="month-badge">ABRIL 2026</div>
+</header>
 
-<div id="p-calc" class="page active">
+<div id="p-hoje" class="page active">
+    <div class="card" id="card-turno">
+        <div class="card-title">Controle de Horas (Turno)</div>
+        <div id="status-turno" style="margin-bottom: 15px; font-weight: bold; color: var(--sub);">Turno: Offline</div>
+        <button id="btn-turno" class="btn-main" onclick="toggleTurno()">INICIAR TRABALHO</button>
+    </div>
+
     <div class="card">
-        <div class="card-title">Nova Simulação</div>
-        <div class="input-group">
-            <label>Valor Bruto (R$)</label>
-            <input type="number" id="v-val" inputmode="decimal" placeholder="Ex: 15.50">
+        <div class="card-title">Lançar Corrida</div>
+        <div class="grid">
+            <div class="input-group"><label>Valor (R$)</label><input type="number" id="f-val" inputmode="decimal"></div>
+            <div class="input-group"><label>KM Rodado</label><input type="number" id="f-km" inputmode="decimal"></div>
         </div>
-        <div class="input-group">
-            <label>Distância Total (KM)</label>
-            <input type="number" id="v-km" inputmode="decimal" placeholder="Ex: 6.2">
-        </div>
-        <div class="input-group">
-            <label>Tempo Estimado (Minutos)</label>
-            <input type="number" id="v-min" inputmode="numeric" placeholder="Ex: 15">
-        </div>
-        <button class="btn-primary" onclick="analisar()">ANALISAR DESEMPENHO</button>
+        <button class="btn-outline" onclick="addCorrida()">SALVAR CORRIDA</button>
+    </div>
 
-        <div id="res-box" style="display:none; margin-top:20px;">
-            <div class="analytics-grid">
-                <div class="stat-item">
-                    <span class="stat-label">LUCRO REAL</span>
-                    <span id="res-lucro" class="stat-value">R$ 0.00</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">GANHO/KM</span>
-                    <span id="res-gkm" class="stat-value">R$ 0.00</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">GANHO/HORA</span>
-                    <span id="res-ghora" class="stat-value">R$ 0.00</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">GANHO/MIN</span>
-                    <span id="res-gmin" class="stat-value">R$ 0.00</span>
-                </div>
-            </div>
-            <button class="btn-success" onclick="salvar()">REGISTRAR CORRIDA</button>
-        </div>
+    <div class="grid">
+        <div class="stat"><span class="stat-lab">Ganhos Hoje</span><span id="h-ganho" class="stat-val">R$ 0.00</span></div>
+        <div class="stat"><span class="stat-lab">Horas Hoje</span><span id="h-tempo" class="stat-val">0h 0m</span></div>
     </div>
 </div>
 
-<div id="p-ganhos" class="page">
+<div id="p-hist" class="page">
     <div class="card">
-        <div class="card-title">Resumo do Dia</div>
-        <div class="progress-bg"><div id="progress-bar"></div></div>
-        <div style="display:flex; justify-content:space-between; font-weight:bold;">
-            <span id="txt-total">R$ 0.00</span>
-            <span id="txt-perc" style="color:var(--primary)">0%</span>
+        <div class="card-title">Consultar Mês Passado</div>
+        <select id="select-mes" onchange="renderHist()">
+            </select>
+    </div>
+
+    <div id="resumo-mes" class="card" style="background: var(--primary); color: #000;">
+        <div class="card-title" style="color:#000">Desempenho Total</div>
+        <div class="grid">
+            <div><small>Faturado:</small><br><strong id="m-fat" style="font-size: 1.4rem;">R$ 0</strong></div>
+            <div><small>Km Total:</small><br><strong id="m-km" style="font-size: 1.4rem;">0</strong></div>
         </div>
-        
-        <div class="analytics-grid" style="margin-top:15px;">
-            <div class="stat-item">
-                <span class="stat-label">MÉDIA R$/KM</span>
-                <span id="med-km" class="stat-value">R$ 0.00</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">MÉDIA R$/HORA</span>
-                <span id="med-hora" class="stat-value">R$ 0.00</span>
-            </div>
+        <hr style="border: 0; border-top: 1px solid rgba(0,0,0,0.1); margin: 10px 0;">
+        <div class="grid">
+            <div><small>Média R$/Hora:</small><br><strong id="m-hora">R$ 0</strong></div>
+            <div><small>Média R$/KM:</small><br><strong id="m-rkm">R$ 0</strong></div>
         </div>
     </div>
 
-    <div id="lista"></div>
-    <button onclick="limpar()" style="background:none; color:gray; font-size:0.7rem; margin-top:20px;">Zerar histórico</button>
+    <div id="lista-hist"></div>
 </div>
 
-<div id="p-perfil" class="page">
+<div id="p-set" class="page">
     <div class="card">
         <div class="card-title">Configurações Base</div>
-        <div class="input-group"><label>Consumo (KM/L)</label><input type="number" id="c-cons" value="35"></div>
-        <div class="input-group"><label>Preço Gasosa (R$)</label><input type="number" id="c-prec" value="5.80"></div>
-        <div class="input-group"><label>Custo Fixo Mês (Manut/Seg)</label><input type="number" id="c-fixo" value="400"></div>
-        <div class="input-group"><label>Meta Diária (R$)</label><input type="number" id="c-meta" value="200"></div>
-        <button class="btn-primary" onclick="salvarConfigs()">SALVAR AJUSTES</button>
+        <div class="input-group"><label>Sua Meta Mensal (R$)</label><input type="number" id="cfg-meta" value="4000"></div>
+        <div class="input-group"><label>Custo por KM (R$)</label><input type="number" id="cfg-ckm" value="0.25"></div>
+        <button class="btn-main" onclick="saveSet()">SALVAR AJUSTES</button>
     </div>
+    <button onclick="clearAllData()" style="color: var(--red); background: none; font-size: 0.7rem;">Apagar todo o histórico permanentemente</button>
 </div>
 
 <nav>
-    <button class="nav-btn active" onclick="tab('p-calc', this)"><i>📊</i>Calc</button>
-    <button class="nav-btn" onclick="tab('p-ganhos', this)"><i>💰</i>Ganhos</button>
-    <button class="nav-btn" onclick="tab('p-perfil', this)"><i>⚙️</i>Perfil</button>
+    <button class="nav-item active" onclick="nav('p-hoje', this)"><i>🏍️</i>Hoje</button>
+    <button class="nav-item" onclick="nav('p-hist', this)"><i>📅</i>Histórico</button>
+    <button class="nav-item" onclick="nav('p-set', this)"><i>⚙️</i>Ajustes</button>
 </nav>
 
 <script>
-    let corridas = JSON.parse(localStorage.getItem('m_ultra_data')) || [];
-    let config = JSON.parse(localStorage.getItem('m_ultra_cfg')) || {c: 35, p: 5.8, f: 400, m: 200};
-    let custoPorKm = 0;
+    // Estrutura: db = { "2026-04": { corridas: [], turnos: [] } }
+    let db = JSON.parse(localStorage.getItem('moto_pro_db')) || {};
+    let config = JSON.parse(localStorage.getItem('moto_pro_cfg')) || {meta: 4000, ckm: 0.25};
+    let turnoAtivo = JSON.parse(localStorage.getItem('moto_pro_turno')) || null;
 
-    function tab(id, btn) {
+    const nomesMeses = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
+
+    function getMesChave() {
+        const d = new Date();
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    }
+
+    function init() {
+        const chave = getMesChave();
+        if(!db[chave]) db[chave] = { corridas: [], turnos: [] };
+        
+        const d = new Date();
+        document.getElementById('display-mes').innerText = `${nomesMeses[d.getMonth()]} ${d.getFullYear()}`;
+        
+        // Preencher select de meses
+        const sel = document.getElementById('select-mes');
+        sel.innerHTML = "";
+        Object.keys(db).sort().reverse().forEach(mes => {
+            const opt = document.createElement('option');
+            opt.value = mes;
+            const [ano, m] = mes.split('-');
+            opt.innerText = `${nomesMeses[parseInt(m)-1]} ${ano}`;
+            sel.appendChild(opt);
+        });
+
+        updateHoje();
+        checkTurnoStatus();
+    }
+
+    function nav(id, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         btn.classList.add('active');
-        if(id === 'p-ganhos') renderGanhos();
+        if(id === 'p-hist') renderHist();
     }
 
-    function salvarConfigs() {
-        config.c = parseFloat(document.getElementById('c-cons').value);
-        config.p = parseFloat(document.getElementById('c-prec').value);
-        config.f = parseFloat(document.getElementById('c-fixo').value);
-        config.m = parseFloat(document.getElementById('c-meta').value);
-        localStorage.setItem('m_ultra_cfg', JSON.stringify(config));
-        calcularCustoBase();
-        alert("Configurações atualizadas!");
+    // TURNO
+    function toggleTurno() {
+        const chave = getMesChave();
+        if(!turnoAtivo) {
+            turnoAtivo = { inicio: new Date().getTime() };
+            document.getElementById('btn-turno').innerText = "ENCERRAR TRABALHO";
+            document.getElementById('btn-turno').className = "btn-stop";
+            document.getElementById('status-turno').innerText = "Turno: Rodando...";
+            document.getElementById('status-turno').style.color = "var(--green)";
+        } else {
+            const fim = new Date().getTime();
+            const duracaoMs = fim - turnoAtivo.inicio;
+            db[chave].turnos.push({ inicio: turnoAtivo.inicio, fim: fim, duracao: duracaoMs });
+            turnoAtivo = null;
+            save();
+            document.getElementById('btn-turno').innerText = "INICIAR TRABALHO";
+            document.getElementById('btn-turno').className = "btn-main";
+            document.getElementById('status-turno').innerText = "Turno: Offline";
+            document.getElementById('status-turno').style.color = "var(--sub)";
+        }
+        localStorage.setItem('moto_pro_turno', JSON.stringify(turnoAtivo));
+        updateHoje();
     }
 
-    function calcularCustoBase() {
-        custoPorKm = (config.p / config.c) + (config.f / 2500); // 2500km base/mês
+    function checkTurnoStatus() {
+        if(turnoAtivo) {
+            document.getElementById('btn-turno').innerText = "ENCERRAR TRABALHO";
+            document.getElementById('btn-turno').className = "btn-stop";
+            document.getElementById('status-turno').innerText = "Turno: Rodando...";
+            document.getElementById('status-turno').style.color = "var(--green)";
+        }
     }
 
-    function analisar() {
-        const v = parseFloat(document.getElementById('v-val').value);
-        const k = parseFloat(document.getElementById('v-km').value);
-        const m = parseFloat(document.getElementById('v-min').value);
-        if(!v || !k || !m) return;
+    // CORRIDAS
+    function addCorrida() {
+        const v = parseFloat(document.getElementById('f-val').value);
+        const k = parseFloat(document.getElementById('f-km').value);
+        if(!v || !k) return;
 
-        const lucro = v - (k * custoPorKm);
-        const gKm = v / k;
-        const gMin = v / m;
-        const gHora = gMin * 60;
-
-        document.getElementById('res-box').style.display = 'block';
-        document.getElementById('res-lucro').innerText = "R$ " + lucro.toFixed(2);
-        document.getElementById('res-gkm').innerText = "R$ " + gKm.toFixed(2);
-        document.getElementById('res-ghora').innerText = "R$ " + gHora.toFixed(2);
-        document.getElementById('res-gmin').innerText = "R$ " + gMin.toFixed(2);
+        const chave = getMesChave();
+        db[chave].corridas.push({
+            v, k, 
+            h: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+            d: new Date().getDate()
+        });
         
-        document.getElementById('res-lucro').style.color = lucro > (v*0.4) ? "var(--success)" : "var(--danger)";
+        document.getElementById('f-val').value = "";
+        document.getElementById('f-km').value = "";
+        save();
+        updateHoje();
+        alert("Salvo!");
     }
 
-    function salvar() {
-        const v = parseFloat(document.getElementById('v-val').value);
-        const k = parseFloat(document.getElementById('v-km').value);
-        const m = parseFloat(document.getElementById('v-min').value);
+    function updateHoje() {
+        const chave = getMesChave();
+        const hoje = new Date().getDate();
+        const corridasHoje = db[chave].corridas.filter(c => c.d === hoje);
         
-        corridas.push({v, k, m, id: Date.now(), t: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})});
-        localStorage.setItem('m_ultra_data', JSON.stringify(corridas));
+        const totalV = corridasHoje.reduce((a,b) => a + b.v, 0);
+        document.getElementById('h-ganho').innerText = "R$ " + totalV.toFixed(2);
+
+        // Tempo hoje (em turnos finalizados hoje)
+        const turnosHoje = db[chave].turnos.filter(t => new Date(t.inicio).getDate() === hoje);
+        let totalMs = turnosHoje.reduce((a,b) => a + b.duracao, 0);
         
-        document.getElementById('res-box').style.display = 'none';
-        document.getElementById('v-val').value = '';
-        document.getElementById('v-km').value = '';
-        document.getElementById('v-min').value = '';
-        alert("Corrida registrada!");
+        const h = Math.floor(totalMs / 3600000);
+        const m = Math.floor((totalMs % 3600000) / 60000);
+        document.getElementById('h-tempo').innerText = `${h}h ${m}m`;
     }
 
-    function renderGanhos() {
-        const total = corridas.reduce((a, b) => a + b.v, 0);
-        const totalKm = corridas.reduce((a, b) => a + b.k, 0);
-        const totalMin = corridas.reduce((a, b) => a + b.m, 0);
+    // HISTORICO MENSAL
+    function renderHist() {
+        const mesBusca = document.getElementById('select-mes').value;
+        const dados = db[mesBusca];
+        if(!dados) return;
+
+        const totalV = dados.corridas.reduce((a,b) => a + b.v, 0);
+        const totalK = dados.corridas.reduce((a,b) => a + b.k, 0);
+        const totalMs = dados.turnos.reduce((a,b) => a + b.duracao, 0);
+        const horasDec = totalMs / 3600000;
+
+        document.getElementById('m-fat').innerText = "R$ " + totalV.toFixed(0);
+        document.getElementById('m-km').innerText = totalK.toFixed(0) + " KM";
+        document.getElementById('m-hora').innerText = horasDec > 0 ? "R$ " + (totalV/horasDec).toFixed(2) : "---";
+        document.getElementById('m-rkm').innerText = totalK > 0 ? "R$ " + (totalV/totalK).toFixed(2) : "---";
+
+        const lista = document.getElementById('lista-hist');
+        lista.innerHTML = "";
         
-        const perc = Math.min((total / config.m) * 100, 100);
-        document.getElementById('txt-total').innerText = "R$ " + total.toFixed(2);
-        document.getElementById('txt-perc').innerText = Math.round(perc) + "%";
-        document.getElementById('progress-bar').style.width = perc + "%";
-
-        document.getElementById('med-km').innerText = totalKm > 0 ? "R$ " + (total/totalKm).toFixed(2) : "R$ 0.00";
-        document.getElementById('med-hora').innerText = totalMin > 0 ? "R$ " + ((total/totalMin)*60).toFixed(2) : "R$ 0.00";
-
-        const lista = document.getElementById('lista');
-        lista.innerHTML = '<div class="card-title">Histórico de Hoje</div>';
-        [...corridas].reverse().forEach(c => {
+        // Agrupar por dia para facilitar a vista
+        const dias = [...new Set(dados.corridas.map(c => c.d))].sort((a,b) => b-a);
+        dias.forEach(dia => {
+            const corridasDia = dados.corridas.filter(c => c.d === dia);
+            const somaDia = corridasDia.reduce((a,b) => a+b.v, 0);
             lista.innerHTML += `
-                <div class="item-corrida">
-                    <div>
-                        <div style="font-weight:bold; font-size:1.1rem">R$ ${c.v.toFixed(2)}</div>
-                        <div style="font-size:0.7rem; color:var(--text-sub)">${c.t} • ${c.k}km • ${c.m}min</div>
-                    </div>
-                    <button onclick="remover(${c.id})" style="width:auto; background:none; color:var(--danger); font-size:12px;">Apagar</button>
+                <div class="log-item">
+                    <strong>Dia ${dia}</strong> - Total: R$ ${somaDia.toFixed(2)} (${corridasDia.length} corridas)
                 </div>
             `;
         });
     }
 
-    function remover(id) {
-        corridas = corridas.filter(c => c.id !== id);
-        localStorage.setItem('m_ultra_data', JSON.stringify(corridas));
-        renderGanhos();
+    function save() { localStorage.setItem('moto_pro_db', JSON.stringify(db)); }
+    function saveSet() {
+        config.meta = document.getElementById('cfg-meta').value;
+        config.ckm = document.getElementById('cfg-ckm').value;
+        localStorage.setItem('moto_pro_cfg', JSON.stringify(config));
+        alert("Ajustes salvos!");
     }
 
-    function limpar() { if(confirm("Zerar hoje?")) { corridas = []; localStorage.removeItem('m_ultra_data'); renderGanhos(); } }
-
-    window.onload = () => {
-        document.getElementById('c-cons').value = config.c;
-        document.getElementById('c-prec').value = config.p;
-        document.getElementById('c-fixo').value = config.f;
-        document.getElementById('c-meta').value = config.m;
-        calcularCustoBase();
+    function clearAllData() {
+        if(confirm("Deseja apagar ABSOLUTAMENTE TUDO? Isso não pode ser desfeito.")) {
+            localStorage.clear();
+            location.reload();
+        }
     }
+
+    init();
 </script>
+
 </body>
 </html>
