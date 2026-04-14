@@ -3,56 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão Cristian - Meta R$ 32/dia</title>
+    <title>Gestão Cristian - Organizado</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #eee; padding: 15px; margin: 0; }
-        .card { background: #161616; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 10px; }
-        .config-card { background: #1b1b1b; border: 1px dashed #00897b; font-size: 11px; }
-        input { width: 92%; padding: 10px; margin: 5px 0; border-radius: 6px; border: 1px solid #444; background: #222; color: #fff; }
-        .btn-add { width: 100%; padding: 14px; background: #00897b; border: none; color: white; font-weight: bold; border-radius: 6px; margin-top: 10px; }
+        .card { background: #161616; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
+        
+        /* Seção de Configuração Organizada */
+        .config-section { border-left: 4px solid #00897b; padding-left: 15px; }
+        .config-item { margin-bottom: 10px; }
+        label { display: block; font-size: 11px; color: #00897b; font-weight: bold; margin-bottom: 2px; }
+        
+        input { width: 92%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #222; color: #fff; font-size: 14px; }
+        .btn-save { background: #333; color: #00897b; border: 1px solid #00897b; padding: 8px; width: 100%; border-radius: 6px; font-size: 12px; margin-top: 5px; cursor: pointer; }
+        .btn-add { width: 100%; padding: 15px; background: #00897b; border: none; color: white; font-weight: bold; border-radius: 6px; margin-top: 15px; font-size: 16px; }
         
         /* Grid de Envelopes */
         .envelopes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
         .env { padding: 10px; border-radius: 6px; font-size: 10px; text-align: center; border: 1px solid #333; }
-        .env strong { display: block; font-size: 13px; margin-top: 4px; }
+        .env strong { display: block; font-size: 14px; margin-top: 4px; }
         
-        /* Cores */
-        .header-pf { background: #4a148c; grid-column: span 2; padding: 15px; }
+        .header-pf { background: #4a148c; grid-column: span 2; padding: 15px; border: none; }
         .bg-gas { background: #b71c1c; }
-        .bg-moto-fixo { background: #e65100; } /* A meta de R$ 32 */
+        .bg-moto { background: #e65100; }
         .bg-ipva { background: #01579b; }
         .bg-multa { background: #d32f2f; }
-        .bg-extra { background: #37474f; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 10px; }
-        th, td { border: 1px solid #333; padding: 8px; text-align: center; }
-        .btn-del { background: #c62828; color: white; border: none; padding: 4px 8px; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 11px; }
+        th, td { border: 1px solid #333; padding: 10px; text-align: center; }
+        th { background: #222; color: #00897b; }
+        .btn-del { background: #c62828; color: white; border: none; padding: 5px 10px; border-radius: 4px; }
     </style>
 </head>
 <body>
 
-    <div class="card config-card">
-        <strong>⚙️ Ajustes do Veículo e Metas</strong><br>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-            <input type="number" id="media_km" placeholder="KM/L (Ex: 35)">
-            <input type="number" id="preco_gas" placeholder="Gasosa R$">
-            <input type="number" id="meta_moto" placeholder="Meta Diária Moto (Ex: 32)">
-            <input type="number" id="reserva_ipva" placeholder="IPVA por KM (Ex: 0.05)">
+    <h3 style="text-align: center; color: #00897b;">🏍️ CONTROLE CRISTIAN</h3>
+
+    <div class="card config-section">
+        <div class="config-item">
+            <label>MÉDIA KM POR LITRO</label>
+            <input type="number" id="media_km" placeholder="Ex: 35">
         </div>
-        <button onclick="salvarConfig()" style="width:100%; font-size:10px; margin-top:5px;">Salvar Configurações</button>
+        <div class="config-item">
+            <label>PREÇO DO LITRO (GASOLINA)</label>
+            <input type="number" id="preco_gas" placeholder="Ex: 6.10">
+        </div>
+        <div class="config-item">
+            <label>META DIÁRIA MOTO (Geralmente 32.00)</label>
+            <input type="number" id="meta_moto" placeholder="Ex: 32">
+        </div>
+        <div class="config-item">
+            <label>RESERVA IPVA (VALOR POR KM)</label>
+            <input type="number" id="reserva_ipva" placeholder="Ex: 0.05">
+        </div>
+        <button class="btn-save" onclick="salvarConfig()">SALVAR CONFIGURAÇÕES</button>
     </div>
 
     <div class="card">
-        <input type="number" id="bruto" placeholder="Valor Total no App (R$)">
-        <input type="number" id="km" placeholder="KM Rodada Hoje">
-        <button class="btn-add" onclick="registrar()">Calcular Diária</button>
+        <label>TOTAL QUE CAIU NO APP (R$)</label>
+        <input type="number" id="bruto" placeholder="R$ 0,00">
+        
+        <label style="margin-top: 10px;">KM TOTAL RODADO NO DIA</label>
+        <input type="number" id="km" placeholder="0 km">
+        
+        <button class="btn-add" onclick="registrar()">CALCULAR E DISTRIBUIR</button>
 
         <div class="envelopes">
-            <div class="env header-pf">LUCRO REAL (CONTA PF) <strong id="res-pf">R$ 0,00</strong></div>
-            <div class="env bg-gas">⛽ GASOLINA <strong id="res-gas">R$ 0,00</strong></div>
-            <div class="env bg-moto-fixo">🏍️ META MOTO <strong id="res-moto">R$ 0,00</strong></div>
-            <div class="env bg-ipva">📄 IPVA / TAXAS <strong id="res-ipva">R$ 0,00</strong></div>
-            <div class="env bg-multa">⚠️ RESERVA MULTA <strong id="res-multa">R$ 0,00</strong></div>
+            <div class="env header-pf">SALÁRIO LÍQUIDO (CONTA PF)<strong id="res-pf">R$ 0,00</strong></div>
+            <div class="env bg-gas">⛽ GASOLINA<strong id="res-gas">R$ 0,00</strong></div>
+            <div class="env bg-moto">🏍️ META MOTO<strong id="res-moto">R$ 0,00</strong></div>
+            <div class="env bg-ipva">📄 IPVA/TAXAS<strong id="res-ipva">R$ 0,00</strong></div>
+            <div class="env bg-multa">⚠️ RESERVA MULTA<strong id="res-multa">R$ 0,00</strong></div>
         </div>
     </div>
 
@@ -62,18 +82,17 @@
                 <th>Data</th>
                 <th>KM</th>
                 <th>Bruto</th>
-                <th>Líquido PF</th>
-                <th>Ação</th>
+                <th>Líquido</th>
+                <th>Apagar</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('gestao_cristian_v3')) || [];
-        let config = JSON.parse(localStorage.getItem('config_cristian_v3')) || { media: 35, preco: 6.10, meta: 32, ipva: 0.05 };
+        let db = JSON.parse(localStorage.getItem('gestao_cristian_v4')) || [];
+        let config = JSON.parse(localStorage.getItem('config_cristian_v4')) || { media: 35, preco: 6.10, meta: 32, ipva: 0.05 };
 
-        // Preenche os campos com a config salva
         document.getElementById('media_km').value = config.media;
         document.getElementById('preco_gas').value = config.preco;
         document.getElementById('meta_moto').value = config.meta;
@@ -86,31 +105,22 @@
                 meta: parseFloat(document.getElementById('meta_moto').value),
                 ipva: parseFloat(document.getElementById('reserva_ipva').value)
             };
-            localStorage.setItem('config_cristian_v3', JSON.stringify(config));
-            alert("Configurações Salvas!");
+            localStorage.setItem('config_cristian_v4', JSON.stringify(config));
+            alert("Configurações Salvas com Sucesso!");
         }
 
         function registrar() {
             const bruto = parseFloat(document.getElementById('bruto').value);
             const km = parseFloat(document.getElementById('km').value);
-            if (!bruto || !km) return alert("Preencha os valores!");
+            if (!bruto || !km) return alert("Por favor, preencha o valor e a quilometragem!");
 
-            // 1. Gasto Real de Gasolina
             const gas = (km / config.media) * config.preco;
-            
-            // 2. Meta Fixa da Moto (Os R$ 32 que você quer focar)
             const metaMoto = config.meta;
-            
-            // 3. Reserva IPVA e Documentos (por KM)
             const reservaIpva = km * config.ipva;
-            
-            // 4. Reserva de Multa (Sugestão R$ 0,03 por KM para não pesar)
-            const reservaMulta = km * 0.03;
+            const reservaMulta = km * 0.03; 
 
-            // 5. O que sobra para você (PF)
             const liquido = bruto - gas - metaMoto - reservaIpva - reservaMulta;
 
-            // Atualiza tela
             document.getElementById('res-pf').innerText = "R$ " + liquido.toFixed(2);
             document.getElementById('res-gas').innerText = "R$ " + gas.toFixed(2);
             document.getElementById('res-moto').innerText = "R$ " + metaMoto.toFixed(2);
@@ -138,10 +148,10 @@
                     <td><button class="btn-del" onclick="apagar(${i})">X</button></td>
                 </tr>`;
             });
-            localStorage.setItem('gestao_cristian_v3', JSON.stringify(db));
+            localStorage.setItem('gestao_cristian_v4', JSON.stringify(db));
         }
 
-        function apagar(i) { if(confirm("Apagar registro?")) { db.splice(i,1); render(); } }
+        function apagar(i) { if(confirm("Deseja mesmo apagar este registro?")) { db.splice(i,1); render(); } }
 
         render();
     </script>
