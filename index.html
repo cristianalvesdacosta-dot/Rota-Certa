@@ -2,390 +2,128 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Moto Analytics Ultra Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão Cristian - Uber/99</title>
     <style>
-        :root {
-            --bg: #000000;
-            --card: #121212;
-            --primary: #f97316;
-            --text-main: #ffffff;
-            --text-sub: #a1a1aa;
-            --border: #262626;
-            --success: #22c55e;
-            --warning: #eab308;
-            --danger: #ef4444;
-        }
-
-        body {
-            font-family: -apple-system, system-ui, sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
-            margin: 0;
-            padding-bottom: 100px;
-            user-select: none;
-        }
-
-        header {
-            padding: 15px 20px;
-            background: #000;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        header h1 { font-size: 0.9rem; margin: 0; color: var(--primary); letter-spacing: 1px; font-weight: 900; }
-        .badge-mes { background: var(--primary); color: #000; padding: 4px 10px; border-radius: 20px; font-weight: 800; font-size: 0.65rem; }
-
-        /* NAVEGAÇÃO */
-        .page { display: none; padding: 15px; animation: fadeIn 0.2s ease; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* CARDS */
-        .card {
-            background: var(--card);
-            padding: 18px;
-            border-radius: 20px;
-            margin-bottom: 15px;
-            border: 1px solid var(--border);
-        }
-        .card-title { font-size: 0.7rem; color: var(--text-sub); margin-bottom: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-
-        /* INPUTS */
-        .input-group { margin-bottom: 15px; }
-        label { display: block; font-size: 0.75rem; margin-bottom: 6px; color: var(--text-sub); }
-        input, select {
-            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border);
-            background: #000; color: #fff; font-size: 1rem; box-sizing: border-box; outline: none;
-        }
-        input:focus { border-color: var(--primary); }
-
-        /* BOTÕES */
-        button { width: 100%; padding: 16px; border-radius: 14px; border: none; font-weight: 800; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
-        .btn-primary { background: var(--primary); color: #000; }
-        .btn-success { background: var(--success); color: #fff; margin-top: 10px; }
-        .btn-stop { background: var(--danger); color: #fff; }
-        .btn-outline { background: none; border: 1px solid var(--border); color: var(--text-sub); margin-top: 10px; }
-
-        /* ANALYTICS GRID */
-        .analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .stat-item { background: #000; padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
-        .stat-label { font-size: 0.6rem; color: var(--text-sub); display: block; margin-bottom: 4px; }
-        .stat-value { font-size: 0.95rem; font-weight: 700; color: var(--primary); }
-
-        /* STATUS DE QUALIDADE (CORES) */
-        #status-quali {
-            padding: 12px; border-radius: 12px; text-align: center; font-weight: 900; 
-            margin-bottom: 15px; font-size: 0.85rem; display: none; text-transform: uppercase;
-        }
-
-        /* BARRA DE PROGRESSO */
-        .progress-bg { background: #262626; height: 10px; border-radius: 10px; margin: 10px 0; overflow: hidden; }
-        #progress-bar { background: var(--primary); height: 100%; width: 0%; transition: 0.8s ease; }
-
-        /* LISTAS */
-        .item-lista {
-            background: #000; padding: 15px; border-radius: 15px; margin-bottom: 10px;
-            border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
-        }
-
-        /* MENU INFERIOR */
-        nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px);
-            display: flex; justify-content: space-around;
-            padding: 12px 0; border-top: 1px solid var(--border); z-index: 1000;
-        }
-        .nav-btn { background: none; border: none; color: var(--text-sub); font-size: 0.65rem; display: flex; flex-direction: column; align-items: center; width: auto; }
-        .nav-btn.active { color: var(--primary); }
-        .nav-btn i { font-style: normal; font-size: 1.3rem; margin-bottom: 4px; }
+        body { font-family: sans-serif; background: #121212; color: white; padding: 15px; }
+        .card { background: #1e1e1e; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #333; }
+        input { width: 93%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #444; background: #252525; color: white; }
+        .btn-add { width: 100%; padding: 12px; background: #00c853; border: none; color: white; font-weight: bold; border-radius: 5px; margin-top: 10px; }
+        .resumo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .box { padding: 10px; border-radius: 5px; text-align: center; font-size: 0.9em; }
+        .mei { background: #1565c0; }
+        .pf { background: #6a1b9a; }
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-backup { flex: 1; padding: 8px; font-size: 12px; border-radius: 5px; border: 1px solid #555; background: #333; color: white; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 11px; }
+        th, td { border: 1px solid #333; padding: 8px; text-align: center; }
+        th { background: #222; }
+        .btn-del { background: #d32f2f; color: white; border: none; padding: 4px 8px; border-radius: 3px; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>MOTO ANALYTICS <span style="color:white">PRO</span></h1>
-    <div id="display-mes-header" class="badge-mes">ABRIL 2026</div>
-</header>
-
-<div id="p-calc" class="page active">
-    <div class="card">
-        <div class="card-title">Expediente</div>
-        <div id="status-turno" style="margin-bottom: 10px; font-weight: bold; color: var(--text-sub); font-size: 0.9rem;">Status: Offline</div>
-        <button id="btn-turno" class="btn-primary" onclick="toggleTurno()">INICIAR TRABALHO</button>
-    </div>
+    <h3>🏍️ Gestão de Diárias (MEI vs PF)</h3>
 
     <div class="card">
-        <div class="card-title">Analisador de Corrida</div>
-        <div class="input-group">
-            <label>Valor da Corrida (R$)</label>
-            <input type="number" id="v-val" inputmode="decimal" placeholder="0.00">
-        </div>
-        <div class="input-group">
-            <label>KM Total (Ida + Entrega)</label>
-            <input type="number" id="v-km" inputmode="decimal" placeholder="0.0">
-        </div>
-        <div class="input-group">
-            <label>Tempo Estimado (Minutos)</label>
-            <input type="number" id="v-min" inputmode="numeric" placeholder="Ex: 15">
-        </div>
-        <button class="btn-primary" onclick="analisar()">ANALISAR VIABILIDADE</button>
+        <input type="number" id="bruto" placeholder="Valor Bruto App (R$)">
+        <input type="number" id="km" placeholder="KM Total do Dia">
+        <button class="btn-add" onclick="adicionarDado()">Registrar Diária</button>
 
-        <div id="res-box" style="display:none; margin-top:20px;">
-            <div id="status-quali"></div>
-            <div class="analytics-grid">
-                <div class="stat-item"><span class="stat-label">LUCRO REAL</span><span id="res-lucro" class="stat-value">R$ 0.00</span></div>
-                <div class="stat-item"><span class="stat-label">GANHO/HORA</span><span id="res-ghora" class="stat-value">R$ 0.00</span></div>
-                <div class="stat-item"><span class="stat-label">GANHO/KM</span><span id="res-gkm" class="stat-value">R$ 0.00</span></div>
-                <div class="stat-item"><span class="stat-label">CUSTO GASOSA</span><span id="res-custo" class="stat-value" style="color:var(--danger)">R$ 0.00</span></div>
-            </div>
-            <button class="btn-success" onclick="salvarCorrida()">ACEITAR E SALVAR</button>
+        <div class="resumo">
+            <div class="box mei">MEI (Moto):<br><strong id="res-mei">R$ 0,00</strong></div>
+            <div class="box pf">PF (Seu):<br><strong id="res-pf">R$ 0,00</strong></div>
         </div>
-    </div>
-</div>
 
-<div id="p-ganhos" class="page">
-    <div class="card">
-        <div class="card-title">Meta Diária</div>
-        <div class="progress-bg"><div id="progress-bar"></div></div>
-        <div style="display:flex; justify-content:space-between; font-weight:bold;">
-            <span id="txt-total-dia">R$ 0.00</span>
-            <span id="txt-perc-dia" style="color:var(--primary)">0%</span>
-        </div>
-    </div>
-    
-    <div id="lista-hoje"></div>
-    <button class="btn-outline" onclick="limparDia()">ZERAR HOJE</button>
-</div>
-
-<div id="p-mes" class="page">
-    <div class="card">
-        <div class="card-title">Histórico por Mês</div>
-        <select id="select-mes" onchange="renderMes()"></select>
-    </div>
-
-    <div class="card" style="background: var(--primary); color: #000;">
-        <div class="analytics-grid" style="border:none">
-            <div style="text-align:left"><small>FATURADO</small><br><strong id="m-fat" style="font-size:1.3rem">R$ 0</strong></div>
-            <div style="text-align:left"><small>KM TOTAL</small><br><strong id="m-km" style="font-size:1.3rem">0</strong></div>
+        <div class="btn-group">
+            <button class="btn-backup" onclick="exportarBackup()">📥 Salvar Backup</button>
+            <button class="btn-backup" onclick="document.getElementById('fileInput').click()">📤 Abrir Backup</button>
+            <input type="file" id="fileInput" style="display:none" onchange="importarBackup(event)">
         </div>
     </div>
 
-    <div id="lista-mes"></div>
-</div>
+    <table id="tabela-dados">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>KM</th>
+                <th>R$/KM</th>
+                <th>PF (L)</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 
-<div id="p-perfil" class="page">
-    <div class="card">
-        <div class="card-title">Configurações de Custos</div>
-        <div class="input-group"><label>Consumo da Moto (KM/L)</label><input type="number" id="c-cons" value="35"></div>
-        <div class="input-group"><label>Preço do Litro (R$)</label><input type="number" id="c-prec" value="5.80"></div>
-        <div class="input-group"><label>Manutenção/Fixo Mensal (R$)</label><input type="number" id="c-fixo" value="400"></div>
-        <div class="input-group"><label>Sua Meta Diária (R$)</label><input type="number" id="c-meta" value="200"></div>
-        <button class="btn-primary" onclick="salvarConfigs()">SALVAR AJUSTES</button>
-    </div>
-</div>
+    <script>
+        let historico = JSON.parse(localStorage.getItem('uber_data')) || [];
 
-<nav>
-    <button class="nav-btn active" onclick="tab('p-calc', this)"><i>📊</i>Calc</button>
-    <button class="nav-btn" onclick="tab('p-ganhos', this)"><i>💰</i>Ganhos</button>
-    <button class="nav-btn" onclick="tab('p-mes', this)"><i>📅</i>Mensal</button>
-    <button class="nav-btn" onclick="tab('p-perfil', this)"><i>⚙️</i>Perfil</button>
-</nav>
-
-<script>
-    let db = JSON.parse(localStorage.getItem('moto_db_v4')) || {};
-    let config = JSON.parse(localStorage.getItem('moto_cfg_v4')) || {c: 35, p: 5.8, f: 400, m: 200};
-    let turnoAtivo = JSON.parse(localStorage.getItem('moto_turno_v4')) || null;
-    let custoKm = 0;
-
-    const meses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
-
-    function getChave() {
-        const d = new Date();
-        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-    }
-
-    function init() {
-        const chave = getChave();
-        if(!db[chave]) db[chave] = { corridas: [], turnos: [] };
-        
-        document.getElementById('c-cons').value = config.c;
-        document.getElementById('c-prec').value = config.p;
-        document.getElementById('c-fixo').value = config.f;
-        document.getElementById('c-meta').value = config.m;
-
-        const d = new Date();
-        document.getElementById('display-mes-header').innerText = `${meses[d.getMonth()]} ${d.getFullYear()}`;
-
-        calcCusto();
-        updateTurnoUI();
-        populeMeses();
-    }
-
-    function tab(id, btn) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        btn.classList.add('active');
-        if(id === 'p-ganhos') renderHoje();
-        if(id === 'p-mes') renderMes();
-    }
-
-    function calcCusto() {
-        custoKm = (config.p / config.c) + (config.f / 2500);
-    }
-
-    // TURNO
-    function toggleTurno() {
-        const chave = getChave();
-        if(!turnoAtivo) {
-            turnoAtivo = { inicio: new Date().getTime() };
-        } else {
-            const fim = new Date().getTime();
-            db[chave].turnos.push({ inicio: turnoAtivo.inicio, fim: fim, duracao: fim - turnoAtivo.inicio, dia: new Date().getDate() });
-            turnoAtivo = null;
-            save();
-        }
-        localStorage.setItem('moto_turno_v4', JSON.stringify(turnoAtivo));
-        updateTurnoUI();
-    }
-
-    function updateTurnoUI() {
-        const btn = document.getElementById('btn-turno');
-        const st = document.getElementById('status-turno');
-        if(turnoAtivo) {
-            btn.innerText = "ENCERRAR TURNO AGORA"; btn.className = "btn-stop";
-            st.innerText = "Status: ONLINE (Trabalhando)"; st.style.color = "var(--success)";
-        } else {
-            btn.innerText = "INICIAR TRABALHO"; btn.className = "btn-primary";
-            st.innerText = "Status: Offline"; st.style.color = "var(--text-sub)";
-        }
-    }
-
-    // CALCULADORA
-    function analisar() {
-        const v = parseFloat(document.getElementById('v-val').value);
-        const k = parseFloat(document.getElementById('v-km').value);
-        const m = parseFloat(document.getElementById('v-min').value);
-        if(!v || !k || !m) return;
-
-        const cst = k * custoKm;
-        const lucro = v - cst;
-        const gHora = (v / m) * 60;
-        const gKm = v / k;
-
-        const box = document.getElementById('res-box');
-        const q = document.getElementById('status-quali');
-        box.style.display = 'block';
-        q.style.display = 'block';
-
-        if(gHora >= 28 && gKm >= 1.8) {
-            q.innerText = "🚀 Corrida Excelente!"; q.style.background = "var(--success)"; q.style.color = "#000";
-        } else if(gHora >= 18 && gKm >= 1.2) {
-            q.innerText = "👍 Vale a Pena"; q.style.background = "var(--warning)"; q.style.color = "#000";
-        } else {
-            q.innerText = "⚠️ Corrida Ruim"; q.style.background = "var(--danger)"; q.style.color = "#fff";
+        function atualizarTabela() {
+            const tbody = document.querySelector('#tabela-dados tbody');
+            tbody.innerHTML = '';
+            historico.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.data}</td>
+                    <td>${item.km}</td>
+                    <td>${item.rkm}</td>
+                    <td>${item.pf}</td>
+                    <td><button class="btn-del" onclick="removerDado(${index})">X</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+            localStorage.setItem('uber_data', JSON.stringify(historico));
         }
 
-        document.getElementById('res-lucro').innerText = "R$ " + lucro.toFixed(2);
-        document.getElementById('res-ghora').innerText = "R$ " + gHora.toFixed(2);
-        document.getElementById('res-gkm').innerText = "R$ " + gKm.toFixed(2);
-        document.getElementById('res-custo').innerText = "R$ " + cst.toFixed(2);
-    }
+        function adicionarDado() {
+            const bruto = parseFloat(document.getElementById('bruto').value);
+            const km = parseFloat(document.getElementById('km').value);
+            if (!bruto || !km) return alert("Preencha os campos!");
 
-    function salvarCorrida() {
-        const v = parseFloat(document.getElementById('v-val').value);
-        const k = parseFloat(document.getElementById('v-km').value);
-        const chave = getChave();
-        db[chave].corridas.push({
-            v, k, id: Date.now(),
-            dia: new Date().getDate(),
-            hora: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
-        });
-        save();
-        document.getElementById('res-box').style.display = 'none';
-        document.getElementById('v-val').value = ""; document.getElementById('v-km').value = ""; document.getElementById('v-min').value = "";
-        alert("Corrida Registrada!");
-    }
+            const custoMei = km * 0.35;
+            const salarioPf = bruto - custoMei;
+            const rkm = (bruto / km).toFixed(2);
 
-    // HISTÓRICOS
-    function renderHoje() {
-        const chave = getChave();
-        const hoje = new Date().getDate();
-        const lista = db[chave].corridas.filter(c => c.dia === hoje);
-        const total = lista.reduce((a,b) => a + b.v, 0);
-        const perc = Math.min((total / config.m) * 100, 100);
+            document.getElementById('res-mei').innerText = "R$ " + custoMei.toFixed(2);
+            document.getElementById('res-pf').innerText = "R$ " + salarioPf.toFixed(2);
 
-        document.getElementById('txt-total-dia').innerText = "R$ " + total.toFixed(2);
-        document.getElementById('txt-perc-dia').innerText = Math.round(perc) + "%";
-        document.getElementById('progress-bar').style.width = perc + "%";
+            historico.unshift({
+                data: new Date().toLocaleDateString('pt-BR').substring(0,5),
+                km: km,
+                rkm: rkm,
+                pf: salarioPf.toFixed(2)
+            });
 
-        const div = document.getElementById('lista-hoje');
-        div.innerHTML = '<div class="card-title">Ganhos de Hoje</div>';
-        [...lista].reverse().forEach(c => {
-            div.innerHTML += `<div class="item-lista"><div><strong>R$ ${c.v.toFixed(2)}</strong><br><small>${c.hora} • ${c.k}km</small></div><button onclick="deleteC(${c.id})" style="width:auto; background:none; color:var(--danger)">X</button></div>`;
-        });
-    }
-
-    function populeMeses() {
-        const sel = document.getElementById('select-mes');
-        sel.innerHTML = "";
-        Object.keys(db).sort().reverse().forEach(m => {
-            const opt = document.createElement('option');
-            opt.value = m;
-            const [ano, mes] = m.split('-');
-            opt.innerText = `${meses[parseInt(mes)-1]} ${ano}`;
-            sel.appendChild(opt);
-        });
-    }
-
-    function renderMes() {
-        const chave = document.getElementById('select-mes').value;
-        const dados = db[chave];
-        if(!dados) return;
-        const totalV = dados.corridas.reduce((a,b) => a + b.v, 0);
-        const totalK = dados.corridas.reduce((a,b) => a + b.k, 0);
-        document.getElementById('m-fat').innerText = "R$ " + totalV.toFixed(0);
-        document.getElementById('m-km').innerText = totalK.toFixed(0) + " KM";
-
-        const listaM = document.getElementById('lista-mes');
-        listaM.innerHTML = "";
-        const dias = [...new Set(dados.corridas.map(c => c.dia))].sort((a,b) => b-a);
-        dias.forEach(d => {
-            const soma = dados.corridas.filter(c => c.dia === d).reduce((a,b) => a+b.v, 0);
-            listaM.innerHTML += `<div class="item-lista">Dia ${d} <span>R$ ${soma.toFixed(2)}</span></div>`;
-        });
-    }
-
-    // AJUSTES
-    function save() { localStorage.setItem('moto_db_v4', JSON.stringify(db)); }
-    function salvarConfigs() {
-        config = {
-            c: parseFloat(document.getElementById('c-cons').value),
-            p: parseFloat(document.getElementById('c-prec').value),
-            f: parseFloat(document.getElementById('c-fixo').value),
-            m: parseFloat(document.getElementById('c-meta').value)
-        };
-        localStorage.setItem('moto_cfg_v4', JSON.stringify(config));
-        calcCusto();
-        alert("Configurações Salvas!");
-    }
-    function deleteC(id) {
-        const chave = getChave();
-        db[chave].corridas = db[chave].corridas.filter(c => c.id !== id);
-        save(); renderHoje();
-    }
-    function limparDia() {
-        if(confirm("Deseja limpar as corridas de hoje?")) {
-            const chave = getChave();
-            const hoje = new Date().getDate();
-            db[chave].corridas = db[chave].corridas.filter(c => c.dia !== hoje);
-            save(); renderHoje();
+            atualizarTabela();
         }
-    }
 
-    window.onload = init;
-</script>
+        function removerDado(index) {
+            if(confirm("Deseja apagar essa diária?")) {
+                historico.splice(index, 1);
+                atualizarTabela();
+            }
+        }
+
+        function exportarBackup() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(historico));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "backup_gestao_uber.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function importarBackup(event) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                historico = JSON.parse(e.target.result);
+                atualizarTabela();
+            };
+            reader.readAsText(event.target.files[0]);
+        }
+
+        atualizarTabela();
+    </script>
 </body>
 </html>
