@@ -3,52 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão Cristian - Uber/99</title>
+    <title>Gestão Cristian AI - Pro</title>
     <style>
-        body { font-family: sans-serif; background: #121212; color: white; padding: 15px; }
-        .card { background: #1e1e1e; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #333; }
-        input { width: 93%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #444; background: #252525; color: white; }
-        .btn-add { width: 100%; padding: 12px; background: #00c853; border: none; color: white; font-weight: bold; border-radius: 5px; margin-top: 10px; }
-        .resumo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .box { padding: 10px; border-radius: 5px; text-align: center; font-size: 0.9em; }
-        .mei { background: #1565c0; }
-        .pf { background: #6a1b9a; }
-        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-backup { flex: 1; padding: 8px; font-size: 12px; border-radius: 5px; border: 1px solid #555; background: #333; color: white; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 11px; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #eee; padding: 15px; }
+        .card { background: #161616; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 10px; }
+        .config-card { background: #1b1b1b; border: 1px dashed #555; font-size: 12px; }
+        input { width: 92%; padding: 10px; margin: 5px 0; border-radius: 6px; border: 1px solid #444; background: #222; color: #fff; }
+        .btn-add { width: 100%; padding: 14px; background: #00897b; border: none; color: white; font-weight: bold; border-radius: 6px; margin-top: 10px; }
+        
+        .envelopes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
+        .env { padding: 10px; border-radius: 6px; font-size: 11px; text-align: center; border: 1px solid #333; }
+        .env strong { display: block; font-size: 14px; margin-top: 4px; }
+        
+        .header-pf { background: #4a148c; grid-column: span 2; padding: 15px; }
+        .bg-gas { background: #b71c1c; }
+        .bg-manut { background: #e65100; }
+        .bg-fixo { background: #01579b; }
+        .bg-parcela { background: #1b5e20; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 10px; }
         th, td { border: 1px solid #333; padding: 8px; text-align: center; }
-        th { background: #222; }
-        .btn-del { background: #d32f2f; color: white; border: none; padding: 4px 8px; border-radius: 3px; }
+        .btn-del { background: #c62828; color: white; border: none; padding: 4px 8px; border-radius: 4px; }
     </style>
 </head>
 <body>
 
-    <h3>🏍️ Gestão de Diárias (MEI vs PF)</h3>
+    <div class="card config-card">
+        <strong>⚙️ Configurações do Veículo</strong><br>
+        <div style="display: flex; gap: 5px;">
+            <input type="number" id="media_km" placeholder="Média KM/L (Ex: 35)" onchange="salvarConfig()">
+            <input type="number" id="preco_gas" placeholder="Preço Gasosa (Ex: 6.10)" onchange="salvarConfig()">
+            <input type="number" id="tanque" placeholder="Tanque (L)" onchange="salvarConfig()">
+        </div>
+        <small>* Os cálculos de combustível serão baseados nesses dados.</small>
+    </div>
 
     <div class="card">
-        <input type="number" id="bruto" placeholder="Valor Bruto App (R$)">
-        <input type="number" id="km" placeholder="KM Total do Dia">
-        <button class="btn-add" onclick="adicionarDado()">Registrar Diária</button>
+        <input type="number" id="bruto" placeholder="Valor Total do App (R$)">
+        <input type="number" id="km" placeholder="KM Total Rodada">
+        <button class="btn-add" onclick="registrar()">Calcular com Precisão</button>
 
-        <div class="resumo">
-            <div class="box mei">MEI (Moto):<br><strong id="res-mei">R$ 0,00</strong></div>
-            <div class="box pf">PF (Seu):<br><strong id="res-pf">R$ 0,00</strong></div>
-        </div>
-
-        <div class="btn-group">
-            <button class="btn-backup" onclick="exportarBackup()">📥 Salvar Backup</button>
-            <button class="btn-backup" onclick="document.getElementById('fileInput').click()">📤 Abrir Backup</button>
-            <input type="file" id="fileInput" style="display:none" onchange="importarBackup(event)">
+        <div class="envelopes">
+            <div class="env header-pf">LUCRO REAL (CONTA PF)<strong id="res-pf">R$ 0,00</strong></div>
+            <div class="env bg-gas">⛽ COMBUSTÍVEL<strong id="res-gas">R$ 0,00</strong></div>
+            <div class="env bg-manut">🔧 MANUTENÇÃO<strong id="res-manut">R$ 0,00</strong></div>
+            <div class="env bg-fixo">📋 FIXOS/MEI/CEL<strong id="res-fixo">R$ 0,00</strong></div>
+            <div class="env bg-parcela">🏍️ PARCELA/MOTO<strong id="res-parcela">R$ 0,00</strong></div>
         </div>
     </div>
 
-    <table id="tabela-dados">
+    <table id="tabela">
         <thead>
             <tr>
                 <th>Data</th>
                 <th>KM</th>
                 <th>R$/KM</th>
-                <th>PF (L)</th>
+                <th>Líquido</th>
                 <th>Ação</th>
             </tr>
         </thead>
@@ -56,74 +66,70 @@
     </table>
 
     <script>
-        let historico = JSON.parse(localStorage.getItem('uber_data')) || [];
+        let db = JSON.parse(localStorage.getItem('gestao_ai')) || [];
+        let config = JSON.parse(localStorage.getItem('config_ai')) || { media: 35, preco: 6.00, tanque: 12 };
 
-        function atualizarTabela() {
-            const tbody = document.querySelector('#tabela-dados tbody');
-            tbody.innerHTML = '';
-            historico.forEach((item, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${item.data}</td>
-                    <td>${item.km}</td>
-                    <td>${item.rkm}</td>
-                    <td>${item.pf}</td>
-                    <td><button class="btn-del" onclick="removerDado(${index})">X</button></td>
-                `;
-                tbody.appendChild(tr);
-            });
-            localStorage.setItem('uber_data', JSON.stringify(historico));
+        // Carrega configs salvas nos campos
+        document.getElementById('media_km').value = config.media;
+        document.getElementById('preco_gas').value = config.preco;
+        document.getElementById('tanque').value = config.tanque;
+
+        function salvarConfig() {
+            config = {
+                media: parseFloat(document.getElementById('media_km').value) || 35,
+                preco: parseFloat(document.getElementById('preco_gas').value) || 6,
+                tanque: parseFloat(document.getElementById('tanque').value) || 12
+            };
+            localStorage.setItem('config_ai', JSON.stringify(config));
         }
 
-        function adicionarDado() {
+        function registrar() {
             const bruto = parseFloat(document.getElementById('bruto').value);
             const km = parseFloat(document.getElementById('km').value);
-            if (!bruto || !km) return alert("Preencha os campos!");
+            if (!bruto || !km) return alert("Insira os dados!");
 
-            const custoMei = km * 0.35;
-            const salarioPf = bruto - custoMei;
-            const rkm = (bruto / km).toFixed(2);
+            // CÁLCULO INTELIGENTE BASEADO NO VEÍCULO
+            const custo_gas_km = config.preco / config.media;
+            const gas = km * custo_gas_km;
+            
+            const manut = km * 0.08;
+            const fixo = km * 0.05;
+            const parcela = km * 0.05;
+            const liquido = bruto - (gas + manut + fixo + parcela);
 
-            document.getElementById('res-mei').innerText = "R$ " + custoMei.toFixed(2);
-            document.getElementById('res-pf').innerText = "R$ " + salarioPf.toFixed(2);
+            document.getElementById('res-pf').innerText = "R$ " + liquido.toFixed(2);
+            document.getElementById('res-gas').innerText = "R$ " + gas.toFixed(2);
+            document.getElementById('res-manut').innerText = "R$ " + manut.toFixed(2);
+            document.getElementById('res-fixo').innerText = "R$ " + fixo.toFixed(2);
+            document.getElementById('res-parcela').innerText = "R$ " + parcela.toFixed(2);
 
-            historico.unshift({
+            db.unshift({
                 data: new Date().toLocaleDateString('pt-BR').substring(0,5),
                 km: km,
-                rkm: rkm,
-                pf: salarioPf.toFixed(2)
+                rkm: (bruto/km).toFixed(2),
+                liquido: liquido.toFixed(2)
             });
-
-            atualizarTabela();
+            render();
         }
 
-        function removerDado(index) {
-            if(confirm("Deseja apagar essa diária?")) {
-                historico.splice(index, 1);
-                atualizarTabela();
-            }
+        function render() {
+            const tbody = document.querySelector('#tabela tbody');
+            tbody.innerHTML = '';
+            db.forEach((item, i) => {
+                tbody.innerHTML += `<tr>
+                    <td>${item.data}</td>
+                    <td>${item.km}</td>
+                    <td>R$ ${item.rkm}</td>
+                    <td><strong>R$ ${item.liquido}</strong></td>
+                    <td><button class="btn-del" onclick="apagar(${i})">X</button></td>
+                </tr>`;
+            });
+            localStorage.setItem('gestao_ai', JSON.stringify(db));
         }
 
-        function exportarBackup() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(historico));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "backup_gestao_uber.json");
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
-        }
+        function apagar(i) { if(confirm("Apagar registro?")) { db.splice(i,1); render(); } }
 
-        function importarBackup(event) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                historico = JSON.parse(e.target.result);
-                atualizarTabela();
-            };
-            reader.readAsText(event.target.files[0]);
-        }
-
-        atualizarTabela();
+        render();
     </script>
 </body>
 </html>
