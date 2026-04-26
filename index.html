@@ -3,136 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão Cristian - Organizado</title>
+    <title>Gestão Cristian - Lander 2026 Connected</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #eee; padding: 15px; margin: 0; }
         .card { background: #161616; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
-        
-        /* Seção de Configuração Organizada */
         .config-section { border-left: 4px solid #00897b; padding-left: 15px; }
         .config-item { margin-bottom: 10px; }
         label { display: block; font-size: 11px; color: #00897b; font-weight: bold; margin-bottom: 2px; }
-        
         input { width: 92%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #222; color: #fff; font-size: 14px; }
         .btn-save { background: #333; color: #00897b; border: 1px solid #00897b; padding: 8px; width: 100%; border-radius: 6px; font-size: 12px; margin-top: 5px; cursor: pointer; }
         .btn-add { width: 100%; padding: 15px; background: #00897b; border: none; color: white; font-weight: bold; border-radius: 6px; margin-top: 15px; font-size: 16px; }
-        
-        /* Grid de Envelopes */
         .envelopes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
         .env { padding: 10px; border-radius: 6px; font-size: 10px; text-align: center; border: 1px solid #333; }
         .env strong { display: block; font-size: 14px; margin-top: 4px; }
-        
         .header-pf { background: #4a148c; grid-column: span 2; padding: 15px; border: none; }
         .bg-gas { background: #b71c1c; }
         .bg-moto { background: #e65100; }
+        .bg-oleo { background: #004d40; border: 1px solid #00c853; }
         .bg-ipva { background: #01579b; }
         .bg-multa { background: #d32f2f; }
-
         table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 11px; }
         th, td { border: 1px solid #333; padding: 10px; text-align: center; }
         th { background: #222; color: #00897b; }
         .btn-del { background: #c62828; color: white; border: none; padding: 5px 10px; border-radius: 4px; }
+        .progress-container { background: #333; height: 10px; border-radius: 5px; margin-top: 10px; overflow: hidden; }
+        .progress-bar { background: #00c853; height: 100%; width: 0%; transition: width 0.5s; }
+        .btn-notif { background: #222; color: #aaa; border: 1px solid #444; padding: 5px; width: 100%; border-radius: 6px; font-size: 10px; margin-top: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <h3 style="text-align: center; color: #00897b;">🏍️ CONTROLE CRISTIAN</h3>
 
+    <div class="card" style="border-left: 4px solid #00c853;">
+        <label style="color: #00c853;">MANUTENÇÃO LANDER 2026 (CONNECTED)</label>
+        <div style="display: flex; gap: 10px; margin-top: 5px;">
+            <div style="flex: 1;">
+                <label style="font-size: 9px; color: #aaa;">KM ATUAL PAINEL</label>
+                <input type="number" id="moto_km_atual" oninput="atualizarManutencao()">
+            </div>
+            <div style="flex: 1;">
+                <label style="font-size: 9px; color: #aaa;">TROCA ÓLEO (KM)</label>
+                <input type="number" id="moto_meta_oleo" oninput="atualizarManutencao()">
+            </div>
+        </div>
+        <div class="progress-container"><div id="barra_oleo" class="progress-bar"></div></div>
+        <small id="txt_km_faltam" style="font-size: 10px; color: #00c853; margin-top: 5px; display: block;">Calculando...</small>
+        <button class="btn-notif" onclick="pedirPermissaoNotif()">🔔 Ativar Alertas no Painel da Moto</button>
+    </div>
+
     <div class="card config-section">
-        <div class="config-item">
-            <label>MÉDIA KM POR LITRO</label>
-            <input type="number" id="media_km" placeholder="Ex: 35">
-        </div>
-        <div class="config-item">
-            <label>PREÇO DO LITRO (GASOLINA)</label>
-            <input type="number" id="preco_gas" placeholder="Ex: 6.10">
-        </div>
-        <div class="config-item">
-            <label>META DIÁRIA MOTO (Geralmente 32.00)</label>
-            <input type="number" id="meta_moto" placeholder="Ex: 32">
-        </div>
-        <div class="config-item">
-            <label>RESERVA IPVA (VALOR POR KM)</label>
-            <input type="number" id="reserva_ipva" placeholder="Ex: 0.05">
-        </div>
+        <div class="config-item"><label>MÉDIA KM POR LITRO</label><input type="number" id="media_km"></div>
+        <div class="config-item"><label>PREÇO DO LITRO (GASOLINA)</label><input type="number" id="preco_gas"></div>
+        <div class="config-item"><label>META MOTO (R$ DIÁRIO)</label><input type="number" id="meta_moto_val"></div>
+        <div class="config-item"><label>VALOR POR KM (ÓLEO)</label><input type="number" id="oleo_km_val"></div>
+        <div class="config-item"><label>VALOR POR KM (IPVA)</label><input type="number" id="ipva_km_val"></div>
+        <div class="config-item"><label>META LÍQUIDA DIÁRIA (R$)</label><input type="number" id="meta_fin_val"></div>
         <button class="btn-save" onclick="salvarConfig()">SALVAR CONFIGURAÇÕES</button>
     </div>
 
     <div class="card">
         <label>TOTAL QUE CAIU NO APP (R$)</label>
         <input type="number" id="bruto" placeholder="R$ 0,00">
-        
         <label style="margin-top: 10px;">KM TOTAL RODADO NO DIA</label>
         <input type="number" id="km" placeholder="0 km">
-        
         <button class="btn-add" onclick="registrar()">CALCULAR E DISTRIBUIR</button>
 
         <div class="envelopes">
-            <div class="env header-pf">SALÁRIO LÍQUIDO (CONTA PF)<strong id="res-pf">R$ 0,00</strong></div>
+            <div class="env header-pf">SALÁRIO LÍQUIDO<strong id="res-pf">R$ 0,00</strong></div>
             <div class="env bg-gas">⛽ GASOLINA<strong id="res-gas">R$ 0,00</strong></div>
             <div class="env bg-moto">🏍️ META MOTO<strong id="res-moto">R$ 0,00</strong></div>
+            <div class="env bg-oleo">🛢️ RESERVA ÓLEO<strong id="res-oleo">R$ 0,00</strong></div>
             <div class="env bg-ipva">📄 IPVA/TAXAS<strong id="res-ipva">R$ 0,00</strong></div>
             <div class="env bg-multa">⚠️ RESERVA MULTA<strong id="res-multa">R$ 0,00</strong></div>
         </div>
     </div>
 
-    <table id="tabela">
-        <thead>
-            <tr>
-                <th>Data</th>
-                <th>KM</th>
-                <th>Bruto</th>
-                <th>Líquido</th>
-                <th>Apagar</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+    <table id="tabela"><thead><tr><th>Data</th><th>KM</th><th>Bruto</th><th>Líquido</th><th>X</th></tr></thead><tbody></tbody></table>
 
     <script>
         let db = JSON.parse(localStorage.getItem('gestao_cristian_v4')) || [];
-        let config = JSON.parse(localStorage.getItem('config_cristian_v4')) || { media: 35, preco: 6.10, meta: 32, ipva: 0.05 };
+        let config = JSON.parse(localStorage.getItem('config_cristian_v4')) || { media: 35, preco: 6.10, metaM: 32, ipva: 0.05, oleo: 0.03, metaF: 100 };
+        let motoData = JSON.parse(localStorage.getItem('moto_cristian_v1')) || { kmAtual: 0, metaOleo: 1000 };
 
-        document.getElementById('media_km').value = config.media;
-        document.getElementById('preco_gas').value = config.preco;
-        document.getElementById('meta_moto').value = config.meta;
-        document.getElementById('reserva_ipva').value = config.ipva;
+        window.onload = function() {
+            carregarCampos();
+            render();
+            atualizarManutencao();
+
+            // RECEBEDOR DO MACRODROID (Puxa dados da URL)
+            const params = new URLSearchParams(window.location.search);
+            if(params.get('km')) document.getElementById('km').value = params.get('km');
+            if(params.get('bruto')) document.getElementById('bruto').value = params.get('bruto');
+            if(params.get('km') || params.get('bruto')) {
+                 alert("Dados recebidos da Moto!");
+            }
+        };
+
+        function carregarCampos() {
+            document.getElementById('media_km').value = config.media;
+            document.getElementById('preco_gas').value = config.preco;
+            document.getElementById('meta_moto_val').value = config.metaM;
+            document.getElementById('oleo_km_val').value = config.oleo;
+            document.getElementById('ipva_km_val').value = config.ipva;
+            document.getElementById('meta_fin_val').value = config.metaF;
+            document.getElementById('moto_km_atual').value = motoData.kmAtual;
+            document.getElementById('moto_meta_oleo').value = motoData.metaOleo;
+        }
 
         function salvarConfig() {
             config = {
                 media: parseFloat(document.getElementById('media_km').value),
                 preco: parseFloat(document.getElementById('preco_gas').value),
-                meta: parseFloat(document.getElementById('meta_moto').value),
-                ipva: parseFloat(document.getElementById('reserva_ipva').value)
+                metaM: parseFloat(document.getElementById('meta_moto_val').value),
+                oleo: parseFloat(document.getElementById('oleo_km_val').value),
+                ipva: parseFloat(document.getElementById('ipva_km_val').value),
+                metaF: parseFloat(document.getElementById('meta_fin_val').value)
             };
             localStorage.setItem('config_cristian_v4', JSON.stringify(config));
-            alert("Configurações Salvas com Sucesso!");
+            alert("Configurações salvas!");
+        }
+
+        function pedirPermissaoNotif() {
+            Notification.requestPermission().then(p => { if(p === 'granted') alert("Alertas ativados no Painel!"); });
+        }
+
+        function atualizarManutencao() {
+            const km = parseFloat(document.getElementById('moto_km_atual').value) || 0;
+            const meta = parseFloat(document.getElementById('moto_meta_oleo').value) || 1000;
+            let rodado = km % meta;
+            let perc = (rodado / meta) * 100;
+            document.getElementById('barra_oleo').style.width = perc + "%";
+            document.getElementById('txt_km_faltam').innerText = "Faltam " + (meta - rodado).toFixed(0) + " km para trocar óleo.";
+            if(meta-rodado <= 0) document.getElementById('txt_km_faltam').innerText = "⚠️ TROCAR ÓLEO AGORA!";
+            localStorage.setItem('moto_cristian_v1', JSON.stringify({ kmAtual: km, metaOleo: meta }));
         }
 
         function registrar() {
             const bruto = parseFloat(document.getElementById('bruto').value);
-            const km = parseFloat(document.getElementById('km').value);
-            if (!bruto || !km) return alert("Por favor, preencha o valor e a quilometragem!");
+            const kmDia = parseFloat(document.getElementById('km').value);
+            if (!bruto || !kmDia) return alert("Preencha KM e Bruto!");
 
-            const gas = (km / config.media) * config.preco;
-            const metaMoto = config.meta;
-            const reservaIpva = km * config.ipva;
-            const reservaMulta = km * 0.03; 
+            const gas = (kmDia / config.media) * config.preco;
+            const resOleo = kmDia * config.oleo;
+            const resIpva = kmDia * config.ipva;
+            const resMulta = kmDia * 0.03;
+            const liq = bruto - gas - config.metaM - resOleo - resIpva - resMulta;
 
-            const liquido = bruto - gas - metaMoto - reservaIpva - reservaMulta;
-
-            document.getElementById('res-pf').innerText = "R$ " + liquido.toFixed(2);
+            document.getElementById('res-pf').innerText = "R$ " + liq.toFixed(2);
             document.getElementById('res-gas').innerText = "R$ " + gas.toFixed(2);
-            document.getElementById('res-moto').innerText = "R$ " + metaMoto.toFixed(2);
-            document.getElementById('res-ipva').innerText = "R$ " + reservaIpva.toFixed(2);
-            document.getElementById('res-multa').innerText = "R$ " + reservaMulta.toFixed(2);
+            document.getElementById('res-moto').innerText = "R$ " + config.metaM.toFixed(2);
+            document.getElementById('res-oleo').innerText = "R$ " + resOleo.toFixed(2);
+            document.getElementById('res-ipva').innerText = "R$ " + resIpva.toFixed(2);
+            document.getElementById('res-multa').innerText = "R$ " + resMulta.toFixed(2);
 
-            db.unshift({
-                data: new Date().toLocaleDateString('pt-BR').substring(0,5),
-                km: km,
-                bruto: bruto.toFixed(2),
-                liquido: liquido.toFixed(2)
-            });
+            // Alerta Meta na Moto
+            if (liq >= config.metaF && Notification.permission === "granted") {
+                new Notification("META ATINGIDA! 🏁", { body: `Lucro: R$ ${liq.toFixed(2)}. Parabéns!` });
+            }
+
+            // Atualiza KM da Moto
+            let novoKm = (parseFloat(document.getElementById('moto_km_atual').value) || 0) + kmDia;
+            document.getElementById('moto_km_atual').value = novoKm;
+            atualizarManutencao();
+
+            db.unshift({ data: new Date().toLocaleDateString('pt-BR').substring(0,5), km: kmDia, bruto, liquido: liq.toFixed(2) });
             render();
         }
 
@@ -140,20 +175,12 @@
             const tbody = document.querySelector('#tabela tbody');
             tbody.innerHTML = '';
             db.forEach((item, i) => {
-                tbody.innerHTML += `<tr>
-                    <td>${item.data}</td>
-                    <td>${item.km}</td>
-                    <td>R$ ${item.bruto}</td>
-                    <td><strong>R$ ${item.liquido}</strong></td>
-                    <td><button class="btn-del" onclick="apagar(${i})">X</button></td>
-                </tr>`;
+                tbody.innerHTML += `<tr><td>${item.data}</td><td>${item.km}</td><td>R$ ${item.bruto}</td><td><strong>R$ ${item.liquido}</strong></td><td><button class="btn-del" onclick="apagar(${i})">X</button></td></tr>`;
             });
             localStorage.setItem('gestao_cristian_v4', JSON.stringify(db));
         }
 
-        function apagar(i) { if(confirm("Deseja mesmo apagar este registro?")) { db.splice(i,1); render(); } }
-
-        render();
+        function apagar(i) { if(confirm("Apagar?")) { db.splice(i,1); render(); } }
     </script>
 </body>
 </html>
