@@ -29,9 +29,46 @@
         .progress-container { background: #333; height: 10px; border-radius: 5px; margin-top: 10px; overflow: hidden; }
         .progress-bar { background: #00c853; height: 100%; width: 0%; transition: width 0.5s; }
         .btn-notif { background: #222; color: #aaa; border: 1px solid #444; padding: 5px; width: 100%; border-radius: 6px; font-size: 10px; margin-top: 10px; cursor: pointer; }
+
+        /* Estilo do Bloqueio de Pagamento */
+        #bloqueio-pagamento {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.96); z-index: 9999; 
+            display: flex; align-items: center; justify-content: center; 
+            color: white; flex-direction: column; text-align: center;
+        }
+        .painel-pagamento {
+            background: #111; padding: 30px; border-radius: 20px; 
+            border: 2px solid #00897b; max-width: 350px; width: 90%;
+        }
+        .btn-pagar {
+            background: #00897b; color: white; padding: 15px; 
+            text-decoration: none; font-weight: bold; border-radius: 8px; 
+            display: block; margin: 20px 0; font-size: 18px;
+        }
     </style>
 </head>
 <body>
+
+    <div id="bloqueio-pagamento">
+        <div class="painel-pagamento">
+            <h2 style="color: #00897b; margin: 0;">CONTROLE CRISTIAN 🔐</h2>
+            <p style="font-size: 14px; color: #ccc;">Sua ferramenta de gestão financeira e manutenção.</p>
+            
+            <div style="background: #222; padding: 10px; border-radius: 10px; margin: 15px 0;">
+                <span style="font-size: 11px; color: #888;">ACESSO COMPLETO</span>
+                <div style="font-size: 24px; font-weight: bold;">R$ 5,00</div>
+            </div>
+
+            <a href="https://pay.kiwify.com.br/r9oxuT1" target="_blank" class="btn-pagar">PAGAR COM PIX</a>
+
+            <div style="border-top: 1px dotted #444; padding-top: 20px;">
+                <label style="color: #aaa; margin-bottom: 8px;">JÁ PAGOU? DIGITE A SENHA:</label>
+                <input type="text" id="campo-senha" placeholder="Senha do e-mail" style="width: 80%; margin-bottom: 10px; text-align: center;">
+                <button class="btn-save" style="background: #fff; color: #000;" onclick="verificarSenha()">LIBERAR AGORA</button>
+            </div>
+        </div>
+    </div>
 
     <h3 style="text-align: center; color: #00897b;">🏍️ CONTROLE CRISTIAN</h3>
 
@@ -82,22 +119,37 @@
     <table id="tabela"><thead><tr><th>Data</th><th>KM</th><th>Bruto</th><th>Líquido</th><th>X</th></tr></thead><tbody></tbody></table>
 
     <script>
+        // --- LÓGICA DE ACESSO ---
+        const SENHA_CORRETA = "ROTA2026"; // Mude aqui para a senha que quiser
+
+        function verificarSenha() {
+            const senha = document.getElementById('campo-senha').value;
+            if (senha === SENHA_CORRETA) {
+                document.getElementById('bloqueio-pagamento').style.display = 'none';
+                localStorage.setItem('cristian_acesso', 'true');
+            } else {
+                alert("Senha incorreta. Verifique seu e-mail após o pagamento.");
+            }
+        }
+
+        // --- SEU CÓDIGO ORIGINAL ---
         let db = JSON.parse(localStorage.getItem('gestao_cristian_v4')) || [];
         let config = JSON.parse(localStorage.getItem('config_cristian_v4')) || { media: 35, preco: 6.10, metaM: 32, ipva: 0.05, oleo: 0.03, metaF: 100 };
         let motoData = JSON.parse(localStorage.getItem('moto_cristian_v1')) || { kmAtual: 0, metaOleo: 1000 };
 
         window.onload = function() {
+            // Verifica se já pagou antes de carregar o resto
+            if(localStorage.getItem('cristian_acesso') === 'true') {
+                document.getElementById('bloqueio-pagamento').style.display = 'none';
+            }
+
             carregarCampos();
             render();
             atualizarManutencao();
 
-            // RECEBEDOR DO MACRODROID (Puxa dados da URL)
             const params = new URLSearchParams(window.location.search);
             if(params.get('km')) document.getElementById('km').value = params.get('km');
             if(params.get('bruto')) document.getElementById('bruto').value = params.get('bruto');
-            if(params.get('km') || params.get('bruto')) {
-                 alert("Dados recebidos da Moto!");
-            }
         };
 
         function carregarCampos() {
@@ -125,7 +177,7 @@
         }
 
         function pedirPermissaoNotif() {
-            Notification.requestPermission().then(p => { if(p === 'granted') alert("Alertas ativados no Painel!"); });
+            Notification.requestPermission().then(p => { if(p === 'granted') alert("Alertas ativados!"); });
         }
 
         function atualizarManutencao() {
@@ -157,12 +209,10 @@
             document.getElementById('res-ipva').innerText = "R$ " + resIpva.toFixed(2);
             document.getElementById('res-multa').innerText = "R$ " + resMulta.toFixed(2);
 
-            // Alerta Meta na Moto
             if (liq >= config.metaF && Notification.permission === "granted") {
-                new Notification("META ATINGIDA! 🏁", { body: `Lucro: R$ ${liq.toFixed(2)}. Parabéns!` });
+                new Notification("META ATINGIDA! 🏁", { body: `Lucro: R$ ${liq.toFixed(2)}.` });
             }
 
-            // Atualiza KM da Moto
             let novoKm = (parseFloat(document.getElementById('moto_km_atual').value) || 0) + kmDia;
             document.getElementById('moto_km_atual').value = novoKm;
             atualizarManutencao();
