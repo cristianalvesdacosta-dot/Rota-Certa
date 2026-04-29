@@ -32,7 +32,6 @@
         .backup-area { display: flex; gap: 10px; margin-top: 20px; }
         .btn-backup { flex: 1; background: #222; color: #aaa; border: 1px solid #444; padding: 8px; border-radius: 6px; font-size: 10px; cursor: pointer; }
 
-        /* Estilo do Bloqueio Firebase */
         #bloqueio-pagamento {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.98); z-index: 9999; 
@@ -117,18 +116,14 @@
         <input type="file" id="importFile" style="display:none" onchange="importarDados(event)">
     </div>
 
-    <script>
-        // CONFIGURAÇÃO FIREBASE DO CRISTIAN
-        const firebaseConfig = {
-            apiKey: "AIzaSyCCX1k0PN_yOd3QWauBQhwX0FRwqhn7Clo",
-            authDomain: "gestao-financeira-motoboy.firebaseapp.com",
-            databaseURL: "https://gestao-financeira-motoboy-default-rtdb.firebaseio.com",
-            projectId: "gestao-financeira-motoboy",
-            storageBucket: "gestao-financeira-motoboy.firebasestorage.app",
-            messagingSenderId: "107405414927",
-            appId: "1:107405414927:web:71eae0a1917ce9e512897a"
-        };
-        firebase.initializeApp(firebaseConfig);
+    <script src="config.js"></script> <script>
+        // CONFIGURAÇÃO FIREBASE SEGURA
+        if (typeof firebaseConfig !== 'undefined') {
+            firebase.initializeApp(firebaseConfig);
+        } else {
+            console.error("Configuração do Firebase não encontrada. Verifique o arquivo config.js");
+        }
+        
         const fb_db = firebase.database();
 
         let db = JSON.parse(localStorage.getItem('app_motoboy_db')) || [];
@@ -169,7 +164,6 @@
             }
         }
 
-        // --- FUNÇÕES DE CÁLCULO ORIGINAIS ---
         function carregarCampos() {
             document.getElementById('media_km').value = config.media;
             document.getElementById('preco_gas').value = config.preco;
@@ -226,7 +220,6 @@
 
             db.unshift({ data: new Date().toLocaleDateString('pt-BR').substring(0,5), km: kmDia, bruto, liquido: liq.toFixed(2) });
             
-            // Sincroniza com Firebase
             const email = localStorage.getItem('m_logado');
             if(email) fb_db.ref('usuarios/' + formatarChave(email) + '/historico').set(db);
             
