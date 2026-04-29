@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GESTÃO FINANCEIRA MOTOBOY</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #eee; padding: 15px; margin: 0; padding-bottom: 50px; }
         .card { background: #161616; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
@@ -27,12 +29,10 @@
         .progress-container { background: #333; height: 10px; border-radius: 5px; margin-top: 10px; overflow: hidden; }
         .progress-bar { background: #00c853; height: 100%; width: 0%; transition: width 0.5s; }
         .btn-notif { background: #222; color: #aaa; border: 1px solid #444; padding: 8px; width: 100%; border-radius: 6px; font-size: 10px; margin-top: 10px; cursor: pointer; }
-        
-        /* Backup Buttons */
         .backup-area { display: flex; gap: 10px; margin-top: 20px; }
         .btn-backup { flex: 1; background: #222; color: #aaa; border: 1px solid #444; padding: 8px; border-radius: 6px; font-size: 10px; cursor: pointer; }
 
-        /* Estilo do Bloqueio de Pagamento */
+        /* Estilo do Bloqueio Firebase */
         #bloqueio-pagamento {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.98); z-index: 9999; 
@@ -44,7 +44,7 @@
             border: 2px solid #00897b; max-width: 350px; width: 90%;
         }
         .btn-pagar {
-            background: #00897b; color: white; padding: 15px; 
+            background: #25d366; color: white; padding: 15px; 
             text-decoration: none; font-weight: bold; border-radius: 8px; 
             display: block; margin: 20px 0; font-size: 18px;
         }
@@ -55,12 +55,17 @@
     <div id="bloqueio-pagamento">
         <div class="painel-pagamento">
             <h2 style="color: #00897b; margin: 0;">SISTEMA FINANCEIRO 🔐</h2>
-            <p style="font-size: 14px; color: #ccc;">Controle de ganhos, gastos e manutenção.</p>
-            <a href="https://pay.kiwify.com.br/r9oxuT1" target="_blank" class="btn-pagar">LIBERAR ACESSO (R$ 5,00)</a>
-            <div style="border-top: 1px dotted #444; padding-top: 20px;">
-                <label style="color: #aaa; margin-bottom: 8px;">JÁ PAGOU? DIGITE A SENHA:</label>
-                <input type="text" id="campo-senha" placeholder="Digite a senha recebida" style="width: 80%; margin-bottom: 10px; text-align: center;">
-                <button class="btn-save" style="background: #fff; color: #000;" onclick="verificarSenha()">ENTRAR AGORA</button>
+            <div id="area-login">
+                <p style="font-size: 14px; color: #ccc;">Acesse para testar por 3 dias grátis.</p>
+                <input type="text" id="reg-nome" placeholder="Seu Nome" style="width: 80%; margin-bottom: 10px; text-align: center;">
+                <input type="email" id="reg-email" placeholder="Seu E-mail" style="width: 80%; margin-bottom: 10px; text-align: center;">
+                <button class="btn-add" onclick="entrar()">ENTRAR NO APP</button>
+            </div>
+            <div id="area-vencido" style="display:none;">
+                <p style="color: #ff5252; font-weight: bold;">TESTE EXPIRADO!</p>
+                <p>Libere o acesso vitalício clicando abaixo:</p>
+                <a href="https://wa.me/5519997648211?text=Quero liberar meu acesso" target="_blank" class="btn-pagar">LIBERAR NO WHATSAPP</a>
+                <button onclick="location.reload()" style="background:none; border:none; color:#555; margin-top:20px;">Já paguei, entrar agora</button>
             </div>
         </div>
     </div>
@@ -75,7 +80,6 @@
         </div>
         <div class="progress-container"><div id="barra_oleo" class="progress-bar"></div></div>
         <small id="txt_km_faltam" style="font-size: 10px; color: #00c853; margin-top: 5px; display: block;">Calculando...</small>
-        <button class="btn-notif" onclick="pedirPermissaoNotif()">🔔 Ativar Alertas de Meta e Óleo</button>
     </div>
 
     <div class="card config-section">
@@ -113,33 +117,59 @@
         <input type="file" id="importFile" style="display:none" onchange="importarDados(event)">
     </div>
 
-    <p style="font-size: 9px; text-align: center; color: #555; margin-top: 20px;">
-        ⚠️ Seus dados são salvos no navegador. Use o botão de Backup para não perder o histórico ao limpar o cache.
-    </p>
-
     <script>
-        const SENHA_CORRETA = "ROTA2026";
-
-        function verificarSenha() {
-            if (document.getElementById('campo-senha').value === SENHA_CORRETA) {
-                document.getElementById('bloqueio-pagamento').style.display = 'none';
-                localStorage.setItem('app_motoboy_acesso', 'true');
-            } else { alert("Senha incorreta. Verifique seu e-mail."); }
-        }
+        // CONFIGURAÇÃO FIREBASE DO CRISTIAN
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCX1k0PN_yOd3QWauBQhwX0FRwqhn7Clo",
+            authDomain: "gestao-financeira-motoboy.firebaseapp.com",
+            databaseURL: "https://gestao-financeira-motoboy-default-rtdb.firebaseio.com",
+            projectId: "gestao-financeira-motoboy",
+            storageBucket: "gestao-financeira-motoboy.firebasestorage.app",
+            messagingSenderId: "107405414927",
+            appId: "1:107405414927:web:71eae0a1917ce9e512897a"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const fb_db = firebase.database();
 
         let db = JSON.parse(localStorage.getItem('app_motoboy_db')) || [];
         let config = JSON.parse(localStorage.getItem('app_motoboy_conf')) || { media: 35, preco: 6.10, metaM: 32, ipva: 0.05, oleo: 0.03, metaF: 100 };
         let motoData = JSON.parse(localStorage.getItem('app_motoboy_moto')) || { kmAtual: 0, metaOleo: 1000 };
 
-        window.onload = function() {
-            if(localStorage.getItem('app_motoboy_acesso') === 'true') {
-                document.getElementById('bloqueio-pagamento').style.display = 'none';
-            }
-            carregarCampos();
-            render();
-            atualizarManutencao();
-        };
+        function formatarChave(email) { return email.toLowerCase().replace(/[.@]/g, "_"); }
 
+        async function entrar() {
+            const nome = document.getElementById('reg-nome').value;
+            const email = document.getElementById('reg-email').value;
+            if(!email.includes('@')) return alert("E-mail inválido");
+            const chave = formatarChave(email);
+            
+            fb_db.ref('usuarios/' + chave).once('value', (snap) => {
+                if (snap.exists()) {
+                    localStorage.setItem('m_logado', email);
+                    verificarAcesso(snap.val());
+                } else {
+                    const novo = { nome, email, pago: false, dataInicio: new Date().getTime() };
+                    fb_db.ref('usuarios/' + chave).set(novo);
+                    localStorage.setItem('m_logado', email);
+                    verificarAcesso(novo);
+                }
+            });
+        }
+
+        function verificarAcesso(dados) {
+            const agora = new Date().getTime();
+            const tresDias = 3 * 24 * 60 * 60 * 1000;
+            if (dados.pago === true || (agora - dados.dataInicio < tresDias)) {
+                document.getElementById('bloqueio-pagamento').style.display = 'none';
+                carregarCampos();
+                render();
+            } else {
+                document.getElementById('area-login').style.display = 'none';
+                document.getElementById('area-vencido').style.display = 'block';
+            }
+        }
+
+        // --- FUNÇÕES DE CÁLCULO ORIGINAIS ---
         function carregarCampos() {
             document.getElementById('media_km').value = config.media;
             document.getElementById('preco_gas').value = config.preco;
@@ -164,18 +194,12 @@
             alert("Configurações salvas!");
         }
 
-        function pedirPermissaoNotif() {
-            Notification.requestPermission().then(p => { if(p === 'granted') alert("Alertas ativados!"); });
-        }
-
         function atualizarManutencao() {
             const km = parseFloat(document.getElementById('moto_km_atual').value) || 0;
             const meta = parseFloat(document.getElementById('moto_meta_oleo').value) || 1000;
             let rodado = km % meta;
-            let perc = (rodado / meta) * 100;
-            document.getElementById('barra_oleo').style.width = perc + "%";
+            document.getElementById('barra_oleo').style.width = (rodado / meta * 100) + "%";
             document.getElementById('txt_km_faltam').innerText = "Faltam " + (meta - rodado).toFixed(0) + " km para trocar óleo.";
-            if(meta-rodado <= 0) document.getElementById('txt_km_faltam').innerText = "⚠️ TROCAR ÓLEO AGORA!";
             localStorage.setItem('app_motoboy_moto', JSON.stringify({ kmAtual: km, metaOleo: meta }));
         }
 
@@ -187,25 +211,25 @@
             const gas = (kmDia / config.media) * config.preco;
             const resOleo = kmDia * config.oleo;
             const resIpva = kmDia * config.ipva;
-            const resMulta = kmDia * 0.03;
-            const liq = bruto - gas - config.metaM - resOleo - resIpva - resMulta;
+            const liq = bruto - gas - config.metaM - resOleo - resIpva - (kmDia * 0.03);
 
             document.getElementById('res-pf').innerText = "R$ " + liq.toFixed(2);
             document.getElementById('res-gas').innerText = "R$ " + gas.toFixed(2);
             document.getElementById('res-moto').innerText = "R$ " + config.metaM.toFixed(2);
             document.getElementById('res-oleo').innerText = "R$ " + resOleo.toFixed(2);
             document.getElementById('res-ipva').innerText = "R$ " + resIpva.toFixed(2);
-            document.getElementById('res-multa').innerText = "R$ " + resMulta.toFixed(2);
-
-            if (liq >= config.metaF && Notification.permission === "granted") {
-                new Notification("META ATINGIDA! 🏁", { body: `Lucro: R$ ${liq.toFixed(2)}.` });
-            }
+            document.getElementById('res-multa').innerText = "R$ " + (kmDia * 0.03).toFixed(2);
 
             let novoKm = (parseFloat(document.getElementById('moto_km_atual').value) || 0) + kmDia;
             document.getElementById('moto_km_atual').value = novoKm;
             atualizarManutencao();
 
             db.unshift({ data: new Date().toLocaleDateString('pt-BR').substring(0,5), km: kmDia, bruto, liquido: liq.toFixed(2) });
+            
+            // Sincroniza com Firebase
+            const email = localStorage.getItem('m_logado');
+            if(email) fb_db.ref('usuarios/' + formatarChave(email) + '/historico').set(db);
+            
             render();
         }
 
@@ -220,32 +244,18 @@
 
         function apagar(i) { if(confirm("Apagar registro?")) { db.splice(i,1); render(); } }
 
-        function exportarDados() {
-            const backup = {
-                db: localStorage.getItem('app_motoboy_db'),
-                conf: localStorage.getItem('app_motoboy_conf'),
-                moto: localStorage.getItem('app_motoboy_moto'),
-                acesso: localStorage.getItem('app_motoboy_acesso')
-            };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup));
-            const dlAnchorElem = document.createElement('a');
-            dlAnchorElem.setAttribute("href", dataStr);
-            dlAnchorElem.setAttribute("download", "backup_financeiro_motoboy.json");
-            dlAnchorElem.click();
-        }
-
-        function importarDados(event) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const data = JSON.parse(e.target.result);
-                if(data.db) localStorage.setItem('app_motoboy_db', data.db);
-                if(data.conf) localStorage.setItem('app_motoboy_conf', data.conf);
-                if(data.moto) localStorage.setItem('app_motoboy_moto', data.moto);
-                if(data.acesso) localStorage.setItem('app_motoboy_acesso', data.acesso);
-                location.reload();
-            };
-            reader.readAsText(event.target.files[0]);
-        }
+        window.onload = function() {
+            const logado = localStorage.getItem('m_logado');
+            if(logado) {
+                fb_db.ref('usuarios/' + formatarChave(logado)).on('value', (snap) => {
+                    if(snap.exists()) {
+                        const dados = snap.val();
+                        if(dados.historico) db = dados.historico;
+                        verificarAcesso(dados);
+                    }
+                });
+            }
+        };
     </script>
 </body>
 </html>
