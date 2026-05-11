@@ -3,176 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GESTÃO FINANCEIRA MOTOBOY</title>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <title>SISTEMA MOTOBOY ELITE</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #eee; padding: 15px; margin: 0; padding-bottom: 50px; }
-        .card { background: #161616; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
-        .config-section { border-left: 4px solid #00897b; padding-left: 15px; }
-        .config-item { margin-bottom: 10px; }
-        label { display: block; font-size: 11px; color: #00897b; font-weight: bold; margin-bottom: 2px; }
-        input { width: 92%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #222; color: #fff; font-size: 14px; }
-        .btn-save { background: #333; color: #00897b; border: 1px solid #00897b; padding: 8px; width: 100%; border-radius: 6px; font-size: 12px; margin-top: 5px; cursor: pointer; }
-        .btn-add { width: 100%; padding: 15px; background: #00897b; border: none; color: white; font-weight: bold; border-radius: 6px; margin-top: 15px; font-size: 16px; cursor: pointer; }
+        :root { --green: #2ecc71; --blue: #3498db; --dark: #0a0a0a; --card: #1e1e1e; --text: #f5f5f5; --accent: #f1c40f; --red: #e74c3c; --purple: #4a148c; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: var(--text); padding: 0; margin: 0; padding-bottom: 70px; }
+        
+        .tab-bar { display: flex; background: #111; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #333; }
+        .tab-btn { flex: 1; padding: 15px; border: none; background: none; color: #888; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; }
+        .tab-btn.active { color: var(--green); border-bottom: 3px solid var(--green); }
+
+        .container { padding: 15px; max-width: 500px; margin: auto; }
+        .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #333; margin-bottom: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+        
+        label { display: block; font-size: 11px; color: var(--green); font-weight: bold; margin-bottom: 4px; text-transform: uppercase; }
+        input { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #444; background: #2b2b2b; color: #fff; box-sizing: border-box; margin-bottom: 12px; text-align: center; font-size: 16px; outline: none; }
+        input:focus { border-color: var(--green); }
+        
+        .btn-add { width: 100%; padding: 16px; background: var(--green); border: none; color: #000; font-weight: 800; border-radius: 8px; cursor: pointer; font-size: 16px; text-transform: uppercase; }
+        
         .envelopes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
         .env { padding: 10px; border-radius: 6px; font-size: 10px; text-align: center; border: 1px solid #333; }
         .env strong { display: block; font-size: 14px; margin-top: 4px; }
-        .header-pf { background: #4a148c; grid-column: span 2; padding: 15px; border: none; }
+        .header-pf { background: var(--purple); grid-column: span 2; padding: 15px; border: none; }
         .bg-gas { background: #b71c1c; } .bg-moto { background: #e65100; }
-        .bg-oleo { background: #004d40; border: 1px solid #00c853; }
-        .bg-ipva { background: #01579b; } .bg-multa { background: #d32f2f; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 11px; }
-        th, td { border: 1px solid #333; padding: 10px; text-align: center; }
-        th { background: #222; color: #00897b; }
-        .btn-del { background: #c62828; color: white; border: none; padding: 5px 10px; border-radius: 4px; }
-        .progress-container { background: #333; height: 10px; border-radius: 5px; margin-top: 10px; overflow: hidden; }
-        .progress-bar { background: #00c853; height: 100%; width: 0%; transition: width 0.5s; }
-        .btn-notif { background: #222; color: #aaa; border: 1px solid #444; padding: 8px; width: 100%; border-radius: 6px; font-size: 10px; margin-top: 10px; cursor: pointer; }
-        .backup-area { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-backup { flex: 1; background: #222; color: #aaa; border: 1px solid #444; padding: 8px; border-radius: 6px; font-size: 10px; cursor: pointer; }
+        .bg-oleo { background: #004d40; border: 1px solid var(--green); }
+        .bg-ipva { background: #01579b; }
 
-        #bloqueio-pagamento {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.98); z-index: 9999; 
-            display: flex; align-items: center; justify-content: center; 
-            color: white; flex-direction: column; text-align: center;
-        }
-        .painel-pagamento {
-            background: #111; padding: 30px; border-radius: 20px; 
-            border: 2px solid #00897b; max-width: 350px; width: 90%;
-        }
-        .btn-pagar {
-            background: #25d366; color: white; padding: 15px; 
-            text-decoration: none; font-weight: bold; border-radius: 8px; 
-            display: block; margin: 20px 0; font-size: 18px;
-        }
+        .progress-container { background: #333; border-radius: 10px; height: 15px; margin: 10px 0; overflow: hidden; position: relative; border: 1px solid #444; }
+        .progress-bar { background: linear-gradient(90deg, #27ae60, #2ecc71); height: 100%; width: 0%; transition: width 0.5s; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 15px; }
+        th, td { border: 1px solid #333; padding: 10px; text-align: center; }
+        th { background: #222; color: var(--green); }
+        .btn-del { background: var(--red); color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
+
+        /* Estilos Financiamento */
+        .contract-header { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; border: 1px dashed #444; margin-bottom: 20px; }
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .stat-box { background: #2b2b2b; padding: 12px; border-radius: 8px; text-align: center; border-bottom: 3px solid var(--blue); }
+        .stat-box.highlight { border-bottom-color: var(--accent); }
     </style>
 </head>
 <body>
 
-    <div id="bloqueio-pagamento">
-        <div class="painel-pagamento">
-            <h2 style="color: #00897b; margin: 0;">SISTEMA FINANCEIRO 🔐</h2>
-            <div id="area-login">
-                <p style="font-size: 14px; color: #ccc;">Acesse para testar por 3 dias grátis.</p>
-                <input type="text" id="reg-nome" placeholder="Seu Nome" style="width: 80%; margin-bottom: 10px; text-align: center;">
-                <input type="email" id="reg-email" placeholder="Seu E-mail" style="width: 80%; margin-bottom: 10px; text-align: center;">
-                <button class="btn-add" onclick="entrar()">ENTRAR NO APP</button>
+    <div class="tab-bar">
+        <button class="tab-btn active" onclick="openTab('diario')">Gestão</button>
+        <button class="tab-btn" onclick="openTab('financa')">Controle 96x</button>
+        <button class="tab-btn" onclick="openTab('ajustes')">Ajustes</button>
+    </div>
+
+    <div id="diario" class="container tab-content">
+        <div class="card" style="border-left: 5px solid var(--green);">
+            <label>MANUTENÇÃO E REVISÃO</label>
+            <div style="display: flex; gap: 10px;">
+                <div style="flex:1"><label>KM ATUAL</label><input type="number" id="moto_km_atual" oninput="atualizarManutencao()"></div>
+                <div style="flex:1"><label>TROCA ÓLEO (KM)</label><input type="number" id="moto_meta_oleo" value="1000" oninput="atualizarManutencao()"></div>
             </div>
-            <div id="area-vencido" style="display:none;">
-                <p style="color: #ff5252; font-weight: bold;">TESTE EXPIRADO!</p>
-                <p>Libere o acesso vitalício clicando abaixo:</p>
-                <a href="https://wa.me/5519997648211?text=Quero liberar meu acesso" target="_blank" class="btn-pagar">LIBERAR NO WHATSAPP</a>
-                <button onclick="location.reload()" style="background:none; border:none; color:#555; margin-top:20px;">Já paguei, entrar agora</button>
+            <div class="progress-container"><div id="barra_oleo" class="progress-bar"></div></div>
+            <small id="txt_km_faltam" style="color: var(--green);"></small>
+        </div>
+
+        <div class="card">
+            <label>TOTAL GANHO NO APP (R$)</label>
+            <input type="number" id="bruto" placeholder="R$ 0,00">
+            <label>KM TOTAL RODADO NO DIA</label>
+            <input type="number" id="km_dia" placeholder="0 km">
+            <button class="btn-add" onclick="registrar()">CALCULAR E SALVAR</button>
+
+            <div class="envelopes">
+                <div class="env header-pf">SALÁRIO LÍQUIDO REAL <strong id="res-pf">R$ 0,00</strong></div>
+                <div class="env bg-gas">⛽ GASOLINA <strong id="res-gas">R$ 0,00</strong></div>
+                <div class="env bg-moto">🏍️ DESPESAS MOTO <strong id="res-moto">R$ 0,00</strong></div>
+                <div class="env bg-oleo">🛢️ RESERVA ÓLEO <strong id="res-oleo">R$ 0,00</strong></div>
+                <div class="env bg-ipva">📄 IPVA/TAXAS <strong id="res-ipva">R$ 0,00</strong></div>
+            </div>
+        </div>
+
+        <table id="tabela"><thead><tr><th>Data</th><th>KM</th><th>Bruto</th><th>Líq.</th><th>X</th></tr></thead><tbody></tbody></table>
+    </div>
+
+    <div id="financa" class="container tab-content" style="display:none;">
+        <div class="card">
+            <h2 style="color: var(--green); text-align: center;">CONTROLE 96X</h2>
+            <div class="contract-header">
+                <div><label>VALOR PARCELA</label><b style="color: var(--green);">R$ 923,65</b></div>
+                <div><label>VALOR RECEBIDO</label><b>R$ 30.350,74</b></div>
+                <div><label>TAXA JUROS</label><b style="color: var(--blue);">1,79% a.m.</b></div>
+                <div><label>TOTAL CONTRATO</label><b style="color: var(--blue);">R$ 88.670,40</b></div>
+            </div>
+            <div class="progress-container" style="height: 22px;">
+                <div id="progressBar" class="progress-bar"></div>
+                <div id="progressText" style="position: absolute; width: 100%; text-align: center; line-height: 22px; font-weight: bold; font-size: 11px;"></div>
+            </div>
+            <div class="stats">
+                <div class="stat-box"><small>SALDO RESTANTE</small><span id="totalRestante"></span></div>
+                <div class="stat-box highlight"><small>ECONOMIA JUROS</small><span id="totalEconomia" style="color: var(--accent);"></span></div>
+            </div>
+            <label style="text-align: center;">DIA DE VENCIMENTO: <input type="number" id="venc_dia" value="10" style="width: 60px; display: inline;"></label>
+        </div>
+
+        <div class="card">
+            <label style="text-align: center; color: #888;">VALOR PARA ABATER HOJE (R$):</label>
+            <input type="number" id="valorInput" placeholder="0,00" oninput="simular()">
+            <div id="previewArea" style="display: none;">
+                <div id="listaPreview" style="max-height: 150px; overflow-y: auto; margin-bottom: 10px;"></div>
+                <button class="btn-add" onclick="confirmarPagamento()">QUITAR PARCELAS</button>
             </div>
         </div>
     </div>
 
-    <h3 style="text-align: center; color: #00897b;">🏍️ GESTÃO FINANCEIRA MOTOBOY</h3>
-
-    <div class="card" style="border-left: 4px solid #00c853;">
-        <label style="color: #00c853;">MANUTENÇÃO E REVISÃO</label>
-        <div style="display: flex; gap: 10px; margin-top: 5px;">
-            <div style="flex: 1;"><label>KM ATUAL PAINEL</label><input type="number" id="moto_km_atual" oninput="atualizarManutencao()"></div>
-            <div style="flex: 1;"><label>TROCA ÓLEO (KM)</label><input type="number" id="moto_meta_oleo" oninput="atualizarManutencao()"></div>
-        </div>
-        <div class="progress-container"><div id="barra_oleo" class="progress-bar"></div></div>
-        <small id="txt_km_faltam" style="font-size: 10px; color: #00c853; margin-top: 5px; display: block;">Calculando...</small>
-    </div>
-
-    <div class="card config-section">
-        <div class="config-item"><label>MÉDIA KM POR LITRO</label><input type="number" id="media_km"></div>
-        <div class="config-item"><label>PREÇO DO LITRO (GASOLINA)</label><input type="number" id="preco_gas"></div>
-        <div class="config-item"><label>META MANUTENÇÃO (R$ DIÁRIO)</label><input type="number" id="meta_moto_val"></div>
-        <div class="config-item"><label>RESERVA ÓLEO (POR KM)</label><input type="number" id="oleo_km_val"></div>
-        <div class="config-item"><label>RESERVA IPVA/TAXAS (POR KM)</label><input type="number" id="ipva_km_val"></div>
-        <div class="config-item"><label>META LÍQUIDA DIÁRIA (R$)</label><input type="number" id="meta_fin_val"></div>
-        <button class="btn-save" onclick="salvarConfig()">SALVAR CONFIGURAÇÕES</button>
-    </div>
-
-    <div class="card">
-        <label>TOTAL GANHO NO APP (R$)</label>
-        <input type="number" id="bruto" placeholder="R$ 0,00">
-        <label style="margin-top: 10px;">KM TOTAL RODADO NO DIA</label>
-        <input type="number" id="km" placeholder="0 km">
-        <button class="btn-add" onclick="registrar()">CALCULAR E SALVAR</button>
-
-        <div class="envelopes">
-            <div class="env header-pf">SALÁRIO LÍQUIDO REAL<strong id="res-pf">R$ 0,00</strong></div>
-            <div class="env bg-gas">⛽ GASOLINA<strong id="res-gas">R$ 0,00</strong></div>
-            <div class="env bg-moto">🏍️ RESERVA MOTO<strong id="res-moto">R$ 0,00</strong></div>
-            <div class="env bg-oleo">🛢️ RESERVA ÓLEO<strong id="res-oleo">R$ 0,00</strong></div>
-            <div class="env bg-ipva">📄 IPVA/TAXAS<strong id="res-ipva">R$ 0,00</strong></div>
-            <div class="env bg-multa">⚠️ RESERVA MULTA<strong id="res-multa">R$ 0,00</strong></div>
+    <div id="ajustes" class="container tab-content" style="display:none;">
+        <div class="card">
+            <label>MÉDIA KM/L</label><input type="number" id="media_km" value="35">
+            <label>PREÇO GASOLINA</label><input type="number" id="preco_gas" value="6.10">
+            <label>DESPESA MOTO DIÁRIA (R$)</label><input type="number" id="meta_moto_val" value="32">
+            <label>RESERVA ÓLEO (KM)</label><input type="number" id="oleo_km_val" value="0.03">
+            <label>RESERVA IPVA (KM)</label><input type="number" id="ipva_km_val" value="0.05">
+            <button class="btn-add" onclick="salvarConfig()">SALVAR CONFIGURAÇÕES</button>
+            <br><br>
+            <button class="btn-add" style="background: #444; color: #fff;" onclick="exportarBackup()">📥 SALVAR BACKUP</button>
         </div>
     </div>
 
-    <table id="tabela"><thead><tr><th>Data</th><th>KM</th><th>Bruto</th><th>Líquido</th><th>X</th></tr></thead><tbody></tbody></table>
+    <script>
+        const VALOR_PARCELA = 923.65;
+        const TAXA_MENSAL = 1.79 / 100;
+        const TOTAL_INICIAL = 96;
 
-    <div class="backup-area">
-        <button class="btn-backup" onclick="exportarDados()">📥 Salvar Backup</button>
-        <button class="btn-backup" onclick="document.getElementById('importFile').click()">📤 Restaurar</button>
-        <input type="file" id="importFile" style="display:none" onchange="importarDados(event)">
-    </div>
+        let db = JSON.parse(localStorage.getItem('moto_db')) || [];
+        let parcelasPagas = JSON.parse(localStorage.getItem('fin_pagas')) || [];
+        let economiaAcumulada = parseFloat(localStorage.getItem('fin_economia')) || 0;
+        let config = JSON.parse(localStorage.getItem('moto_conf')) || { media: 35, preco: 6.10, metaM: 32, oleo: 0.03, ipva: 0.05 };
 
-    <script src="config.js"></script> <script>
-        // CONFIGURAÇÃO FIREBASE SEGURA
-        if (typeof firebaseConfig !== 'undefined') {
-            firebase.initializeApp(firebaseConfig);
-        } else {
-            console.error("Configuração do Firebase não encontrada. Verifique o arquivo config.js");
-        }
-        
-        const fb_db = firebase.database();
-
-        let db = JSON.parse(localStorage.getItem('app_motoboy_db')) || [];
-        let config = JSON.parse(localStorage.getItem('app_motoboy_conf')) || { media: 35, preco: 6.10, metaM: 32, ipva: 0.05, oleo: 0.03, metaF: 100 };
-        let motoData = JSON.parse(localStorage.getItem('app_motoboy_moto')) || { kmAtual: 0, metaOleo: 1000 };
-
-        function formatarChave(email) { return email.toLowerCase().replace(/[.@]/g, "_"); }
-
-        async function entrar() {
-            const nome = document.getElementById('reg-nome').value;
-            const email = document.getElementById('reg-email').value;
-            if(!email.includes('@')) return alert("E-mail inválido");
-            const chave = formatarChave(email);
-            
-            fb_db.ref('usuarios/' + chave).once('value', (snap) => {
-                if (snap.exists()) {
-                    localStorage.setItem('m_logado', email);
-                    verificarAcesso(snap.val());
-                } else {
-                    const novo = { nome, email, pago: false, dataInicio: new Date().getTime() };
-                    fb_db.ref('usuarios/' + chave).set(novo);
-                    localStorage.setItem('m_logado', email);
-                    verificarAcesso(novo);
-                }
-            });
+        function openTab(name) {
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(name).style.display = 'block';
+            event.currentTarget.classList.add('active');
         }
 
-        function verificarAcesso(dados) {
-            const agora = new Date().getTime();
-            const tresDias = 3 * 24 * 60 * 60 * 1000;
-            if (dados.pago === true || (agora - dados.dataInicio < tresDias)) {
-                document.getElementById('bloqueio-pagamento').style.display = 'none';
-                carregarCampos();
-                render();
-            } else {
-                document.getElementById('area-login').style.display = 'none';
-                document.getElementById('area-vencido').style.display = 'block';
+        // --- GESTÃO ---
+        function atualizarManutencao() {
+            const km = parseFloat(document.getElementById('moto_km_atual').value) || 0;
+            const meta = parseFloat(document.getElementById('moto_meta_oleo').value) || 1000;
+            let rodado = km % meta;
+            document.getElementById('barra_oleo').style.width = (rodado / meta * 100) + "%";
+            document.getElementById('txt_km_faltam').innerText = `FALTAM ${(meta - rodado).toFixed(0)} KM PARA O ÓLEO`;
+            localStorage.setItem('km_painel', km);
+        }
+
+        function registrar() {
+            const bruto = parseFloat(document.getElementById('bruto').value);
+            const kmDia = parseFloat(document.getElementById('km_dia').value);
+            if (!bruto || !kmDia) return alert("Preencha KM e Valor!");
+
+            const gas = (kmDia / config.media) * config.preco;
+            const resOleo = kmDia * config.oleo;
+            const resIpva = kmDia * config.ipva;
+            const liq = bruto - gas - config.metaM - resOleo - resIpva;
+
+            document.getElementById('res-pf').innerText = "R$ " + liq.toFixed(2);
+            document.getElementById('res-gas').innerText = "R$ " + gas.toFixed(2);
+            document.getElementById('res-moto').innerText = "R$ " + config.metaM.toFixed(2);
+            document.getElementById('res-oleo').innerText = "R$ " + resOleo.toFixed(2);
+            document.getElementById('res-ipva').innerText = "R$ " + resIpva.toFixed(2);
+
+            let kmAtual = parseFloat(document.getElementById('moto_km_atual').value) || 0;
+            document.getElementById('moto_km_atual').value = kmAtual + kmDia;
+            atualizarManutencao();
+
+            db.unshift({ data: new Date().toLocaleDateString('pt-BR').substring(0,5), km: kmDia, bruto, liq: liq.toFixed(2) });
+            salvarERender();
+        }
+
+        function salvarERender() {
+            localStorage.setItem('moto_db', JSON.stringify(db));
+            const tbody = document.querySelector('#tabela tbody');
+            tbody.innerHTML = db.map((item, i) => `
+                <tr>
+                    <td>${item.data}</td>
+                    <td>${item.km}</td>
+                    <td>${item.bruto}</td>
+                    <td><b>${item.liq}</b></td>
+                    <td><button class="btn-del" onclick="apagarLinha(${i})">X</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function apagarLinha(i) {
+            if(confirm("Deseja apagar este registro?")) {
+                db.splice(i, 1);
+                salvarERender();
             }
         }
 
-        function carregarCampos() {
-            document.getElementById('media_km').value = config.media;
-            document.getElementById('preco_gas').value = config.preco;
-            document.getElementById('meta_moto_val').value = config.metaM;
-            document.getElementById('oleo_km_val').value = config.oleo;
-            document.getElementById('ipva_km_val').value = config.ipva;
-            document.getElementById('meta_fin_val').value = config.metaF;
-            document.getElementById('moto_km_atual').value = motoData.kmAtual;
-            document.getElementById('moto_meta_oleo').value = motoData.metaOleo;
+        // --- FINANCIAMENTO ---
+        function atualizarFin() {
+            const pagas = parcelasPagas.length;
+            const porc = (pagas / TOTAL_INICIAL) * 100;
+            document.getElementById('progressBar').style.width = porc + '%';
+            document.getElementById('progressText').innerText = `${pagas}/${TOTAL_INICIAL} PAGAS (${porc.toFixed(1)}%)`;
+            document.getElementById('totalRestante').innerText = "R$ " + ((TOTAL_INICIAL - pagas) * VALOR_PARCELA).toLocaleString();
+            document.getElementById('totalEconomia').innerText = "R$ " + economiaAcumulada.toLocaleString();
+            localStorage.setItem('fin_pagas', JSON.stringify(parcelasPagas));
+            localStorage.setItem('fin_economia', economiaAcumulada);
+        }
+
+        let simulacao = [];
+        function simular() {
+            let saldo = parseFloat(document.getElementById('valorInput').value) || 0;
+            const preview = document.getElementById('previewArea');
+            const lista = document.getElementById('listaPreview');
+            if(saldo < 10) { preview.style.display = 'none'; return; }
+            preview.style.display = 'block';
+            lista.innerHTML = ''; simulacao = [];
+
+            let proxima = 1;
+            while(parcelasPagas.includes(proxima)) proxima++;
+            if(saldo >= VALOR_PARCELA) {
+                saldo -= VALOR_PARCELA;
+                simulacao.push({n: proxima, v: VALOR_PARCELA, eco: 0});
+            }
+
+            for(let i = TOTAL_INICIAL; i > proxima; i--) {
+                if(!parcelasPagas.includes(i)) {
+                    let meses = i - (parcelasPagas.length + simulacao.length);
+                    let vp = VALOR_PARCELA / Math.pow(1 + TAXA_MENSAL, meses);
+                    if(saldo >= vp) {
+                        saldo -= vp;
+                        simulacao.push({n: i, v: vp, eco: VALOR_PARCELA - vp});
+                    } else break;
+                }
+            }
+            simulacao.forEach(p => {
+                lista.innerHTML += `<div style="display:flex;justify-content:space-between;color:var(--green);padding:5px;border-bottom:1px solid #333"><span>Parc. ${p.n}</span><b>R$ ${p.v.toFixed(2)}</b></div>`;
+            });
+        }
+
+        function confirmarPagamento() {
+            simulacao.forEach(p => { parcelasPagas.push(p.n); economiaAcumulada += p.eco; });
+            parcelasPagas.sort((a,b) => a-b);
+            document.getElementById('valorInput').value = '';
+            document.getElementById('previewArea').style.display = 'none';
+            atualizarFin();
         }
 
         function salvarConfig() {
@@ -181,73 +254,26 @@
                 preco: parseFloat(document.getElementById('preco_gas').value),
                 metaM: parseFloat(document.getElementById('meta_moto_val').value),
                 oleo: parseFloat(document.getElementById('oleo_km_val').value),
-                ipva: parseFloat(document.getElementById('ipva_km_val').value),
-                metaF: parseFloat(document.getElementById('meta_fin_val').value)
+                ipva: parseFloat(document.getElementById('ipva_km_val').value)
             };
-            localStorage.setItem('app_motoboy_conf', JSON.stringify(config));
-            alert("Configurações salvas!");
+            localStorage.setItem('moto_conf', JSON.stringify(config));
+            alert("Configurações Salvas!");
         }
 
-        function atualizarManutencao() {
-            const km = parseFloat(document.getElementById('moto_km_atual').value) || 0;
-            const meta = parseFloat(document.getElementById('moto_meta_oleo').value) || 1000;
-            let rodado = km % meta;
-            document.getElementById('barra_oleo').style.width = (rodado / meta * 100) + "%";
-            document.getElementById('txt_km_faltam').innerText = "Faltam " + (meta - rodado).toFixed(0) + " km para trocar óleo.";
-            localStorage.setItem('app_motoboy_moto', JSON.stringify({ kmAtual: km, metaOleo: meta }));
+        function exportarBackup() {
+            const data = { db, parcelasPagas, economiaAcumulada, config, km: localStorage.getItem('km_painel') };
+            const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `backup_motoboy.json`;
+            a.click();
         }
 
-        function registrar() {
-            const bruto = parseFloat(document.getElementById('bruto').value);
-            const kmDia = parseFloat(document.getElementById('km').value);
-            if (!bruto || !kmDia) return alert("Preencha KM e Bruto!");
-
-            const gas = (kmDia / config.media) * config.preco;
-            const resOleo = kmDia * config.oleo;
-            const resIpva = kmDia * config.ipva;
-            const liq = bruto - gas - config.metaM - resOleo - resIpva - (kmDia * 0.03);
-
-            document.getElementById('res-pf').innerText = "R$ " + liq.toFixed(2);
-            document.getElementById('res-gas').innerText = "R$ " + gas.toFixed(2);
-            document.getElementById('res-moto').innerText = "R$ " + config.metaM.toFixed(2);
-            document.getElementById('res-oleo').innerText = "R$ " + resOleo.toFixed(2);
-            document.getElementById('res-ipva').innerText = "R$ " + resIpva.toFixed(2);
-            document.getElementById('res-multa').innerText = "R$ " + (kmDia * 0.03).toFixed(2);
-
-            let novoKm = (parseFloat(document.getElementById('moto_km_atual').value) || 0) + kmDia;
-            document.getElementById('moto_km_atual').value = novoKm;
+        window.onload = () => {
+            document.getElementById('moto_km_atual').value = localStorage.getItem('km_painel') || 0;
+            salvarERender();
+            atualizarFin();
             atualizarManutencao();
-
-            db.unshift({ data: new Date().toLocaleDateString('pt-BR').substring(0,5), km: kmDia, bruto, liquido: liq.toFixed(2) });
-            
-            const email = localStorage.getItem('m_logado');
-            if(email) fb_db.ref('usuarios/' + formatarChave(email) + '/historico').set(db);
-            
-            render();
-        }
-
-        function render() {
-            const tbody = document.querySelector('#tabela tbody');
-            tbody.innerHTML = '';
-            db.forEach((item, i) => {
-                tbody.innerHTML += `<tr><td>${item.data}</td><td>${item.km}</td><td>R$ ${item.bruto}</td><td><strong>R$ ${item.liquido}</strong></td><td><button class="btn-del" onclick="apagar(${i})">X</button></td></tr>`;
-            });
-            localStorage.setItem('app_motoboy_db', JSON.stringify(db));
-        }
-
-        function apagar(i) { if(confirm("Apagar registro?")) { db.splice(i,1); render(); } }
-
-        window.onload = function() {
-            const logado = localStorage.getItem('m_logado');
-            if(logado) {
-                fb_db.ref('usuarios/' + formatarChave(logado)).on('value', (snap) => {
-                    if(snap.exists()) {
-                        const dados = snap.val();
-                        if(dados.historico) db = dados.historico;
-                        verificarAcesso(dados);
-                    }
-                });
-            }
         };
     </script>
 </body>
