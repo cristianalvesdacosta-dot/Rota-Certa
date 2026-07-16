@@ -1,745 +1,96 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>POLO SPX - GESTÃO TRANSPARENTE</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA MOTOBOY ELITE</title>
+    <style>
+        :root { --green: #2ecc71; --blue: #3498db; --dark: #0a0a0a; --card: #1e1e1e; --text: #f5f5f5; --accent: #f1c40f; --red: #e74c3c; --purple: #4a148c; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: var(--text); padding: 0; margin: 0; padding-bottom: 70px; }
+        
+        .tab-bar { display: flex; background: #111; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #333; }
+        .tab-btn { flex: 1; padding: 15px; border: none; background: none; color: #888; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; }
+        .tab-btn.active { color: var(--green); border-bottom: 3px solid var(--green); }
 
-<style>
-body{
-    font-family:sans-serif;
-    background:#121212;
-    color:white;
-    padding:10px;
-    margin:0;
-}
+        .container { padding: 15px; max-width: 500px; margin: auto; }
+        .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #333; margin-bottom: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+        
+        label { display: block; font-size: 11px; color: var(--green); font-weight: bold; margin-bottom: 4px; text-transform: uppercase; }
+        input { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #444; background: #2b2b2b; color: #fff; box-sizing: border-box; margin-bottom: 12px; text-align: center; font-size: 16px; outline: none; }
+        
+        .btn-add { width: 100%; padding: 16px; background: var(--green); border: none; color: #000; font-weight: 800; border-radius: 8px; cursor: pointer; font-size: 16px; text-transform: uppercase; }
+        
+        .envelopes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
+        .env { padding: 10px; border-radius: 6px; font-size: 10px; text-align: center; border: 1px solid #333; }
+        .env strong { display: block; font-size: 14px; margin-top: 4px; }
+        .header-pf { background: var(--purple); grid-column: span 2; padding: 15px; border: none; }
+        .bg-gas { background: #b71c1c; } .bg-moto { background: #e65100; }
+        .bg-oleo { background: #004d40; border: 1px solid var(--green); }
+        .bg-ipva { background: #01579b; }
 
-.tabs{
-    display:flex;
-    gap:5px;
-    margin-bottom:10px;
-}
-
-.tab-btn{
-    flex:1;
-    padding:12px;
-    border:none;
-    background:#333;
-    color:white;
-    border-radius:8px 8px 0 0;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-.tab-btn.active{
-    background:#ee4d2d;
-}
-
-.card{
-    background:#1e1e1e;
-    padding:15px;
-    border-radius:0 0 12px 12px;
-    border:1px solid #ee4d2d;
-    border-top:none;
-}
-
-label{
-    display:block;
-    margin-top:10px;
-    font-size:0.8rem;
-    color:#aaa;
-}
-
-input,select{
-    width:100%;
-    padding:12px;
-    border-radius:8px;
-    border:1px solid #333;
-    background:#252525;
-    color:white;
-    font-size:1rem;
-    box-sizing:border-box;
-}
-
-button{
-    width:100%;
-    padding:15px;
-    margin-top:10px;
-    border:none;
-    border-radius:8px;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-.btn-calc{
-    background:#ee4d2d;
-    color:white;
-}
-
-.res-box{
-    background:#252525;
-    padding:15px;
-    border-radius:8px;
-    margin-top:15px;
-    border-left:4px solid #ee4d2d;
-}
-
-.step{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:8px 0;
-    border-bottom:1px solid #333;
-    font-size:0.9rem;
-}
-
-.resumo-mes{
-    background:#252525;
-    padding:15px;
-    border-radius:12px;
-    margin-top:20px;
-    border:1px solid #444;
-}
-
-.resumo-linha{
-    display:flex;
-    justify-content:space-between;
-    padding:6px 0;
-    font-size:0.85rem;
-    border-bottom:1px solid #333;
-}
-
-.resumo-total{
-    display:flex;
-    justify-content:space-between;
-    padding:12px 0;
-    margin-top:5px;
-    font-weight:bold;
-    font-size:1.1rem;
-}
-
-.negativo{ color:#ff4444; }
-.positivo{ color:#2ecc71; }
-.alerta{ color:#e67e22; }
-.info{ color:#3498db; }
-
-.table-container{
-    overflow-x:auto;
-    margin-top:20px;
-    border-radius:8px;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    min-width:700px;
-    font-size:0.75rem;
-}
-
-th,td{
-    padding:12px 8px;
-    text-align:center;
-    border-bottom:1px solid #333;
-}
-
-th{
-    background:#222;
-    color:#ee4d2d;
-}
-
-.oculto{
-    display:none;
-}
-
-.btn-del{
-    background:none;
-    color:#ff4444;
-    border:none;
-    font-size:1.2rem;
-    cursor:pointer;
-}
-</style>
+        table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 15px; }
+        th, td { border: 1px solid #333; padding: 10px; text-align: center; }
+        th { background: #222; color: var(--green); }
+    </style>
 </head>
-
 <body>
 
-<div class="tabs">
-    <button class="tab-btn active" id="btn-tab-calc" onclick="mudarAba('calc')">
-        DIÁRIO / ROTA
-    </button>
+    <div id="diario" class="container tab-content">
+        <div class="card">
+            <label>TOTAL GANHO NO APP (R$)</label>
+            <input type="number" id="bruto" placeholder="R$ 0,00">
+            <label>KM TOTAL RODADO NO DIA</label>
+            <input type="number" id="km_dia" placeholder="0 km">
+            <button class="btn-add" onclick="registrar()">CALCULAR E SALVAR</button>
 
-    <button class="tab-btn" id="btn-tab-notas" onclick="mudarAba('notas')">
-        MESES / MEI
-    </button>
-</div>
-
-<div id="aba-calc" class="card">
-
-    <label>Valor Bruto da Rota (R$):</label>
-    <input type="number" id="bruto" step="0.01" placeholder="0.00">
-
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-
-        <div>
-            <label>Gasolina por:</label>
-
-            <select id="modo-gas" onchange="alternarModoGas()">
-                <option value="km">KM Rodado</option>
-                <option value="fixo">Valor Fixo</option>
-            </select>
-
-            <div id="box-km" style="margin-top:5px;">
-                <input type="number" id="km" step="0.1" placeholder="KM rodado">
-            </div>
-
-            <div id="box-gas-fixo" class="oculto" style="margin-top:5px;">
-                <input type="number" id="gas-fixo" step="0.01" placeholder="Valor gasolina">
+            <div class="envelopes">
+                <div class="env header-pf">SALÁRIO LÍQUIDO REAL <strong id="res-pf">R$ 0,00</strong></div>
+                <div class="env bg-gas">⛽ GASOLINA <strong id="res-gas">R$ 0,00</strong></div>
+                <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="res-moto">R$ 0,00</strong></div>
+                <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="res-oleo">R$ 0,00</strong></div>
+                <div class="env bg-ipva">📄 DESPESAS FIXAS <strong id="res-ipva">R$ 0,00</strong></div>
             </div>
         </div>
-
-        <div>
-            <label>Ajudante:</label>
-
-            <div style="display:flex; gap:5px;">
-
-                <select id="tipo-aju" style="width:70px;">
-                    <option value="porcento">%</option>
-                    <option value="fixo">R$</option>
-                </select>
-
-                <input type="number" id="val-aju-input" value="50">
-
-            </div>
-        </div>
-
+        <table id="tabela"><thead><tr><th>Data</th><th>Bruto</th><th>Líq.</th><th>X</th></tr></thead><tbody></tbody></table>
     </div>
 
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-
-        <div>
-            <label>Preço Gasolina (R$):</label>
-            <input type="number" id="preco" value="6.15">
-        </div>
-
-        <div>
-            <label>Extras / Pedágio (R$):</label>
-            <input type="number" id="outros" value="0.00">
-        </div>
-
-    </div>
-
-    <button class="btn-calc" onclick="calcular()">
-        CALCULAR ROTA
-    </button>
-
-    <div id="resultado" class="oculto">
-
-        <div class="res-box">
-
-            <div class="step">
-                <span>💰 Bruto</span>
-                <span id="r-bruto" class="positivo"></span>
-            </div>
-
-            <div class="step">
-                <span>⛽ Gasolina</span>
-                <span id="r-gas" class="negativo"></span>
-            </div>
-
-            <div class="step">
-                <span>🔧 Reserva + Parcela</span>
-                <span id="r-manut" class="alerta"></span>
-            </div>
-
-            <div class="step">
-                <span>🤝 Ajudante</span>
-                <span id="r-aju" class="info"></span>
-            </div>
-
-            <div class="step" style="border:none; font-weight:bold;">
-                <span>👤 Seu Ganho</span>
-                <span id="r-mot" class="positivo"></span>
-            </div>
-
-        </div>
-
-        <button style="background:#28a745; color:white" onclick="salvarRota()">
-            CONFIRMAR E SALVAR
-        </button>
-
-    </div>
-
-    <div id="relatorio-detalhado" class="resumo-mes">
-
-        <h3 id="titulo-relatorio"
-            style="margin-top:0; color:#ee4d2d; font-size:1rem; text-align:center; border-bottom:1px solid #444; padding-bottom:10px;">
-            RELATÓRIO ACUMULADO
-        </h3>
-
-        <div class="resumo-linha">
-            <span>Bruto Total:</span>
-            <b id="total-bruto">R$ 0,00</b>
-        </div>
-
-        <div class="resumo-linha">
-            <span>Gasolina Total:</span>
-            <b id="total-gas" class="negativo">R$ 0,00</b>
-        </div>
-
-        <div class="resumo-linha">
-            <span>Extras/Pedágios:</span>
-            <b id="total-outros" class="negativo">R$ 0,00</b>
-        </div>
-
-        <div class="resumo-linha">
-            <span>Fundo Reserva:</span>
-            <b id="total-manut" class="alerta">R$ 0,00</b>
-        </div>
-
-        <div class="resumo-linha">
-            <span>Pago Ajudantes:</span>
-            <b id="total-aju" class="info">R$ 0,00</b>
-        </div>
-
-        <div class="resumo-total">
-            <span>LUCRO LÍQUIDO:</span>
-            <span id="total-lucro" class="positivo">R$ 0,00</span>
-        </div>
-
-    </div>
-
-    <div class="table-container">
-        <div id="lista-rotas"></div>
-    </div>
-
-</div>
-
-<div id="aba-notas" class="card oculto">
-
-    <h3 style="margin-top:0; color:#ee4d2d">
-        Faturamento MEI
-    </h3>
-
-    <div id="texto-mei"
-        style="text-align:center; font-weight:bold; margin-bottom:15px; background:#333; padding:10px; border-radius:8px;">
-        R$ 0,00 / R$ 6.750,00
-    </div>
-
-    <label>Nº da Nota:</label>
-    <input type="text" id="num-nota" placeholder="Ex: 001">
-
-    <label>Valor da Nota (R$):</label>
-    <input type="number" id="val-nota" step="0.01" placeholder="0.00">
-
-    <button style="background:#3498db; color:white" onclick="registrarNota()">
-        REGISTRAR NF-e
-    </button>
-
-    <h3 style="margin-top:25px; font-size:1rem; border-bottom:1px solid #ee4d2d; padding-bottom:5px;">
-        Histórico de Notas
-    </h3>
-
-    <div id="lista-notas"></div>
-
-    <hr style="border:0.5px solid #333; margin:20px 0;">
-
-    <button onclick="baixarBackup()"
-        style="background:#444; color:white; font-size:0.8rem;">
-        BAIXAR BACKUP GERAL (JSON)
-    </button>
-
-</div>
-
-<script>
-
-let dados = JSON.parse(localStorage.getItem('polo_pro_v4')) || {
-    rotas: [],
-    notas: []
-};
-
-const mesesNomes = [
-    "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
-    "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
-];
-
-const mesAtualIdx = new Date().getMonth();
-const anoAtual = new Date().getFullYear();
-
-function mudarAba(aba){
-
-    document.getElementById('aba-calc')
-        .classList.toggle('oculto', aba !== 'calc');
-
-    document.getElementById('aba-notas')
-        .classList.toggle('oculto', aba !== 'notas');
-
-    document.getElementById('btn-tab-calc')
-        .classList.toggle('active', aba === 'calc');
-
-    document.getElementById('btn-tab-notas')
-        .classList.toggle('active', aba === 'notas');
-}
-
-function alternarModoGas(){
-
-    const modo = document.getElementById('modo-gas').value;
-
-    document.getElementById('box-km')
-        .classList.toggle('oculto', modo !== 'km');
-
-    document.getElementById('box-gas-fixo')
-        .classList.toggle('oculto', modo !== 'fixo');
-}
-
-function calcular(){
-
-    const bruto = parseFloat(document.getElementById('bruto').value) || 0;
-
-    const km = parseFloat(document.getElementById('km').value) || 0;
-
-    const preco = parseFloat(document.getElementById('preco').value) || 0;
-
-    const outros = parseFloat(document.getElementById('outros').value) || 0;
-
-    const tipoAju = document.getElementById('tipo-aju').value;
-
-    const valAjuInput =
-        parseFloat(document.getElementById('val-aju-input').value) || 0;
-
-    const modoGas = document.getElementById('modo-gas').value;
-
-    const gasFixo =
-        parseFloat(document.getElementById('gas-fixo').value) || 0;
-
-    const gas = modoGas === 'km'
-        ? (km / 10.0) * preco
-        : gasFixo;
-
-    const sobraAposCustos = bruto - gas - outros;
-
-    // PARCELA MENSAL
-    const parcelaMensal = 87.05;
-
-    // MÉDIA DE ROTAS NO MÊS
-    const mediaRotasMes = 22;
-
-    // RATEIO POR ROTA
-    const parcelaPorRota = parcelaMensal / mediaRotasMes;
-
-    // RESERVA + PARCELA
-    const manut = (sobraAposCustos * 0.10) + parcelaPorRota;
-
-    const liquidoParaDividir = sobraAposCustos - manut;
-
-    const parteAjudante = tipoAju === 'porcento'
-        ? (liquidoParaDividir * (valAjuInput / 100))
-        : valAjuInput;
-
-    const seuGanho = liquidoParaDividir - parteAjudante;
-
-    document.getElementById('r-bruto').innerText =
-        "R$ " + bruto.toFixed(2);
-
-    document.getElementById('r-gas').innerText =
-        "- R$ " + gas.toFixed(2);
-
-    document.getElementById('r-manut').innerText =
-        "- R$ " + manut.toFixed(2);
-
-    document.getElementById('r-aju').innerText =
-        "R$ " + parteAjudante.toFixed(2);
-
-    document.getElementById('r-mot').innerText =
-        "R$ " + seuGanho.toFixed(2);
-
-    document.getElementById('resultado')
-        .classList.remove('oculto');
-}
-
-function salvarRota(){
-
-    const rota = {
-
-        id: Date.now(),
-
-        mes: mesAtualIdx,
-
-        ano: anoAtual,
-
-        data: new Date().toLocaleDateString('pt-BR'),
-
-        bruto: parseFloat(
-            document.getElementById('r-bruto')
-            .innerText.replace("R$ ","")
-        ),
-
-        gas: parseFloat(
-            document.getElementById('r-gas')
-            .innerText.replace("- R$ ","")
-        ),
-
-        outros: parseFloat(
-            document.getElementById('outros').value
-        ) || 0,
-
-        manut: parseFloat(
-            document.getElementById('r-manut')
-            .innerText.replace("- R$ ","")
-        ),
-
-        aju: parseFloat(
-            document.getElementById('r-aju')
-            .innerText.replace("R$ ","")
-        ),
-
-        ganho: parseFloat(
-            document.getElementById('r-mot')
-            .innerText.replace("R$ ","")
-        )
-    };
-
-    dados.rotas.push(rota);
-
-    localStorage.setItem(
-        'polo_pro_v4',
-        JSON.stringify(dados)
-    );
-
-    renderizarPagina();
-
-    document.getElementById('resultado')
-        .classList.add('oculto');
-
-    document.getElementById('bruto').value = "";
-    document.getElementById('km').value = "";
-}
-
-function registrarNota(){
-
-    const val =
-        parseFloat(document.getElementById('val-nota').value);
-
-    if(!val){
-        return alert("Digite o valor da nota!");
-    }
-
-    dados.notas.push({
-
-        id: Date.now(),
-
-        mes: mesAtualIdx,
-
-        ano: anoAtual,
-
-        val,
-
-        num:
-            document.getElementById('num-nota').value || 'S/N'
-    });
-
-    localStorage.setItem(
-        'polo_pro_v4',
-        JSON.stringify(dados)
-    );
-
-    document.getElementById('val-nota').value = "";
-    document.getElementById('num-nota').value = "";
-
-    renderizarPagina();
-}
-
-function renderizarPagina(){
-
-    document.getElementById('titulo-relatorio').innerText =
-        `RELATÓRIO: ${mesesNomes[mesAtualIdx].toUpperCase()} / ${anoAtual}`;
-
-    const rotasMes = dados.rotas.filter(r =>
-        r.mes === mesAtualIdx && r.ano === anoAtual
-    );
-
-    let sums = {
-        bruto:0,
-        gas:0,
-        outros:0,
-        manut:0,
-        aju:0,
-        ganho:0
-    };
-
-    let h =
-    `<table>
-        <tr>
-            <th>DATA</th>
-            <th>BRUTO</th>
-            <th>GAS</th>
-            <th>EXTRAS</th>
-            <th>RESERVA</th>
-            <th>AJUD.</th>
-            <th>EU</th>
-            <th></th>
-        </tr>`;
-
-    rotasMes.slice().reverse().forEach(r => {
-
-        sums.bruto += r.bruto;
-        sums.gas += r.gas;
-        sums.outros += (r.outros || 0);
-        sums.manut += r.manut;
-        sums.aju += r.aju;
-        sums.ganho += r.ganho;
-
-        h += `
-        <tr>
-
-            <td>${r.data}</td>
-
-            <td>${r.bruto.toFixed(2)}</td>
-
-            <td class="negativo">
-                ${r.gas.toFixed(2)}
-            </td>
-
-            <td>
-                ${(r.outros || 0).toFixed(2)}
-            </td>
-
-            <td class="alerta">
-                ${r.manut.toFixed(2)}
-            </td>
-
-            <td class="info">
-                ${r.aju.toFixed(2)}
-            </td>
-
-            <td class="positivo">
-                ${r.ganho.toFixed(2)}
-            </td>
-
-            <td>
-                <button class="btn-del"
-                    onclick="apagarItem(${r.id}, 'rotas')">
-                    ×
-                </button>
-            </td>
-
-        </tr>`;
-    });
-
-    document.getElementById('lista-rotas').innerHTML =
-        h + `</table>`;
-
-    document.getElementById('total-bruto').innerText =
-        "R$ " + sums.bruto.toLocaleString('pt-br', {
-            minimumFractionDigits:2
-        });
-
-    document.getElementById('total-gas').innerText =
-        "R$ " + sums.gas.toLocaleString('pt-br', {
-            minimumFractionDigits:2
-        });
-
-    document.getElementById('total-outros').innerText =
-        "R$ " + sums.outros.toLocaleString('pt-br', {
-            minimumFractionDigits:2
-        });
-
-    document.getElementById('total-manut').innerText =
-        "R$ " + sums.manut.toLocaleString('pt-br', {
-            minimumFractionDigits:2
-        });
-
-    document.getElementById('total-aju').innerText =
-        "R$ " + sums.aju.toLocaleString('pt-br', {
-            minimumFractionDigits:2
-        });
-
-    document.getElementById('total-lucro').innerText =
-        "R$ " + sums.ganho.toLocaleString('pt-br', {
-            minimumFractionDigits:2
-        });
-
-    // PAINEL MEI
-    const notasMes = dados.notas.filter(n =>
-        n.mes === mesAtualIdx && n.ano === anoAtual
-    );
-
-    const totalNotas =
-        notasMes.reduce((acc, n) => acc + n.val, 0);
-
-    document.getElementById('texto-mei').innerText =
-        `Emitido: R$ ${totalNotas.toLocaleString('pt-br', {
-            minimumFractionDigits:2
-        })} / Limite: R$ 6.750,00`;
-
-    let hNotas =
-    `<table style="min-width:100%">
-        <tr>
-            <th>Nota</th>
-            <th>Valor</th>
-            <th></th>
-        </tr>`;
-
-    notasMes.forEach(n => {
-
-        hNotas += `
-        <tr>
-
-            <td>${n.num}</td>
-
-            <td>
-                R$ ${n.val.toFixed(2)}
-            </td>
-
-            <td>
-                <button class="btn-del"
-                    onclick="apagarItem(${n.id}, 'notas')">
-                    ×
-                </button>
-            </td>
-
-        </tr>`;
-    });
-
-    document.getElementById('lista-notas').innerHTML =
-        hNotas + `</table>`;
-}
-
-function apagarItem(id, tipo){
-
-    if(confirm("Apagar este registro?")){
-
-        dados[tipo] =
-            dados[tipo].filter(item => item.id !== id);
-
-        localStorage.setItem(
-            'polo_pro_v4',
-            JSON.stringify(dados)
-        );
-
-        renderizarPagina();
-    }
-}
-
-function baixarBackup(){
-
-    const blob = new Blob(
-        [JSON.stringify(dados)],
-        {type:'application/json'}
-    );
-
-    const a = document.createElement('a');
-
-    a.href = URL.createObjectURL(blob);
-
-    a.download =
-        `polo_backup_${new Date().toLocaleDateString('pt-BR')}.json`;
-
-    a.click();
-}
-
-renderizarPagina();
-
-</script>
-
+    <script>
+        // Metas baseadas em 2000km/mês (Valor por KM)
+        // Parcela: 0.25 | Manutenção: 0.15 | Fixas: 0.13 | Emergência: 0.10
+        const rates = { parcela: 0.25, manutencao: 0.15, fixas: 0.13 };
+        const precoGas = 6.10; // Ajuste se necessário
+        const mediaKm = 28;    // Ajuste se necessário
+
+        let db = JSON.parse(localStorage.getItem('moto_db')) || [];
+
+        function registrar() {
+            const bruto = parseFloat(document.getElementById('bruto').value) || 0;
+            const km = parseFloat(document.getElementById('km_dia').value) || 0;
+
+            const gas = (km / mediaKm) * precoGas;
+            const resParcela = km * rates.parcela;
+            const resManut = km * rates.manutencao;
+            const resFixas = km * rates.fixas;
+            
+            const liq = bruto - gas - resParcela - resManut - resFixas;
+
+            document.getElementById('res-pf').innerText = "R$ " + liq.toFixed(2);
+            document.getElementById('res-gas').innerText = "R$ " + gas.toFixed(2);
+            document.getElementById('res-moto').innerText = "R$ " + resParcela.toFixed(2);
+            document.getElementById('res-oleo').innerText = "R$ " + resManut.toFixed(2);
+            document.getElementById('res-ipva').innerText = "R$ " + resFixas.toFixed(2);
+
+            db.unshift({ data: new Date().toLocaleDateString('pt-BR').substring(0,5), bruto: bruto.toFixed(2), liq: liq.toFixed(2) });
+            localStorage.setItem('moto_db', JSON.stringify(db));
+            renderTable();
+        }
+
+        function renderTable() {
+            const tbody = document.querySelector('#tabela tbody');
+            tbody.innerHTML = db.slice(0,10).map((item, i) => `<tr><td>${item.data}</td><td>${item.bruto}</td><td>${item.liq}</td><td><button onclick="db.splice(${i},1);renderTable()">X</button></td></tr>`).join('');
+        }
+
+        window.onload = renderTable;
+    </script>
 </body>
 </html>
