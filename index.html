@@ -1,280 +1,745 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA MOTOBOY ELITE</title>
-    <style>
-        :root { --green: #2ecc71; --blue: #3498db; --dark: #0a0a0a; --card: #1e1e1e; --text: #f5f5f5; --accent: #f1c40f; --red: #e74c3c; --purple: #4a148c; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: var(--text); padding: 0; margin: 0; padding-bottom: 70px; }
-        
-        .tab-bar { display: flex; background: #111; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #333; }
-        .tab-btn { flex: 1; padding: 15px; border: none; background: none; color: #888; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; }
-        .tab-btn.active { color: var(--green); border-bottom: 3px solid var(--green); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POLO SPX - GESTÃO TRANSPARENTE</title>
 
-        .container { padding: 15px; max-width: 500px; margin: auto; }
-        .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #333; margin-bottom: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
-        
-        label { display: block; font-size: 11px; color: var(--green); font-weight: bold; margin-bottom: 4px; text-transform: uppercase; }
-        input { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #444; background: #2b2b2b; color: #fff; box-sizing: border-box; margin-bottom: 12px; text-align: center; font-size: 16px; outline: none; }
-        input:focus { border-color: var(--green); }
-        
-        .btn-add { width: 100%; padding: 16px; background: var(--green); border: none; color: #000; font-weight: 800; border-radius: 8px; cursor: pointer; font-size: 16px; text-transform: uppercase; }
-        
-        .envelopes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
-        .env { padding: 10px; border-radius: 6px; font-size: 10px; text-align: center; border: 1px solid #333; }
-        .env strong { display: block; font-size: 14px; margin-top: 4px; }
-        .header-pf { background: var(--purple); grid-column: span 2; padding: 15px; border: none; }
-        .bg-gas { background: #b71c1c; } .bg-moto { background: #e65100; }
-        .bg-oleo { background: #004d40; border: 1px solid var(--green); }
-        .bg-ipva { background: #01579b; }
+<style>
+body{
+    font-family:sans-serif;
+    background:#121212;
+    color:white;
+    padding:10px;
+    margin:0;
+}
 
-        .progress-container { background: #333; border-radius: 10px; height: 15px; margin: 10px 0; overflow: hidden; position: relative; border: 1px solid #444; }
-        .progress-bar { background: linear-gradient(90deg, #27ae60, #2ecc71); height: 100%; width: 0%; transition: width 0.5s; }
+.tabs{
+    display:flex;
+    gap:5px;
+    margin-bottom:10px;
+}
 
-        table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 15px; }
-        th, td { border: 1px solid #333; padding: 10px; text-align: center; }
-        th { background: #222; color: var(--green); }
-        .btn-del { background: var(--red); color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
+.tab-btn{
+    flex:1;
+    padding:12px;
+    border:none;
+    background:#333;
+    color:white;
+    border-radius:8px 8px 0 0;
+    font-weight:bold;
+    cursor:pointer;
+}
 
-        /* Estilos Financiamento */
-        .contract-header { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; border: 1px dashed #444; margin-bottom: 20px; }
-        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .stat-box { background: #2b2b2b; padding: 12px; border-radius: 8px; text-align: center; border-bottom: 3px solid var(--blue); }
-        .stat-box.highlight { border-bottom-color: var(--accent); }
-    </style>
+.tab-btn.active{
+    background:#ee4d2d;
+}
+
+.card{
+    background:#1e1e1e;
+    padding:15px;
+    border-radius:0 0 12px 12px;
+    border:1px solid #ee4d2d;
+    border-top:none;
+}
+
+label{
+    display:block;
+    margin-top:10px;
+    font-size:0.8rem;
+    color:#aaa;
+}
+
+input,select{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #333;
+    background:#252525;
+    color:white;
+    font-size:1rem;
+    box-sizing:border-box;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    margin-top:10px;
+    border:none;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn-calc{
+    background:#ee4d2d;
+    color:white;
+}
+
+.res-box{
+    background:#252525;
+    padding:15px;
+    border-radius:8px;
+    margin-top:15px;
+    border-left:4px solid #ee4d2d;
+}
+
+.step{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:8px 0;
+    border-bottom:1px solid #333;
+    font-size:0.9rem;
+}
+
+.resumo-mes{
+    background:#252525;
+    padding:15px;
+    border-radius:12px;
+    margin-top:20px;
+    border:1px solid #444;
+}
+
+.resumo-linha{
+    display:flex;
+    justify-content:space-between;
+    padding:6px 0;
+    font-size:0.85rem;
+    border-bottom:1px solid #333;
+}
+
+.resumo-total{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 0;
+    margin-top:5px;
+    font-weight:bold;
+    font-size:1.1rem;
+}
+
+.negativo{ color:#ff4444; }
+.positivo{ color:#2ecc71; }
+.alerta{ color:#e67e22; }
+.info{ color:#3498db; }
+
+.table-container{
+    overflow-x:auto;
+    margin-top:20px;
+    border-radius:8px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:700px;
+    font-size:0.75rem;
+}
+
+th,td{
+    padding:12px 8px;
+    text-align:center;
+    border-bottom:1px solid #333;
+}
+
+th{
+    background:#222;
+    color:#ee4d2d;
+}
+
+.oculto{
+    display:none;
+}
+
+.btn-del{
+    background:none;
+    color:#ff4444;
+    border:none;
+    font-size:1.2rem;
+    cursor:pointer;
+}
+</style>
 </head>
+
 <body>
 
-    <div class="tab-bar">
-        <button class="tab-btn active" onclick="openTab('diario')">Gestão</button>
-        <button class="tab-btn" onclick="openTab('financa')">Controle 96x</button>
-        <button class="tab-btn" onclick="openTab('ajustes')">Ajustes</button>
+<div class="tabs">
+    <button class="tab-btn active" id="btn-tab-calc" onclick="mudarAba('calc')">
+        DIÁRIO / ROTA
+    </button>
+
+    <button class="tab-btn" id="btn-tab-notas" onclick="mudarAba('notas')">
+        MESES / MEI
+    </button>
+</div>
+
+<div id="aba-calc" class="card">
+
+    <label>Valor Bruto da Rota (R$):</label>
+    <input type="number" id="bruto" step="0.01" placeholder="0.00">
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+
+        <div>
+            <label>Gasolina por:</label>
+
+            <select id="modo-gas" onchange="alternarModoGas()">
+                <option value="km">KM Rodado</option>
+                <option value="fixo">Valor Fixo</option>
+            </select>
+
+            <div id="box-km" style="margin-top:5px;">
+                <input type="number" id="km" step="0.1" placeholder="KM rodado">
+            </div>
+
+            <div id="box-gas-fixo" class="oculto" style="margin-top:5px;">
+                <input type="number" id="gas-fixo" step="0.01" placeholder="Valor gasolina">
+            </div>
+        </div>
+
+        <div>
+            <label>Ajudante:</label>
+
+            <div style="display:flex; gap:5px;">
+
+                <select id="tipo-aju" style="width:70px;">
+                    <option value="porcento">%</option>
+                    <option value="fixo">R$</option>
+                </select>
+
+                <input type="number" id="val-aju-input" value="50">
+
+            </div>
+        </div>
+
     </div>
 
-    <div id="diario" class="container tab-content">
-        <div class="card" style="border-left: 5px solid var(--green);">
-            <label>MANUTENÇÃO E REVISÃO</label>
-            <div style="display: flex; gap: 10px;">
-                <div style="flex:1"><label>KM ATUAL</label><input type="number" id="moto_km_atual" oninput="atualizarManutencao()"></div>
-                <div style="flex:1"><label>TROCA ÓLEO (KM)</label><input type="number" id="moto_meta_oleo" value="1000" oninput="atualizarManutencao()"></div>
-            </div>
-            <div class="progress-container"><div id="barra_oleo" class="progress-bar"></div></div>
-            <small id="txt_km_faltam" style="color: var(--green);"></small>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+
+        <div>
+            <label>Preço Gasolina (R$):</label>
+            <input type="number" id="preco" value="6.15">
         </div>
 
-        <div class="card">
-            <label>TOTAL GANHO NO APP (R$)</label>
-            <input type="number" id="bruto" placeholder="R$ 0,00">
-            <label>KM TOTAL RODADO NO DIA</label>
-            <input type="number" id="km_dia" placeholder="0 km">
-            <button class="btn-add" onclick="registrar()">CALCULAR E SALVAR</button>
-
-            <div class="envelopes">
-                <div class="env header-pf">SALÁRIO LÍQUIDO REAL <strong id="res-pf">R$ 0,00</strong></div>
-                <div class="env bg-gas">⛽ GASOLINA <strong id="res-gas">R$ 0,00</strong></div>
-                <div class="env bg-moto">🏍️ DESPESAS MOTO <strong id="res-moto">R$ 0,00</strong></div>
-                <div class="env bg-oleo">🛢️ RESERVA ÓLEO <strong id="res-oleo">R$ 0,00</strong></div>
-                <div class="env bg-ipva">📄 IPVA/TAXAS <strong id="res-ipva">R$ 0,00</strong></div>
-            </div>
+        <div>
+            <label>Extras / Pedágio (R$):</label>
+            <input type="number" id="outros" value="0.00">
         </div>
 
-        <table id="tabela"><thead><tr><th>Data</th><th>KM</th><th>Bruto</th><th>Líq.</th><th>X</th></tr></thead><tbody></tbody></table>
     </div>
 
-    <div id="financa" class="container tab-content" style="display:none;">
-        <div class="card">
-            <h2 style="color: var(--green); text-align: center;">CONTROLE FINANCIAMENO MOTO (VENCIMENTO 08/06/2026)</h2>
-            <div class="contract-header">
-                <div><label>VALOR PARCELA</label><b style="color: var(--green);">R$ 923,65</b></div>
-                <div><label>VALOR RECEBIDO</label><b>R$ 30.350,74</b></div>
-                <div><label>TAXA JUROS</label><b style="color: var(--blue);">1,79% a.m.</b></div>
-                <div><label>TOTAL CONTRATO</label><b style="color: var(--blue);">R$ 88.670,40</b></div>
+    <button class="btn-calc" onclick="calcular()">
+        CALCULAR ROTA
+    </button>
+
+    <div id="resultado" class="oculto">
+
+        <div class="res-box">
+
+            <div class="step">
+                <span>💰 Bruto</span>
+                <span id="r-bruto" class="positivo"></span>
             </div>
-            <div class="progress-container" style="height: 22px;">
-                <div id="progressBar" class="progress-bar"></div>
-                <div id="progressText" style="position: absolute; width: 100%; text-align: center; line-height: 22px; font-weight: bold; font-size: 11px;"></div>
+
+            <div class="step">
+                <span>⛽ Gasolina</span>
+                <span id="r-gas" class="negativo"></span>
             </div>
-            <div class="stats">
-                <div class="stat-box"><small>SALDO RESTANTE</small><span id="totalRestante"></span></div>
-                <div class="stat-box highlight"><small>ECONOMIA JUROS</small><span id="totalEconomia" style="color: var(--accent);"></span></div>
+
+            <div class="step">
+                <span>🔧 Reserva + Parcela</span>
+                <span id="r-manut" class="alerta"></span>
             </div>
-            <label style="text-align: center;">DIA DE VENCIMENTO: <input type="number" id="venc_dia" value="06" style="width: 60px; display: inline;"></label>
+
+            <div class="step">
+                <span>🤝 Ajudante</span>
+                <span id="r-aju" class="info"></span>
+            </div>
+
+            <div class="step" style="border:none; font-weight:bold;">
+                <span>👤 Seu Ganho</span>
+                <span id="r-mot" class="positivo"></span>
+            </div>
+
         </div>
 
-        <div class="card">
-            <label style="text-align: center; color: #888;">VALOR PARA ABATER HOJE (R$):</label>
-            <input type="number" id="valorInput" placeholder="0,00" oninput="simular()">
-            <div id="previewArea" style="display: none;">
-                <div id="listaPreview" style="max-height: 150px; overflow-y: auto; margin-bottom: 10px;"></div>
-                <button class="btn-add" onclick="confirmarPagamento()">QUITAR PARCELAS</button>
-            </div>
-        </div>
+        <button style="background:#28a745; color:white" onclick="salvarRota()">
+            CONFIRMAR E SALVAR
+        </button>
+
     </div>
 
-    <div id="ajustes" class="container tab-content" style="display:none;">
-        <div class="card">
-            <label>MÉDIA KM/L</label><input type="number" id="media_km" value="35">
-            <label>PREÇO GASOLINA</label><input type="number" id="preco_gas" value="6.10">
-            <label>DESPESA MOTO DIÁRIA (R$)</label><input type="number" id="meta_moto_val" value="32">
-            <label>RESERVA ÓLEO (KM)</label><input type="number" id="oleo_km_val" value="0.03">
-            <label>RESERVA IPVA (KM)</label><input type="number" id="ipva_km_val" value="0.05">
-            <button class="btn-add" onclick="salvarConfig()">SALVAR CONFIGURAÇÕES</button>
-            <br><br>
-            <button class="btn-add" style="background: #444; color: #fff;" onclick="exportarBackup()">📥 SALVAR BACKUP</button>
+    <div id="relatorio-detalhado" class="resumo-mes">
+
+        <h3 id="titulo-relatorio"
+            style="margin-top:0; color:#ee4d2d; font-size:1rem; text-align:center; border-bottom:1px solid #444; padding-bottom:10px;">
+            RELATÓRIO ACUMULADO
+        </h3>
+
+        <div class="resumo-linha">
+            <span>Bruto Total:</span>
+            <b id="total-bruto">R$ 0,00</b>
         </div>
+
+        <div class="resumo-linha">
+            <span>Gasolina Total:</span>
+            <b id="total-gas" class="negativo">R$ 0,00</b>
+        </div>
+
+        <div class="resumo-linha">
+            <span>Extras/Pedágios:</span>
+            <b id="total-outros" class="negativo">R$ 0,00</b>
+        </div>
+
+        <div class="resumo-linha">
+            <span>Fundo Reserva:</span>
+            <b id="total-manut" class="alerta">R$ 0,00</b>
+        </div>
+
+        <div class="resumo-linha">
+            <span>Pago Ajudantes:</span>
+            <b id="total-aju" class="info">R$ 0,00</b>
+        </div>
+
+        <div class="resumo-total">
+            <span>LUCRO LÍQUIDO:</span>
+            <span id="total-lucro" class="positivo">R$ 0,00</span>
+        </div>
+
     </div>
 
-    <script>
-        const VALOR_PARCELA = 923.65;
-        const TAXA_MENSAL = 1.79 / 100;
-        const TOTAL_INICIAL = 96;
+    <div class="table-container">
+        <div id="lista-rotas"></div>
+    </div>
 
-        let db = JSON.parse(localStorage.getItem('moto_db')) || [];
-        let parcelasPagas = JSON.parse(localStorage.getItem('fin_pagas')) || [];
-        let economiaAcumulada = parseFloat(localStorage.getItem('fin_economia')) || 0;
-        let config = JSON.parse(localStorage.getItem('moto_conf')) || { media: 35, preco: 6.10, metaM: 32, oleo: 0.03, ipva: 0.05 };
+</div>
 
-        function openTab(name) {
-            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(name).style.display = 'block';
-            event.currentTarget.classList.add('active');
-        }
+<div id="aba-notas" class="card oculto">
 
-        // --- GESTÃO ---
-        function atualizarManutencao() {
-            const km = parseFloat(document.getElementById('moto_km_atual').value) || 0;
-            const meta = parseFloat(document.getElementById('moto_meta_oleo').value) || 1000;
-            let rodado = km % meta;
-            document.getElementById('barra_oleo').style.width = (rodado / meta * 100) + "%";
-            document.getElementById('txt_km_faltam').innerText = `FALTAM ${(meta - rodado).toFixed(0)} KM PARA O ÓLEO`;
-            localStorage.setItem('km_painel', km);
-        }
+    <h3 style="margin-top:0; color:#ee4d2d">
+        Faturamento MEI
+    </h3>
 
-        function registrar() {
-            const bruto = parseFloat(document.getElementById('bruto').value);
-            const kmDia = parseFloat(document.getElementById('km_dia').value);
-            if (!bruto || !kmDia) return alert("Preencha KM e Valor!");
+    <div id="texto-mei"
+        style="text-align:center; font-weight:bold; margin-bottom:15px; background:#333; padding:10px; border-radius:8px;">
+        R$ 0,00 / R$ 6.750,00
+    </div>
 
-            const gas = (kmDia / config.media) * config.preco;
-            const resOleo = kmDia * config.oleo;
-            const resIpva = kmDia * config.ipva;
-            const liq = bruto - gas - config.metaM - resOleo - resIpva;
+    <label>Nº da Nota:</label>
+    <input type="text" id="num-nota" placeholder="Ex: 001">
 
-            document.getElementById('res-pf').innerText = "R$ " + liq.toFixed(2);
-            document.getElementById('res-gas').innerText = "R$ " + gas.toFixed(2);
-            document.getElementById('res-moto').innerText = "R$ " + config.metaM.toFixed(2);
-            document.getElementById('res-oleo').innerText = "R$ " + resOleo.toFixed(2);
-            document.getElementById('res-ipva').innerText = "R$ " + resIpva.toFixed(2);
+    <label>Valor da Nota (R$):</label>
+    <input type="number" id="val-nota" step="0.01" placeholder="0.00">
 
-            let kmAtual = parseFloat(document.getElementById('moto_km_atual').value) || 0;
-            document.getElementById('moto_km_atual').value = kmAtual + kmDia;
-            atualizarManutencao();
+    <button style="background:#3498db; color:white" onclick="registrarNota()">
+        REGISTRAR NF-e
+    </button>
 
-            db.unshift({ data: new Date().toLocaleDateString('pt-BR').substring(0,5), km: kmDia, bruto, liq: liq.toFixed(2) });
-            salvarERender();
-        }
+    <h3 style="margin-top:25px; font-size:1rem; border-bottom:1px solid #ee4d2d; padding-bottom:5px;">
+        Histórico de Notas
+    </h3>
 
-        function salvarERender() {
-            localStorage.setItem('moto_db', JSON.stringify(db));
-            const tbody = document.querySelector('#tabela tbody');
-            tbody.innerHTML = db.map((item, i) => `
-                <tr>
-                    <td>${item.data}</td>
-                    <td>${item.km}</td>
-                    <td>${item.bruto}</td>
-                    <td><b>${item.liq}</b></td>
-                    <td><button class="btn-del" onclick="apagarLinha(${i})">X</button></td>
-                </tr>
-            `).join('');
-        }
+    <div id="lista-notas"></div>
 
-        function apagarLinha(i) {
-            if(confirm("Deseja apagar este registro?")) {
-                db.splice(i, 1);
-                salvarERender();
-            }
-        }
+    <hr style="border:0.5px solid #333; margin:20px 0;">
 
-        // --- FINANCIAMENTO ---
-        function atualizarFin() {
-            const pagas = parcelasPagas.length;
-            const porc = (pagas / TOTAL_INICIAL) * 100;
-            document.getElementById('progressBar').style.width = porc + '%';
-            document.getElementById('progressText').innerText = `${pagas}/${TOTAL_INICIAL} PAGAS (${porc.toFixed(1)}%)`;
-            document.getElementById('totalRestante').innerText = "R$ " + ((TOTAL_INICIAL - pagas) * VALOR_PARCELA).toLocaleString();
-            document.getElementById('totalEconomia').innerText = "R$ " + economiaAcumulada.toLocaleString();
-            localStorage.setItem('fin_pagas', JSON.stringify(parcelasPagas));
-            localStorage.setItem('fin_economia', economiaAcumulada);
-        }
+    <button onclick="baixarBackup()"
+        style="background:#444; color:white; font-size:0.8rem;">
+        BAIXAR BACKUP GERAL (JSON)
+    </button>
 
-        let simulacao = [];
-        function simular() {
-            let saldo = parseFloat(document.getElementById('valorInput').value) || 0;
-            const preview = document.getElementById('previewArea');
-            const lista = document.getElementById('listaPreview');
-            if(saldo < 10) { preview.style.display = 'none'; return; }
-            preview.style.display = 'block';
-            lista.innerHTML = ''; simulacao = [];
+</div>
 
-            let proxima = 1;
-            while(parcelasPagas.includes(proxima)) proxima++;
-            if(saldo >= VALOR_PARCELA) {
-                saldo -= VALOR_PARCELA;
-                simulacao.push({n: proxima, v: VALOR_PARCELA, eco: 0});
-            }
+<script>
 
-            for(let i = TOTAL_INICIAL; i > proxima; i--) {
-                if(!parcelasPagas.includes(i)) {
-                    let meses = i - (parcelasPagas.length + simulacao.length);
-                    let vp = VALOR_PARCELA / Math.pow(1 + TAXA_MENSAL, meses);
-                    if(saldo >= vp) {
-                        saldo -= vp;
-                        simulacao.push({n: i, v: vp, eco: VALOR_PARCELA - vp});
-                    } else break;
-                }
-            }
-            simulacao.forEach(p => {
-                lista.innerHTML += `<div style="display:flex;justify-content:space-between;color:var(--green);padding:5px;border-bottom:1px solid #333"><span>Parc. ${p.n}</span><b>R$ ${p.v.toFixed(2)}</b></div>`;
-            });
-        }
+let dados = JSON.parse(localStorage.getItem('polo_pro_v4')) || {
+    rotas: [],
+    notas: []
+};
 
-        function confirmarPagamento() {
-            simulacao.forEach(p => { parcelasPagas.push(p.n); economiaAcumulada += p.eco; });
-            parcelasPagas.sort((a,b) => a-b);
-            document.getElementById('valorInput').value = '';
-            document.getElementById('previewArea').style.display = 'none';
-            atualizarFin();
-        }
+const mesesNomes = [
+    "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+    "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
+];
 
-        function salvarConfig() {
-            config = {
-                media: parseFloat(document.getElementById('media_km').value),
-                preco: parseFloat(document.getElementById('preco_gas').value),
-                metaM: parseFloat(document.getElementById('meta_moto_val').value),
-                oleo: parseFloat(document.getElementById('oleo_km_val').value),
-                ipva: parseFloat(document.getElementById('ipva_km_val').value)
-            };
-            localStorage.setItem('moto_conf', JSON.stringify(config));
-            alert("Configurações Salvas!");
-        }
+const mesAtualIdx = new Date().getMonth();
+const anoAtual = new Date().getFullYear();
 
-        function exportarBackup() {
-            const data = { db, parcelasPagas, economiaAcumulada, config, km: localStorage.getItem('km_painel') };
-            const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `backup_motoboy.json`;
-            a.click();
-        }
+function mudarAba(aba){
 
-        window.onload = () => {
-            document.getElementById('moto_km_atual').value = localStorage.getItem('km_painel') || 0;
-            salvarERender();
-            atualizarFin();
-            atualizarManutencao();
-        };
-    </script>
+    document.getElementById('aba-calc')
+        .classList.toggle('oculto', aba !== 'calc');
+
+    document.getElementById('aba-notas')
+        .classList.toggle('oculto', aba !== 'notas');
+
+    document.getElementById('btn-tab-calc')
+        .classList.toggle('active', aba === 'calc');
+
+    document.getElementById('btn-tab-notas')
+        .classList.toggle('active', aba === 'notas');
+}
+
+function alternarModoGas(){
+
+    const modo = document.getElementById('modo-gas').value;
+
+    document.getElementById('box-km')
+        .classList.toggle('oculto', modo !== 'km');
+
+    document.getElementById('box-gas-fixo')
+        .classList.toggle('oculto', modo !== 'fixo');
+}
+
+function calcular(){
+
+    const bruto = parseFloat(document.getElementById('bruto').value) || 0;
+
+    const km = parseFloat(document.getElementById('km').value) || 0;
+
+    const preco = parseFloat(document.getElementById('preco').value) || 0;
+
+    const outros = parseFloat(document.getElementById('outros').value) || 0;
+
+    const tipoAju = document.getElementById('tipo-aju').value;
+
+    const valAjuInput =
+        parseFloat(document.getElementById('val-aju-input').value) || 0;
+
+    const modoGas = document.getElementById('modo-gas').value;
+
+    const gasFixo =
+        parseFloat(document.getElementById('gas-fixo').value) || 0;
+
+    const gas = modoGas === 'km'
+        ? (km / 10.0) * preco
+        : gasFixo;
+
+    const sobraAposCustos = bruto - gas - outros;
+
+    // PARCELA MENSAL
+    const parcelaMensal = 87.05;
+
+    // MÉDIA DE ROTAS NO MÊS
+    const mediaRotasMes = 22;
+
+    // RATEIO POR ROTA
+    const parcelaPorRota = parcelaMensal / mediaRotasMes;
+
+    // RESERVA + PARCELA
+    const manut = (sobraAposCustos * 0.10) + parcelaPorRota;
+
+    const liquidoParaDividir = sobraAposCustos - manut;
+
+    const parteAjudante = tipoAju === 'porcento'
+        ? (liquidoParaDividir * (valAjuInput / 100))
+        : valAjuInput;
+
+    const seuGanho = liquidoParaDividir - parteAjudante;
+
+    document.getElementById('r-bruto').innerText =
+        "R$ " + bruto.toFixed(2);
+
+    document.getElementById('r-gas').innerText =
+        "- R$ " + gas.toFixed(2);
+
+    document.getElementById('r-manut').innerText =
+        "- R$ " + manut.toFixed(2);
+
+    document.getElementById('r-aju').innerText =
+        "R$ " + parteAjudante.toFixed(2);
+
+    document.getElementById('r-mot').innerText =
+        "R$ " + seuGanho.toFixed(2);
+
+    document.getElementById('resultado')
+        .classList.remove('oculto');
+}
+
+function salvarRota(){
+
+    const rota = {
+
+        id: Date.now(),
+
+        mes: mesAtualIdx,
+
+        ano: anoAtual,
+
+        data: new Date().toLocaleDateString('pt-BR'),
+
+        bruto: parseFloat(
+            document.getElementById('r-bruto')
+            .innerText.replace("R$ ","")
+        ),
+
+        gas: parseFloat(
+            document.getElementById('r-gas')
+            .innerText.replace("- R$ ","")
+        ),
+
+        outros: parseFloat(
+            document.getElementById('outros').value
+        ) || 0,
+
+        manut: parseFloat(
+            document.getElementById('r-manut')
+            .innerText.replace("- R$ ","")
+        ),
+
+        aju: parseFloat(
+            document.getElementById('r-aju')
+            .innerText.replace("R$ ","")
+        ),
+
+        ganho: parseFloat(
+            document.getElementById('r-mot')
+            .innerText.replace("R$ ","")
+        )
+    };
+
+    dados.rotas.push(rota);
+
+    localStorage.setItem(
+        'polo_pro_v4',
+        JSON.stringify(dados)
+    );
+
+    renderizarPagina();
+
+    document.getElementById('resultado')
+        .classList.add('oculto');
+
+    document.getElementById('bruto').value = "";
+    document.getElementById('km').value = "";
+}
+
+function registrarNota(){
+
+    const val =
+        parseFloat(document.getElementById('val-nota').value);
+
+    if(!val){
+        return alert("Digite o valor da nota!");
+    }
+
+    dados.notas.push({
+
+        id: Date.now(),
+
+        mes: mesAtualIdx,
+
+        ano: anoAtual,
+
+        val,
+
+        num:
+            document.getElementById('num-nota').value || 'S/N'
+    });
+
+    localStorage.setItem(
+        'polo_pro_v4',
+        JSON.stringify(dados)
+    );
+
+    document.getElementById('val-nota').value = "";
+    document.getElementById('num-nota').value = "";
+
+    renderizarPagina();
+}
+
+function renderizarPagina(){
+
+    document.getElementById('titulo-relatorio').innerText =
+        `RELATÓRIO: ${mesesNomes[mesAtualIdx].toUpperCase()} / ${anoAtual}`;
+
+    const rotasMes = dados.rotas.filter(r =>
+        r.mes === mesAtualIdx && r.ano === anoAtual
+    );
+
+    let sums = {
+        bruto:0,
+        gas:0,
+        outros:0,
+        manut:0,
+        aju:0,
+        ganho:0
+    };
+
+    let h =
+    `<table>
+        <tr>
+            <th>DATA</th>
+            <th>BRUTO</th>
+            <th>GAS</th>
+            <th>EXTRAS</th>
+            <th>RESERVA</th>
+            <th>AJUD.</th>
+            <th>EU</th>
+            <th></th>
+        </tr>`;
+
+    rotasMes.slice().reverse().forEach(r => {
+
+        sums.bruto += r.bruto;
+        sums.gas += r.gas;
+        sums.outros += (r.outros || 0);
+        sums.manut += r.manut;
+        sums.aju += r.aju;
+        sums.ganho += r.ganho;
+
+        h += `
+        <tr>
+
+            <td>${r.data}</td>
+
+            <td>${r.bruto.toFixed(2)}</td>
+
+            <td class="negativo">
+                ${r.gas.toFixed(2)}
+            </td>
+
+            <td>
+                ${(r.outros || 0).toFixed(2)}
+            </td>
+
+            <td class="alerta">
+                ${r.manut.toFixed(2)}
+            </td>
+
+            <td class="info">
+                ${r.aju.toFixed(2)}
+            </td>
+
+            <td class="positivo">
+                ${r.ganho.toFixed(2)}
+            </td>
+
+            <td>
+                <button class="btn-del"
+                    onclick="apagarItem(${r.id}, 'rotas')">
+                    ×
+                </button>
+            </td>
+
+        </tr>`;
+    });
+
+    document.getElementById('lista-rotas').innerHTML =
+        h + `</table>`;
+
+    document.getElementById('total-bruto').innerText =
+        "R$ " + sums.bruto.toLocaleString('pt-br', {
+            minimumFractionDigits:2
+        });
+
+    document.getElementById('total-gas').innerText =
+        "R$ " + sums.gas.toLocaleString('pt-br', {
+            minimumFractionDigits:2
+        });
+
+    document.getElementById('total-outros').innerText =
+        "R$ " + sums.outros.toLocaleString('pt-br', {
+            minimumFractionDigits:2
+        });
+
+    document.getElementById('total-manut').innerText =
+        "R$ " + sums.manut.toLocaleString('pt-br', {
+            minimumFractionDigits:2
+        });
+
+    document.getElementById('total-aju').innerText =
+        "R$ " + sums.aju.toLocaleString('pt-br', {
+            minimumFractionDigits:2
+        });
+
+    document.getElementById('total-lucro').innerText =
+        "R$ " + sums.ganho.toLocaleString('pt-br', {
+            minimumFractionDigits:2
+        });
+
+    // PAINEL MEI
+    const notasMes = dados.notas.filter(n =>
+        n.mes === mesAtualIdx && n.ano === anoAtual
+    );
+
+    const totalNotas =
+        notasMes.reduce((acc, n) => acc + n.val, 0);
+
+    document.getElementById('texto-mei').innerText =
+        `Emitido: R$ ${totalNotas.toLocaleString('pt-br', {
+            minimumFractionDigits:2
+        })} / Limite: R$ 6.750,00`;
+
+    let hNotas =
+    `<table style="min-width:100%">
+        <tr>
+            <th>Nota</th>
+            <th>Valor</th>
+            <th></th>
+        </tr>`;
+
+    notasMes.forEach(n => {
+
+        hNotas += `
+        <tr>
+
+            <td>${n.num}</td>
+
+            <td>
+                R$ ${n.val.toFixed(2)}
+            </td>
+
+            <td>
+                <button class="btn-del"
+                    onclick="apagarItem(${n.id}, 'notas')">
+                    ×
+                </button>
+            </td>
+
+        </tr>`;
+    });
+
+    document.getElementById('lista-notas').innerHTML =
+        hNotas + `</table>`;
+}
+
+function apagarItem(id, tipo){
+
+    if(confirm("Apagar este registro?")){
+
+        dados[tipo] =
+            dados[tipo].filter(item => item.id !== id);
+
+        localStorage.setItem(
+            'polo_pro_v4',
+            JSON.stringify(dados)
+        );
+
+        renderizarPagina();
+    }
+}
+
+function baixarBackup(){
+
+    const blob = new Blob(
+        [JSON.stringify(dados)],
+        {type:'application/json'}
+    );
+
+    const a = document.createElement('a');
+
+    a.href = URL.createObjectURL(blob);
+
+    a.download =
+        `polo_backup_${new Date().toLocaleDateString('pt-BR')}.json`;
+
+    a.click();
+}
+
+renderizarPagina();
+
+</script>
+
 </body>
 </html>
