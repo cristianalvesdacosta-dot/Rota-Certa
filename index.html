@@ -12,85 +12,245 @@
         .tab-btn { flex: 1; padding: 15px; border: none; background: none; color: #888; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; }
         .tab-btn.active { color: var(--green); border-bottom: 3px solid var(--green); }
 
-        .container { padding: 15px; max-width: 500px; margin: auto; }
+        .container { padding: 15px; max-width: 500px; margin: auto; display: none; }
+        .container.active { display: block; }
+
         .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #333; margin-bottom: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
         
         label { display: block; font-size: 11px; color: var(--green); font-weight: bold; margin-bottom: 4px; text-transform: uppercase; }
         input { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #444; background: #2b2b2b; color: #fff; box-sizing: border-box; margin-bottom: 12px; text-align: center; font-size: 16px; outline: none; }
         
         .btn-add { width: 100%; padding: 16px; background: var(--green); border: none; color: #000; font-weight: 800; border-radius: 8px; cursor: pointer; font-size: 16px; text-transform: uppercase; }
-        
+        .btn-backup { width: 100%; padding: 12px; background: var(--blue); border: none; color: #fff; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 14px; text-transform: uppercase; margin-top: 10px; }
+        .btn-restore { width: 100%; padding: 12px; background: var(--accent); border: none; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 14px; text-transform: uppercase; margin-top: 10px; }
+
+        .metric-box { display: flex; justify-content: space-between; align-items: center; background: #333; padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #444; }
+        .metric-val { color: var(--green); font-weight: bold; font-size: 16px; }
+
         .envelopes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
         .env { padding: 10px; border-radius: 6px; font-size: 10px; text-align: center; border: 1px solid #333; }
         .env strong { display: block; font-size: 14px; margin-top: 4px; }
         .header-pf { background: var(--purple); grid-column: span 2; padding: 15px; border: none; }
-        .bg-gas { background: #b71c1c; } .bg-moto { background: #e65100; }
+        .bg-gas { background: #b71c1c; } 
+        .bg-moto { background: #e65100; }
         .bg-oleo { background: #004d40; border: 1px solid var(--green); }
         .bg-ipva { background: #01579b; }
 
-        table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 15px; }
-        th, td { border: 1px solid #333; padding: 10px; text-align: center; }
+        table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 15px; }
+        th, td { border: 1px solid #333; padding: 8px; text-align: center; }
         th { background: #222; color: var(--green); }
+        .btn-del { background: var(--red); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div id="diario" class="container tab-content">
+    <div class="tab-bar">
+        <button class="tab-btn active" onclick="trocarTab('diario', event)">Lançamento</button>
+        <button class="tab-btn" onclick="trocarTab('config', event)">Configurar</button>
+    </div>
+
+    <!-- ABA DIÁRIO -->
+    <div id="diario" class="container active">
         <div class="card">
             <label>TOTAL GANHO NO APP (R$)</label>
-            <input type="number" id="bruto" placeholder="R$ 0,00">
-            <label>KM TOTAL RODADO NO DIA</label>
-            <input type="number" id="km_dia" placeholder="0 km">
-            <button class="btn-add" onclick="registrar()">CALCULAR E SALVAR</button>
+            <input type="number" id="bruto" step="0.01" placeholder="R$ 0,00">
+            <label>KM TOTAL RODADO NO DIA (PAINEL)</label>
+            <input type="number" id="km_dia" step="0.1" placeholder="0 km">
+            <label>ANÁLISE AUTOMÁTICA DE DESEMPENHO</label>
+            <input type="text" id="obs" placeholder="Gerado automaticamente..." readonly style="color: var(--accent); background: #1a1a1a;">
+            <button class="btn-add" onclick="registrar()">CALCULAR E DISTRIBUIR</button>
+
+            <div class="metric-box" style="margin-top: 15px;">
+                <span>Eficiência Média:</span>
+                <span id="res-eficiencia" class="metric-val">R$ 0,00 / km</span>
+            </div>
 
             <div class="envelopes">
-                <div class="env header-pf">SALÁRIO LÍQUIDO REAL <strong id="res-pf">R$ 0,00</strong></div>
+                <div class="env header-pf">LUCRO / BOLSO FINAL <strong id="res-pf">R$ 0,00</strong></div>
                 <div class="env bg-gas">⛽ GASOLINA <strong id="res-gas">R$ 0,00</strong></div>
-                <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="res-moto">R$ 0,00</strong></div>
-                <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="res-oleo">R$ 0,00</strong></div>
-                <div class="env bg-ipva">📄 DESPESAS FIXAS <strong id="res-ipva">R$ 0,00</strong></div>
+                <div class="env bg-moto">🏍️ BANCO BV (PARCELA) <strong id="res-moto">R$ 0,00</strong></div>
+                <div class="env bg-oleo">🛢️ MANUTENÇÃO / PEÇAS <strong id="res-oleo">R$ 0,00</strong></div>
+                <div class="env bg-ipva">📄 CONTAS (WIFI/GPS/FIXAS) <strong id="res-ipva">R$ 0,00</strong></div>
             </div>
         </div>
-        <table id="tabela"><thead><tr><th>Data</th><th>Bruto</th><th>Líq.</th><th>X</th></tr></thead><tbody></tbody></table>
+        <table id="tabela">
+            <thead><tr><th>Data</th><th>Bruto</th><th>R$/Km</th><th>Lucro</th><th>Análise</th><th>X</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- ABA CONFIGURAÇÕES & BACKUP -->
+    <div id="config" class="container">
+        <div class="card">
+            <label>Preço da Gasolina (R$)</label>
+            <input type="number" id="cfg_gas" step="0.01">
+
+            <label>Média da Moto (Km/L)</label>
+            <input type="number" id="cfg_media" step="0.1">
+
+            <label>Taxa Parcela Moto por KM (R$)</label>
+            <input type="number" id="cfg_parcela" step="0.01">
+
+            <label>Taxa Manutenção por KM (R$)</label>
+            <input type="number" id="cfg_manut" step="0.01">
+
+            <label>Taxa Contas/Fixas por KM (R$)</label>
+            <input type="number" id="cfg_fixas" step="0.01">
+
+            <button class="btn-add" onclick="salvarConfig()">Salvar Configurações</button>
+
+            <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
+
+            <label>Gerenciamento de Dados (Backup)</label>
+            <button class="btn-backup" onclick="exportarBackup()">Exportar Backup (Baixar)</button>
+            <button class="btn-restore" onclick="importarBackupClick()">Restaurar Backup</button>
+            <input type="file" id="fileInput" style="display:none" onchange="importarBackup(event)">
+        </div>
     </div>
 
     <script>
-        // Metas baseadas em 2000km/mês (Valor por KM)
-        // Parcela: 0.25 | Manutenção: 0.15 | Fixas: 0.13 | Emergência: 0.10
-        const rates = { parcela: 0.25, manutencao: 0.15, fixas: 0.13 };
-        const precoGas = 6.19; // Ajuste se necessário
-        const mediaKm = 28;    // Ajuste se necessário
+        let config = JSON.parse(localStorage.getItem('moto_config')) || {
+            precoGas: 6.19,
+            mediaKm: 28,
+            parcela: 0.16,
+            manutencao: 0.18,
+            fixas: 0.30
+        };
 
         let db = JSON.parse(localStorage.getItem('moto_db')) || [];
+
+        function carregarConfigNaTela() {
+            document.getElementById('cfg_gas').value = config.precoGas;
+            document.getElementById('cfg_media').value = config.mediaKm;
+            document.getElementById('cfg_parcela').value = config.parcela;
+            document.getElementById('cfg_manut').value = config.manutencao;
+            document.getElementById('cfg_fixas').value = config.fixas;
+        }
+
+        function salvarConfig() {
+            config.precoGas = parseFloat(document.getElementById('cfg_gas').value) || 0;
+            config.mediaKm = parseFloat(document.getElementById('cfg_media').value) || 1;
+            config.parcela = parseFloat(document.getElementById('cfg_parcela').value) || 0;
+            config.manutencao = parseFloat(document.getElementById('cfg_manut').value) || 0;
+            config.fixas = parseFloat(document.getElementById('cfg_fixas').value) || 0;
+
+            localStorage.setItem('moto_config', JSON.stringify(config));
+            alert('Configurações salvas com sucesso!');
+            trocarTab('diario');
+        }
+
+        function trocarTab(tabId, evt) {
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            if (evt && evt.currentTarget) {
+                evt.currentTarget.classList.add('active');
+            } else {
+                document.querySelector('.tab-btn').classList.add('active');
+            }
+            if(tabId === 'config') carregarConfigNaTela();
+        }
 
         function registrar() {
             const bruto = parseFloat(document.getElementById('bruto').value) || 0;
             const km = parseFloat(document.getElementById('km_dia').value) || 0;
 
-            const gas = (km / mediaKm) * precoGas;
-            const resParcela = km * rates.parcela;
-            const resManut = km * rates.manutencao;
-            const resFixas = km * rates.fixas;
+            const gas = (km / config.mediaKm) * config.precoGas;
+            const resParcela = km * config.parcela;
+            const resManut = km * config.manutencao;
+            const resFixas = km * config.fixas;
             
-            const liq = bruto - gas - resParcela - resManut - resFixas;
+            const lucro = bruto - gas - resParcela - resManut - resFixas;
+            const eficiencia = km > 0 ? (bruto / km) : 0;
 
-            document.getElementById('res-pf').innerText = "R$ " + liq.toFixed(2);
+            // Análise Automática baseada no Custo Total de 0.64
+            let status = "";
+            if (eficiencia < 0.64) {
+                status = "RUIM (Abaixo do Custo)";
+            } else if (eficiencia >= 0.64 && eficiencia < 1.00) {
+                status = "REGULAR (Pagando Contas)";
+            } else {
+                status = "EXCELENTE (Lucro Alto)";
+            }
+
+            document.getElementById('obs').value = status;
+            document.getElementById('res-pf').innerText = "R$ " + lucro.toFixed(2);
             document.getElementById('res-gas').innerText = "R$ " + gas.toFixed(2);
             document.getElementById('res-moto').innerText = "R$ " + resParcela.toFixed(2);
             document.getElementById('res-oleo').innerText = "R$ " + resManut.toFixed(2);
             document.getElementById('res-ipva').innerText = "R$ " + resFixas.toFixed(2);
+            document.getElementById('res-eficiencia').innerText = "R$ " + eficiencia.toFixed(2) + " /km";
 
-            db.unshift({ data: new Date().toLocaleDateString('pt-BR').substring(0,5), bruto: bruto.toFixed(2), liq: liq.toFixed(2) });
+            db.unshift({ 
+                data: new Date().toLocaleDateString('pt-BR').substring(0,5), 
+                bruto: bruto.toFixed(2), 
+                lucro: lucro.toFixed(2), 
+                eficiencia: eficiencia.toFixed(2),
+                obs: status 
+            });
             localStorage.setItem('moto_db', JSON.stringify(db));
             renderTable();
         }
 
         function renderTable() {
             const tbody = document.querySelector('#tabela tbody');
-            tbody.innerHTML = db.slice(0,10).map((item, i) => `<tr><td>${item.data}</td><td>${item.bruto}</td><td>${item.liq}</td><td><button onclick="db.splice(${i},1);renderTable()">X</button></td></tr>`).join('');
+            tbody.innerHTML = db.slice(0, 15).map((item, i) => `
+                <tr>
+                    <td>${item.data}</td>
+                    <td>R$ ${item.bruto}</td>
+                    <td>R$ ${item.eficiencia}</td>
+                    <td>R$ ${item.lucro}</td>
+                    <td>${item.obs}</td>
+                    <td><button class="btn-del" onclick="db.splice(${i},1);localStorage.setItem('moto_db', JSON.stringify(db));renderTable()">X</button></td>
+                </tr>
+            `).join('');
         }
 
-        window.onload = renderTable;
+        function exportarBackup() {
+            const dadosBackup = { config: config, db: db };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dadosBackup));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "backup_motoboy_elite.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importarBackupClick() {
+            document.getElementById('fileInput').click();
+        }
+
+        function importarBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const conteudo = JSON.parse(e.target.result);
+                    if (conteudo.config && conteudo.db) {
+                        config = conteudo.config;
+                        db = conteudo.db;
+                        localStorage.setItem('moto_config', JSON.stringify(config));
+                        localStorage.setItem('moto_db', JSON.stringify(db));
+                        carregarConfigNaTela();
+                        renderTable();
+                        alert('Backup restaurado com sucesso!');
+                    } else {
+                        alert('Arquivo de backup inválido.');
+                    }
+                } catch (err) {
+                    alert('Erro ao ler o arquivo de backup.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        window.onload = () => {
+            carregarConfigNaTela();
+            renderTable();
+        };
     </script>
 </body>
 </html>
