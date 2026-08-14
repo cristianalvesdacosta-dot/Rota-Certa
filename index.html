@@ -9,7 +9,7 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: var(--text); padding: 0; margin: 0; padding-bottom: 70px; }
         
         .tab-bar { display: flex; background: #111; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #333; }
-        .tab-btn { flex: 1; padding: 15px; border: none; background: none; color: #888; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; }
+        .tab-btn { flex: 1; padding: 15px; border: none; background: none; color: #888; font-weight: bold; cursor: pointer; font-size: 10px; text-transform: uppercase; }
         .tab-btn.active { color: var(--green); border-bottom: 3px solid var(--green); }
 
         .container { padding: 15px; max-width: 500px; margin: auto; display: none; }
@@ -35,17 +35,28 @@
         .bg-moto { background: #e65100; }
         .bg-oleo { background: #004d40; border: 1px solid var(--green); }
         .bg-ipva { background: #01579b; }
+        .bg-extra { background: #311b92; }
 
         table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 15px; }
         th, td { border: 1px solid #333; padding: 8px; text-align: center; }
         th { background: #222; color: var(--green); }
         .btn-del { background: var(--red); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
+        
+        .total-box { background: #151515; border: 1px dashed var(--green); padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 12px; text-align: center; color: var(--accent); }
+        .total-box strong { font-size: 15px; color: var(--green); display: block; margin-top: 4px; }
+
+        .toggle-container { display: flex; align-items: center; justify-content: space-between; background: #252525; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #444; font-size: 11px; }
+        .toggle-container input { width: 20px; height: 20px; margin: 0; cursor: pointer; }
+
+        .mode-box { background: #222; padding: 12px; border-radius: 8px; border: 1px solid #444; margin-bottom: 15px; }
+        .mode-box label { color: var(--accent); margin-bottom: 8px; }
     </style>
 </head>
 <body>
 
     <div class="tab-bar">
         <button class="tab-btn active" onclick="trocarTab('diario', event)">Lançamento</button>
+        <button class="tab-btn" onclick="trocarTab('gastos', event)">Meus Gastos</button>
         <button class="tab-btn" onclick="trocarTab('config', event)">Configurar</button>
     </div>
 
@@ -71,31 +82,86 @@
                 <div class="env bg-moto">🏍️ BANCO BV (PARCELA) <strong id="res-moto">R$ 0,00</strong></div>
                 <div class="env bg-oleo">🛢️ MANUTENÇÃO / PEÇAS <strong id="res-oleo">R$ 0,00</strong></div>
                 <div class="env bg-ipva">📄 CONTAS (WIFI/GPS/FIXAS) <strong id="res-ipva">R$ 0,00</strong></div>
+                <div id="envelopes-extras-container" style="grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;"></div>
             </div>
         </div>
+        
         <table id="tabela">
             <thead><tr><th>Data</th><th>Bruto</th><th>R$/Km</th><th>Lucro</th><th>Análise</th><th>X</th></tr></thead>
             <tbody></tbody>
         </table>
+
+        <div class="total-box">
+            SOMA TOTAL ACUMULADA (LUCRO LÍQUIDO)
+            <strong id="soma-total-lucro">R$ 0,00</strong>
+        </div>
+    </div>
+
+    <!-- ABA GASTOS MENSAIS & SUGESTÃO -->
+    <div id="gastos" class="container">
+        <div class="card">
+            <label>Nome do Gasto Mensal (Ex: Seguro, Aluguel Baú)</label>
+            <input type="text" id="gasto_nome" placeholder="Ex: Seguro da Moto">
+
+            <label>Valor Mensal (R$)</label>
+            <input type="number" id="gasto_valor" step="0.01" placeholder="R$ 0,00">
+
+            <button class="btn-add" onclick="adicionarGasto()">➕ Adicionar Gasto Mensal</button>
+
+            <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
+
+            <label>Sugestão de Distribuição (Ativar / Desativar)</label>
+            <div id="lista-toggles"></div>
+
+            <table id="tabela-gastos" style="margin-top: 20px;">
+                <thead><tr><th>Gasto Mensal</th><th>Valor</th><th>Ação</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 
     <!-- ABA CONFIGURAÇÕES & BACKUP -->
     <div id="config" class="container">
         <div class="card">
-            <label>Preço da Gasolina (R$)</label>
-            <input type="number" id="cfg_gas" step="0.01">
+            <div class="mode-box">
+                <label>MODO DE CONFIGURAÇÃO DO CUSTO KM</label>
+                <div class="toggle-container" style="margin-top: 8px;">
+                    <span>Modo Automático (Definir Custo Total p/ Km)</span>
+                    <input type="checkbox" id="cfg_modo_auto" onchange="mudarModoConfig()">
+                </div>
+            </div>
 
-            <label>Média da Moto (Km/L)</label>
-            <input type="number" id="cfg_media" step="0.1">
+            <label>Média Estimada de KM Rodados por Mês</label>
+            <input type="number" id="cfg_km_mes" step="1">
 
-            <label>Taxa Parcela Moto por KM (R$)</label>
-            <input type="number" id="cfg_parcela" step="0.01">
+            <!-- SEÇÃO MODO MANUAL -->
+            <div id="bloco-manual">
+                <label>Taxa Gasolina por KM (R$)</label>
+                <input type="number" id="cfg_gas_km" step="0.01" oninput="calcularTotalConfigManual()">
 
-            <label>Taxa Manutenção por KM (R$)</label>
-            <input type="number" id="cfg_manut" step="0.01">
+                <label>Taxa Parcela Moto por KM (R$)</label>
+                <input type="number" id="cfg_parcela" step="0.01" oninput="calcularTotalConfigManual()">
 
-            <label>Taxa Contas/Fixas por KM (R$)</label>
-            <input type="number" id="cfg_fixas" step="0.01">
+                <label>Taxa Manutenção por KM (R$)</label>
+                <input type="number" id="cfg_manut" step="0.01" oninput="calcularTotalConfigManual()">
+
+                <label>Taxa Contas/Fixas por KM (R$)</label>
+                <input type="number" id="cfg_fixas" step="0.01" oninput="calcularTotalConfigManual()">
+
+                <div class="total-box" style="margin-bottom: 12px;">
+                    SOMA TOTAL DA DISTRIBUIÇÃO POR KM
+                    <strong id="cfg_total_manual">R$ 0,00 / km</strong>
+                </div>
+            </div>
+
+            <!-- SEÇÃO MODO AUTOMÁTICO -->
+            <div id="bloco-auto" style="display:none;">
+                <label>Custo Total Desejado por KM (Ex: R$ 0,46)</label>
+                <input type="number" id="cfg_custo_total_auto" step="0.01" placeholder="0.46">
+                <div style="font-size: 10px; color: #888; text-align: center; margin-bottom: 12px;">
+                    O sistema distribuirá o valor proporcionalmente entre Gasolina, Parcela, Manutenção e Fixas com base nas proporções padrão.
+                </div>
+            </div>
 
             <button class="btn-add" onclick="salvarConfig()">Salvar Configurações</button>
 
@@ -110,29 +176,66 @@
 
     <script>
         let config = JSON.parse(localStorage.getItem('moto_config')) || {
-            precoGas: 6.19,
-            mediaKm: 28,
-            parcela: 0.16,
-            manutencao: 0.18,
-            fixas: 0.30
+            kmMes: 3000,
+            modoAuto: false,
+            custoTotalAuto: 0.46,
+            gasolinaKm: 0.22,
+            parcela: 0.08,
+            manutencao: 0.06,
+            fixas: 0.10
         };
 
+        let gastosMensais = JSON.parse(localStorage.getItem('moto_gastos_mensais')) || [];
         let db = JSON.parse(localStorage.getItem('moto_db')) || [];
 
         function carregarConfigNaTela() {
-            document.getElementById('cfg_gas').value = config.precoGas;
-            document.getElementById('cfg_media').value = config.mediaKm;
+            document.getElementById('cfg_km_mes').value = config.kmMes;
+            document.getElementById('cfg_modo_auto').checked = config.modoAuto;
+            document.getElementById('cfg_custo_total_auto').value = config.custoTotalAuto || 0.46;
+            
+            document.getElementById('cfg_gas_km').value = config.gasolinaKm;
             document.getElementById('cfg_parcela').value = config.parcela;
             document.getElementById('cfg_manut').value = config.manutencao;
             document.getElementById('cfg_fixas').value = config.fixas;
+
+            mudarModoConfig();
+            calcularTotalConfigManual();
+            renderPainelGastos();
+        }
+
+        function mudarModoConfig() {
+            const auto = document.getElementById('cfg_modo_auto').checked;
+            document.getElementById('bloco-manual').style.display = auto ? 'none' : 'block';
+            document.getElementById('bloco-auto').style.display = auto ? 'block' : 'none';
+        }
+
+        function calcularTotalConfigManual() {
+            const g = parseFloat(document.getElementById('cfg_gas_km').value) || 0;
+            const p = parseFloat(document.getElementById('cfg_parcela').value) || 0;
+            const m = parseFloat(document.getElementById('cfg_manut').value) || 0;
+            const f = parseFloat(document.getElementById('cfg_fixas').value) || 0;
+            const total = g + p + m + f;
+            document.getElementById('cfg_total_manual').innerText = "R$ " + total.toFixed(2) + " / km";
         }
 
         function salvarConfig() {
-            config.precoGas = parseFloat(document.getElementById('cfg_gas').value) || 0;
-            config.mediaKm = parseFloat(document.getElementById('cfg_media').value) || 1;
-            config.parcela = parseFloat(document.getElementById('cfg_parcela').value) || 0;
-            config.manutencao = parseFloat(document.getElementById('cfg_manut').value) || 0;
-            config.fixas = parseFloat(document.getElementById('cfg_fixas').value) || 0;
+            config.kmMes = parseFloat(document.getElementById('cfg_km_mes').value) || 3000;
+            config.modoAuto = document.getElementById('cfg_modo_auto').checked;
+
+            if (config.modoAuto) {
+                const totalAuto = parseFloat(document.getElementById('cfg_custo_total_auto').value) || 0.46;
+                config.custoTotalAuto = totalAuto;
+                // Proporções padrão base (Gasolina 48%, Parcela 17%, Manutenção 13%, Fixas 22%)
+                config.gasolinaKm = totalAuto * 0.48;
+                config.parcela = totalAuto * 0.17;
+                config.manutencao = totalAuto * 0.13;
+                config.fixas = totalAuto * 0.22;
+            } else {
+                config.gasolinaKm = parseFloat(document.getElementById('cfg_gas_km').value) || 0;
+                config.parcela = parseFloat(document.getElementById('cfg_parcela').value) || 0;
+                config.manutencao = parseFloat(document.getElementById('cfg_manut').value) || 0;
+                config.fixas = parseFloat(document.getElementById('cfg_fixas').value) || 0;
+            }
 
             localStorage.setItem('moto_config', JSON.stringify(config));
             alert('Configurações salvas com sucesso!');
@@ -147,28 +250,109 @@
             if (evt && evt.currentTarget) {
                 evt.currentTarget.classList.add('active');
             } else {
-                document.querySelector('.tab-btn').classList.add('active');
+                document.querySelectorAll('.tab-btn')[tabId === 'diario' ? 0 : tabId === 'gastos' ? 1 : 2].classList.add('active');
             }
-            if(tabId === 'config') carregarConfigNaTela();
+            if(tabId === 'config' || tabId === 'gastos') carregarConfigNaTela();
+            if(tabId === 'diario') renderEnvelopesExtras();
+        }
+
+        function adicionarGasto() {
+            const nome = document.getElementById('gasto_nome').value.trim();
+            const valor = parseFloat(document.getElementById('gasto_valor').value);
+
+            if(!nome || isNaN(valor)) {
+                alert('Preencha o nome e o valor mensal corretamente!');
+                return;
+            }
+
+            gastosMensais.push({ id: Date.now(), nome, valor, ativo: true });
+            localStorage.setItem('moto_gastos_mensais', JSON.stringify(gastosMensais));
+            
+            document.getElementById('gasto_nome').value = '';
+            document.getElementById('gasto_valor').value = '';
+            renderPainelGastos();
+        }
+
+        function removerGasto(id) {
+            gastosMensais = gastosMensais.filter(g => g.id !== id);
+            localStorage.setItem('moto_gastos_mensais', JSON.stringify(gastosMensais));
+            renderPainelGastos();
+        }
+
+        function alternarGastoAtivo(id) {
+            const gasto = gastosMensais.find(g => g.id === id);
+            if(gasto) {
+                gasto.ativo = !gasto.ativo;
+                localStorage.setItem('moto_gastos_mensais', JSON.stringify(gastosMensais));
+                renderEnvelopesExtras();
+            }
+        }
+
+        function renderPainelGastos() {
+            const tbody = document.querySelector('#tabela-gastos tbody');
+            const listaToggles = document.getElementById('lista-toggles');
+
+            tbody.innerHTML = gastosMensais.map(g => `
+                <tr>
+                    <td><strong>${g.nome}</strong></td>
+                    <td>R$ ${g.valor.toFixed(2)} /mês</td>
+                    <td><button class="btn-del" onclick="removerGasto(${g.id})">X</button></td>
+                </tr>
+            `).join('');
+
+            listaToggles.innerHTML = gastosMensais.map(g => `
+                <div class="toggle-container">
+                    <span>${g.nome} (R$ ${g.valor.toFixed(2)}/mês)</span>
+                    <input type="checkbox" ${g.ativo ? 'checked' : ''} onchange="alternarGastoAtivo(${g.id})">
+                </div>
+            `).join('');
+
+            renderEnvelopesExtras();
+        }
+
+        function renderEnvelopesExtras() {
+            const container = document.getElementById('envelopes-extras-container');
+            const ativos = gastosMensais.filter(g => g.ativo);
+            
+            container.innerHTML = ativos.map(g => `
+                <div class="env bg-extra">${g.nome.toUpperCase()} <strong id="res-extra-${g.id}">R$ 0,00</strong></div>
+            `).join('');
         }
 
         function registrar() {
             const bruto = parseFloat(document.getElementById('bruto').value) || 0;
             const km = parseFloat(document.getElementById('km_dia').value) || 0;
 
-            const gas = (km / config.mediaKm) * config.precoGas;
+            const gas = km * config.gasolinaKm;
             const resParcela = km * config.parcela;
             const resManut = km * config.manutencao;
             const resFixas = km * config.fixas;
             
-            const lucro = bruto - gas - resParcela - resManut - resFixas;
+            let totalExtrasDia = 0;
+            let valoresExtrasDia = {};
+
+            const kmMes = config.kmMes > 0 ? config.kmMes : 3000;
+
+            gastosMensais.forEach(g => {
+                if(g.ativo) {
+                    const custoKmGasto = g.valor / kmMes;
+                    const valorNoDia = km * custoKmGasto;
+                    totalExtrasDia += valorNoDia;
+                    valoresExtrasDia[g.id] = valorNoDia;
+                }
+            });
+
+            const custoTotalPorKmBase = config.gasolinaKm + config.parcela + config.manutencao + config.fixas;
+            const custoExtraPorKm = gastosMensais.filter(g => g.ativo).reduce((acc, g) => acc + (g.valor / kmMes), 0);
+            const custoTotalPorKm = custoTotalPorKmBase + custoExtraPorKm;
+
+            const lucro = bruto - gas - resParcela - resManut - resFixas - totalExtrasDia;
             const eficiencia = km > 0 ? (bruto / km) : 0;
 
-            // Análise Automática baseada no Custo Total de 0.64
             let status = "";
-            if (eficiencia < 0.64) {
+            if (eficiencia < custoTotalPorKm) {
                 status = "RUIM (Abaixo do Custo)";
-            } else if (eficiencia >= 0.64 && eficiencia < 1.00) {
+            } else if (eficiencia >= custoTotalPorKm && eficiencia < (custoTotalPorKm + 0.36)) {
                 status = "REGULAR (Pagando Contas)";
             } else {
                 status = "EXCELENTE (Lucro Alto)";
@@ -181,6 +365,13 @@
             document.getElementById('res-oleo').innerText = "R$ " + resManut.toFixed(2);
             document.getElementById('res-ipva').innerText = "R$ " + resFixas.toFixed(2);
             document.getElementById('res-eficiencia').innerText = "R$ " + eficiencia.toFixed(2) + " /km";
+
+            gastosMensais.forEach(g => {
+                if(g.ativo) {
+                    const el = document.getElementById(`res-extra-${g.id}`);
+                    if(el) el.innerText = "R$ " + (valoresExtrasDia[g.id] || 0).toFixed(2);
+                }
+            });
 
             db.unshift({ 
                 data: new Date().toLocaleDateString('pt-BR').substring(0,5), 
@@ -205,10 +396,13 @@
                     <td><button class="btn-del" onclick="db.splice(${i},1);localStorage.setItem('moto_db', JSON.stringify(db));renderTable()">X</button></td>
                 </tr>
             `).join('');
+
+            const somaTotal = db.reduce((acc, item) => acc + parseFloat(item.lucro), 0);
+            document.getElementById('soma-total-lucro').innerText = "R$ " + somaTotal.toFixed(2);
         }
 
         function exportarBackup() {
-            const dadosBackup = { config: config, db: db };
+            const dadosBackup = { config: config, gastosMensais: gastosMensais, db: db };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dadosBackup));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
@@ -229,12 +423,15 @@
             reader.onload = function(e) {
                 try {
                     const conteudo = JSON.parse(e.target.result);
-                    if (conteudo.config && conteudo.db) {
+                    if (conteudo.config && conteudo.gastosMensais && conteudo.db) {
                         config = conteudo.config;
+                        gastosMensais = conteudo.gastosMensais;
                         db = conteudo.db;
                         localStorage.setItem('moto_config', JSON.stringify(config));
+                        localStorage.setItem('moto_gastos_mensais', JSON.stringify(gastosMensais));
                         localStorage.setItem('moto_db', JSON.stringify(db));
                         carregarConfigNaTela();
+                        renderPainelGastos();
                         renderTable();
                         alert('Backup restaurado com sucesso!');
                     } else {
@@ -249,6 +446,7 @@
 
         window.onload = () => {
             carregarConfigNaTela();
+            renderPainelGastos();
             renderTable();
         };
     </script>
