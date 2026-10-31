@@ -91,7 +91,7 @@
             <label>VALOR TOTAL NA UBER (R$)</label>
             <input type="number" id="bruto_uber" step="0.01" placeholder="R$ 0,00" oninput="calcularBrutoTotal()">
 
-            <label>QUANTO DISSO FOI EM DINHEIRO (Uber - Espécie)?</label>
+            <label>QUANTO DISSO FOI EM DINHEIRO/PIX (Uber - Direto)?</label>
             <input type="number" id="dinheiro_uber" step="0.01" placeholder="R$ 0,00 (Opcional)">
 
             <label>TOTAL GERAL DO DIA (Soma Automática)</label>
@@ -124,7 +124,7 @@
                     <div class="bg-acumulado-99">
                         💵 <strong>CAIXINHAS 99:</strong><br>
                         <div style="margin: 4px 0;">
-                            <div class="linha-acumulado"><span>Total:</span> <input type="number" id="edit-99-tot" step="0.01" readonly style="color:var(--green);"></div>
+                            <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-99-tot" step="0.01" readonly style="color:var(--green);"></div>
                             <div class="linha-acumulado"><span>💵 Espécie:</span> <input type="number" id="edit-99-dinheiro" step="0.01" readonly style="color:var(--accent);"></div>
                             <div class="linha-acumulado"><span>⛽ Gas:</span> <input type="number" id="edit-99-gas" step="0.01"></div>
                             <div class="linha-acumulado"><span>🏍️ Moto:</span> <input type="number" id="edit-99-moto" step="0.01"></div>
@@ -140,8 +140,8 @@
                     <div class="bg-acumulado-uber">
                         📅 <strong>CAIXINHAS UBER:</strong><br>
                         <div style="margin: 4px 0;">
-                            <div class="linha-acumulado"><span>Total:</span> <input type="number" id="edit-ub-tot" step="0.01" readonly style="color:var(--accent);"></div>
-                            <div class="linha-acumulado"><span>💵 Espécie:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" readonly style="color:var(--accent);"></div>
+                            <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-ub-tot" step="0.01" readonly style="color:var(--accent);"></div>
+                            <div class="linha-acumulado"><span>💵 Esp/Pix:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" readonly style="color:var(--accent);"></div>
                             <div class="linha-acumulado"><span>⛽ Gas:</span> <input type="number" id="edit-ub-gas" step="0.01"></div>
                             <div class="linha-acumulado"><span>🏍️ Moto:</span> <input type="number" id="edit-ub-moto" step="0.01"></div>
                             <div class="linha-acumulado"><span>🛢️ Manut:</span> <input type="number" id="edit-ub-manut" step="0.01"></div>
@@ -345,7 +345,11 @@
         }
 
         function atualizarTelasCaixas() {
-            document.getElementById('edit-99-tot').value = caixas99.total.toFixed(2);
+            // Saldo App = Total bruto menos o dinheiro/pix direto que já está no bolso
+            const saldoApp99 = caixas99.total - (caixas99.dinheiro || 0);
+            const saldoAppUber = uberCaixas.total - (uberCaixas.dinheiro || 0);
+
+            document.getElementById('edit-99-tot').value = Math.max(0, saldoApp99).toFixed(2);
             document.getElementById('edit-99-dinheiro').value = (caixas99.dinheiro || 0).toFixed(2);
             document.getElementById('edit-99-gas').value = caixas99.gas.toFixed(2);
             document.getElementById('edit-99-moto').value = caixas99.moto.toFixed(2);
@@ -353,7 +357,7 @@
             document.getElementById('edit-99-fixas').value = caixas99.fixas.toFixed(2);
             document.getElementById('edit-99-lucro').value = caixas99.lucro.toFixed(2);
 
-            document.getElementById('edit-ub-tot').value = uberCaixas.total.toFixed(2);
+            document.getElementById('edit-ub-tot').value = Math.max(0, saldoAppUber).toFixed(2);
             document.getElementById('edit-ub-dinheiro').value = (uberCaixas.dinheiro || 0).toFixed(2);
             document.getElementById('edit-ub-gas').value = uberCaixas.gas.toFixed(2);
             document.getElementById('edit-ub-moto').value = uberCaixas.moto.toFixed(2);
@@ -370,7 +374,8 @@
             caixas99.manut = parseFloat(document.getElementById('edit-99-manut').value) || 0;
             caixas99.fixas = parseFloat(document.getElementById('edit-99-fixas').value) || 0;
             caixas99.lucro = parseFloat(document.getElementById('edit-99-lucro').value) || 0;
-            caixas99.total = caixas99.gas + caixas99.moto + caixas99.manut + caixas99.fixas + caixas99.lucro;
+            // O total bruto recalculado preserva o dinheiro já recebido + o novo saldo digitado se necessário, ou soma os componentes
+            caixas99.total = (caixas99.dinheiro || 0) + caixas99.gas + caixas99.moto + caixas99.manut + caixas99.fixas + caixas99.lucro;
             
             salvarNoFirebase();
             atualizarTelasCaixas();
@@ -378,11 +383,12 @@
         }
 
         function baixarCaixas99() {
-            if (caixas99.total <= 0) {
+            const saldoApp99 = caixas99.total - (caixas99.dinheiro || 0);
+            if (saldoApp99 <= 0 && caixas99.total <= 0) {
                 alert('Não há saldo na 99 para dar baixa no momento.');
                 return;
             }
-            if (confirm(`Confirma que sacou/distribuiu o valor da 99 de R$ ${caixas99.total.toFixed(2)} e deseja zerar este painel?`)) {
+            if (confirm(`Confirma que deu baixa no saldo da 99 e deseja zerar este painel?`)) {
                 caixas99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
                 salvarNoFirebase();
                 atualizarTelasCaixas();
@@ -396,7 +402,7 @@
             uberCaixas.manut = parseFloat(document.getElementById('edit-ub-manut').value) || 0;
             uberCaixas.fixas = parseFloat(document.getElementById('edit-ub-fixas').value) || 0;
             uberCaixas.lucro = parseFloat(document.getElementById('edit-ub-lucro').value) || 0;
-            uberCaixas.total = uberCaixas.gas + uberCaixas.moto + uberCaixas.manut + uberCaixas.fixas + uberCaixas.lucro;
+            uberCaixas.total = (uberCaixas.dinheiro || 0) + uberCaixas.gas + uberCaixas.moto + uberCaixas.manut + uberCaixas.fixas + uberCaixas.lucro;
             
             salvarNoFirebase();
             atualizarTelasCaixas();
@@ -404,11 +410,12 @@
         }
 
         function receberRepasseUber() {
-            if (uberCaixas.total <= 0) {
+            const saldoAppUber = uberCaixas.total - (uberCaixas.dinheiro || 0);
+            if (saldoAppUber <= 0 && uberCaixas.total <= 0) {
                 alert('Não há saldo acumulado da Uber para receber no momento.');
                 return;
             }
-            if (confirm(`Confirma que recebeu o repasse semanal da Uber de R$ ${uberCaixas.total.toFixed(2)} e deseja zerar o acumulado?`)) {
+            if (confirm(`Confirma que recebeu o repasse da Uber e deseja zerar o acumulado?`)) {
                 uberCaixas = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
                 salvarNoFirebase();
                 atualizarTelasCaixas();
