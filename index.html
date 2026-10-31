@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SISTEMA MOTOBOY ELITE</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
     <style>
         :root { --green: #2ecc71; --blue: #3498db; --dark: #0a0a0a; --card: #1e1e1e; --text: #f5f5f5; --accent: #f1c40f; --red: #e74c3c; --purple: #4a148c; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: var(--text); padding: 0; margin: 0; padding-bottom: 70px; }
@@ -23,6 +27,10 @@
         .btn-add { width: 100%; padding: 16px; background: var(--green); border: none; color: #000; font-weight: 800; border-radius: 8px; cursor: pointer; font-size: 16px; text-transform: uppercase; }
         .btn-backup { width: 100%; padding: 12px; background: var(--blue); border: none; color: #fff; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 14px; text-transform: uppercase; margin-top: 10px; }
         .btn-restore { width: 100%; padding: 12px; background: var(--accent); border: none; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 14px; text-transform: uppercase; margin-top: 10px; }
+        
+        .btn-baixar-99 { width: 100%; padding: 10px; background: var(--green); border: none; color: #000; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 10px; }
+        .btn-receber-uber { width: 100%; padding: 10px; background: var(--accent); border: none; color: #000; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 10px; }
+        .btn-salvar-edicao { width: 100%; padding: 8px; background: var(--blue); border: none; color: #fff; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 6px; }
 
         .metric-box { display: flex; justify-content: space-between; align-items: center; background: #333; padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #444; }
         .metric-val { color: var(--green); font-weight: bold; font-size: 16px; }
@@ -36,6 +44,16 @@
         .bg-oleo { background: #004d40; border: 1px solid var(--green); }
         .bg-ipva { background: #01579b; }
         .bg-extra { background: #311b92; }
+        
+        .painel-duplo-container { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px; }
+        .bg-acumulado-99 { background: #004d40; border: 1px dashed var(--green); padding: 10px; border-radius: 6px; font-size: 10px; text-align: left; }
+        .bg-acumulado-uber { background: #263238; border: 1px dashed var(--accent); padding: 10px; border-radius: 6px; font-size: 10px; text-align: left; }
+        
+        .linha-acumulado { display: flex; justify-content: space-between; align-items: center; margin: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2px; font-size: 10px; }
+        .linha-acumulado input { width: 65px; padding: 3px; font-size: 11px; margin: 0; background: #111; border: 1px solid #555; color: #fff; text-align: right; }
+
+        .toggle-container { display: flex; align-items: center; justify-content: space-between; background: #252525; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #444; font-size: 11px; }
+        .toggle-container input { width: 20px; height: 20px; margin: 0; cursor: pointer; }
 
         table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 15px; }
         th, td { border: 1px solid #333; padding: 8px; text-align: center; }
@@ -45,14 +63,15 @@
         .total-box { background: #151515; border: 1px dashed var(--green); padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 12px; text-align: center; color: var(--accent); }
         .total-box strong { font-size: 15px; color: var(--green); display: block; margin-top: 4px; }
 
-        .toggle-container { display: flex; align-items: center; justify-content: space-between; background: #252525; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #444; font-size: 11px; }
-        .toggle-container input { width: 20px; height: 20px; margin: 0; cursor: pointer; }
-
         .mode-box { background: #222; padding: 12px; border-radius: 8px; border: 1px solid #444; margin-bottom: 15px; }
         .mode-box label { color: var(--accent); margin-bottom: 8px; }
+        
+        #sync-status { position: fixed; bottom: 5px; right: 5px; background: rgba(0,0,0,0.8); color: var(--green); padding: 4px 8px; font-size: 9px; border-radius: 4px; z-index: 1000; }
     </style>
 </head>
 <body>
+
+    <div id="sync-status">Conectando ao Firebase...</div>
 
     <div class="tab-bar">
         <button class="tab-btn active" onclick="trocarTab('diario', event)">Lançamento</button>
@@ -63,12 +82,21 @@
     <!-- ABA DIÁRIO -->
     <div id="diario" class="container active">
         <div class="card">
-            <label>TOTAL GANHO NO APP (R$)</label>
-            <input type="number" id="bruto" step="0.01" placeholder="R$ 0,00">
+            <label>VALOR FEITO NA 99 (R$ - Disponível Hoje)</label>
+            <input type="number" id="bruto_99" step="0.01" placeholder="R$ 0,00" oninput="calcularBrutoTotal()">
+
+            <label>VALOR FEITO NA UBER (R$ - Acumula p/ Segunda)</label>
+            <input type="number" id="bruto_uber" step="0.01" placeholder="R$ 0,00" oninput="calcularBrutoTotal()">
+
+            <label>TOTAL GERAL DO DIA (Soma Automática)</label>
+            <input type="number" id="bruto" step="0.01" placeholder="R$ 0,00" readonly style="color: var(--accent); background: #151515;">
+
             <label>KM TOTAL RODADO NO DIA (PAINEL)</label>
             <input type="number" id="km_dia" step="0.1" placeholder="0 km">
+
             <label>ANÁLISE AUTOMÁTICA DE DESEMPENHO</label>
             <input type="text" id="obs" placeholder="Gerado automaticamente..." readonly style="color: var(--accent); background: #1a1a1a;">
+            
             <button class="btn-add" onclick="registrar()">CALCULAR E DISTRIBUIR</button>
 
             <div class="metric-box" style="margin-top: 15px;">
@@ -77,12 +105,46 @@
             </div>
 
             <div class="envelopes">
-                <div class="env header-pf">LUCRO / BOLSO FINAL <strong id="res-pf">R$ 0,00</strong></div>
-                <div class="env bg-gas">⛽ GASOLINA <strong id="res-gas">R$ 0,00</strong></div>
-                <div class="env bg-moto">🏍️ PARCELA DA MOTO <strong id="res-moto">R$ 0,00</strong></div>
-                <div class="env bg-oleo">🛢️ MANUTENÇÃO / PEÇAS <strong id="res-oleo">R$ 0,00</strong></div>
+                <div class="env header-pf">LUCRO DO DIA / BOLSO <strong id="res-pf">R$ 0,00</strong></div>
+                <div class="env bg-gas">⛽ GASOLINA (Do Dia) <strong id="res-gas">R$ 0,00</strong></div>
+                <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="res-moto">R$ 0,00</strong></div>
+                <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="res-oleo">R$ 0,00</strong></div>
                 <div class="env bg-ipva">📄 CONTAS FIXAS <strong id="res-ipva">R$ 0,00</strong></div>
                 <div id="envelopes-extras-container" style="grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;"></div>
+                
+                <!-- PAINÉIS LADO A LADO (99 E UBER) -->
+                <div class="painel-duplo-container">
+                    <!-- PAINEL DA 99 -->
+                    <div class="bg-acumulado-99">
+                        💵 <strong>CAIXINHAS 99:</strong><br>
+                        <div style="margin: 4px 0;">
+                            <div class="linha-acumulado"><span>Total:</span> <input type="number" id="edit-99-tot" step="0.01" readonly style="color:var(--green);"></div>
+                            <div class="linha-acumulado"><span>⛽ Gas:</span> <input type="number" id="edit-99-gas" step="0.01"></div>
+                            <div class="linha-acumulado"><span>🏍️ Moto:</span> <input type="number" id="edit-99-moto" step="0.01"></div>
+                            <div class="linha-acumulado"><span>🛢️ Manut:</span> <input type="number" id="edit-99-manut" step="0.01"></div>
+                            <div class="linha-acumulado"><span>📄 Fixas:</span> <input type="number" id="edit-99-fixas" step="0.01"></div>
+                            <div class="linha-acumulado"><span>💜 Lucro:</span> <input type="number" id="edit-99-lucro" step="0.01" style="color:var(--green);"></div>
+                        </div>
+                        <button class="btn-salvar-edicao" onclick="salvarEdicoes99()">💾 Salvar</button>
+                        <button class="btn-baixar-99" onclick="baixarCaixas99()">✅ Baixar / Zerar 99</button>
+                    </div>
+
+                    <!-- PAINEL DA UBER -->
+                    <div class="bg-acumulado-uber">
+                        📅 <strong>CAIXINHAS UBER:</strong><br>
+                        <div style="margin: 4px 0;">
+                            <div class="linha-acumulado"><span>Total:</span> <input type="number" id="edit-ub-tot" step="0.01" readonly style="color:var(--accent);"></div>
+                            <div class="linha-acumulado"><span>⛽ Gas:</span> <input type="number" id="edit-ub-gas" step="0.01"></div>
+                            <div class="linha-acumulado"><span>🏍️ Moto:</span> <input type="number" id="edit-ub-moto" step="0.01"></div>
+                            <div class="linha-acumulado"><span>🛢️ Manut:</span> <input type="number" id="edit-ub-manut" step="0.01"></div>
+                            <div class="linha-acumulado"><span>📄 Fixas:</span> <input type="number" id="edit-ub-fixas" step="0.01"></div>
+                            <div class="linha-acumulado"><span>💜 Lucro:</span> <input type="number" id="edit-ub-lucro" step="0.01" style="color:var(--green);"></div>
+                        </div>
+                        <button class="btn-salvar-edicao" onclick="salvarEdicoesUber()">💾 Salvar</button>
+                        <button class="btn-receber-uber" onclick="receberRepasseUber()">💰 Baixar / Zerar Uber</button>
+                    </div>
+                </div>
+
             </div>
         </div>
         
@@ -167,15 +229,30 @@
 
             <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
 
-            <label>Gerenciamento de Dados (Backup)</label>
-            <button class="btn-backup" onclick="exportarBackup()">Exportar Backup (Baixar)</button>
+            <label>Gerenciamento de Dados (Backup Local Extra)</label>
+            <button class="btn-backup" onclick="exportarBackup()">Exportar Backup (Salvar Arquivo)</button>
             <button class="btn-restore" onclick="importarBackupClick()">Restaurar Backup</button>
             <input type="file" id="fileInput" style="display:none" onchange="importarBackup(event)">
         </div>
     </div>
 
     <script>
-        let config = JSON.parse(localStorage.getItem('moto_config')) || {
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCX1k0PN_yOd3QWauBQhwX0FRwqhn7Clo",
+            authDomain: "gestao-financeira-motoboy.firebaseapp.com",
+            databaseURL: "https://gestao-financeira-motoboy-default-rtdb.firebaseio.com",
+            projectId: "gestao-financeira-motoboy",
+            storageBucket: "gestao-financeira-motoboy.firebasestorage.app",
+            messagingSenderId: "107405414927",
+            appId: "1:107405414927:web:71eae0a1917ce9e512897a",
+            measurementId: "G-M6XG8S0KBX"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const dbRef = firebase.database().ref('motoboy_elite');
+
+        let config = {
             kmMes: 3000,
             modoAuto: false,
             custoTotalAuto: 0.46,
@@ -185,8 +262,47 @@
             fixas: 0.10
         };
 
-        let gastosMensais = JSON.parse(localStorage.getItem('moto_gastos_mensais')) || [];
-        let db = JSON.parse(localStorage.getItem('moto_db')) || [];
+        let gastosMensais = [];
+        let db = [];
+        let caixas99 = { total: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+        let uberCaixas = { total: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+
+        // Carregar dados do Firebase ao iniciar
+        dbRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                if (data.config) config = data.config;
+                if (data.gastosMensais) gastosMensais = data.gastosMensais;
+                if (data.db) db = data.db;
+                if (data.caixas99) caixas99 = data.caixas99;
+                if (data.uberCaixas) uberCaixas = data.uberCaixas;
+            }
+            carregarConfigNaTela();
+            renderPainelGastos();
+            renderTable();
+            document.getElementById('sync-status').innerText = "Conectado ao Firebase ☁️";
+            document.getElementById('sync-status').style.color = "#2ecc71";
+        }, (error) => {
+            document.getElementById('sync-status').innerText = "Erro de Sincronização ⚠️";
+            document.getElementById('sync-status').style.color = "#e74c3c";
+        });
+
+        function salvarNoFirebase() {
+            dbRef.set({
+                config: config,
+                gastosMensais: gastosMensais,
+                db: db,
+                caixas99: caixas99,
+                uberCaixas: uberCaixas
+            });
+        }
+
+        function calcularBrutoTotal() {
+            const b99 = parseFloat(document.getElementById('bruto_99').value) || 0;
+            const uber = parseFloat(document.getElementById('bruto_uber').value) || 0;
+            const total = b99 + uber;
+            document.getElementById('bruto').value = total > 0 ? total.toFixed(2) : '';
+        }
 
         function carregarConfigNaTela() {
             document.getElementById('cfg_km_mes').value = config.kmMes;
@@ -201,6 +317,75 @@
             mudarModoConfig();
             calcularTotalConfigManual();
             renderPainelGastos();
+            atualizarTelasCaixas();
+        }
+
+        function atualizarTelasCaixas() {
+            document.getElementById('edit-99-tot').value = caixas99.total.toFixed(2);
+            document.getElementById('edit-99-gas').value = caixas99.gas.toFixed(2);
+            document.getElementById('edit-99-moto').value = caixas99.moto.toFixed(2);
+            document.getElementById('edit-99-manut').value = caixas99.manut.toFixed(2);
+            document.getElementById('edit-99-fixas').value = caixas99.fixas.toFixed(2);
+            document.getElementById('edit-99-lucro').value = caixas99.lucro.toFixed(2);
+
+            document.getElementById('edit-ub-tot').value = uberCaixas.total.toFixed(2);
+            document.getElementById('edit-ub-gas').value = uberCaixas.gas.toFixed(2);
+            document.getElementById('edit-ub-moto').value = uberCaixas.moto.toFixed(2);
+            document.getElementById('edit-ub-manut').value = uberCaixas.manut.toFixed(2);
+            document.getElementById('edit-ub-fixas').value = uberCaixas.fixas.toFixed(2);
+            document.getElementById('edit-ub-lucro').value = uberCaixas.lucro.toFixed(2);
+        }
+
+        function salvarEdicoes99() {
+            caixas99.gas = parseFloat(document.getElementById('edit-99-gas').value) || 0;
+            caixas99.moto = parseFloat(document.getElementById('edit-99-moto').value) || 0;
+            caixas99.manut = parseFloat(document.getElementById('edit-99-manut').value) || 0;
+            caixas99.fixas = parseFloat(document.getElementById('edit-99-fixas').value) || 0;
+            caixas99.lucro = parseFloat(document.getElementById('edit-99-lucro').value) || 0;
+            caixas99.total = caixas99.gas + caixas99.moto + caixas99.manut + caixas99.fixas + caixas99.lucro;
+            
+            salvarNoFirebase();
+            atualizarTelasCaixas();
+            alert('Caixinhas da 99 salvas no Firebase!');
+        }
+
+        function baixarCaixas99() {
+            if (caixas99.total <= 0) {
+                alert('Não há saldo na 99 para dar baixa no momento.');
+                return;
+            }
+            if (confirm(`Confirma que sacou/distribuiu o valor da 99 de R$ ${caixas99.total.toFixed(2)} e deseja zerar este painel?`)) {
+                caixas99 = { total: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+                salvarNoFirebase();
+                atualizarTelasCaixas();
+                alert('Painel da 99 zerado com sucesso!');
+            }
+        }
+
+        function salvarEdicoesUber() {
+            uberCaixas.gas = parseFloat(document.getElementById('edit-ub-gas').value) || 0;
+            uberCaixas.moto = parseFloat(document.getElementById('edit-ub-moto').value) || 0;
+            uberCaixas.manut = parseFloat(document.getElementById('edit-ub-manut').value) || 0;
+            uberCaixas.fixas = parseFloat(document.getElementById('edit-ub-fixas').value) || 0;
+            uberCaixas.lucro = parseFloat(document.getElementById('edit-ub-lucro').value) || 0;
+            uberCaixas.total = uberCaixas.gas + uberCaixas.moto + uberCaixas.manut + uberCaixas.fixas + uberCaixas.lucro;
+            
+            salvarNoFirebase();
+            atualizarTelasCaixas();
+            alert('Caixinhas da Uber salvas no Firebase!');
+        }
+
+        function receberRepasseUber() {
+            if (uberCaixas.total <= 0) {
+                alert('Não há saldo acumulado da Uber para receber no momento.');
+                return;
+            }
+            if (confirm(`Confirma que recebeu o repasse semanal da Uber de R$ ${uberCaixas.total.toFixed(2)} e deseja zerar o acumulado?`)) {
+                uberCaixas = { total: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+                salvarNoFirebase();
+                atualizarTelasCaixas();
+                alert('Repasse da Uber recebido e caixinhas zeradas!');
+            }
         }
 
         function mudarModoConfig() {
@@ -225,7 +410,6 @@
             if (config.modoAuto) {
                 const totalAuto = parseFloat(document.getElementById('cfg_custo_total_auto').value) || 0.46;
                 config.custoTotalAuto = totalAuto;
-                // Proporções padrão base (Gasolina 48%, Parcela 17%, Manutenção 13%, Fixas 22%)
                 config.gasolinaKm = totalAuto * 0.48;
                 config.parcela = totalAuto * 0.17;
                 config.manutencao = totalAuto * 0.13;
@@ -237,8 +421,8 @@
                 config.fixas = parseFloat(document.getElementById('cfg_fixas').value) || 0;
             }
 
-            localStorage.setItem('moto_config', JSON.stringify(config));
-            alert('Configurações salvas com sucesso!');
+            salvarNoFirebase();
+            alert('Configurações salvas na nuvem com sucesso!');
             trocarTab('diario');
         }
 
@@ -266,7 +450,7 @@
             }
 
             gastosMensais.push({ id: Date.now(), nome, valor, ativo: true });
-            localStorage.setItem('moto_gastos_mensais', JSON.stringify(gastosMensais));
+            salvarNoFirebase();
             
             document.getElementById('gasto_nome').value = '';
             document.getElementById('gasto_valor').value = '';
@@ -275,7 +459,7 @@
 
         function removerGasto(id) {
             gastosMensais = gastosMensais.filter(g => g.id !== id);
-            localStorage.setItem('moto_gastos_mensais', JSON.stringify(gastosMensais));
+            salvarNoFirebase();
             renderPainelGastos();
         }
 
@@ -283,7 +467,7 @@
             const gasto = gastosMensais.find(g => g.id === id);
             if(gasto) {
                 gasto.ativo = !gasto.ativo;
-                localStorage.setItem('moto_gastos_mensais', JSON.stringify(gastosMensais));
+                salvarNoFirebase();
                 renderEnvelopesExtras();
             }
         }
@@ -320,8 +504,15 @@
         }
 
         function registrar() {
-            const bruto = parseFloat(document.getElementById('bruto').value) || 0;
+            const b99 = parseFloat(document.getElementById('bruto_99').value) || 0;
+            const uber = parseFloat(document.getElementById('bruto_uber').value) || 0;
+            const bruto = b99 + uber;
             const km = parseFloat(document.getElementById('km_dia').value) || 0;
+
+            if (bruto <= 0 || km <= 0) {
+                alert('Preencha os valores de faturamento e KM corretamente.');
+                return;
+            }
 
             const gas = km * config.gasolinaKm;
             const resParcela = km * config.parcela;
@@ -330,7 +521,6 @@
             
             let totalExtrasDia = 0;
             let valoresExtrasDia = {};
-
             const kmMes = config.kmMes > 0 ? config.kmMes : 3000;
 
             gastosMensais.forEach(g => {
@@ -349,51 +539,61 @@
             const lucro = bruto - gas - resParcela - resManut - resFixas - totalExtrasDia;
             const eficiencia = km > 0 ? (bruto / km) : 0;
 
-            let status = "";
-            if (eficiencia < custoTotalPorKm) {
-                status = "RUIM (Abaixo do Custo)";
-            } else if (eficiencia >= custoTotalPorKm && eficiencia < (custoTotalPorKm + 0.36)) {
-                status = "REGULAR (Pagando Contas)";
-            } else {
-                status = "EXCELENTE (Lucro Alto)";
+            if (b99 > 0) {
+                const prop99 = b99 / bruto;
+                caixas99.total += b99;
+                caixas99.gas += gas * prop99;
+                caixas99.moto += resParcela * prop99;
+                caixas99.manut += resManut * prop99;
+                caixas99.fixas += resFixas * prop99;
+                caixas99.lucro += lucro * prop99;
             }
 
-            document.getElementById('obs').value = status;
-            document.getElementById('res-pf').innerText = "R$ " + lucro.toFixed(2);
-            document.getElementById('res-gas').innerText = "R$ " + gas.toFixed(2);
-            document.getElementById('res-moto').innerText = "R$ " + resParcela.toFixed(2);
-            document.getElementById('res-oleo').innerText = "R$ " + resManut.toFixed(2);
-            document.getElementById('res-ipva').innerText = "R$ " + resFixas.toFixed(2);
-            document.getElementById('res-eficiencia').innerText = "R$ " + eficiencia.toFixed(2) + " /km";
-
-            gastosMensais.forEach(g => {
-                if(g.ativo) {
-                    const el = document.getElementById(`res-extra-${g.id}`);
-                    if(el) el.innerText = "R$ " + (valoresExtrasDia[g.id] || 0).toFixed(2);
-                }
-            });
+            if (uber > 0) {
+                const propUber = uber / bruto;
+                uberCaixas.total += uber;
+                uberCaixas.gas += gas * propUber;
+                uberCaixas.moto += resParcela * propUber;
+                uberCaixas.manut += resManut * propUber;
+                uberCaixas.fixas += resFixas * propUber;
+                uberCaixas.lucro += lucro * propUber;
+            }
 
             db.unshift({ 
-                data: new Date().toLocaleDateString('pt-BR').substring(0,5), 
+                data: new Date().toLocaleDateString('pt-BR'), 
                 bruto: bruto.toFixed(2), 
                 lucro: lucro.toFixed(2), 
                 eficiencia: eficiencia.toFixed(2),
-                obs: status 
+                obs: (eficiencia < custoTotalPorKm) ? "RUIM" : (eficiencia < (custoTotalPorKm + 0.36) ? "REGULAR" : "EXCELENTE")
             });
-            localStorage.setItem('moto_db', JSON.stringify(db));
+
+            salvarNoFirebase();
+            atualizarTelasCaixas();
+            renderTable();
+
+            document.getElementById('bruto_99').value = '';
+            document.getElementById('bruto_uber').value = '';
+            document.getElementById('km_dia').value = '';
+            document.getElementById('bruto').value = '';
+            alert('Lançamento registrado e salvo na nuvem!');
+        }
+
+        function deletarItem(i) {
+            db.splice(i, 1);
+            salvarNoFirebase();
             renderTable();
         }
 
         function renderTable() {
             const tbody = document.querySelector('#tabela tbody');
-            tbody.innerHTML = db.slice(0, 15).map((item, i) => `
+            tbody.innerHTML = db.map((item, i) => `
                 <tr>
                     <td>${item.data}</td>
                     <td>R$ ${item.bruto}</td>
                     <td>R$ ${item.eficiencia}</td>
                     <td>R$ ${item.lucro}</td>
                     <td>${item.obs}</td>
-                    <td><button class="btn-del" onclick="db.splice(${i},1);localStorage.setItem('moto_db', JSON.stringify(db));renderTable()">X</button></td>
+                    <td><button class="btn-del" onclick="deletarItem(${i})">X</button></td>
                 </tr>
             `).join('');
 
@@ -402,7 +602,7 @@
         }
 
         function exportarBackup() {
-            const dadosBackup = { config: config, gastosMensais: gastosMensais, db: db };
+            const dadosBackup = { config: config, gastosMensais: gastosMensais, db: db, caixas99: caixas99, uberCaixas: uberCaixas };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dadosBackup));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
@@ -423,32 +623,23 @@
             reader.onload = function(e) {
                 try {
                     const conteudo = JSON.parse(e.target.result);
-                    if (conteudo.config && conteudo.gastosMensais && conteudo.db) {
+                    if (conteudo.config && conteudo.db) {
                         config = conteudo.config;
-                        gastosMensais = conteudo.gastosMensais;
-                        db = conteudo.db;
-                        localStorage.setItem('moto_config', JSON.stringify(config));
-                        localStorage.setItem('moto_gastos_mensais', JSON.stringify(gastosMensais));
-                        localStorage.setItem('moto_db', JSON.stringify(db));
-                        carregarConfigNaTela();
-                        renderPainelGastos();
-                        renderTable();
-                        alert('Backup restaurado com sucesso!');
+                        gastosMensais = conteudo.gastosMensais || [];
+                        db = conteudo.db || [];
+                        caixas99 = conteudo.caixas99 || caixas99;
+                        uberCaixas = conteudo.uberCaixas || uberCaixas;
+                        salvarNoFirebase();
+                        alert('Backup restaurado e sincronizado com o Firebase!');
                     } else {
-                        alert('Arquivo de backup inválido.');
+                        alert('Arquivo inválido.');
                     }
                 } catch (err) {
-                    alert('Erro ao ler o arquivo de backup.');
+                    alert('Erro ao ler o arquivo.');
                 }
             };
             reader.readAsText(file);
         }
-
-        window.onload = () => {
-            carregarConfigNaTela();
-            renderPainelGastos();
-            renderTable();
-        };
     </script>
 </body>
 </html>
