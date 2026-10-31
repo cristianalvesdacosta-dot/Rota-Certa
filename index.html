@@ -124,7 +124,7 @@
                     <div class="bg-acumulado-99">
                         💵 <strong>CAIXINHAS 99:</strong><br>
                         <div style="margin: 4px 0;">
-                            <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-99-tot" step="0.01" readonly style="color:var(--green);"></div>
+                            <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);"></div>
                             <div class="linha-acumulado"><span>💵 Espécie:</span> <input type="number" id="edit-99-dinheiro" step="0.01" readonly style="color:var(--accent);"></div>
                             <div class="linha-acumulado"><span>⛽ Gas:</span> <input type="number" id="edit-99-gas" step="0.01"></div>
                             <div class="linha-acumulado"><span>🏍️ Moto:</span> <input type="number" id="edit-99-moto" step="0.01"></div>
@@ -140,7 +140,7 @@
                     <div class="bg-acumulado-uber">
                         📅 <strong>CAIXINHAS UBER:</strong><br>
                         <div style="margin: 4px 0;">
-                            <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-ub-tot" step="0.01" readonly style="color:var(--accent);"></div>
+                            <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);"></div>
                             <div class="linha-acumulado"><span>💵 Esp/Pix:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" readonly style="color:var(--accent);"></div>
                             <div class="linha-acumulado"><span>⛽ Gas:</span> <input type="number" id="edit-ub-gas" step="0.01"></div>
                             <div class="linha-acumulado"><span>🏍️ Moto:</span> <input type="number" id="edit-ub-moto" step="0.01"></div>
@@ -345,7 +345,6 @@
         }
 
         function atualizarTelasCaixas() {
-            // Saldo App = Total bruto menos o dinheiro/pix direto que já está no bolso
             const saldoApp99 = caixas99.total - (caixas99.dinheiro || 0);
             const saldoAppUber = uberCaixas.total - (uberCaixas.dinheiro || 0);
 
@@ -369,13 +368,13 @@
         }
 
         function salvarEdicoes99() {
+            const novoSaldoApp99 = parseFloat(document.getElementById('edit-99-tot').value) || 0;
             caixas99.gas = parseFloat(document.getElementById('edit-99-gas').value) || 0;
             caixas99.moto = parseFloat(document.getElementById('edit-99-moto').value) || 0;
             caixas99.manut = parseFloat(document.getElementById('edit-99-manut').value) || 0;
             caixas99.fixas = parseFloat(document.getElementById('edit-99-fixas').value) || 0;
             caixas99.lucro = parseFloat(document.getElementById('edit-99-lucro').value) || 0;
-            // O total bruto recalculado preserva o dinheiro já recebido + o novo saldo digitado se necessário, ou soma os componentes
-            caixas99.total = (caixas99.dinheiro || 0) + caixas99.gas + caixas99.moto + caixas99.manut + caixas99.fixas + caixas99.lucro;
+            caixas99.total = novoSaldoApp99 + (caixas99.dinheiro || 0);
             
             salvarNoFirebase();
             atualizarTelasCaixas();
@@ -397,12 +396,13 @@
         }
 
         function salvarEdicoesUber() {
+            const novoSaldoAppUber = parseFloat(document.getElementById('edit-ub-tot').value) || 0;
             uberCaixas.gas = parseFloat(document.getElementById('edit-ub-gas').value) || 0;
             uberCaixas.moto = parseFloat(document.getElementById('edit-ub-moto').value) || 0;
             uberCaixas.manut = parseFloat(document.getElementById('edit-ub-manut').value) || 0;
             uberCaixas.fixas = parseFloat(document.getElementById('edit-ub-fixas').value) || 0;
             uberCaixas.lucro = parseFloat(document.getElementById('edit-ub-lucro').value) || 0;
-            uberCaixas.total = (uberCaixas.dinheiro || 0) + uberCaixas.gas + uberCaixas.moto + uberCaixas.manut + uberCaixas.fixas + uberCaixas.lucro;
+            uberCaixas.total = novoSaldoAppUber + (uberCaixas.dinheiro || 0);
             
             salvarNoFirebase();
             atualizarTelasCaixas();
