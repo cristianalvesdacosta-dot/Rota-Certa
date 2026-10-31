@@ -105,8 +105,8 @@
             </div>
 
             <div class="envelopes">
-                <div class="env header-pf">LUCRO DO DIA / BOLSO <strong id="res-pf">R$ 0,00</strong></div>
-                <div class="env bg-gas">⛽ GASOLINA (Do Dia) <strong id="res-gas">R$ 0,00</strong></div>
+                <div class="env header-pf">LUCRO GERAL PENDENTE <strong id="res-pf">R$ 0,00</strong></div>
+                <div class="env bg-gas">⛽ GASOLINA (Geral) <strong id="res-gas">R$ 0,00</strong></div>
                 <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="res-moto">R$ 0,00</strong></div>
                 <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="res-oleo">R$ 0,00</strong></div>
                 <div class="env bg-ipva">📄 CONTAS FIXAS <strong id="res-ipva">R$ 0,00</strong></div>
@@ -280,6 +280,7 @@
             carregarConfigNaTela();
             renderPainelGastos();
             renderTable();
+            atualizarQuadroGeral();
             document.getElementById('sync-status').innerText = "Conectado ao Firebase ☁️";
             document.getElementById('sync-status').style.color = "#2ecc71";
         }, (error) => {
@@ -295,6 +296,21 @@
                 caixas99: caixas99,
                 uberCaixas: uberCaixas
             });
+        }
+
+        // ATUALIZA O QUADRO GERAL DE CIMA SOMANDO 99 + UBER
+        function atualizarQuadroGeral() {
+            const totalGas = caixas99.gas + uberCaixas.gas;
+            const totalMoto = caixas99.moto + uberCaixas.moto;
+            const totalManut = caixas99.manut + uberCaixas.manut;
+            const totalFixas = caixas99.fixas + uberCaixas.fixas;
+            const totalLucro = caixas99.lucro + uberCaixas.lucro;
+
+            document.getElementById('res-gas').innerText = "R$ " + totalGas.toFixed(2);
+            document.getElementById('res-moto').innerText = "R$ " + totalMoto.toFixed(2);
+            document.getElementById('res-oleo').innerText = "R$ " + totalManut.toFixed(2);
+            document.getElementById('res-ipva').innerText = "R$ " + totalFixas.toFixed(2);
+            document.getElementById('res-pf').innerText = "R$ " + totalLucro.toFixed(2);
         }
 
         function calcularBrutoTotal() {
@@ -318,6 +334,7 @@
             calcularTotalConfigManual();
             renderPainelGastos();
             atualizarTelasCaixas();
+            atualizarQuadroGeral();
         }
 
         function atualizarTelasCaixas() {
@@ -334,6 +351,8 @@
             document.getElementById('edit-ub-manut').value = uberCaixas.manut.toFixed(2);
             document.getElementById('edit-ub-fixas').value = uberCaixas.fixas.toFixed(2);
             document.getElementById('edit-ub-lucro').value = uberCaixas.lucro.toFixed(2);
+            
+            atualizarQuadroGeral();
         }
 
         function salvarEdicoes99() {
@@ -623,19 +642,20 @@
             reader.onload = function(e) {
                 try {
                     const conteudo = JSON.parse(e.target.result);
-                    if (conteudo.config && conteudo.db) {
-                        config = conteudo.config;
-                        gastosMensais = conteudo.gastosMensais || [];
-                        db = conteudo.db || [];
-                        caixas99 = conteudo.caixas99 || caixas99;
-                        uberCaixas = conteudo.uberCaixas || uberCaixas;
-                        salvarNoFirebase();
-                        alert('Backup restaurado e sincronizado com o Firebase!');
-                    } else {
-                        alert('Arquivo inválido.');
-                    }
+                    if (conteudo.config) config = conteudo.config;
+                    if (conteudo.gastosMensais) gastosMensais = conteudo.gastosMensais;
+                    if (conteudo.db) db = conteudo.db;
+                    
+                    caixas99 = conteudo.caixas99 || { total: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+                    uberCaixas = conteudo.uberCaixas || { total: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+
+                    salvarNoFirebase();
+                    carregarConfigNaTela();
+                    renderPainelGastos();
+                    renderTable();
+                    alert('Backup restaurado e sincronizado com o Firebase com sucesso!');
                 } catch (err) {
-                    alert('Erro ao ler o arquivo.');
+                    alert('Erro ao ler o arquivo de backup.');
                 }
             };
             reader.readAsText(file);
