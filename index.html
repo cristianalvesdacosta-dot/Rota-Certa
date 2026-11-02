@@ -177,10 +177,22 @@
 
     <!-- ABA GERENCIAR COFRES E DESPESAS -->
     <div id="gerenciar" class="container">
-        <!-- DIAGNÓSTICO DO ASSISTENTE INTELIGENTE -->
+        <!-- DIAGNÓSTICO E ALERTAS DO ASSISTENTE INTELIGENTE -->
         <div class="ai-card">
-            🤖 <strong>Assistente de Gestão Inteligente:</strong>
-            <div id="ai-feedback" style="margin-top: 5px;">Analisando dados financeiros dos seus cofres...</div>
+            🤖 <strong>Assistente & Notificações:</strong>
+            <div id="ai-feedback" style="margin-top: 5px;">Analisando vencimentos e cofres...</div>
+        </div>
+
+        <!-- QUADRO GERAL DOS COFRES NA ABA GERENCIAR -->
+        <div class="card">
+            <label style="color: var(--accent);">💰 SALDO ATUAL DOS COFRES</label>
+            <div class="envelopes" style="margin-top: 5px;">
+                <div class="env header-pf" style="padding: 10px;">LUCRO GERAL <strong id="ger-res-pf" style="font-size:12px;">R$ 0,00</strong></div>
+                <div class="env bg-gas">⛽ GASOLINA <strong id="ger-res-gas">R$ 0,00</strong></div>
+                <div class="env bg-moto">🏍️ MOTO <strong id="ger-res-moto">R$ 0,00</strong></div>
+                <div class="env bg-oleo">🛢️ MANUT. <strong id="ger-res-oleo">R$ 0,00</strong></div>
+                <div class="env bg-ipva">📄 FIXAS <strong id="ger-res-ipva">R$ 0,00</strong></div>
+            </div>
         </div>
 
         <!-- PAINEL COMPARATIVO DE MESES -->
@@ -202,8 +214,8 @@
                 <option value="lucro">💜 Lucro Pessoal</option>
             </select>
 
-            <label>Descrição do Gasto (Ex: Gasolina Posto, Calibrar Pneu)</label>
-            <input type="text" id="saida_desc" placeholder="Ex: Abastecimento de Gasolina">
+            <label>Descrição do Gasto (Ex: Pagamento Wi-Fi, Calibrar Pneu)</label>
+            <input type="text" id="saida_desc" placeholder="Ex: Pagar Conta de Internet">
 
             <label>Valor da Saída (R$)</label>
             <input type="number" id="saida_valor" step="0.01" placeholder="R$ 0,00">
@@ -211,9 +223,9 @@
             <button class="btn-add" style="background: var(--red); color: #fff;" onclick="lançarSaidaCofre()">REGISTRAR SAÍDA</button>
         </div>
 
-        <!-- CADASTRO DE CONTAS INTELIGENTE -->
+        <!-- CADASTRO DE CONTAS INTELIGENTE COM VENCIMENTO -->
         <div class="card">
-            <label>📌 CADASTRO DE CONTAS & COMPROMISSOS</label>
+            <label>📌 CADASTRO DE CONTAS & ALERTA DE VENCIMENTO</label>
             
             <label style="margin-top: 8px;">Tipo da Conta</label>
             <select id="conta_tipo" onchange="mudarTipoContaForm()">
@@ -236,6 +248,9 @@
             <label>Valor (R$)</label>
             <input type="number" id="conta_valor" step="0.01" placeholder="R$ 0,00">
 
+            <label>Dia do Vencimento no Mês (Ex: 10)</label>
+            <input type="number" id="conta_vencimento" min="1" max="31" placeholder="Dia (1 a 31)">
+
             <div id="bloco_qtd_parcelas" style="display:none;">
                 <label>Total de Parcelas (Ex: 5)</label>
                 <input type="number" id="conta_parcelas" value="1" min="1">
@@ -248,7 +263,7 @@
         <div class="card">
             <label>📋 CONTAS PENDENTES DO MÊS</label>
             <table id="tabela-contas">
-                <thead><tr><th>Conta</th><th>Cofre</th><th>Valor</th><th>Info</th><th>Ação</th></tr></thead>
+                <thead><tr><th>Conta</th><th>Cofre</th><th>Valor</th><th>Venc.</th><th>Ação</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
@@ -416,11 +431,19 @@
             const totalFixas = caixas99.fixas + uberCaixas.fixas;
             const totalLucro = caixas99.lucro + uberCaixas.lucro;
 
+            // Aba Diário
             document.getElementById('res-gas').innerText = "R$ " + totalGas.toFixed(2);
             document.getElementById('res-moto').innerText = "R$ " + totalMoto.toFixed(2);
             document.getElementById('res-oleo').innerText = "R$ " + totalManut.toFixed(2);
             document.getElementById('res-ipva').innerText = "R$ " + totalFixas.toFixed(2);
             document.getElementById('res-pf').innerText = "R$ " + totalLucro.toFixed(2);
+
+            // Aba Gerenciar (Novo Quadro Geral)
+            document.getElementById('ger-res-gas').innerText = "R$ " + totalGas.toFixed(2);
+            document.getElementById('ger-res-moto').innerText = "R$ " + totalMoto.toFixed(2);
+            document.getElementById('ger-res-oleo').innerText = "R$ " + totalManut.toFixed(2);
+            document.getElementById('ger-res-ipva').innerText = "R$ " + totalFixas.toFixed(2);
+            document.getElementById('ger-res-pf').innerText = "R$ " + totalLucro.toFixed(2);
         }
 
         function calcularBrutoTotal() {
@@ -748,7 +771,7 @@
             document.getElementById('soma-total-lucro').innerText = "R$ " + somaTotal.toFixed(2);
         }
 
-        // --- LÓGICA DA ABA GERENCIAR & CONTAS INTELIGENTES ---
+        // --- LÓGICA DA ABA GERENCIAR & NOTIFICAÇÕES ---
         function mudarTipoContaForm() {
             const tipo = document.getElementById('conta_tipo').value;
             document.getElementById('bloco_qtd_parcelas').style.display = (tipo === 'parcelada') ? 'block' : 'none';
@@ -799,6 +822,7 @@
             const cofre = document.getElementById('conta_cofre').value;
             const nome = document.getElementById('conta_nome').value.trim();
             const valor = parseFloat(document.getElementById('conta_valor').value);
+            const vencimento = parseInt(document.getElementById('conta_vencimento').value) || 1;
             const parcelas = parseInt(document.getElementById('conta_parcelas').value) || 1;
 
             if(!nome || isNaN(valor) || valor <= 0) {
@@ -808,10 +832,11 @@
 
             contasCadastradas.push({
                 id: Date.now(),
-                tipo: tipo, // 'recorrente', 'parcelada', 'unica'
+                tipo: tipo, 
                 cofre: cofre,
                 nome: nome,
                 valor: valor,
+                vencimento: vencimento,
                 parcelaAtual: 1,
                 totalParcelas: parcelas,
                 paga: false
@@ -822,6 +847,7 @@
 
             document.getElementById('conta_nome').value = '';
             document.getElementById('conta_valor').value = '';
+            document.getElementById('conta_vencimento').value = '';
             document.getElementById('conta_parcelas').value = '1';
             alert('Conta cadastrada com sucesso!');
         }
@@ -861,12 +887,11 @@
                     if (conta.parcelaAtual < conta.totalParcelas) {
                         conta.parcelaAtual += 1;
                     } else {
-                        conta.paga = true; // Finalizou todas as parcelas
+                        conta.paga = true; 
                     }
                 } else if (conta.tipo === 'unica') {
-                    conta.paga = true; // Conta única some das pendentes após paga
+                    conta.paga = true; 
                 } else if (conta.tipo === 'recorrente') {
-                    // Mantém ativa para o próximo mês (recorrente)
                     conta.paga = false; 
                 }
 
@@ -900,7 +925,7 @@
                     <td><strong>${c.nome}</strong></td>
                     <td>${c.cofre.toUpperCase()}</td>
                     <td>R$ ${c.valor.toFixed(2)}</td>
-                    <td>${badgeInfo}</td>
+                    <td>Dia ${c.vencimento || '-'} (${badgeInfo})</td>
                     <td>
                         <button class="btn-pay" onclick="darBaixaConta(${c.id})">Baixa</button>
                         <button class="btn-del" onclick="deletarConta(${c.id})">X</button>
@@ -922,6 +947,7 @@
 
             gerarDiagnosticoIA();
             gerarComparativoMeses();
+            atualizarQuadroGeral();
         }
 
         function gerarComparativoMeses() {
@@ -930,7 +956,6 @@
             const mesAtualNum = agora.getMonth() + 1;
             const anoAtualNum = agora.getFullYear();
             
-            // Mês anterior
             let mesAntNum = mesAtualNum - 1;
             let anoAntNum = anoAtualNum;
             if (mesAntNum === 0) { mesAntNum = 12; anoAntNum -= 1; }
@@ -938,12 +963,10 @@
             const strMesAtual = `${String(mesAtualNum).padStart(2, '0')}/${anoAtualNum}`;
             const strMesAnt = `${String(mesAntNum).padStart(2, '0')}/${anoAntNum}`;
 
-            // Filtrar faturamento e lucro do mês atual
             const itensAtual = db.filter(item => item.mesAno === strMesAtual);
             const brutoAtual = itensAtual.reduce((acc, i) => acc + parseFloat(i.bruto), 0);
             const lucroAtual = itensAtual.reduce((acc, i) => acc + parseFloat(i.lucro), 0);
 
-            // Filtrar faturamento e lucro do mês anterior
             const itensAnt = db.filter(item => item.mesAno === strMesAnt);
             const brutoAnt = itensAnt.reduce((acc, i) => acc + parseFloat(i.bruto), 0);
             const lucroAnt = itensAnt.reduce((acc, i) => acc + parseFloat(i.lucro), 0);
@@ -963,25 +986,30 @@
         function gerarDiagnosticoIA() {
             const aiElem = document.getElementById('ai-feedback');
             const totalFixas = caixas99.fixas + uberCaixas.fixas;
-            const totalManut = caixas99.manut + uberCaixas.manut;
             const pendentes = contasCadastradas.filter(c => !c.paga);
             const somaPendentes = pendentes.reduce((acc, c) => acc + c.valor, 0);
+            
+            const diaHoje = new Date().getDate();
 
             let msgs = [];
+            
+            // Verificação de Vencimentos Próximos
+            let vencendoLogo = pendentes.filter(c => c.vencimento && c.vencimento >= diaHoje && c.vencimento <= (diaHoje + 3));
+            if (vencendoLogo.length > 0) {
+                let nomes = vencendoLogo.map(c => `<strong>${c.nome} (Dia ${c.vencimento})</strong>`).join(', ');
+                msgs.push(`🚨 <em>Atenção ao Vencimento:</em> ${nomes} vencem nos próximos dias!`);
+            }
+
             if (somaPendentes > 0) {
-                msgs.push(`• Contas pendentes cadastradas somam: <strong>R$ ${somaPendentes.toFixed(2)}</strong>.`);
+                msgs.push(`• Contas pendentes somam: <strong>R$ ${somaPendentes.toFixed(2)}</strong>.`);
             } else {
                 msgs.push(`• Nenhuma conta pendente no momento.`);
             }
 
             if (totalFixas < somaPendentes) {
-                msgs.push(`⚠️ <em>Atenção:</em> O cofre de Contas Fixas (R$ ${totalFixas.toFixed(2)}) está menor que as contas cadastradas.`);
+                msgs.push(`⚠️ <em>Aviso:</em> Cofre Fixas (R$ ${totalFixas.toFixed(2)}) menor que as contas cadastradas.`);
             } else if (somaPendentes > 0) {
-                msgs.push(`✅ <em>Perfeito:</em> Cofre de Contas Fixas cobre todos os compromissos.`);
-            }
-
-            if (totalManut > 0) {
-                msgs.push(`🛢️ <em>Manutenção:</em> Cofre de oficina acumulado em <strong>R$ ${totalManut.toFixed(2)}</strong>.`);
+                msgs.push(`✅ <em>Tudo em ordem:</em> Cofre cobre todas as contas cadastradas.`);
             }
 
             aiElem.innerHTML = msgs.join('<br>');
