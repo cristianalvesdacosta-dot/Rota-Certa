@@ -13,7 +13,7 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: var(--text); padding: 0; margin: 0; padding-bottom: 70px; }
         
         .tab-bar { display: flex; background: #111; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #333; }
-        .tab-btn { flex: 1; padding: 15px 5px; border: none; background: none; color: #888; font-weight: bold; cursor: pointer; font-size: 10px; text-transform: uppercase; text-align: center; }
+        .tab-btn { flex: 1; padding: 15px 2px; border: none; background: none; color: #888; font-weight: bold; cursor: pointer; font-size: 9px; text-transform: uppercase; text-align: center; }
         .tab-btn.active { color: var(--green); border-bottom: 3px solid var(--green); }
 
         .container { padding: 15px; max-width: 500px; margin: auto; display: none; }
@@ -70,6 +70,8 @@
         
         .ai-card { background: #1a252f; border: 1px solid #34495e; padding: 12px; border-radius: 10px; margin-bottom: 15px; font-size: 11px; line-height: 1.4; color: #ecf0f1; }
         .ai-card strong { color: var(--accent); }
+
+        .compare-box { background: #111; border: 1px solid #333; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 11px; }
 
         #sync-status { position: fixed; bottom: 5px; right: 5px; background: rgba(0,0,0,0.8); color: var(--green); padding: 4px 8px; font-size: 9px; border-radius: 4px; z-index: 1000; }
     </style>
@@ -173,12 +175,20 @@
         </div>
     </div>
 
-    <!-- ABA GERENCIAR COFRES E DESPESAS (NOVA ABA) -->
+    <!-- ABA GERENCIAR COFRES E DESPESAS -->
     <div id="gerenciar" class="container">
         <!-- DIAGNÓSTICO DO ASSISTENTE INTELIGENTE -->
         <div class="ai-card">
             🤖 <strong>Assistente de Gestão Inteligente:</strong>
             <div id="ai-feedback" style="margin-top: 5px;">Analisando dados financeiros dos seus cofres...</div>
+        </div>
+
+        <!-- PAINEL COMPARATIVO DE MESES -->
+        <div class="card">
+            <label style="color: var(--accent);">📊 COMPARATIVO DE MESES (MÊS ATUAL X ANTERIOR)</label>
+            <div class="compare-box" id="comparativo-conteudo">
+                Carregando comparativo...
+            </div>
         </div>
 
         <!-- LANÇAMENTO DE RETIRADA RÁPIDA DE COFRE -->
@@ -192,7 +202,7 @@
                 <option value="lucro">💜 Lucro Pessoal</option>
             </select>
 
-            <label>Descrição do Gasto (Ex: Combustível Shell, Calibrar Pneu)</label>
+            <label>Descrição do Gasto (Ex: Gasolina Posto, Calibrar Pneu)</label>
             <input type="text" id="saida_desc" placeholder="Ex: Abastecimento de Gasolina">
 
             <label>Valor da Saída (R$)</label>
@@ -201,10 +211,18 @@
             <button class="btn-add" style="background: var(--red); color: #fff;" onclick="lançarSaidaCofre()">REGISTRAR SAÍDA</button>
         </div>
 
-        <!-- CADASTRO DE CONTAS E COMPROMISSOS FIXOS -->
+        <!-- CADASTRO DE CONTAS INTELIGENTE -->
         <div class="card">
-            <label>📌 CADASTRO DE COMPROMISSOS & PARCELAS</label>
-            <label style="margin-top: 8px;">Cofre Destinado</label>
+            <label>📌 CADASTRO DE CONTAS & COMPROMISSOS</label>
+            
+            <label style="margin-top: 8px;">Tipo da Conta</label>
+            <select id="conta_tipo" onchange="mudarTipoContaForm()">
+                <option value="recorrente">🔄 Recorrente (Contínua Todo Mês - Ex: Wi-Fi)</option>
+                <option value="parcelada">💳 Parcelada (Com Fim - Ex: Peça em 5x)</option>
+                <option value="unica">⚡ Única / Casual (Paga só este mês)</option>
+            </select>
+
+            <label>Cofre Destinado</label>
             <select id="conta_cofre">
                 <option value="fixas">📄 Contas Fixas</option>
                 <option value="moto">🏍️ Parcela Moto</option>
@@ -212,23 +230,25 @@
                 <option value="lucro">💜 Lucro / Pessoal</option>
             </select>
 
-            <label>Nome do Compromisso / Conta</label>
-            <input type="text" id="conta_nome" placeholder="Ex: Capacete Novo, IPVA">
+            <label>Nome da Conta / Compromisso</label>
+            <input type="text" id="conta_nome" placeholder="Ex: Internet Wi-Fi, Parcela Baú">
 
-            <label>Valor da Parcela/Conta (R$)</label>
+            <label>Valor (R$)</label>
             <input type="number" id="conta_valor" step="0.01" placeholder="R$ 0,00">
 
-            <label>Total de Parcelas (Digite 1 p/ Conta Única/Mensal)</label>
-            <input type="number" id="conta_parcelas" value="1" min="1">
+            <div id="bloco_qtd_parcelas" style="display:none;">
+                <label>Total de Parcelas (Ex: 5)</label>
+                <input type="number" id="conta_parcelas" value="1" min="1">
+            </div>
 
-            <button class="btn-add" style="background: var(--blue); color: #fff;" onclick="cadastrarConta()">CADASTRAR CONTAS</button>
+            <button class="btn-add" style="background: var(--blue); color: #fff;" onclick="cadastrarConta()">CADASTRAR CONTA</button>
         </div>
 
         <!-- LISTA DE CONTAS PENDENTES -->
         <div class="card">
-            <label>📋 CONTAS E COMPROMISSOS CADASTRADOS</label>
+            <label>📋 CONTAS PENDENTES DO MÊS</label>
             <table id="tabela-contas">
-                <thead><tr><th>Conta</th><th>Cofre</th><th>Valor</th><th>Parc.</th><th>Ação</th></tr></thead>
+                <thead><tr><th>Conta</th><th>Cofre</th><th>Valor</th><th>Info</th><th>Ação</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
@@ -644,15 +664,12 @@
             const resFixas = km * config.fixas;
             
             let totalExtrasDia = 0;
-            let valoresExtrasDia = {};
             const kmMes = config.kmMes > 0 ? config.kmMes : 3000;
 
             gastosMensais.forEach(g => {
                 if(g.ativo) {
                     const custoKmGasto = g.valor / kmMes;
-                    const valorNoDia = km * custoKmGasto;
-                    totalExtrasDia += valorNoDia;
-                    valoresExtrasDia[g.id] = valorNoDia;
+                    totalExtrasDia += (km * custoKmGasto);
                 }
             });
 
@@ -685,8 +702,10 @@
                 uberCaixas.lucro += lucro * propUber;
             }
 
+            const agora = new Date();
             db.unshift({ 
-                data: new Date().toLocaleDateString('pt-BR'), 
+                data: agora.toLocaleDateString('pt-BR'), 
+                mesAno: `${String(agora.getMonth() + 1).padStart(2, '0')}/${agora.getFullYear()}`,
                 bruto: bruto.toFixed(2), 
                 lucro: lucro.toFixed(2), 
                 eficiencia: eficiencia.toFixed(2),
@@ -729,7 +748,12 @@
             document.getElementById('soma-total-lucro').innerText = "R$ " + somaTotal.toFixed(2);
         }
 
-        // --- LÓGICA DA NOVA ABA "GERENCIAR" (COFRES, SAÍDAS, CONTAS E ASSISTENTE) ---
+        // --- LÓGICA DA ABA GERENCIAR & CONTAS INTELIGENTES ---
+        function mudarTipoContaForm() {
+            const tipo = document.getElementById('conta_tipo').value;
+            document.getElementById('bloco_qtd_parcelas').style.display = (tipo === 'parcelada') ? 'block' : 'none';
+        }
+
         function lançarSaidaCofre() {
             const cofre = document.getElementById('saida_cofre').value;
             const desc = document.getElementById('saida_desc').value.trim();
@@ -740,7 +764,6 @@
                 return;
             }
 
-            // Abater valor proporcionalmente entre as caixinhas 99 e Uber
             const totalDisponivel = (caixas99[cofre] || 0) + (uberCaixas[cofre] || 0);
 
             if (totalDisponivel > 0) {
@@ -753,9 +776,11 @@
                 caixas99[cofre] = Math.max(0, (caixas99[cofre] || 0) - valor);
             }
 
+            const agora = new Date();
             historicoSaidas.unshift({
                 id: Date.now(),
-                data: new Date().toLocaleDateString('pt-BR'),
+                data: agora.toLocaleDateString('pt-BR'),
+                mesAno: `${String(agora.getMonth() + 1).padStart(2, '0')}/${agora.getFullYear()}`,
                 cofre: cofre,
                 desc: desc,
                 valor: valor
@@ -770,6 +795,7 @@
         }
 
         function cadastrarConta() {
+            const tipo = document.getElementById('conta_tipo').value;
             const cofre = document.getElementById('conta_cofre').value;
             const nome = document.getElementById('conta_nome').value.trim();
             const valor = parseFloat(document.getElementById('conta_valor').value);
@@ -782,6 +808,7 @@
 
             contasCadastradas.push({
                 id: Date.now(),
+                tipo: tipo, // 'recorrente', 'parcelada', 'unica'
                 cofre: cofre,
                 nome: nome,
                 valor: valor,
@@ -796,7 +823,7 @@
             document.getElementById('conta_nome').value = '';
             document.getElementById('conta_valor').value = '';
             document.getElementById('conta_parcelas').value = '1';
-            alert('Conta/Compromisso cadastrado com sucesso!');
+            alert('Conta cadastrada com sucesso!');
         }
 
         function darBaixaConta(id) {
@@ -806,8 +833,9 @@
             const cofre = conta.cofre;
             const valor = conta.valor;
 
-            if (confirm(`Confirmar pagamento da parcela ${conta.parcelaAtual}/${conta.totalParcelas} de "${conta.nome}" no valor de R$ ${valor.toFixed(2)} pelo cofre ${cofre.toUpperCase()}?`)) {
-                // Abater do cofre correspondente
+            let infoTexto = conta.tipo === 'parcelada' ? `parcela ${conta.parcelaAtual}/${conta.totalParcelas}` : conta.tipo === 'recorrente' ? 'mensalidade recorrente' : 'conta única';
+
+            if (confirm(`Confirmar pagamento (${infoTexto}) de "${conta.nome}" no valor de R$ ${valor.toFixed(2)} pelo cofre ${cofre.toUpperCase()}?`)) {
                 const totalDisponivel = (caixas99[cofre] || 0) + (uberCaixas[cofre] || 0);
                 if (totalDisponivel > 0) {
                     const prop99 = (caixas99[cofre] || 0) / totalDisponivel;
@@ -819,24 +847,33 @@
                     caixas99[cofre] = Math.max(0, (caixas99[cofre] || 0) - valor);
                 }
 
+                const agora = new Date();
                 historicoSaidas.unshift({
                     id: Date.now(),
-                    data: new Date().toLocaleDateString('pt-BR'),
+                    data: agora.toLocaleDateString('pt-BR'),
+                    mesAno: `${String(agora.getMonth() + 1).padStart(2, '0')}/${agora.getFullYear()}`,
                     cofre: cofre,
-                    desc: `Baixa Pagamento: ${conta.nome} (${conta.parcelaAtual}/${conta.totalParcelas})`,
+                    desc: `Baixa: ${conta.nome} (${infoTexto})`,
                     valor: valor
                 });
 
-                if (conta.parcelaAtual < conta.totalParcelas) {
-                    conta.parcelaAtual += 1;
-                } else {
-                    conta.paga = true;
+                if (conta.tipo === 'parcelada') {
+                    if (conta.parcelaAtual < conta.totalParcelas) {
+                        conta.parcelaAtual += 1;
+                    } else {
+                        conta.paga = true; // Finalizou todas as parcelas
+                    }
+                } else if (conta.tipo === 'unica') {
+                    conta.paga = true; // Conta única some das pendentes após paga
+                } else if (conta.tipo === 'recorrente') {
+                    // Mantém ativa para o próximo mês (recorrente)
+                    conta.paga = false; 
                 }
 
                 salvarNoFirebase();
                 atualizarTelasCaixas();
                 renderGerenciador();
-                alert('Baixa efetuada e valor abatido do cofre!');
+                alert('Baixa efetuada com sucesso!');
             }
         }
 
@@ -853,23 +890,25 @@
         }
 
         function renderGerenciador() {
-            // Render Tabela de Contas
+            // Tabela Contas Pendentes
             const tbodyContas = document.querySelector('#tabela-contas tbody');
             const pendentes = contasCadastradas.filter(c => !c.paga);
-            tbodyContas.innerHTML = pendentes.length ? pendentes.map(c => `
+            tbodyContas.innerHTML = pendentes.length ? pendentes.map(c => {
+                let badgeInfo = c.tipo === 'recorrente' ? '🔄 Recorrente' : c.tipo === 'parcelada' ? `${c.parcelaAtual}/${c.totalParcelas} Parc.` : '⚡ Única';
+                return `
                 <tr>
                     <td><strong>${c.nome}</strong></td>
                     <td>${c.cofre.toUpperCase()}</td>
                     <td>R$ ${c.valor.toFixed(2)}</td>
-                    <td>${c.parcelaAtual}/${c.totalParcelas}</td>
+                    <td>${badgeInfo}</td>
                     <td>
                         <button class="btn-pay" onclick="darBaixaConta(${c.id})">Baixa</button>
                         <button class="btn-del" onclick="deletarConta(${c.id})">X</button>
                     </td>
-                </tr>
-            `).join('') : '<tr><td colspan="5" style="color:#777;">Nenhuma conta pendente.</td></tr>';
+                </tr>`;
+            }).join('') : '<tr><td colspan="5" style="color:#777;">Nenhuma conta pendente.</td></tr>';
 
-            // Render Tabela de Saídas
+            // Tabela Saídas
             const tbodySaidas = document.querySelector('#tabela-saidas tbody');
             tbodySaidas.innerHTML = historicoSaidas.length ? historicoSaidas.slice(0, 10).map(s => `
                 <tr>
@@ -881,50 +920,76 @@
                 </tr>
             `).join('') : '<tr><td colspan="5" style="color:#777;">Sem retiradas registradas.</td></tr>';
 
-            // Diagnóstico Assistente Inteligente
             gerarDiagnosticoIA();
+            gerarComparativoMeses();
+        }
+
+        function gerarComparativoMeses() {
+            const compBox = document.getElementById('comparativo-conteudo');
+            const agora = new Date();
+            const mesAtualNum = agora.getMonth() + 1;
+            const anoAtualNum = agora.getFullYear();
+            
+            // Mês anterior
+            let mesAntNum = mesAtualNum - 1;
+            let anoAntNum = anoAtualNum;
+            if (mesAntNum === 0) { mesAntNum = 12; anoAntNum -= 1; }
+
+            const strMesAtual = `${String(mesAtualNum).padStart(2, '0')}/${anoAtualNum}`;
+            const strMesAnt = `${String(mesAntNum).padStart(2, '0')}/${anoAntNum}`;
+
+            // Filtrar faturamento e lucro do mês atual
+            const itensAtual = db.filter(item => item.mesAno === strMesAtual);
+            const brutoAtual = itensAtual.reduce((acc, i) => acc + parseFloat(i.bruto), 0);
+            const lucroAtual = itensAtual.reduce((acc, i) => acc + parseFloat(i.lucro), 0);
+
+            // Filtrar faturamento e lucro do mês anterior
+            const itensAnt = db.filter(item => item.mesAno === strMesAnt);
+            const brutoAnt = itensAnt.reduce((acc, i) => acc + parseFloat(i.bruto), 0);
+            const lucroAnt = itensAnt.reduce((acc, i) => acc + parseFloat(i.lucro), 0);
+
+            compBox.innerHTML = `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid #333; padding-bottom: 4px;">
+                    <span>📅 <strong>${strMesAnt} (Anterior)</strong></span>
+                    <span>Bruto: <strong>R$ ${brutoAnt.toFixed(2)}</strong> | Lucro: <strong style="color:var(--accent);">R$ ${lucroAnt.toFixed(2)}</strong></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>📅 <strong>${strMesAtual} (Atual)</strong></span>
+                    <span>Bruto: <strong style="color:var(--green);">R$ ${brutoAtual.toFixed(2)}</strong> | Lucro: <strong style="color:var(--green);">R$ ${lucroAtual.toFixed(2)}</strong></span>
+                </div>
+            `;
         }
 
         function gerarDiagnosticoIA() {
             const aiElem = document.getElementById('ai-feedback');
-            const totalLucro = caixas99.lucro + uberCaixas.lucro;
             const totalFixas = caixas99.fixas + uberCaixas.fixas;
             const totalManut = caixas99.manut + uberCaixas.manut;
             const pendentes = contasCadastradas.filter(c => !c.paga);
             const somaPendentes = pendentes.reduce((acc, c) => acc + c.valor, 0);
 
             let msgs = [];
-
             if (somaPendentes > 0) {
-                msgs.push(`• Você tem <strong>R$ ${somaPendentes.toFixed(2)}</strong> em contas cadastradas pendentes neste mês.`);
+                msgs.push(`• Contas pendentes cadastradas somam: <strong>R$ ${somaPendentes.toFixed(2)}</strong>.`);
             } else {
-                msgs.push(`• Nenhuma conta pendente cadastrada no momento. Bom trabalho!`);
+                msgs.push(`• Nenhuma conta pendente no momento.`);
             }
 
             if (totalFixas < somaPendentes) {
-                msgs.push(`⚠️ <em>Alerta de Cofre:</em> Seu cofre de Contas Fixas tem R$ ${totalFixas.toFixed(2)}, o que ainda não cobre a totalidade dos compromissos cadastrados.`);
+                msgs.push(`⚠️ <em>Atenção:</em> O cofre de Contas Fixas (R$ ${totalFixas.toFixed(2)}) está menor que as contas cadastradas.`);
             } else if (somaPendentes > 0) {
-                msgs.push(`✅ <em>Excelente:</em> Seu cofre de Contas Fixas tem saldo suficiente para quitar as contas pendentes.`);
+                msgs.push(`✅ <em>Perfeito:</em> Cofre de Contas Fixas cobre todos os compromissos.`);
             }
 
-            if (totalManut > 100) {
-                msgs.push(`🏍️ <em>Manutenção:</em> Saldo acumulado para oficina/troca de óleo: <strong>R$ ${totalManut.toFixed(2)}</strong>.`);
+            if (totalManut > 0) {
+                msgs.push(`🛢️ <em>Manutenção:</em> Cofre de oficina acumulado em <strong>R$ ${totalManut.toFixed(2)}</strong>.`);
             }
 
             aiElem.innerHTML = msgs.join('<br>');
         }
 
-        // FUNÇÕES DE BACKUP LOCAL
+        // BACKUP
         function exportarBackup() {
-            const dadosBackup = { 
-                config: config, 
-                gastosMensais: gastosMensais, 
-                db: db, 
-                caixas99: caixas99, 
-                uberCaixas: uberCaixas,
-                contasCadastradas: contasCadastradas,
-                historicoSaidas: historicoSaidas
-            };
+            const dadosBackup = { config, gastosMensais, db, caixas99, uberCaixas, contasCadastradas, historicoSaidas };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dadosBackup));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
@@ -934,9 +999,7 @@
             downloadAnchor.remove();
         }
 
-        function importarBackupClick() {
-            document.getElementById('fileInput').click();
-        }
+        function importarBackupClick() { document.getElementById('fileInput').click(); }
 
         function importarBackup(event) {
             const file = event.target.files[0];
@@ -948,9 +1011,8 @@
                     if (conteudo.config) config = conteudo.config;
                     if (conteudo.gastosMensais) gastosMensais = conteudo.gastosMensais;
                     if (conteudo.db) db = conteudo.db;
-                    
-                    caixas99 = conteudo.caixas99 || { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
-                    uberCaixas = conteudo.uberCaixas || { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+                    caixas99 = conteudo.caixas99 || caixas99;
+                    uberCaixas = conteudo.uberCaixas || uberCaixas;
                     contasCadastradas = conteudo.contasCadastradas || [];
                     historicoSaidas = conteudo.historicoSaidas || [];
 
@@ -959,7 +1021,7 @@
                     renderPainelGastos();
                     renderTable();
                     renderGerenciador();
-                    alert('Backup restaurado e sincronizado com o Firebase com sucesso!');
+                    alert('Backup restaurado e sincronizado com o Firebase!');
                 } catch (err) {
                     alert('Erro ao ler o arquivo de backup.');
                 }
