@@ -59,8 +59,12 @@
         table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 15px; }
         th, td { border: 1px solid #333; padding: 8px; text-align: center; }
         th { background: #222; color: var(--green); }
+        
+        /* Botões Organizados e Limpos na Aba Gerenciar */
+        .btn-acao-grupo { display: flex; gap: 4px; justify-content: center; }
+        .btn-pagar { background: var(--green); color: #000; font-weight: bold; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; text-transform: uppercase; }
+        .btn-excluir { background: var(--red); color: #fff; font-weight: bold; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; text-transform: uppercase; }
         .btn-del { background: var(--red); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
-        .btn-pay { background: var(--green); color: #000; font-weight: bold; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
 
         .total-box { background: #151515; border: 1px dashed var(--green); padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 12px; text-align: center; color: var(--accent); }
         .total-box strong { font-size: 15px; color: var(--green); display: block; margin-top: 4px; }
@@ -205,7 +209,7 @@
 
         <!-- LANÇAMENTO DE RETIRADA RÁPIDA DE COFRE -->
         <div class="card">
-            <label style="color: var(--accent);">💸 LANÇAR SAÍDA / RETIRADA DE COFRE</label>
+            <label style="color: var(--accent);">💸 LANÇAR SAÍDA / RETIRADA RÁPIDA</label>
             <select id="saida_cofre">
                 <option value="gas">⛽ Gasolina</option>
                 <option value="moto">🏍️ Parcela Moto</option>
@@ -214,24 +218,24 @@
                 <option value="lucro">💜 Lucro Pessoal</option>
             </select>
 
-            <label>Descrição do Gasto (Ex: Pagamento Wi-Fi, Calibrar Pneu)</label>
-            <input type="text" id="saida_desc" placeholder="Ex: Pagar Conta de Internet">
+            <label>Descrição (Ex: Calibrar Pneu, Combustível)</label>
+            <input type="text" id="saida_desc" placeholder="Ex: Calibragem Pneu">
 
             <label>Valor da Saída (R$)</label>
             <input type="number" id="saida_valor" step="0.01" placeholder="R$ 0,00">
 
-            <button class="btn-add" style="background: var(--red); color: #fff;" onclick="lançarSaidaCofre()">REGISTRAR SAÍDA</button>
+            <button class="btn-add" style="background: var(--red); color: #fff;" onclick="lançarSaidaCofre()">CONFIRMAR RETIRADA</button>
         </div>
 
-        <!-- CADASTRO DE CONTAS INTELIGENTE COM VENCIMENTO -->
+        <!-- CADASTRO DE CONTAS INTELIGENTE COM DATA E MÊS -->
         <div class="card">
-            <label>📌 CADASTRO DE CONTAS & ALERTA DE VENCIMENTO</label>
+            <label>📌 CADASTRAR CONTA OU BOLETO</label>
             
             <label style="margin-top: 8px;">Tipo da Conta</label>
             <select id="conta_tipo" onchange="mudarTipoContaForm()">
                 <option value="recorrente">🔄 Recorrente (Contínua Todo Mês - Ex: Wi-Fi)</option>
                 <option value="parcelada">💳 Parcelada (Com Fim - Ex: Peça em 5x)</option>
-                <option value="unica">⚡ Única / Casual (Paga só este mês)</option>
+                <option value="unica">⚡ Única / Casual (Paga só uma vez)</option>
             </select>
 
             <label>Cofre Destinado</label>
@@ -242,13 +246,16 @@
                 <option value="lucro">💜 Lucro / Pessoal</option>
             </select>
 
-            <label>Nome da Conta / Compromisso</label>
+            <label>Nome da Conta</label>
             <input type="text" id="conta_nome" placeholder="Ex: Internet Wi-Fi, Parcela Baú">
 
             <label>Valor (R$)</label>
             <input type="number" id="conta_valor" step="0.01" placeholder="R$ 0,00">
 
-            <label>Dia do Vencimento no Mês (Ex: 10)</label>
+            <label>Mês e Ano de Referência (Ex: Dezembro/2026)</label>
+            <input type="month" id="conta_mes_ano" style="text-align: center;">
+
+            <label>Dia do Vencimento (Ex: 10)</label>
             <input type="number" id="conta_vencimento" min="1" max="31" placeholder="Dia (1 a 31)">
 
             <div id="bloco_qtd_parcelas" style="display:none;">
@@ -256,21 +263,21 @@
                 <input type="number" id="conta_parcelas" value="1" min="1">
             </div>
 
-            <button class="btn-add" style="background: var(--blue); color: #fff;" onclick="cadastrarConta()">CADASTRAR CONTA</button>
+            <button class="btn-add" style="background: var(--blue); color: #fff;" onclick="cadastrarConta()">SALVAR NOVO CADASTRO</button>
         </div>
 
         <!-- LISTA DE CONTAS PENDENTES -->
         <div class="card">
-            <label>📋 CONTAS PENDENTES DO MÊS</label>
+            <label>📋 CONTAS PENDENTES</label>
             <table id="tabela-contas">
-                <thead><tr><th>Conta</th><th>Cofre</th><th>Valor</th><th>Venc.</th><th>Ação</th></tr></thead>
+                <thead><tr><th>Conta</th><th>Cofre</th><th>Valor</th><th>Vencimento / Ref.</th><th>Ação</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
 
         <!-- HISTÓRICO DE SAÍDAS DE COFRES -->
         <div class="card">
-            <label>📜 HISTÓRICO DE RETIRADAS DOS COFRES</label>
+            <label>📜 HISTÓRICO DE RETIRADAS</label>
             <table id="tabela-saidas">
                 <thead><tr><th>Data</th><th>Cofre</th><th>Descrição</th><th>Valor</th><th>X</th></tr></thead>
                 <tbody></tbody>
@@ -388,6 +395,14 @@
         let contasCadastradas = [];
         let historicoSaidas = [];
 
+        // Definir mês padrão atual no input de mês ao iniciar
+        window.addEventListener('DOMContentLoaded', () => {
+            const agora = new Date();
+            const anoMes = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}`;
+            const inputMes = document.getElementById('conta_mes_ano');
+            if(inputMes && !inputMes.value) inputMes.value = anoMes;
+        });
+
         // Carregar dados do Firebase ao iniciar
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
@@ -438,7 +453,7 @@
             document.getElementById('res-ipva').innerText = "R$ " + totalFixas.toFixed(2);
             document.getElementById('res-pf').innerText = "R$ " + totalLucro.toFixed(2);
 
-            // Aba Gerenciar (Novo Quadro Geral)
+            // Aba Gerenciar
             document.getElementById('ger-res-gas').innerText = "R$ " + totalGas.toFixed(2);
             document.getElementById('ger-res-moto').innerText = "R$ " + totalMoto.toFixed(2);
             document.getElementById('ger-res-oleo').innerText = "R$ " + totalManut.toFixed(2);
@@ -814,7 +829,7 @@
 
             document.getElementById('saida_desc').value = '';
             document.getElementById('saida_valor').value = '';
-            alert(`Saída de R$ ${valor.toFixed(2)} registrada no cofre!`);
+            alert(`Retirada de R$ ${valor.toFixed(2)} registrada com sucesso!`);
         }
 
         function cadastrarConta() {
@@ -822,11 +837,12 @@
             const cofre = document.getElementById('conta_cofre').value;
             const nome = document.getElementById('conta_nome').value.trim();
             const valor = parseFloat(document.getElementById('conta_valor').value);
+            const mesAno = document.getElementById('conta_mes_ano').value; // Formato: "2026-12"
             const vencimento = parseInt(document.getElementById('conta_vencimento').value) || 1;
             const parcelas = parseInt(document.getElementById('conta_parcelas').value) || 1;
 
-            if(!nome || isNaN(valor) || valor <= 0) {
-                alert('Preencha os dados da conta corretamente!');
+            if(!nome || isNaN(valor) || valor <= 0 || !mesAno) {
+                alert('Preencha o nome, valor e o mês/ano de referência corretamente!');
                 return;
             }
 
@@ -836,6 +852,7 @@
                 cofre: cofre,
                 nome: nome,
                 valor: valor,
+                mesAnoRef: mesAno, // Ex: "2026-12"
                 vencimento: vencimento,
                 parcelaAtual: 1,
                 totalParcelas: parcelas,
@@ -852,16 +869,16 @@
             alert('Conta cadastrada com sucesso!');
         }
 
-        function darBaixaConta(id) {
+        function pagarConta(id) {
             const conta = contasCadastradas.find(c => c.id === id);
             if (!conta) return;
 
             const cofre = conta.cofre;
             const valor = conta.valor;
 
-            let infoTexto = conta.tipo === 'parcelada' ? `parcela ${conta.parcelaAtual}/${conta.totalParcelas}` : conta.tipo === 'recorrente' ? 'mensalidade recorrente' : 'conta única';
+            let infoTexto = conta.tipo === 'parcelada' ? `parcela ${conta.parcelaAtual}/${conta.totalParcelas}` : conta.tipo === 'recorrente' ? 'mensalidade' : 'conta única';
 
-            if (confirm(`Confirmar pagamento (${infoTexto}) de "${conta.nome}" no valor de R$ ${valor.toFixed(2)} pelo cofre ${cofre.toUpperCase()}?`)) {
+            if (confirm(`Confirmar PAGAMENTO de "${conta.nome}" (${infoTexto}) no valor de R$ ${valor.toFixed(2)} usando o cofre ${cofre.toUpperCase()}?`)) {
                 const totalDisponivel = (caixas99[cofre] || 0) + (uberCaixas[cofre] || 0);
                 if (totalDisponivel > 0) {
                     const prop99 = (caixas99[cofre] || 0) / totalDisponivel;
@@ -879,7 +896,7 @@
                     data: agora.toLocaleDateString('pt-BR'),
                     mesAno: `${String(agora.getMonth() + 1).padStart(2, '0')}/${agora.getFullYear()}`,
                     cofre: cofre,
-                    desc: `Baixa: ${conta.nome} (${infoTexto})`,
+                    desc: `Pago: ${conta.nome} (${infoTexto})`,
                     valor: valor
                 });
 
@@ -892,20 +909,27 @@
                 } else if (conta.tipo === 'unica') {
                     conta.paga = true; 
                 } else if (conta.tipo === 'recorrente') {
+                    // Atualiza a referência para o próximo mês automaticamente
+                    let [ano, mes] = conta.mesAnoRef.split('-').map(Number);
+                    mes += 1;
+                    if (mes > 12) { mes = 1; ano += 1; }
+                    conta.mesAnoRef = `${ano}-${String(mes).padStart(2, '0')}`;
                     conta.paga = false; 
                 }
 
                 salvarNoFirebase();
                 atualizarTelasCaixas();
                 renderGerenciador();
-                alert('Baixa efetuada com sucesso!');
+                alert('Pagamento efetuado e abatido do cofre!');
             }
         }
 
-        function deletarConta(id) {
-            contasCadastradas = contasCadastradas.filter(c => c.id !== id);
-            salvarNoFirebase();
-            renderGerenciador();
+        function excluirConta(id) {
+            if (confirm('Deseja realmente excluir este cadastro de conta?')) {
+                contasCadastradas = contasCadastradas.filter(c => c.id !== id);
+                salvarNoFirebase();
+                renderGerenciador();
+            }
         }
 
         function deletarSaida(id) {
@@ -914,21 +938,31 @@
             renderGerenciador();
         }
 
+        function formatarMesAno(anoMesStr) {
+            if (!anoMesStr) return '';
+            let [ano, mes] = anoMesStr.split('-');
+            const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+            return `${meses[parseInt(mes) - 1]}/${ano}`;
+        }
+
         function renderGerenciador() {
             // Tabela Contas Pendentes
             const tbodyContas = document.querySelector('#tabela-contas tbody');
             const pendentes = contasCadastradas.filter(c => !c.paga);
             tbodyContas.innerHTML = pendentes.length ? pendentes.map(c => {
                 let badgeInfo = c.tipo === 'recorrente' ? '🔄 Recorrente' : c.tipo === 'parcelada' ? `${c.parcelaAtual}/${c.totalParcelas} Parc.` : '⚡ Única';
+                let refFormatada = formatarMesAno(c.mesAnoRef);
                 return `
                 <tr>
                     <td><strong>${c.nome}</strong></td>
                     <td>${c.cofre.toUpperCase()}</td>
                     <td>R$ ${c.valor.toFixed(2)}</td>
-                    <td>Dia ${c.vencimento || '-'} (${badgeInfo})</td>
+                    <td>Dia ${c.vencimento || '-'} (${refFormatada})<br><span style="font-size:8px; color:#888;">${badgeInfo}</span></td>
                     <td>
-                        <button class="btn-pay" onclick="darBaixaConta(${c.id})">Baixa</button>
-                        <button class="btn-del" onclick="deletarConta(${c.id})">X</button>
+                        <div class="btn-acao-grupo">
+                            <button class="btn-pagar" onclick="pagarConta(${c.id})">Pagar</button>
+                            <button class="btn-excluir" onclick="excluirConta(${c.id})">Excluir</button>
+                        </div>
                     </td>
                 </tr>`;
             }).join('') : '<tr><td colspan="5" style="color:#777;">Nenhuma conta pendente.</td></tr>';
@@ -993,7 +1027,6 @@
 
             let msgs = [];
             
-            // Verificação de Vencimentos Próximos
             let vencendoLogo = pendentes.filter(c => c.vencimento && c.vencimento >= diaHoje && c.vencimento <= (diaHoje + 3));
             if (vencendoLogo.length > 0) {
                 let nomes = vencendoLogo.map(c => `<strong>${c.nome} (Dia ${c.vencimento})</strong>`).join(', ');
