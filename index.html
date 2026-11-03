@@ -60,7 +60,6 @@
         th, td { border: 1px solid #333; padding: 8px; text-align: center; }
         th { background: #222; color: var(--green); }
         
-        /* Botões Organizados e Limpos na Aba Gerenciar */
         .btn-acao-grupo { display: flex; gap: 4px; justify-content: center; }
         .btn-pagar { background: var(--green); color: #000; font-weight: bold; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; text-transform: uppercase; }
         .btn-excluir { background: var(--red); color: #fff; font-weight: bold; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; text-transform: uppercase; }
@@ -395,7 +394,6 @@
         let contasCadastradas = [];
         let historicoSaidas = [];
 
-        // Definir mês padrão atual no input de mês ao iniciar
         window.addEventListener('DOMContentLoaded', () => {
             const agora = new Date();
             const anoMes = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}`;
@@ -403,7 +401,6 @@
             if(inputMes && !inputMes.value) inputMes.value = anoMes;
         });
 
-        // Carregar dados do Firebase ao iniciar
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -440,20 +437,18 @@
         }
 
         function atualizarQuadroGeral() {
-            const totalGas = caixas99.gas + uberCaixas.gas;
-            const totalMoto = caixas99.moto + uberCaixas.moto;
-            const totalManut = caixas99.manut + uberCaixas.manut;
-            const totalFixas = caixas99.fixas + uberCaixas.fixas;
-            const totalLucro = caixas99.lucro + uberCaixas.lucro;
+            const totalGas = (caixas99.gas || 0) + (uberCaixas.gas || 0);
+            const totalMoto = (caixas99.moto || 0) + (uberCaixas.moto || 0);
+            const totalManut = (caixas99.manut || 0) + (uberCaixas.manut || 0);
+            const totalFixas = (caixas99.fixas || 0) + (uberCaixas.fixas || 0);
+            const totalLucro = (caixas99.lucro || 0) + (uberCaixas.lucro || 0);
 
-            // Aba Diário
             document.getElementById('res-gas').innerText = "R$ " + totalGas.toFixed(2);
             document.getElementById('res-moto').innerText = "R$ " + totalMoto.toFixed(2);
             document.getElementById('res-oleo').innerText = "R$ " + totalManut.toFixed(2);
             document.getElementById('res-ipva').innerText = "R$ " + totalFixas.toFixed(2);
             document.getElementById('res-pf').innerText = "R$ " + totalLucro.toFixed(2);
 
-            // Aba Gerenciar
             document.getElementById('ger-res-gas').innerText = "R$ " + totalGas.toFixed(2);
             document.getElementById('ger-res-moto').innerText = "R$ " + totalMoto.toFixed(2);
             document.getElementById('ger-res-oleo').innerText = "R$ " + totalManut.toFixed(2);
@@ -491,19 +486,19 @@
 
             document.getElementById('edit-99-tot').value = Math.max(0, saldoApp99).toFixed(2);
             document.getElementById('edit-99-dinheiro').value = (caixas99.dinheiro || 0).toFixed(2);
-            document.getElementById('edit-99-gas').value = caixas99.gas.toFixed(2);
-            document.getElementById('edit-99-moto').value = caixas99.moto.toFixed(2);
-            document.getElementById('edit-99-manut').value = caixas99.manut.toFixed(2);
-            document.getElementById('edit-99-fixas').value = caixas99.fixas.toFixed(2);
-            document.getElementById('edit-99-lucro').value = caixas99.lucro.toFixed(2);
+            document.getElementById('edit-99-gas').value = (caixas99.gas || 0).toFixed(2);
+            document.getElementById('edit-99-moto').value = (caixas99.moto || 0).toFixed(2);
+            document.getElementById('edit-99-manut').value = (caixas99.manut || 0).toFixed(2);
+            document.getElementById('edit-99-fixas').value = (caixas99.fixas || 0).toFixed(2);
+            document.getElementById('edit-99-lucro').value = (caixas99.lucro || 0).toFixed(2);
 
             document.getElementById('edit-ub-tot').value = Math.max(0, saldoAppUber).toFixed(2);
             document.getElementById('edit-ub-dinheiro').value = (uberCaixas.dinheiro || 0).toFixed(2);
-            document.getElementById('edit-ub-gas').value = uberCaixas.gas.toFixed(2);
-            document.getElementById('edit-ub-moto').value = uberCaixas.moto.toFixed(2);
-            document.getElementById('edit-ub-manut').value = uberCaixas.manut.toFixed(2);
-            document.getElementById('edit-ub-fixas').value = uberCaixas.fixas.toFixed(2);
-            document.getElementById('edit-ub-lucro').value = uberCaixas.lucro.toFixed(2);
+            document.getElementById('edit-ub-gas').value = (uberCaixas.gas || 0).toFixed(2);
+            document.getElementById('edit-ub-moto').value = (uberCaixas.moto || 0).toFixed(2);
+            document.getElementById('edit-ub-manut').value = (uberCaixas.manut || 0).toFixed(2);
+            document.getElementById('edit-ub-fixas').value = (uberCaixas.fixas || 0).toFixed(2);
+            document.getElementById('edit-ub-lucro').value = (uberCaixas.lucro || 0).toFixed(2);
             
             atualizarQuadroGeral();
             renderGerenciador();
@@ -720,24 +715,24 @@
 
             if (b99 > 0) {
                 const prop99 = b99 / bruto;
-                caixas99.total += b99;
+                caixas99.total = (caixas99.total || 0) + b99;
                 caixas99.dinheiro = (caixas99.dinheiro || 0) + dinheiro99;
-                caixas99.gas += gas * prop99;
-                caixas99.moto += resParcela * prop99;
-                caixas99.manut += resManut * prop99;
-                caixas99.fixas += resFixas * prop99;
-                caixas99.lucro += lucro * prop99;
+                caixas99.gas = (caixas99.gas || 0) + (gas * prop99);
+                caixas99.moto = (caixas99.moto || 0) + (resParcela * prop99);
+                caixas99.manut = (caixas99.manut || 0) + (resManut * prop99);
+                caixas99.fixas = (caixas99.fixas || 0) + (resFixas * prop99);
+                caixas99.lucro = (caixas99.lucro || 0) + (lucro * prop99);
             }
 
             if (uber > 0) {
                 const propUber = uber / bruto;
-                uberCaixas.total += uber;
+                uberCaixas.total = (uberCaixas.total || 0) + uber;
                 uberCaixas.dinheiro = (uberCaixas.dinheiro || 0) + dinheiroUber;
-                uberCaixas.gas += gas * propUber;
-                uberCaixas.moto += resParcela * propUber;
-                uberCaixas.manut += resManut * propUber;
-                uberCaixas.fixas += resFixas * propUber;
-                uberCaixas.lucro += lucro * propUber;
+                uberCaixas.gas = (uberCaixas.gas || 0) + (gas * propUber);
+                uberCaixas.moto = (uberCaixas.moto || 0) + (resParcela * propUber);
+                uberCaixas.manut = (uberCaixas.manut || 0) + (resManut * propUber);
+                uberCaixas.fixas = (uberCaixas.fixas || 0) + (resFixas * propUber);
+                uberCaixas.lucro = (uberCaixas.lucro || 0) + (lucro * propUber);
             }
 
             const agora = new Date();
@@ -760,7 +755,7 @@
             document.getElementById('dinheiro_uber').value = '';
             document.getElementById('km_dia').value = '';
             document.getElementById('bruto').value = '';
-            alert('Lançamento registrado e salvo na nuvem!');
+            alert('Lançamento registrado e adicionado aos cofres!');
         }
 
         function deletarItem(i) {
@@ -786,7 +781,6 @@
             document.getElementById('soma-total-lucro').innerText = "R$ " + somaTotal.toFixed(2);
         }
 
-        // --- LÓGICA DA ABA GERENCIAR & NOTIFICAÇÕES ---
         function mudarTipoContaForm() {
             const tipo = document.getElementById('conta_tipo').value;
             document.getElementById('bloco_qtd_parcelas').style.display = (tipo === 'parcelada') ? 'block' : 'none';
@@ -803,6 +797,11 @@
             }
 
             const totalDisponivel = (caixas99[cofre] || 0) + (uberCaixas[cofre] || 0);
+
+            if (valor > totalDisponivel) {
+                alert(`Saldo insuficiente no cofre ${cofre.toUpperCase()}! Disponível: R$ ${totalDisponivel.toFixed(2)}`);
+                return;
+            }
 
             if (totalDisponivel > 0) {
                 const prop99 = (caixas99[cofre] || 0) / totalDisponivel;
@@ -837,7 +836,7 @@
             const cofre = document.getElementById('conta_cofre').value;
             const nome = document.getElementById('conta_nome').value.trim();
             const valor = parseFloat(document.getElementById('conta_valor').value);
-            const mesAno = document.getElementById('conta_mes_ano').value; // Formato: "2026-12"
+            const mesAno = document.getElementById('conta_mes_ano').value;
             const vencimento = parseInt(document.getElementById('conta_vencimento').value) || 1;
             const parcelas = parseInt(document.getElementById('conta_parcelas').value) || 1;
 
@@ -852,7 +851,7 @@
                 cofre: cofre,
                 nome: nome,
                 valor: valor,
-                mesAnoRef: mesAno, // Ex: "2026-12"
+                mesAnoRef: mesAno,
                 vencimento: vencimento,
                 parcelaAtual: 1,
                 totalParcelas: parcelas,
@@ -875,11 +874,16 @@
 
             const cofre = conta.cofre;
             const valor = conta.valor;
+            const totalDisponivel = (caixas99[cofre] || 0) + (uberCaixas[cofre] || 0);
+
+            if (valor > totalDisponivel) {
+                alert(`Saldo insuficiente no cofre ${cofre.toUpperCase()} para pagar esta conta! Disponível: R$ ${totalDisponivel.toFixed(2)}`);
+                return;
+            }
 
             let infoTexto = conta.tipo === 'parcelada' ? `parcela ${conta.parcelaAtual}/${conta.totalParcelas}` : conta.tipo === 'recorrente' ? 'mensalidade' : 'conta única';
 
             if (confirm(`Confirmar PAGAMENTO de "${conta.nome}" (${infoTexto}) no valor de R$ ${valor.toFixed(2)} usando o cofre ${cofre.toUpperCase()}?`)) {
-                const totalDisponivel = (caixas99[cofre] || 0) + (uberCaixas[cofre] || 0);
                 if (totalDisponivel > 0) {
                     const prop99 = (caixas99[cofre] || 0) / totalDisponivel;
                     const propUber = (uberCaixas[cofre] || 0) / totalDisponivel;
@@ -909,7 +913,6 @@
                 } else if (conta.tipo === 'unica') {
                     conta.paga = true; 
                 } else if (conta.tipo === 'recorrente') {
-                    // Atualiza a referência para o próximo mês automaticamente
                     let [ano, mes] = conta.mesAnoRef.split('-').map(Number);
                     mes += 1;
                     if (mes > 12) { mes = 1; ano += 1; }
@@ -946,7 +949,6 @@
         }
 
         function renderGerenciador() {
-            // Tabela Contas Pendentes
             const tbodyContas = document.querySelector('#tabela-contas tbody');
             const pendentes = contasCadastradas.filter(c => !c.paga);
             tbodyContas.innerHTML = pendentes.length ? pendentes.map(c => {
@@ -967,7 +969,6 @@
                 </tr>`;
             }).join('') : '<tr><td colspan="5" style="color:#777;">Nenhuma conta pendente.</td></tr>';
 
-            // Tabela Saídas
             const tbodySaidas = document.querySelector('#tabela-saidas tbody');
             tbodySaidas.innerHTML = historicoSaidas.length ? historicoSaidas.slice(0, 10).map(s => `
                 <tr>
@@ -1019,12 +1020,11 @@
 
         function gerarDiagnosticoIA() {
             const aiElem = document.getElementById('ai-feedback');
-            const totalFixas = caixas99.fixas + uberCaixas.fixas;
+            const totalFixas = (caixas99.fixas || 0) + (uberCaixas.fixas || 0);
             const pendentes = contasCadastradas.filter(c => !c.paga);
             const somaPendentes = pendentes.reduce((acc, c) => acc + c.valor, 0);
             
             const diaHoje = new Date().getDate();
-
             let msgs = [];
             
             let vencendoLogo = pendentes.filter(c => c.vencimento && c.vencimento >= diaHoje && c.vencimento <= (diaHoje + 3));
@@ -1048,7 +1048,6 @@
             aiElem.innerHTML = msgs.join('<br>');
         }
 
-        // BACKUP
         function exportarBackup() {
             const dadosBackup = { config, gastosMensais, db, caixas99, uberCaixas, contasCadastradas, historicoSaidas };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dadosBackup));
