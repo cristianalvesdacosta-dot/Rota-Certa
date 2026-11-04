@@ -122,11 +122,11 @@
             </div>
 
             <div class="envelopes">
-                <div class="env header-pf">LUCRO GERAL PENDENTE <strong id="res-pf">R$ 0,00</strong></div>
-                <div class="env bg-gas">⛽ GASOLINA (Geral) <strong id="res-gas">R$ 0,00</strong></div>
-                <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="res-moto">R$ 0,00</strong></div>
-                <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="res-oleo">R$ 0,00</strong></div>
-                <div class="env bg-ipva">📄 CONTAS FIXAS <strong id="res-ipva">R$ 0,00</strong></div>
+                <div class="env header-pf">LUCRO GERAL PENDENTE <strong id="res-pf">R$ 8.31</strong></div>
+                <div class="env bg-gas">⛽ GASOLINA (Geral) <strong id="res-gas">R$ 0.00</strong></div>
+                <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="res-moto">R$ 5.60</strong></div>
+                <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="res-oleo">R$ 4.97</strong></div>
+                <div class="env bg-ipva">📄 CONTAS FIXAS <strong id="res-ipva">R$ 0.00</strong></div>
                 <div id="envelopes-extras-container" style="grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;"></div>
                 
                 <!-- PAINÉIS LADO A LADO (99 E UBER) -->
@@ -190,11 +190,11 @@
         <div class="card">
             <label style="color: var(--accent);">💰 SALDO ATUAL DOS COFRES</label>
             <div class="envelopes" style="margin-top: 5px;">
-                <div class="env header-pf" style="padding: 10px;">LUCRO GERAL <strong id="ger-res-pf" style="font-size:12px;">R$ 0,00</strong></div>
-                <div class="env bg-gas">⛽ GASOLINA <strong id="ger-res-gas">R$ 0,00</strong></div>
-                <div class="env bg-moto">🏍️ MOTO <strong id="ger-res-moto">R$ 0,00</strong></div>
-                <div class="env bg-oleo">🛢️ MANUT. <strong id="ger-res-oleo">R$ 0,00</strong></div>
-                <div class="env bg-ipva">📄 FIXAS <strong id="ger-res-ipva">R$ 0,00</strong></div>
+                <div class="env header-pf" style="padding: 10px;">LUCRO GERAL <strong id="ger-res-pf" style="font-size:12px;">R$ 8.31</strong></div>
+                <div class="env bg-gas">⛽ GASOLINA <strong id="ger-res-gas">R$ 0.00</strong></div>
+                <div class="env bg-moto">🏍️ MOTO <strong id="ger-res-moto">R$ 5.60</strong></div>
+                <div class="env bg-oleo">🛢️ MANUT. <strong id="ger-res-oleo">R$ 4.97</strong></div>
+                <div class="env bg-ipva">📄 FIXAS <strong id="ger-res-ipva">R$ 0.00</strong></div>
             </div>
         </div>
 
@@ -389,7 +389,8 @@
 
         let gastosMensais = [];
         let db = [];
-        let caixas99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+        // Valores iniciais sincronizados com o print atual do cofre (Moto: 5.60, Manut: 4.97, Lucro: 8.31)
+        let caixas99 = { total: 0, dinheiro: 0, gas: 0, moto: 5.60, manut: 4.97, fixas: 0, lucro: 8.31 };
         let uberCaixas = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
         let contasCadastradas = [];
         let historicoSaidas = [];
@@ -1007,7 +1008,7 @@
             const lucroAnt = itensAnt.reduce((acc, i) => acc + parseFloat(i.lucro), 0);
 
             compBox.innerHTML = `
-                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid #333; padding-bottom: 4px;">
+                <div style="display: flex; justify-space-between; margin-bottom: 6px; border-bottom: 1px solid #333; padding-bottom: 4px;">
                     <span>📅 <strong>${strMesAnt} (Anterior)</strong></span>
                     <span>Bruto: <strong>R$ ${brutoAnt.toFixed(2)}</strong> | Lucro: <strong style="color:var(--accent);">R$ ${lucroAnt.toFixed(2)}</strong></span>
                 </div>
