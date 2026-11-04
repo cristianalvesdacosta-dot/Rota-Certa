@@ -113,7 +113,7 @@
             <label>ANÁLISE AUTOMÁTICA DE DESEMPENHO</label>
             <input type="text" id="obs" placeholder="Gerado automaticamente..." readonly style="color: var(--accent); background: #1a1a1a;">
             
-            <button class="btn-add" onclick="registrar()">CALCULAR E DISTRIBUIR</button>
+            <button class="btn-add" onclick="registrar()">REGISTRAR LANÇAMENTO</button>
 
             <div class="metric-box" style="margin-top: 15px;">
                 <span>Eficiência Média:</span>
@@ -121,17 +121,17 @@
             </div>
 
             <div class="envelopes">
-                <div class="env bg-gas">⛽ GASOLINA <strong id="res-gas">R$ 0.00</strong></div>
-                <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="res-moto">R$ 5.60</strong></div>
-                <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="res-oleo">R$ 4.97</strong></div>
-                <div class="env bg-ipva">📄 CONTAS FIXAS <strong id="res-ipva">R$ 0.00</strong></div>
+                <div class="env bg-gas">⛽ GASOLINA <strong id="res-gas">R$ 24.61</strong></div>
+                <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="res-moto">R$ 6.08</strong></div>
+                <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="res-oleo">R$ 13.61</strong></div>
+                <div class="env bg-ipva">📄 CONTAS FIXAS <strong id="res-ipva">R$ 10.37</strong></div>
                 <div id="envelopes-extras-container" style="grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;"></div>
                 
                 <!-- PAINÉIS LADO A LADO (99 E UBER) -->
                 <div class="painel-duplo-container">
                     <!-- PAINEL DA 99 -->
                     <div class="bg-acumulado-99">
-                        💵 <strong>CAIXINHAS 99:</strong><br>
+                        💵 <strong>CAIXINHAS 99 (PENDENTE):</strong><br>
                         <div style="margin: 4px 0;">
                             <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);"></div>
                             <div class="linha-acumulado"><span>💵 Espécie:</span> <input type="number" id="edit-99-dinheiro" step="0.01" readonly style="color:var(--accent);"></div>
@@ -140,13 +140,13 @@
                             <div class="linha-acumulado"><span>🛢️ Manut:</span> <input type="number" id="edit-99-manut" step="0.01"></div>
                             <div class="linha-acumulado"><span>📄 Fixas:</span> <input type="number" id="edit-99-fixas" step="0.01"></div>
                         </div>
-                        <button class="btn-salvar-edicao" onclick="salvarEdicoes99()">💾 Salvar</button>
+                        <button class="btn-salvar-edicao" onclick="salvarEdicoes99()">💾 Salvar p/ Cofre</button>
                         <button class="btn-baixar-99" onclick="baixarCaixas99()">✅ Baixar / Zerar 99</button>
                     </div>
 
                     <!-- PAINEL DA UBER -->
                     <div class="bg-acumulado-uber">
-                        📅 <strong>CAIXINHAS UBER:</strong><br>
+                        📅 <strong>CAIXINHAS UBER (PENDENTE):</strong><br>
                         <div style="margin: 4px 0;">
                             <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);"></div>
                             <div class="linha-acumulado"><span>💵 Esp/Pix:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" readonly style="color:var(--accent);"></div>
@@ -155,7 +155,7 @@
                             <div class="linha-acumulado"><span>🛢️ Manut:</span> <input type="number" id="edit-ub-manut" step="0.01"></div>
                             <div class="linha-acumulado"><span>📄 Fixas:</span> <input type="number" id="edit-ub-fixas" step="0.01"></div>
                         </div>
-                        <button class="btn-salvar-edicao" onclick="salvarEdicoesUber()">💾 Salvar</button>
+                        <button class="btn-salvar-edicao" onclick="salvarEdicoesUber()">💾 Salvar p/ Cofre</button>
                         <button class="btn-receber-uber" onclick="receberRepasseUber()">💰 Baixar / Zerar Uber</button>
                     </div>
                 </div>
@@ -183,7 +183,7 @@
             <div class="envelopes" style="margin-top: 5px;">
                 <div class="env bg-gas">⛽ GASOLINA <strong id="ger-res-gas">R$ 24.61</strong></div>
                 <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="ger-res-moto">R$ 6.08</strong></div>
-                <div class="env bg-oleo">🛢️ MANUTENÇÃO. <strong id="ger-res-oleo">R$ 13.61</strong></div>
+                <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="ger-res-oleo">R$ 13.61</strong></div>
                 <div class="env bg-ipva">📄 CONTAS FIXAS <strong id="ger-res-ipva">R$ 10.37</strong></div>
             </div>
         </div>
@@ -376,9 +376,14 @@
 
         let gastosMensais = [];
         let db = [];
-        // Sem lucro: mantendo os valores atuais de Moto (5.60) e Manut (4.97)
-        let caixas99 = { total: 0, dinheiro: 0, gas: 0, moto: 5.60, manut: 4.97, fixas: 0 };
-        let uberCaixas = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0 };
+        
+        // Cofres reais gerais salvos na nuvem
+        let cofresGerais = { gas: 24.61, moto: 6.08, manut: 13.61, fixas: 10.37 };
+        
+        // Caixinhas pendentes separadas por app (ainda não somadas ao cofre principal)
+        let pendente99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0 };
+        let pendenteUber = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0 };
+
         let contasCadastradas = [];
         let historicoSaidas = [];
 
@@ -395,8 +400,9 @@
                 if (data.config) config = data.config;
                 if (data.gastosMensais) gastosMensais = data.gastosMensais;
                 if (data.db) db = data.db;
-                if (data.caixas99) caixas99 = data.caixas99;
-                if (data.uberCaixas) uberCaixas = data.uberCaixas;
+                if (data.cofresGerais) cofresGerais = data.cofresGerais;
+                if (data.pendente99) pendente99 = data.pendente99;
+                if (data.pendenteUber) pendenteUber = data.pendenteUber;
                 if (data.contasCadastradas) contasCadastradas = data.contasCadastradas;
                 if (data.historicoSaidas) historicoSaidas = data.historicoSaidas;
             }
@@ -417,28 +423,24 @@
                 config: config,
                 gastosMensais: gastosMensais,
                 db: db,
-                caixas99: caixas99,
-                uberCaixas: uberCaixas,
+                cofresGerais: cofresGerais,
+                pendente99: pendente99,
+                pendenteUber: pendenteUber,
                 contasCadastradas: contasCadastradas,
                 historicoSaidas: historicoSaidas
             });
         }
 
         function atualizarQuadroGeral() {
-            const totalGas = (caixas99.gas || 0) + (uberCaixas.gas || 0);
-            const totalMoto = (caixas99.moto || 0) + (uberCaixas.moto || 0);
-            const totalManut = (caixas99.manut || 0) + (uberCaixas.manut || 0);
-            const totalFixas = (caixas99.fixas || 0) + (uberCaixas.fixas || 0);
+            document.getElementById('res-gas').innerText = "R$ " + (cofresGerais.gas || 0).toFixed(2);
+            document.getElementById('res-moto').innerText = "R$ " + (cofresGerais.moto || 0).toFixed(2);
+            document.getElementById('res-oleo').innerText = "R$ " + (cofresGerais.manut || 0).toFixed(2);
+            document.getElementById('res-ipva').innerText = "R$ " + (cofresGerais.fixas || 0).toFixed(2);
 
-            document.getElementById('res-gas').innerText = "R$ " + totalGas.toFixed(2);
-            document.getElementById('res-moto').innerText = "R$ " + totalMoto.toFixed(2);
-            document.getElementById('res-oleo').innerText = "R$ " + totalManut.toFixed(2);
-            document.getElementById('res-ipva').innerText = "R$ " + totalFixas.toFixed(2);
-
-            document.getElementById('ger-res-gas').innerText = "R$ " + totalGas.toFixed(2);
-            document.getElementById('ger-res-moto').innerText = "R$ " + totalMoto.toFixed(2);
-            document.getElementById('ger-res-oleo').innerText = "R$ " + totalManut.toFixed(2);
-            document.getElementById('ger-res-ipva').innerText = "R$ " + totalFixas.toFixed(2);
+            document.getElementById('ger-res-gas').innerText = "R$ " + (cofresGerais.gas || 0).toFixed(2);
+            document.getElementById('ger-res-moto').innerText = "R$ " + (cofresGerais.moto || 0).toFixed(2);
+            document.getElementById('ger-res-oleo').innerText = "R$ " + (cofresGerais.manut || 0).toFixed(2);
+            document.getElementById('ger-res-ipva').innerText = "R$ " + (cofresGerais.fixas || 0).toFixed(2);
         }
 
         function calcularBrutoTotal() {
@@ -466,78 +468,108 @@
         }
 
         function atualizarTelasCaixas() {
-            const saldoApp99 = caixas99.total - (caixas99.dinheiro || 0);
-            const saldoAppUber = uberCaixas.total - (uberCaixas.dinheiro || 0);
+            const saldoApp99 = pendente99.total - (pendente99.dinheiro || 0);
+            const saldoAppUber = pendenteUber.total - (pendenteUber.dinheiro || 0);
 
             document.getElementById('edit-99-tot').value = Math.max(0, saldoApp99).toFixed(2);
-            document.getElementById('edit-99-dinheiro').value = (caixas99.dinheiro || 0).toFixed(2);
-            document.getElementById('edit-99-gas').value = (caixas99.gas || 0).toFixed(2);
-            document.getElementById('edit-99-moto').value = (caixas99.moto || 0).toFixed(2);
-            document.getElementById('edit-99-manut').value = (caixas99.manut || 0).toFixed(2);
-            document.getElementById('edit-99-fixas').value = (caixas99.fixas || 0).toFixed(2);
+            document.getElementById('edit-99-dinheiro').value = (pendente99.dinheiro || 0).toFixed(2);
+            document.getElementById('edit-99-gas').value = (pendente99.gas || 0).toFixed(2);
+            document.getElementById('edit-99-moto').value = (pendente99.moto || 0).toFixed(2);
+            document.getElementById('edit-99-manut').value = (pendente99.manut || 0).toFixed(2);
+            document.getElementById('edit-99-fixas').value = (pendente99.fixas || 0).toFixed(2);
 
             document.getElementById('edit-ub-tot').value = Math.max(0, saldoAppUber).toFixed(2);
-            document.getElementById('edit-ub-dinheiro').value = (uberCaixas.dinheiro || 0).toFixed(2);
-            document.getElementById('edit-ub-gas').value = (uberCaixas.gas || 0).toFixed(2);
-            document.getElementById('edit-ub-moto').value = (uberCaixas.moto || 0).toFixed(2);
-            document.getElementById('edit-ub-manut').value = (uberCaixas.manut || 0).toFixed(2);
-            document.getElementById('edit-ub-fixas').value = (uberCaixas.fixas || 0).toFixed(2);
+            document.getElementById('edit-ub-dinheiro').value = (pendenteUber.dinheiro || 0).toFixed(2);
+            document.getElementById('edit-ub-gas').value = (pendenteUber.gas || 0).toFixed(2);
+            document.getElementById('edit-ub-moto').value = (pendenteUber.moto || 0).toFixed(2);
+            document.getElementById('edit-ub-manut').value = (pendenteUber.manut || 0).toFixed(2);
+            document.getElementById('edit-ub-fixas').value = (pendenteUber.fixas || 0).toFixed(2);
             
             atualizarQuadroGeral();
             renderGerenciador();
         }
 
+        // SALVAR 99: Soma o acumulado pendente da 99 direto para o cofre real e zera o pendente
         function salvarEdicoes99() {
             const novoSaldoApp99 = parseFloat(document.getElementById('edit-99-tot').value) || 0;
-            caixas99.gas = parseFloat(document.getElementById('edit-99-gas').value) || 0;
-            caixas99.moto = parseFloat(document.getElementById('edit-99-moto').value) || 0;
-            caixas99.manut = parseFloat(document.getElementById('edit-99-manut').value) || 0;
-            caixas99.fixas = parseFloat(document.getElementById('edit-99-fixas').value) || 0;
-            caixas99.total = novoSaldoApp99 + (caixas99.dinheiro || 0);
-            
+            pendente99.gas = parseFloat(document.getElementById('edit-99-gas').value) || 0;
+            pendente99.moto = parseFloat(document.getElementById('edit-99-moto').value) || 0;
+            pendente99.manut = parseFloat(document.getElementById('edit-99-manut').value) || 0;
+            pendente99.fixas = parseFloat(document.getElementById('edit-99-fixas').value) || 0;
+            pendente99.total = novoSaldoApp99 + (pendente99.dinheiro || 0);
+
+            // Transfere pro cofre geral
+            cofresGerais.gas += pendente99.gas;
+            cofresGerais.moto += pendente99.moto;
+            cofresGerais.manut += pendente99.manut;
+            cofresGerais.fixas += pendente99.fixas;
+
+            // Zera o pendente da 99 após enviar pro cofre
+            pendente99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0 };
+
             salvarNoFirebase();
             atualizarTelasCaixas();
-            alert('Caixinhas da 99 salvas no Firebase!');
+            alert('Valores da 99 salvos e somados ao cofre geral com sucesso!');
         }
 
         function baixarCaixas99() {
-            const saldoApp99 = caixas99.total - (caixas99.dinheiro || 0);
-            if (saldoApp99 <= 0 && caixas99.total <= 0) {
-                alert('Não há saldo na 99 para dar baixa no momento.');
+            const saldoApp99 = pendente99.total - (pendente99.dinheiro || 0);
+            if (saldoApp99 <= 0 && pendente99.total <= 0) {
+                alert('Não há saldo pendente na 99 para dar baixa.');
                 return;
             }
-            if (confirm(`Confirma que deu baixa no saldo da 99 e deseja zerar este painel?`)) {
-                caixas99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0 };
+            if (confirm(`Confirma que deu baixa e deseja enviar os valores pendentes da 99 para o cofre real?`)) {
+                cofresGerais.gas += (pendente99.gas || 0);
+                cofresGerais.moto += (pendente99.moto || 0);
+                cofresGerais.manut += (pendente99.manut || 0);
+                cofresGerais.fixas += (pendente99.fixas || 0);
+
+                pendente99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0 };
                 salvarNoFirebase();
                 atualizarTelasCaixas();
-                alert('Painel da 99 zerado com sucesso!');
+                alert('Baixa da 99 efetuada e integrada ao cofre!');
             }
         }
 
+        // SALVAR UBER: Soma o acumulado pendente da Uber direto para o cofre real e zera o pendente
         function salvarEdicoesUber() {
             const novoSaldoAppUber = parseFloat(document.getElementById('edit-ub-tot').value) || 0;
-            uberCaixas.gas = parseFloat(document.getElementById('edit-ub-gas').value) || 0;
-            uberCaixas.moto = parseFloat(document.getElementById('edit-ub-moto').value) || 0;
-            uberCaixas.manut = parseFloat(document.getElementById('edit-ub-manut').value) || 0;
-            uberCaixas.fixas = parseFloat(document.getElementById('edit-ub-fixas').value) || 0;
-            uberCaixas.total = novoSaldoAppUber + (uberCaixas.dinheiro || 0);
-            
+            pendenteUber.gas = parseFloat(document.getElementById('edit-ub-gas').value) || 0;
+            pendenteUber.moto = parseFloat(document.getElementById('edit-ub-moto').value) || 0;
+            pendenteUber.manut = parseFloat(document.getElementById('edit-ub-manut').value) || 0;
+            pendenteUber.fixas = parseFloat(document.getElementById('edit-ub-fixas').value) || 0;
+            pendenteUber.total = novoSaldoAppUber + (pendenteUber.dinheiro || 0);
+
+            // Transfere pro cofre geral
+            cofresGerais.gas += pendenteUber.gas;
+            cofresGerais.moto += pendenteUber.moto;
+            cofresGerais.manut += pendenteUber.manut;
+            cofresGerais.fixas += pendenteUber.fixas;
+
+            // Zera o pendente da Uber após enviar pro cofre
+            pendenteUber = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0 };
+
             salvarNoFirebase();
             atualizarTelasCaixas();
-            alert('Caixinhas da Uber salvas no Firebase!');
+            alert('Valores da Uber salvos e somados ao cofre geral com sucesso!');
         }
 
         function receberRepasseUber() {
-            const saldoAppUber = uberCaixas.total - (uberCaixas.dinheiro || 0);
-            if (saldoAppUber <= 0 && uberCaixas.total <= 0) {
-                alert('Não há saldo acumulado da Uber para receber no momento.');
+            const saldoAppUber = pendenteUber.total - (pendenteUber.dinheiro || 0);
+            if (saldoAppUber <= 0 && pendenteUber.total <= 0) {
+                alert('Não há saldo pendente na Uber para receber.');
                 return;
             }
-            if (confirm(`Confirma que recebeu o repasse da Uber e deseja zerar o acumulado?`)) {
-                uberCaixas = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0 };
+            if (confirm(`Confirma que recebeu o repasse da Uber e deseja integrar ao cofre real?`)) {
+                cofresGerais.gas += (pendenteUber.gas || 0);
+                cofresGerais.moto += (pendenteUber.moto || 0);
+                cofresGerais.manut += (pendenteUber.manut || 0);
+                cofresGerais.fixas += (pendenteUber.fixas || 0);
+
+                pendenteUber = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0 };
                 salvarNoFirebase();
                 atualizarTelasCaixas();
-                alert('Repasse da Uber recebido e caixinhas zeradas!');
+                alert('Repasse da Uber recebido e integrado ao cofre!');
             }
         }
 
@@ -658,6 +690,7 @@
             `).join('');
         }
 
+        // REGISTRAR: Vai direto para o painel pendente do app, sem somar direto no cofre geral ainda
         function registrar() {
             const b99 = parseFloat(document.getElementById('bruto_99').value) || 0;
             const dinheiro99 = parseFloat(document.getElementById('dinheiro_99').value) || 0;
@@ -677,37 +710,27 @@
             const resManut = km * config.manutencao;
             const resFixas = km * config.fixas;
             
-            let totalExtrasDia = 0;
-            const kmMes = config.kmMes > 0 ? config.kmMes : 3000;
-
-            gastosMensais.forEach(g => {
-                if(g.ativo) {
-                    const custoKmGasto = g.valor / kmMes;
-                    totalExtrasDia += (km * custoKmGasto);
-                }
-            });
-
             const eficiencia = km > 0 ? (bruto / km) : 0;
             const custoTotalPorKmBase = config.gasolinaKm + config.parcela + config.manutencao + config.fixas;
 
             if (b99 > 0) {
                 const prop99 = b99 / bruto;
-                caixas99.total = (caixas99.total || 0) + b99;
-                caixas99.dinheiro = (caixas99.dinheiro || 0) + dinheiro99;
-                caixas99.gas = (caixas99.gas || 0) + (gas * prop99);
-                caixas99.moto = (caixas99.moto || 0) + (resParcela * prop99);
-                caixas99.manut = (caixas99.manut || 0) + (resManut * prop99);
-                caixas99.fixas = (caixas99.fixas || 0) + (resFixas * prop99);
+                pendente99.total = (pendente99.total || 0) + b99;
+                pendente99.dinheiro = (pendente99.dinheiro || 0) + dinheiro99;
+                pendente99.gas = (pendente99.gas || 0) + (gas * prop99);
+                pendente99.moto = (pendente99.moto || 0) + (resParcela * prop99);
+                pendente99.manut = (pendente99.manut || 0) + (resManut * prop99);
+                pendente99.fixas = (pendente99.fixas || 0) + (resFixas * prop99);
             }
 
             if (uber > 0) {
                 const propUber = uber / bruto;
-                uberCaixas.total = (uberCaixas.total || 0) + uber;
-                uberCaixas.dinheiro = (uberCaixas.dinheiro || 0) + dinheiroUber;
-                uberCaixas.gas = (uberCaixas.gas || 0) + (gas * propUber);
-                uberCaixas.moto = (uberCaixas.moto || 0) + (resParcela * propUber);
-                uberCaixas.manut = (uberCaixas.manut || 0) + (resManut * propUber);
-                uberCaixas.fixas = (uberCaixas.fixas || 0) + (resFixas * propUber);
+                pendenteUber.total = (pendenteUber.total || 0) + uber;
+                pendenteUber.dinheiro = (pendenteUber.dinheiro || 0) + dinheiroUber;
+                pendenteUber.gas = (pendenteUber.gas || 0) + (gas * propUber);
+                pendenteUber.moto = (pendenteUber.moto || 0) + (resParcela * propUber);
+                pendenteUber.manut = (pendenteUber.manut || 0) + (resManut * propUber);
+                pendenteUber.fixas = (pendenteUber.fixas || 0) + (resFixas * propUber);
             }
 
             const agora = new Date();
@@ -729,7 +752,7 @@
             document.getElementById('dinheiro_uber').value = '';
             document.getElementById('km_dia').value = '';
             document.getElementById('bruto').value = '';
-            alert('Lançamento registrado e distribuído para os cofres operacionais!');
+            alert('Lançamento registrado nas caixinhas pendentes dos aplicativos! Clique em Salvar p/ Cofre para integrar ao saldo real.');
         }
 
         function deletarItem(i) {
@@ -757,6 +780,7 @@
             document.getElementById('bloco_qtd_parcelas').style.display = (tipo === 'parcelada') ? 'block' : 'none';
         }
 
+        // RETIRADA RÁPIDA: Sai direto do cofre real geral
         function lançarSaidaCofre() {
             const cofre = document.getElementById('saida_cofre').value;
             const desc = document.getElementById('saida_desc').value.trim();
@@ -767,22 +791,14 @@
                 return;
             }
 
-            const totalDisponivel = (caixas99[cofre] || 0) + (uberCaixas[cofre] || 0);
+            const totalDisponivel = cofresGerais[cofre] || 0;
 
             if (valor > totalDisponivel) {
                 alert(`Saldo insuficiente no cofre ${cofre.toUpperCase()}! Disponível: R$ ${totalDisponivel.toFixed(2)}`);
                 return;
             }
 
-            if (totalDisponivel > 0) {
-                const prop99 = (caixas99[cofre] || 0) / totalDisponivel;
-                const propUber = (uberCaixas[cofre] || 0) / totalDisponivel;
-                
-                caixas99[cofre] = Math.max(0, (caixas99[cofre] || 0) - (valor * prop99));
-                uberCaixas[cofre] = Math.max(0, (uberCaixas[cofre] || 0) - (valor * propUber));
-            } else {
-                caixas99[cofre] = Math.max(0, (caixas99[cofre] || 0) - valor);
-            }
+            cofresGerais[cofre] = Math.max(0, totalDisponivel - valor);
 
             const agora = new Date();
             historicoSaidas.unshift({
@@ -845,7 +861,7 @@
 
             const cofre = conta.cofre;
             const valor = conta.valor;
-            const totalDisponivel = (caixas99[cofre] || 0) + (uberCaixas[cofre] || 0);
+            const totalDisponivel = cofresGerais[cofre] || 0;
 
             if (valor > totalDisponivel) {
                 alert(`Saldo insuficiente no cofre ${cofre.toUpperCase()} para pagar esta conta! Disponível: R$ ${totalDisponivel.toFixed(2)}`);
@@ -855,15 +871,7 @@
             let infoTexto = conta.tipo === 'parcelada' ? `parcela ${conta.parcelaAtual}/${conta.totalParcelas}` : conta.tipo === 'recorrente' ? 'mensalidade' : 'conta única';
 
             if (confirm(`Confirmar PAGAMENTO de "${conta.nome}" (${infoTexto}) no valor de R$ ${valor.toFixed(2)} usando o cofre ${cofre.toUpperCase()}?`)) {
-                if (totalDisponivel > 0) {
-                    const prop99 = (caixas99[cofre] || 0) / totalDisponivel;
-                    const propUber = (uberCaixas[cofre] || 0) / totalDisponivel;
-
-                    caixas99[cofre] = Math.max(0, (caixas99[cofre] || 0) - (valor * prop99));
-                    uberCaixas[cofre] = Math.max(0, (uberCaixas[cofre] || 0) - (valor * propUber));
-                } else {
-                    caixas99[cofre] = Math.max(0, (caixas99[cofre] || 0) - valor);
-                }
+                cofresGerais[cofre] = Math.max(0, totalDisponivel - valor);
 
                 const agora = new Date();
                 historicoSaidas.unshift({
@@ -989,7 +997,7 @@
 
         function gerarDiagnosticoIA() {
             const aiElem = document.getElementById('ai-feedback');
-            const totalFixas = (caixas99.fixas || 0) + (uberCaixas.fixas || 0);
+            const totalFixas = cofresGerais.fixas || 0;
             const pendentes = contasCadastradas.filter(c => !c.paga);
             const somaPendentes = pendentes.reduce((acc, c) => acc + c.valor, 0);
             
@@ -1018,7 +1026,7 @@
         }
 
         function exportarBackup() {
-            const dadosBackup = { config, gastosMensais, db, caixas99, uberCaixas, contasCadastradas, historicoSaidas };
+            const dadosBackup = { config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, contasCadastradas, historicoSaidas };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dadosBackup));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
@@ -1040,8 +1048,9 @@
                     if (conteudo.config) config = conteudo.config;
                     if (conteudo.gastosMensais) gastosMensais = conteudo.gastosMensais;
                     if (conteudo.db) db = conteudo.db;
-                    caixas99 = conteudo.caixas99 || caixas99;
-                    uberCaixas = conteudo.uberCaixas || uberCaixas;
+                    cofresGerais = conteudo.cofresGerais || cofresGerais;
+                    pendente99 = conteudo.pendente99 || pendente99;
+                    pendenteUber = conteudo.pendenteUber || pendenteUber;
                     contasCadastradas = conteudo.contasCadastradas || [];
                     historicoSaidas = conteudo.historicoSaidas || [];
 
