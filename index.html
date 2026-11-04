@@ -9,7 +9,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
     <style>
-        :root { --green: #2ecc71; --blue: #3498db; --dark: #0a0a0a; --card: #1e1e1e; --text: #f5f5f5; --accent: #f1c40f; --red: #e74c3c; --purple: #4a148c; }
+        :root { --green: #2ecc71; --blue: #3498db; --dark: #0a0a0a; --card: #1e1e1e; --text: #f5f5f5; --accent: #f1c40f; --red: #e74c3c; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: var(--text); padding: 0; margin: 0; padding-bottom: 70px; }
         
         .tab-bar { display: flex; background: #111; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #333; }
@@ -39,7 +39,6 @@
         .envelopes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
         .env { padding: 10px; border-radius: 6px; font-size: 10px; text-align: center; border: 1px solid #333; }
         .env strong { display: block; font-size: 14px; margin-top: 4px; }
-        .header-pf { background: var(--purple); grid-column: span 2; padding: 15px; border: none; }
         .bg-gas { background: #b71c1c; } 
         .bg-moto { background: #e65100; }
         .bg-oleo { background: #004d40; border: 1px solid var(--green); }
@@ -122,8 +121,7 @@
             </div>
 
             <div class="envelopes">
-                <div class="env header-pf">LUCRO GERAL PENDENTE <strong id="res-pf">R$ 8.31</strong></div>
-                <div class="env bg-gas">⛽ GASOLINA (Geral) <strong id="res-gas">R$ 0.00</strong></div>
+                <div class="env bg-gas">⛽ GASOLINA <strong id="res-gas">R$ 0.00</strong></div>
                 <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="res-moto">R$ 5.60</strong></div>
                 <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="res-oleo">R$ 4.97</strong></div>
                 <div class="env bg-ipva">📄 CONTAS FIXAS <strong id="res-ipva">R$ 0.00</strong></div>
@@ -141,7 +139,6 @@
                             <div class="linha-acumulado"><span>🏍️ Moto:</span> <input type="number" id="edit-99-moto" step="0.01"></div>
                             <div class="linha-acumulado"><span>🛢️ Manut:</span> <input type="number" id="edit-99-manut" step="0.01"></div>
                             <div class="linha-acumulado"><span>📄 Fixas:</span> <input type="number" id="edit-99-fixas" step="0.01"></div>
-                            <div class="linha-acumulado"><span>💜 Lucro:</span> <input type="number" id="edit-99-lucro" step="0.01" style="color:var(--green);"></div>
                         </div>
                         <button class="btn-salvar-edicao" onclick="salvarEdicoes99()">💾 Salvar</button>
                         <button class="btn-baixar-99" onclick="baixarCaixas99()">✅ Baixar / Zerar 99</button>
@@ -157,7 +154,6 @@
                             <div class="linha-acumulado"><span>🏍️ Moto:</span> <input type="number" id="edit-ub-moto" step="0.01"></div>
                             <div class="linha-acumulado"><span>🛢️ Manut:</span> <input type="number" id="edit-ub-manut" step="0.01"></div>
                             <div class="linha-acumulado"><span>📄 Fixas:</span> <input type="number" id="edit-ub-fixas" step="0.01"></div>
-                            <div class="linha-acumulado"><span>💜 Lucro:</span> <input type="number" id="edit-ub-lucro" step="0.01" style="color:var(--green);"></div>
                         </div>
                         <button class="btn-salvar-edicao" onclick="salvarEdicoesUber()">💾 Salvar</button>
                         <button class="btn-receber-uber" onclick="receberRepasseUber()">💰 Baixar / Zerar Uber</button>
@@ -168,14 +164,9 @@
         </div>
         
         <table id="tabela">
-            <thead><tr><th>Data</th><th>Bruto</th><th>R$/Km</th><th>Lucro</th><th>Análise</th><th>X</th></tr></thead>
+            <thead><tr><th>Data</th><th>Bruto</th><th>R$/Km</th><th>Eficiência</th><th>Análise</th><th>X</th></tr></thead>
             <tbody></tbody>
         </table>
-
-        <div class="total-box">
-            SOMA TOTAL ACUMULADA (LUCRO LÍQUIDO)
-            <strong id="soma-total-lucro">R$ 0,00</strong>
-        </div>
     </div>
 
     <!-- ABA GERENCIAR COFRES E DESPESAS -->
@@ -190,7 +181,6 @@
         <div class="card">
             <label style="color: var(--accent);">💰 SALDO ATUAL DOS COFRES</label>
             <div class="envelopes" style="margin-top: 5px;">
-                <div class="env header-pf" style="padding: 10px;">LUCRO GERAL <strong id="ger-res-pf" style="font-size:12px;">R$ 8.31</strong></div>
                 <div class="env bg-gas">⛽ GASOLINA <strong id="ger-res-gas">R$ 0.00</strong></div>
                 <div class="env bg-moto">🏍️ MOTO <strong id="ger-res-moto">R$ 5.60</strong></div>
                 <div class="env bg-oleo">🛢️ MANUT. <strong id="ger-res-oleo">R$ 4.97</strong></div>
@@ -214,7 +204,6 @@
                 <option value="moto">🏍️ Parcela Moto</option>
                 <option value="manut">🛢️ Manutenção</option>
                 <option value="fixas">📄 Contas Fixas</option>
-                <option value="lucro">💜 Lucro Pessoal</option>
             </select>
 
             <label>Descrição (Ex: Calibrar Pneu, Combustível)</label>
@@ -242,7 +231,6 @@
                 <option value="fixas">📄 Contas Fixas</option>
                 <option value="moto">🏍️ Parcela Moto</option>
                 <option value="manut">🛢️ Manutenção</option>
-                <option value="lucro">💜 Lucro / Pessoal</option>
             </select>
 
             <label>Nome da Conta</label>
@@ -362,7 +350,6 @@
     </div>
 
     <script>
-        // Configuração do Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyCCX1k0PN_yOd3QWauBQhwX0FRwqhn7Clo",
             authDomain: "gestao-financeira-motoboy.firebaseapp.com",
@@ -389,9 +376,9 @@
 
         let gastosMensais = [];
         let db = [];
-        // Valores iniciais sincronizados com o print atual do cofre (Moto: 5.60, Manut: 4.97, Lucro: 8.31)
-        let caixas99 = { total: 0, dinheiro: 0, gas: 0, moto: 5.60, manut: 4.97, fixas: 0, lucro: 8.31 };
-        let uberCaixas = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+        // Sem lucro: mantendo os valores atuais de Moto (5.60) e Manut (4.97)
+        let caixas99 = { total: 0, dinheiro: 0, gas: 0, moto: 5.60, manut: 4.97, fixas: 0 };
+        let uberCaixas = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0 };
         let contasCadastradas = [];
         let historicoSaidas = [];
 
@@ -442,19 +429,16 @@
             const totalMoto = (caixas99.moto || 0) + (uberCaixas.moto || 0);
             const totalManut = (caixas99.manut || 0) + (uberCaixas.manut || 0);
             const totalFixas = (caixas99.fixas || 0) + (uberCaixas.fixas || 0);
-            const totalLucro = (caixas99.lucro || 0) + (uberCaixas.lucro || 0);
 
             document.getElementById('res-gas').innerText = "R$ " + totalGas.toFixed(2);
             document.getElementById('res-moto').innerText = "R$ " + totalMoto.toFixed(2);
             document.getElementById('res-oleo').innerText = "R$ " + totalManut.toFixed(2);
             document.getElementById('res-ipva').innerText = "R$ " + totalFixas.toFixed(2);
-            document.getElementById('res-pf').innerText = "R$ " + totalLucro.toFixed(2);
 
             document.getElementById('ger-res-gas').innerText = "R$ " + totalGas.toFixed(2);
             document.getElementById('ger-res-moto').innerText = "R$ " + totalMoto.toFixed(2);
             document.getElementById('ger-res-oleo').innerText = "R$ " + totalManut.toFixed(2);
             document.getElementById('ger-res-ipva').innerText = "R$ " + totalFixas.toFixed(2);
-            document.getElementById('ger-res-pf').innerText = "R$ " + totalLucro.toFixed(2);
         }
 
         function calcularBrutoTotal() {
@@ -491,7 +475,6 @@
             document.getElementById('edit-99-moto').value = (caixas99.moto || 0).toFixed(2);
             document.getElementById('edit-99-manut').value = (caixas99.manut || 0).toFixed(2);
             document.getElementById('edit-99-fixas').value = (caixas99.fixas || 0).toFixed(2);
-            document.getElementById('edit-99-lucro').value = (caixas99.lucro || 0).toFixed(2);
 
             document.getElementById('edit-ub-tot').value = Math.max(0, saldoAppUber).toFixed(2);
             document.getElementById('edit-ub-dinheiro').value = (uberCaixas.dinheiro || 0).toFixed(2);
@@ -499,7 +482,6 @@
             document.getElementById('edit-ub-moto').value = (uberCaixas.moto || 0).toFixed(2);
             document.getElementById('edit-ub-manut').value = (uberCaixas.manut || 0).toFixed(2);
             document.getElementById('edit-ub-fixas').value = (uberCaixas.fixas || 0).toFixed(2);
-            document.getElementById('edit-ub-lucro').value = (uberCaixas.lucro || 0).toFixed(2);
             
             atualizarQuadroGeral();
             renderGerenciador();
@@ -511,7 +493,6 @@
             caixas99.moto = parseFloat(document.getElementById('edit-99-moto').value) || 0;
             caixas99.manut = parseFloat(document.getElementById('edit-99-manut').value) || 0;
             caixas99.fixas = parseFloat(document.getElementById('edit-99-fixas').value) || 0;
-            caixas99.lucro = parseFloat(document.getElementById('edit-99-lucro').value) || 0;
             caixas99.total = novoSaldoApp99 + (caixas99.dinheiro || 0);
             
             salvarNoFirebase();
@@ -526,7 +507,7 @@
                 return;
             }
             if (confirm(`Confirma que deu baixa no saldo da 99 e deseja zerar este painel?`)) {
-                caixas99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+                caixas99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0 };
                 salvarNoFirebase();
                 atualizarTelasCaixas();
                 alert('Painel da 99 zerado com sucesso!');
@@ -539,7 +520,6 @@
             uberCaixas.moto = parseFloat(document.getElementById('edit-ub-moto').value) || 0;
             uberCaixas.manut = parseFloat(document.getElementById('edit-ub-manut').value) || 0;
             uberCaixas.fixas = parseFloat(document.getElementById('edit-ub-fixas').value) || 0;
-            uberCaixas.lucro = parseFloat(document.getElementById('edit-ub-lucro').value) || 0;
             uberCaixas.total = novoSaldoAppUber + (uberCaixas.dinheiro || 0);
             
             salvarNoFirebase();
@@ -554,7 +534,7 @@
                 return;
             }
             if (confirm(`Confirma que recebeu o repasse da Uber e deseja zerar o acumulado?`)) {
-                uberCaixas = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+                uberCaixas = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0 };
                 salvarNoFirebase();
                 atualizarTelasCaixas();
                 alert('Repasse da Uber recebido e caixinhas zeradas!');
@@ -707,12 +687,8 @@
                 }
             });
 
-            const custoTotalPorKmBase = config.gasolinaKm + config.parcela + config.manutencao + config.fixas;
-            const custoExtraPorKm = gastosMensais.filter(g => g.ativo).reduce((acc, g) => acc + (g.valor / kmMes), 0);
-            const custoTotalPorKm = custoTotalPorKmBase + custoExtraPorKm;
-
-            const lucro = bruto - gas - resParcela - resManut - resFixas - totalExtrasDia;
             const eficiencia = km > 0 ? (bruto / km) : 0;
+            const custoTotalPorKmBase = config.gasolinaKm + config.parcela + config.manutencao + config.fixas;
 
             if (b99 > 0) {
                 const prop99 = b99 / bruto;
@@ -722,7 +698,6 @@
                 caixas99.moto = (caixas99.moto || 0) + (resParcela * prop99);
                 caixas99.manut = (caixas99.manut || 0) + (resManut * prop99);
                 caixas99.fixas = (caixas99.fixas || 0) + (resFixas * prop99);
-                caixas99.lucro = (caixas99.lucro || 0) + (lucro * prop99);
             }
 
             if (uber > 0) {
@@ -733,7 +708,6 @@
                 uberCaixas.moto = (uberCaixas.moto || 0) + (resParcela * propUber);
                 uberCaixas.manut = (uberCaixas.manut || 0) + (resManut * propUber);
                 uberCaixas.fixas = (uberCaixas.fixas || 0) + (resFixas * propUber);
-                uberCaixas.lucro = (uberCaixas.lucro || 0) + (lucro * propUber);
             }
 
             const agora = new Date();
@@ -741,9 +715,8 @@
                 data: agora.toLocaleDateString('pt-BR'), 
                 mesAno: `${String(agora.getMonth() + 1).padStart(2, '0')}/${agora.getFullYear()}`,
                 bruto: bruto.toFixed(2), 
-                lucro: lucro.toFixed(2), 
                 eficiencia: eficiencia.toFixed(2),
-                obs: (eficiencia < custoTotalPorKm) ? "RUIM" : (eficiencia < (custoTotalPorKm + 0.36) ? "REGULAR" : "EXCELENTE")
+                obs: (eficiencia < custoTotalPorKmBase) ? "RUIM" : (eficiencia < (custoTotalPorKmBase + 0.36) ? "REGULAR" : "EXCELENTE")
             });
 
             salvarNoFirebase();
@@ -756,7 +729,7 @@
             document.getElementById('dinheiro_uber').value = '';
             document.getElementById('km_dia').value = '';
             document.getElementById('bruto').value = '';
-            alert('Lançamento registrado e adicionado aos cofres!');
+            alert('Lançamento registrado e distribuído para os cofres operacionais!');
         }
 
         function deletarItem(i) {
@@ -772,14 +745,11 @@
                     <td>${item.data}</td>
                     <td>R$ ${item.bruto}</td>
                     <td>R$ ${item.eficiencia}</td>
-                    <td>R$ ${item.lucro}</td>
+                    <td>${item.eficiencia >= 2.0 ? 'EXCELENTE' : item.eficiencia >= 1.5 ? 'MÉDIO' : 'RUIM'}</td>
                     <td>${item.obs}</td>
                     <td><button class="btn-del" onclick="deletarItem(${i})">X</button></td>
                 </tr>
             `).join('');
-
-            const somaTotal = db.reduce((acc, item) => acc + parseFloat(item.lucro), 0);
-            document.getElementById('soma-total-lucro').innerText = "R$ " + somaTotal.toFixed(2);
         }
 
         function mudarTipoContaForm() {
@@ -1001,20 +971,18 @@
 
             const itensAtual = db.filter(item => item.mesAno === strMesAtual);
             const brutoAtual = itensAtual.reduce((acc, i) => acc + parseFloat(i.bruto), 0);
-            const lucroAtual = itensAtual.reduce((acc, i) => acc + parseFloat(i.lucro), 0);
 
             const itensAnt = db.filter(item => item.mesAno === strMesAnt);
             const brutoAnt = itensAnt.reduce((acc, i) => acc + parseFloat(i.bruto), 0);
-            const lucroAnt = itensAnt.reduce((acc, i) => acc + parseFloat(i.lucro), 0);
 
             compBox.innerHTML = `
-                <div style="display: flex; justify-space-between; margin-bottom: 6px; border-bottom: 1px solid #333; padding-bottom: 4px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid #333; padding-bottom: 4px;">
                     <span>📅 <strong>${strMesAnt} (Anterior)</strong></span>
-                    <span>Bruto: <strong>R$ ${brutoAnt.toFixed(2)}</strong> | Lucro: <strong style="color:var(--accent);">R$ ${lucroAnt.toFixed(2)}</strong></span>
+                    <span>Bruto: <strong>R$ ${brutoAnt.toFixed(2)}</strong></span>
                 </div>
                 <div style="display: flex; justify-content: space-between;">
                     <span>📅 <strong>${strMesAtual} (Atual)</strong></span>
-                    <span>Bruto: <strong style="color:var(--green);">R$ ${brutoAtual.toFixed(2)}</strong> | Lucro: <strong style="color:var(--green);">R$ ${lucroAtual.toFixed(2)}</strong></span>
+                    <span>Bruto: <strong style="color:var(--green);">R$ ${brutoAtual.toFixed(2)}</strong></span>
                 </div>
             `;
         }
