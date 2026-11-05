@@ -9,291 +9,73 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
     <style>
-        :root { 
-            --green: #2ecc71; 
-            --blue: #3498db; 
-            --dark: #0a0a0a; 
-            --card: #1e1e1e; 
-            --text: #f5f5f5; 
-            --accent: #f1c40f; 
-            --red: #e74c3c; 
-        }
+        :root { --green: #2ecc71; --blue: #3498db; --dark: #0a0a0a; --card: #1e1e1e; --text: #f5f5f5; --accent: #f1c40f; --red: #e74c3c; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: var(--text); padding: 0; margin: 0; padding-bottom: 70px; }
         
-        * { box-sizing: border-box; }
+        .tab-bar { display: flex; background: #111; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #333; }
+        .tab-btn { flex: 1; padding: 15px 2px; border: none; background: none; color: #888; font-weight: bold; cursor: pointer; font-size: 9px; text-transform: uppercase; text-align: center; }
+        .tab-btn.active { color: var(--green); border-bottom: 3px solid var(--green); }
 
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: var(--dark); 
-            color: var(--text); 
-            padding: 0; 
-            margin: 0; 
-            padding-bottom: 70px; 
-        }
+        .container { padding: 15px; max-width: 500px; margin: auto; display: none; }
+        .container.active { display: block; }
+
+        .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #333; margin-bottom: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
         
-        .tab-bar { 
-            display: flex; 
-            background: #111; 
-            position: sticky; 
-            top: 0; 
-            z-index: 100; 
-            border-bottom: 1px solid #333; 
-        }
-
-        .tab-btn { 
-            flex: 1; 
-            padding: 14px 2px; 
-            border: none; 
-            background: none; 
-            color: #888; 
-            font-weight: bold; 
-            cursor: pointer; 
-            font-size: 10px; 
-            text-transform: uppercase; 
-            text-align: center; 
-            transition: all 0.2s;
-        }
-
-        .tab-btn.active { 
-            color: var(--green); 
-            border-bottom: 3px solid var(--green); 
-            background: #181818;
-        }
-
-        .container { 
-            padding: 12px; 
-            max-width: 500px; 
-            margin: auto; 
-            display: none; 
-        }
-
-        .container.active { 
-            display: block; 
-        }
-
-        .card { 
-            background: var(--card); 
-            padding: 16px; 
-            border-radius: 12px; 
-            border: 1px solid #333; 
-            margin-bottom: 15px; 
-            box-shadow: 0 6px 18px rgba(0,0,0,0.5); 
-        }
-        
-        label { 
-            display: block; 
-            font-size: 11px; 
-            color: var(--green); 
-            font-weight: bold; 
-            margin-bottom: 4px; 
-            text-transform: uppercase; 
-        }
-
-        input, select { 
-            width: 100%; 
-            padding: 10px 12px; 
-            border-radius: 8px; 
-            border: 2px solid #333; 
-            background: #252525; 
-            color: #fff; 
-            margin-bottom: 10px; 
-            text-align: center; 
-            font-size: 14px; 
-            outline: none; 
-            transition: border-color 0.2s;
-        }
-
-        input:focus, select:focus {
-            border-color: var(--green);
-        }
-
+        label { display: block; font-size: 11px; color: var(--green); font-weight: bold; margin-bottom: 4px; text-transform: uppercase; }
+        input, select { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #444; background: #2b2b2b; color: #fff; box-sizing: border-box; margin-bottom: 12px; text-align: center; font-size: 15px; outline: none; }
         select { text-align-last: center; }
 
-        .btn-add { 
-            width: 100%; 
-            padding: 14px; 
-            background: var(--green); 
-            border: none; 
-            color: #000; 
-            font-weight: 800; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-size: 15px; 
-            text-transform: uppercase; 
-            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
-            margin-top: 5px;
-        }
-
-        .btn-add:active { transform: scale(0.98); }
-
-        .btn-backup { width: 100%; padding: 12px; background: var(--blue); border: none; color: #fff; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 13px; text-transform: uppercase; margin-top: 10px; }
-        .btn-restore { width: 100%; padding: 12px; background: var(--accent); border: none; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 13px; text-transform: uppercase; margin-top: 10px; }
+        .btn-add { width: 100%; padding: 16px; background: var(--green); border: none; color: #000; font-weight: 800; border-radius: 8px; cursor: pointer; font-size: 16px; text-transform: uppercase; }
+        .btn-backup { width: 100%; padding: 12px; background: var(--blue); border: none; color: #fff; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 14px; text-transform: uppercase; margin-top: 10px; }
+        .btn-restore { width: 100%; padding: 12px; background: var(--accent); border: none; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 14px; text-transform: uppercase; margin-top: 10px; }
+        .btn-limpar-pendentes { width: 100%; padding: 10px; background: #444; border: 1px solid #666; color: #fff; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 10px; }
         
-        .btn-baixar-99 { 
-            width: 100%; 
-            padding: 9px; 
-            background: var(--green); 
-            border: none; 
-            color: #000; 
-            font-weight: bold; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-size: 10px; 
-            text-transform: uppercase; 
-            margin-top: 6px; 
-        }
+        .btn-baixar-99 { width: 100%; padding: 10px; background: var(--green); border: none; color: #000; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 10px; }
+        .btn-receber-uber { width: 100%; padding: 10px; background: var(--accent); border: none; color: #000; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 10px; }
+        .btn-salvar-edicao { width: 100%; padding: 8px; background: var(--blue); border: none; color: #fff; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 6px; }
+        .btn-reset-trip { background: var(--accent); color: #000; border: none; padding: 4px 8px; font-size: 10px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 4px; display: inline-block; }
 
-        .btn-receber-uber { 
-            width: 100%; 
-            padding: 9px; 
-            background: var(--accent); 
-            border: none; 
-            color: #000; 
-            font-weight: bold; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-size: 10px; 
-            text-transform: uppercase; 
-            margin-top: 6px; 
-        }
+        .metric-box { display: flex; justify-content: space-between; align-items: center; background: #333; padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #444; }
+        .metric-val { color: var(--green); font-weight: bold; font-size: 16px; }
 
-        .btn-salvar-edicao { 
-            width: 100%; 
-            padding: 8px; 
-            background: var(--blue); 
-            border: none; 
-            color: #fff; 
-            font-weight: bold; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-size: 10px; 
-            text-transform: uppercase; 
-            margin-top: 6px; 
-        }
-
-        .btn-reset-trip { 
-            background: var(--accent); 
-            color: #000; 
-            border: none; 
-            padding: 4px 8px; 
-            font-size: 10px; 
-            font-weight: bold; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            margin-top: 4px; 
-            display: inline-block; 
-        }
-
-        .metric-box { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: #252525; 
-            padding: 12px; 
-            border-radius: 8px; 
-            margin-top: 12px; 
-            border: 1px solid #333; 
-        }
-
-        .metric-val { 
-            color: var(--green); 
-            font-weight: bold; 
-            font-size: 16px; 
-        }
-
-        .envelopes { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 8px; 
-            margin-top: 10px; 
-        }
-
-        .env { 
-            padding: 10px; 
-            border-radius: 6px; 
-            font-size: 10px; 
-            text-align: center; 
-            border: 1px solid #333; 
-        }
-        .env strong { display: block; font-size: 13px; margin-top: 4px; }
-        
+        .envelopes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
+        .env { padding: 10px; border-radius: 6px; font-size: 10px; text-align: center; border: 1px solid #333; }
+        .env strong { display: block; font-size: 14px; margin-top: 4px; }
         .bg-gas { background: #b71c1c; } 
         .bg-moto { background: #e65100; }
         .bg-oleo { background: #004d40; border: 1px solid var(--green); }
         .bg-ipva { background: #01579b; }
         .bg-lucro { background: #1b5e20; border: 1px solid var(--green); }
         
-        .painel-duplo-container { 
-            grid-column: span 2; 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 8px; 
-            margin-top: 5px; 
-        }
-
-        .bg-acumulado-99 { 
-            background: #0d2818; 
-            border: 1px dashed var(--green); 
-            padding: 8px; 
-            border-radius: 8px; 
-            font-size: 10px; 
-            text-align: left; 
-        }
-
-        .bg-acumulado-uber { 
-            background: #1a232a; 
-            border: 1px dashed var(--accent); 
-            padding: 8px; 
-            border-radius: 8px; 
-            font-size: 10px; 
-            text-align: left; 
-        }
+        .painel-duplo-container { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px; }
+        .bg-acumulado-99 { background: #004d40; border: 1px dashed var(--green); padding: 10px; border-radius: 6px; font-size: 10px; text-align: left; }
+        .bg-acumulado-uber { background: #263238; border: 1px dashed var(--accent); padding: 10px; border-radius: 6px; font-size: 10px; text-align: left; }
         
-        .linha-acumulado { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin: 3px 0; 
-            border-bottom: 1px solid rgba(255,255,255,0.08); 
-            padding-bottom: 2px; 
-            font-size: 10px; 
-        }
+        .linha-acumulado { display: flex; justify-content: space-between; align-items: center; margin: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2px; font-size: 10px; }
+        .linha-acumulado input { width: 65px; padding: 3px; font-size: 11px; margin: 0; background: #111; border: 1px solid #555; color: #fff; text-align: right; }
 
-        .linha-acumulado input { 
-            width: 58px; 
-            padding: 2px 4px; 
-            font-size: 10px; 
-            margin: 0; 
-            background: #111; 
-            border: 1px solid #444; 
-            color: #fff; 
-            text-align: right; 
-            border-radius: 4px;
-        }
-
-        .toggle-container { 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            background: #252525; 
-            padding: 10px; 
-            border-radius: 6px; 
-            margin-bottom: 8px; 
-            border: 1px solid #444; 
-            font-size: 11px; 
-        }
+        .toggle-container { display: flex; align-items: center; justify-content: space-between; background: #252525; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #444; font-size: 11px; }
         .toggle-container input { width: 20px; height: 20px; margin: 0; cursor: pointer; }
 
-        table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 15px; }
-        th, td { border: 1px solid #333; padding: 6px; text-align: center; }
-        th { background: #222; color: var(--green); }
+        /* TABELA DE HISTÓRICO RE-ESTILIZADA PROFISSIONAL */
+        .historico-card { background: var(--card); border: 1px solid #333; border-radius: 12px; padding: 15px; margin-top: 20px; }
+        .historico-titulo { font-size: 12px; font-weight: bold; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
         
-        .btn-acao-grupo { display: flex; gap: 4px; justify-content: center; }
-        .btn-pagar { background: var(--green); color: #000; font-weight: bold; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 9px; text-transform: uppercase; }
-        .btn-excluir { background: var(--red); color: #fff; font-weight: bold; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 9px; text-transform: uppercase; }
-        .btn-del { background: var(--red); color: #fff; border: none; padding: 4px 6px; border-radius: 4px; cursor: pointer; font-size: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        th { background: #151515; color: var(--green); padding: 10px 6px; border-bottom: 2px solid #333; text-transform: uppercase; font-size: 10px; }
+        td { border-bottom: 1px solid #2a2a2a; padding: 10px 4px; text-align: center; color: #ddd; }
+        tr:hover { background: rgba(255,255,255,0.02); }
 
-        .total-box { background: #151515; border: 1px dashed var(--green); padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 11px; text-align: center; color: var(--accent); }
-        .total-box strong { font-size: 14px; color: var(--green); display: block; margin-top: 4px; }
+        .badge-obs { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 9px; text-transform: uppercase; display: inline-block; }
+        .badge-ruim { background: rgba(231, 76, 60, 0.2); color: var(--red); border: 1px solid var(--red); }
+        .badge-medio { background: rgba(241, 196, 15, 0.2); color: var(--accent); border: 1px solid var(--accent); }
+        .badge-excelente { background: rgba(46, 204, 113, 0.2); color: var(--green); border: 1px solid var(--green); }
+        
+        .btn-del { background: var(--red); color: #fff; border: none; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-del:hover { background: #c0392b; transform: scale(1.1); }
+
+        .total-box { background: #151515; border: 1px dashed var(--green); padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 12px; text-align: center; color: var(--accent); }
+        .total-box strong { font-size: 15px; color: var(--green); display: block; margin-top: 4px; }
 
         .mode-box { background: #222; padding: 12px; border-radius: 8px; border: 1px solid #444; margin-bottom: 15px; }
         .mode-box label { color: var(--accent); margin-bottom: 8px; }
@@ -301,19 +83,9 @@
         .ai-card { background: #1a252f; border: 1px solid #34495e; padding: 12px; border-radius: 10px; margin-bottom: 15px; font-size: 11px; line-height: 1.4; color: #ecf0f1; }
         .ai-card strong { color: var(--accent); }
 
-        .compare-box { background: #111; border: 1px solid #333; padding: 12px; border-radius: 8px; margin-top: 5px; font-size: 11px; }
+        .compare-box { background: #111; border: 1px solid #333; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 11px; }
 
-        #sync-status { 
-            position: fixed; 
-            bottom: 5px; 
-            right: 5px; 
-            background: rgba(0,0,0,0.85); 
-            color: var(--green); 
-            padding: 4px 8px; 
-            font-size: 9px; 
-            border-radius: 4px; 
-            z-index: 1000; 
-        }
+        #sync-status { position: fixed; bottom: 5px; right: 5px; background: rgba(0,0,0,0.8); color: var(--green); padding: 4px 8px; font-size: 9px; border-radius: 4px; z-index: 1000; }
     </style>
 </head>
 <body>
@@ -327,7 +99,7 @@
         <button class="tab-btn" onclick="trocarTab('config', event)">Configurar</button>
     </div>
 
-    <!-- ABA DIÁRIO / LANÇAMENTO -->
+    <!-- ABA DIÁRIO -->
     <div id="diario" class="container active">
         <div class="card">
             <label>VALOR TOTAL NA 99 (R$)</label>
@@ -353,117 +125,75 @@
             
             <button class="btn-add" onclick="registrar()">REGISTRAR LANÇAMENTO</button>
 
-            <div class="metric-box">
+            <div class="metric-box" style="margin-top: 15px;">
                 <span>Eficiência Média:</span>
                 <span id="res-eficiencia" class="metric-val">R$ 0,00 / km</span>
             </div>
 
-            <!-- CARD DE DISTRIBUIÇÃO DAS CAIXINHAS DO ÚLTIMO LANÇAMENTO -->
-            <div class="card" style="margin-top: 15px; border: 1px dashed var(--green); background: #141414;">
-                <label style="color: var(--accent); text-align: center;">📊 DISTRIBUIÇÃO DAS CAIXINHAS (ÚLTIMO LANÇAMENTO)</label>
-                <div class="envelopes">
-                    <div class="env bg-gas">⛽ GASOLINA <strong id="dia-res-gas">R$ 0.00</strong></div>
-                    <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="dia-res-moto">R$ 0.00</strong></div>
-                    <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="dia-res-oleo">R$ 0.00</strong></div>
-                    <div class="env bg-ipva">📄 CONTAS FIXAS <strong id="dia-res-fixas">R$ 0.00</strong></div>
-                    <div class="env bg-lucro" style="grid-column: span 2;">💰 LUCRO LÍQUIDO DO DIA <strong id="dia-res-lucro" style="font-size: 15px; color: var(--accent);">R$ 0.00</strong></div>
+            <!-- CARD VISUAL DO ÚLTIMO LANÇAMENTO -->
+            <div id="card-ultimo-lancamento" class="card" style="margin-top: 15px; border: 1px dashed var(--accent); background: #151515;">
+                <label style="color: var(--accent); text-align: center; font-size: 12px;">📊 DISTRIBUIÇÃO DAS CAIXINHAS (ÚLTIMO LANÇAMENTO)</label>
+                <div class="envelopes" style="margin-top: 8px;">
+                    <div class="env bg-gas">⛽ GASOLINA <strong id="card-res-gas">R$ 0,00</strong></div>
+                    <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="card-res-moto">R$ 0,00</strong></div>
+                    <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="card-res-manut">R$ 0,00</strong></div>
+                    <div class="env bg-ipva">📄 CONTAS FIXAS <strong id="card-res-fixas">R$ 0,00</strong></div>
+                    <div class="env bg-lucro" style="grid-column: span 2;">💰 LUCRO LÍQUIDO DO DIA <strong id="card-res-lucro" style="font-size: 16px; color: var(--green);">R$ 0,00</strong></div>
                 </div>
             </div>
 
-            <!-- PAINÉIS DE CAIXINHAS PENDENTES (99 E UBER) -->
             <div class="envelopes">
+                <!-- PAINÉIS LADO A LADO (99 E UBER) -->
                 <div class="painel-duplo-container">
-                    
                     <!-- PAINEL DA 99 -->
                     <div class="bg-acumulado-99">
                         💵 <strong>CAIXINHAS 99 (PENDENTE):</strong><br>
                         <div style="margin: 4px 0;">
-                            <div class="linha-acumulado">
-                                <span>Saldo App:</span> 
-                                <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);">
-                            </div>
-                            <div class="linha-acumulado">
-                                <span>💵 Espécie:</span> 
-                                <input type="number" id="edit-99-dinheiro" step="0.01" readonly style="color:var(--accent);">
-                            </div>
-                            <div class="linha-acumulado">
-                                <span>⛽ Gas:</span> 
-                                <input type="number" id="edit-99-gas" step="0.01">
-                            </div>
-                            <div class="linha-acumulado">
-                                <span>🏍️ Moto:</span> 
-                                <input type="number" id="edit-99-moto" step="0.01">
-                            </div>
-                            <div class="linha-acumulado">
-                                <span>🛢️ Manut:</span> 
-                                <input type="number" id="edit-99-manut" step="0.01">
-                            </div>
-                            <div class="linha-acumulado">
-                                <span>📄 Fixas:</span> 
-                                <input type="number" id="edit-99-fixas" step="0.01">
-                            </div>
-                            <div class="linha-acumulado">
-                                <span>💰 Lucro:</span> 
-                                <input type="number" id="edit-99-lucro" step="0.01" style="color:var(--accent);">
-                            </div>
+                            <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);"></div>
+                            <div class="linha-acumulado"><span>💵 Espécie:</span> <input type="number" id="edit-99-dinheiro" step="0.01" readonly style="color:var(--accent);"></div>
+                            <div class="linha-acumulado"><span>⛽ Gas:</span> <input type="number" id="edit-99-gas" step="0.01"></div>
+                            <div class="linha-acumulado"><span>🏍️ Moto:</span> <input type="number" id="edit-99-moto" step="0.01"></div>
+                            <div class="linha-acumulado"><span>🛢️ Manut:</span> <input type="number" id="edit-99-manut" step="0.01"></div>
+                            <div class="linha-acumulado"><span>📄 Fixas:</span> <input type="number" id="edit-99-fixas" step="0.01"></div>
+                            <div class="linha-acumulado"><span>💰 Lucro:</span> <input type="number" id="edit-99-lucro" step="0.01" readonly style="color:var(--accent);"></div>
                         </div>
-                        <button class="btn-salvar-edicao" onclick="salvarEdicoes99()">💾 SALVAR P/ COFRE</button>
-                        <button class="btn-baixar-99" onclick="baixarCaixas99()">✅ BAIXAR / ZERAR 99</button>
+                        <button class="btn-salvar-edicao" onclick="salvarEdicoes99()">💾 Salvar p/ Cofre</button>
+                        <button class="btn-baixar-99" onclick="baixarCaixas99()">✅ Baixar / Zerar 99</button>
                     </div>
 
                     <!-- PAINEL DA UBER -->
                     <div class="bg-acumulado-uber">
                         📅 <strong>CAIXINHAS UBER (PENDENTE):</strong><br>
                         <div style="margin: 4px 0;">
-                            <div class="linha-acumulado">
-                                <span>Saldo App:</span> 
-                                <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);">
-                            </div>
-                            <div class="linha-acumulado">
-                                <span>💵 Esp/Pix:</span> 
-                                <input type="number" id="edit-ub-dinheiro" step="0.01" readonly style="color:var(--accent);">
-                            </div>
-                            <div class="linha-acumulado">
-                                <span>⛽ Gas:</span> 
-                                <input type="number" id="edit-ub-gas" step="0.01">
-                            </div>
-                            <div class="linha-acumulado">
-                                <span>🏍️ Moto:</span> 
-                                <input type="number" id="edit-ub-moto" step="0.01">
-                            </div>
-                            <div class="linha-acumulado">
-                                <span>🛢️ Manut:</span> 
-                                <input type="number" id="edit-ub-manut" step="0.01">
-                            </div>
-                            <div class="linha-acumulado">
-                                <span>📄 Fixas:</span> 
-                                <input type="number" id="edit-ub-fixas" step="0.01">
-                            </div>
-                            <div class="linha-acumulado">
-                                <span>💰 Lucro:</span> 
-                                <input type="number" id="edit-ub-lucro" step="0.01" style="color:var(--accent);">
-                            </div>
+                            <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);"></div>
+                            <div class="linha-acumulado"><span>💵 Esp/Pix:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" readonly style="color:var(--accent);"></div>
+                            <div class="linha-acumulado"><span>⛽ Gas:</span> <input type="number" id="edit-ub-gas" step="0.01"></div>
+                            <div class="linha-acumulado"><span>🏍️ Moto:</span> <input type="number" id="edit-ub-moto" step="0.01"></div>
+                            <div class="linha-acumulado"><span>🛢️ Manut:</span> <input type="number" id="edit-ub-manut" step="0.01"></div>
+                            <div class="linha-acumulado"><span>📄 Fixas:</span> <input type="number" id="edit-ub-fixas" step="0.01"></div>
+                            <div class="linha-acumulado"><span>💰 Lucro:</span> <input type="number" id="edit-ub-lucro" step="0.01" readonly style="color:var(--accent);"></div>
                         </div>
-                        <button class="btn-salvar-edicao" onclick="salvarEdicoesUber()">💾 SALVAR P/ COFRE</button>
-                        <button class="btn-receber-uber" onclick="receberRepasseUber()">💰 BAIXAR / ZERAR UBER</button>
+                        <button class="btn-salvar-edicao" onclick="salvarEdicoesUber()">💾 Salvar p/ Cofre</button>
+                        <button class="btn-receber-uber" onclick="receberRepasseUber()">💰 Baixar / Zerar Uber</button>
                     </div>
-
                 </div>
+
+                <!-- BOTÃO DE LIMPEZA GERAL DE PENDENTES (CASO ACUMULE) -->
+                <button class="btn-limpar-pendentes" style="grid-column: span 2;" onclick="zerarCaixasPendentesManualmente()">🧹 Zerar Caixas Pendentes (99 & Uber)</button>
             </div>
         </div>
         
-        <table id="tabela">
-            <thead>
-                <tr>
-                    <th>Data</th>
-                    <th>Bruto</th>
-                    <th>R$/Km</th>
-                    <th>Análise</th>
-                    <th>X</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <!-- RESUMO / HISTÓRICO DE LANÇAMENTOS COM DESIGN PROFISSIONAL -->
+        <div class="historico-card">
+            <div class="historico-titulo">
+                <span>📋 Histórico de Lançamentos</span>
+                <span style="font-size: 9px; color: #777;">Aperte o X para desfazer</span>
+            </div>
+            <table id="tabela">
+                <thead><tr><th>Data</th><th>Bruto</th><th>R$/Km</th><th>Avaliação</th><th>Ação</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 
     <!-- ABA GERENCIAR COFRES E DESPESAS -->
@@ -474,14 +204,14 @@
             <div id="ai-feedback" style="margin-top: 5px;">Analisando manual e quilometragem...</div>
         </div>
 
-        <!-- QUADRO GERAL DOS COFRES OFICIAIS -->
+        <!-- QUADRO GERAL DOS COFRES -->
         <div class="card">
             <label style="color: var(--accent);">💰 SALDO ATUAL DOS COFRES (OFICIAL)</label>
             <div class="envelopes" style="margin-top: 5px; grid-template-columns: 1fr 1fr;">
-                <div class="env bg-gas">⛽ GASOLINA <strong id="ger-res-gas">R$ 0,00</strong></div>
-                <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="ger-res-moto">R$ 0,00</strong></div>
-                <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="ger-res-oleo">R$ 0,00</strong></div>
-                <div class="env bg-ipva">📄 CONTAS FIXAS <strong id="ger-res-ipva">R$ 0,00</strong></div>
+                <div class="env bg-gas">⛽ GASOLINA <strong id="ger-res-gas">R$ 24.61</strong></div>
+                <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="ger-res-moto">R$ 6.08</strong></div>
+                <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="ger-res-oleo">R$ 13.61</strong></div>
+                <div class="env bg-ipva">📄 CONTAS FIXAS <strong id="ger-res-ipva">R$ 10.37</strong></div>
             </div>
         </div>
 
@@ -606,7 +336,7 @@
             <label>Média Estimada de KM Rodados por Mês</label>
             <input type="number" id="cfg_km_mes" step="1">
 
-            <!-- CONTROLE DOS TRIPS DA MOTO -->
+            <!-- CONTROLE DOS TRIPS DA MOTO (MANUAL DO FABRICANTE) -->
             <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
             <label style="color: var(--accent);">🏍️ CONTROLE DE KM (TRIPS DO PAINEL)</label>
             
@@ -697,6 +427,7 @@
         
         let pendente99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
         let pendenteUber = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+
         let ultimoLancamento = { gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
 
         let contasCadastradas = [];
@@ -725,6 +456,7 @@
             carregarConfigNaTela();
             renderPainelGastos();
             renderTable();
+            atualizarCardUltimoLancamento();
             atualizarQuadroGeral();
             renderGerenciador();
             document.getElementById('sync-status').innerText = "Conectado ao Firebase ☁️";
@@ -753,6 +485,14 @@
             document.getElementById('ger-res-moto').innerText = "R$ " + (cofresGerais.moto || 0).toFixed(2);
             document.getElementById('ger-res-oleo').innerText = "R$ " + (cofresGerais.manut || 0).toFixed(2);
             document.getElementById('ger-res-ipva').innerText = "R$ " + (cofresGerais.fixas || 0).toFixed(2);
+        }
+
+        function atualizarCardUltimoLancamento() {
+            document.getElementById('card-res-gas').innerText = "R$ " + (ultimoLancamento.gas || 0).toFixed(2);
+            document.getElementById('card-res-moto').innerText = "R$ " + (ultimoLancamento.moto || 0).toFixed(2);
+            document.getElementById('card-res-manut').innerText = "R$ " + (ultimoLancamento.manut || 0).toFixed(2);
+            document.getElementById('card-res-fixas').innerText = "R$ " + (ultimoLancamento.fixas || 0).toFixed(2);
+            document.getElementById('card-res-lucro').innerText = "R$ " + (ultimoLancamento.lucro || 0).toFixed(2);
         }
 
         function calcularBrutoTotal() {
@@ -802,13 +542,6 @@
             document.getElementById('edit-ub-manut').value = (pendenteUber.manut || 0).toFixed(2);
             document.getElementById('edit-ub-fixas').value = (pendenteUber.fixas || 0).toFixed(2);
             document.getElementById('edit-ub-lucro').value = (pendenteUber.lucro || 0).toFixed(2);
-
-            // Atualiza preview visual do último lançamento
-            document.getElementById('dia-res-gas').innerText = "R$ " + (ultimoLancamento.gas || 0).toFixed(2);
-            document.getElementById('dia-res-moto').innerText = "R$ " + (ultimoLancamento.moto || 0).toFixed(2);
-            document.getElementById('dia-res-oleo').innerText = "R$ " + (ultimoLancamento.manut || 0).toFixed(2);
-            document.getElementById('dia-res-fixas').innerText = "R$ " + (ultimoLancamento.fixas || 0).toFixed(2);
-            document.getElementById('dia-res-lucro').innerText = "R$ " + (ultimoLancamento.lucro || 0).toFixed(2);
             
             atualizarQuadroGeral();
             renderGerenciador();
@@ -832,7 +565,7 @@
 
             salvarNoFirebase();
             atualizarTelasCaixas();
-            alert('Valores da 99 salvos e depositados no Cofre Oficial do Gerenciador!');
+            alert('Valores da 99 salvos e somados ao cofre geral!');
         }
 
         function baixarCaixas99() {
@@ -841,7 +574,7 @@
                 alert('Não há saldo pendente na 99 para dar baixa.');
                 return;
             }
-            if (confirm(`Confirma a baixa e envio dos valores acumulados da 99 para o Cofre Oficial?`)) {
+            if (confirm(`Confirma que deu baixa e deseja enviar os valores da 99 para o cofre real?`)) {
                 cofresGerais.gas += (pendente99.gas || 0);
                 cofresGerais.moto += (pendente99.moto || 0);
                 cofresGerais.manut += (pendente99.manut || 0);
@@ -850,7 +583,7 @@
                 pendente99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
                 salvarNoFirebase();
                 atualizarTelasCaixas();
-                alert('Baixa da 99 concluída com sucesso!');
+                alert('Baixa da 99 efetuada e integrada ao cofre!');
             }
         }
 
@@ -872,7 +605,7 @@
 
             salvarNoFirebase();
             atualizarTelasCaixas();
-            alert('Valores da Uber salvos e depositados no Cofre Oficial do Gerenciador!');
+            alert('Valores da Uber salvos e somados ao cofre geral!');
         }
 
         function receberRepasseUber() {
@@ -881,7 +614,7 @@
                 alert('Não há saldo pendente na Uber para receber.');
                 return;
             }
-            if (confirm(`Confirma o recebimento do repasse da Uber e envio dos valores para o Cofre Oficial?`)) {
+            if (confirm(`Confirma que recebeu o repasse da Uber e deseja integrar ao cofre real?`)) {
                 cofresGerais.gas += (pendenteUber.gas || 0);
                 cofresGerais.moto += (pendenteUber.moto || 0);
                 cofresGerais.manut += (pendenteUber.manut || 0);
@@ -890,7 +623,17 @@
                 pendenteUber = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
                 salvarNoFirebase();
                 atualizarTelasCaixas();
-                alert('Repasse da Uber recebido com sucesso!');
+                alert('Repasse da Uber recebido e integrado ao cofre!');
+            }
+        }
+
+        function zerarCaixasPendentesManualmente() {
+            if (confirm('Deseja realmente zerar as caixinhas pendentes da 99 e da Uber sem enviar para o cofre?')) {
+                pendente99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+                pendenteUber = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+                salvarNoFirebase();
+                atualizarTelasCaixas();
+                alert('Caixinhas pendentes limpas com sucesso!');
             }
         }
 
@@ -932,7 +675,7 @@
             config.tripGeral = parseFloat(document.getElementById('cfg_trip_geral').value) || 0;
 
             salvarNoFirebase();
-            alert('Configurações salvas com sucesso!');
+            alert('Configurações e Trips salvos com sucesso!');
             trocarTab('diario');
         }
 
@@ -940,14 +683,14 @@
             config.tripOleo = 0;
             salvarNoFirebase();
             renderGerenciador();
-            alert('Trip do Óleo zerado!');
+            alert('Trip do Óleo zerado com sucesso!');
         }
 
         function zerarTripGeral() {
             config.tripGeral = 0;
             salvarNoFirebase();
             renderGerenciador();
-            alert('Trip Geral zerado!');
+            alert('Trip Geral / Revisão zerado com sucesso!');
         }
 
         function trocarTab(tabId, evt) {
@@ -970,7 +713,7 @@
             const valor = parseFloat(document.getElementById('gasto_valor').value);
 
             if(!nome || isNaN(valor)) {
-                alert('Preencha o nome e o valor corretamente!');
+                alert('Preencha o nome e o valor mensal corretamente!');
                 return;
             }
 
@@ -1004,7 +747,7 @@
                 <tr>
                     <td><strong>${g.nome}</strong></td>
                     <td>R$ ${g.valor.toFixed(2)} /mês</td>
-                    <td><button class="btn-del" onclick="removerGasto(${g.id})">X</button></td>
+                    <td><button class="btn-del" onclick="removerGasto(${g.id})">✕</button></td>
                 </tr>
             `).join('');
 
@@ -1026,7 +769,7 @@
             const km = parseFloat(document.getElementById('km_dia').value) || 0;
 
             if (bruto <= 0 || km <= 0) {
-                alert('Preencha faturamento e KM do dia.');
+                alert('Preencha os valores de faturamento e KM corretamente.');
                 return;
             }
 
@@ -1048,9 +791,6 @@
                 }
             });
 
-            const custoTotalCustos = gas + resParcela + resManut + resFixas + totalExtrasDia;
-            const lucroDia = Math.max(0, bruto - custoTotalCustos);
-
             const custoTotalPorKmBase = config.gasolinaKm + config.parcela + config.manutencao + config.fixas;
             const custoExtraPorKm = gastosMensais.filter(g => g.ativo).reduce((acc, g) => acc + (g.valor / kmMes), 0);
             const custoTotalPorKm = custoTotalPorKmBase + custoExtraPorKm;
@@ -1058,52 +798,66 @@
             const eficiencia = km > 0 ? (bruto / km) : 0;
             document.getElementById('res-eficiencia').innerText = `R$ ${eficiencia.toFixed(2)} / km`;
 
-            // Guarda os valores para exibição no card de preview visual do lançamento
+            const totalCustosGerais = gas + resParcela + resManut + resFixas + totalExtrasDia;
+            const lucroTotalDia = bruto - totalCustosGerais;
+
             ultimoLancamento = {
                 gas: gas,
                 moto: resParcela,
                 manut: resManut,
                 fixas: resFixas,
-                lucro: lucroDia
+                lucro: lucroTotalDia
             };
 
-            // ACUMULA APENAS NAS CAIXINHAS PENDENTES (NÃO ALTERA OS COFRES OFICIAIS DO GERENCIADOR)
             if (b99 > 0) {
                 const prop99 = b99 / bruto;
-                pendente99.total = (pendente99.total || 0) + b99;
-                pendente99.dinheiro = (pendente99.dinheiro || 0) + dinheiro99;
-                pendente99.gas = (pendente99.gas || 0) + (gas * prop99);
-                pendente99.moto = (pendente99.moto || 0) + (resParcela * prop99);
-                pendente99.manut = (pendente99.manut || 0) + (resManut * prop99);
-                pendente99.fixas = (pendente99.fixas || 0) + (resFixas * prop99);
-                pendente99.lucro = (pendente99.lucro || 0) + (lucroDia * prop99);
+                const totalCustos99 = totalCustosGerais * prop99;
+                const lucro99 = b99 - totalCustos99;
+
+                pendente99 = {
+                    total: b99,
+                    dinheiro: dinheiro99,
+                    gas: gas * prop99,
+                    moto: resParcela * prop99,
+                    manut: resManut * prop99,
+                    fixas: resFixas * prop99,
+                    lucro: lucro99
+                };
             }
 
             if (uber > 0) {
                 const propUber = uber / bruto;
-                pendenteUber.total = (pendenteUber.total || 0) + uber;
-                pendenteUber.dinheiro = (pendenteUber.dinheiro || 0) + dinheiroUber;
-                pendenteUber.gas = (pendenteUber.gas || 0) + (gas * propUber);
-                pendenteUber.moto = (pendenteUber.moto || 0) + (resParcela * propUber);
-                pendenteUber.manut = (pendenteUber.manut || 0) + (resManut * propUber);
-                pendenteUber.fixas = (pendenteUber.fixas || 0) + (resFixas * propUber);
-                pendenteUber.lucro = (pendenteUber.lucro || 0) + (lucroDia * propUber);
+                const totalCustosUber = totalCustosGerais * propUber;
+                const lucroUber = uber - totalCustosUber;
+
+                pendenteUber = {
+                    total: uber,
+                    dinheiro: dinheiroUber,
+                    gas: gas * propUber,
+                    moto: resParcela * propUber,
+                    manut: resManut * propUber,
+                    fixas: resFixas * propUber,
+                    lucro: lucroUber
+                };
             }
 
             const agora = new Date();
-            const obsTexto = (eficiencia < custoTotalPorKm) ? "RUIM" : (eficiencia < (custoTotalPorKm + 0.36) ? "MÉDIO" : "EXCELENTE");
+            const obsTexto = (eficiencia < 1.50) ? "RUIM" : (eficiencia < 2.00 ? "MÉDIO" : "EXCELENTE");
             document.getElementById('obs').value = obsTexto;
 
             db.unshift({ 
+                id: Date.now(),
                 data: agora.toLocaleDateString('pt-BR'), 
                 mesAno: `${String(agora.getMonth() + 1).padStart(2, '0')}/${agora.getFullYear()}`,
                 bruto: bruto.toFixed(2), 
+                km: km,
                 eficiencia: eficiencia.toFixed(2),
                 obs: obsTexto
             });
 
             salvarNoFirebase();
             atualizarTelasCaixas();
+            atualizarCardUltimoLancamento();
             renderTable();
 
             document.getElementById('bruto_99').value = '';
@@ -1112,26 +866,48 @@
             document.getElementById('dinheiro_uber').value = '';
             document.getElementById('km_dia').value = '';
             document.getElementById('bruto').value = '';
-            alert('Lançamento registrado! As caixinhas pendentes e a prévia do dia foram geradas.');
+            alert('Lançamento registrado e adicionado com sucesso!');
         }
 
+        // LIMPEZA / DELEÇÃO DO LANÇAMENTO PELO BOTÃO X
         function deletarItem(i) {
-            db.splice(i, 1);
-            salvarNoFirebase();
-            renderTable();
+            if (confirm('Deseja desfazer/apagar este lançamento do histórico? Os KM acumulados e pendências deste lançamento serão limpos.')) {
+                const itemRemovido = db[i];
+                
+                // Desfaz os KMs acumulados nos Trips da moto se houver valor gravado
+                if (itemRemovido && itemRemovido.km) {
+                    const kmAbater = parseFloat(itemRemovido.km) || 0;
+                    config.tripOleo = Math.max(0, (parseFloat(config.tripOleo) || 0) - kmAbater);
+                    config.tripGeral = Math.max(0, (parseFloat(config.tripGeral) || 0) - kmAbater);
+                }
+
+                // Zera as caixas pendentes para evitar acúmulos incorretos
+                pendente99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+                pendenteUber = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+                ultimoLancamento = { gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+
+                db.splice(i, 1);
+                salvarNoFirebase();
+                atualizarTelasCaixas();
+                atualizarCardUltimoLancamento();
+                renderTable();
+                alert('Lançamento apagado e valores corrigidos com sucesso!');
+            }
         }
 
         function renderTable() {
             const tbody = document.querySelector('#tabela tbody');
-            tbody.innerHTML = db.map((item, i) => `
+            tbody.innerHTML = db.length ? db.map((item, i) => {
+                let badgeClass = item.obs === 'RUIM' ? 'badge-ruim' : (item.obs === 'MÉDIO' ? 'badge-medio' : 'badge-excelente');
+                return `
                 <tr>
-                    <td>${item.data}</td>
-                    <td>R$ ${item.bruto}</td>
+                    <td><strong>${item.data}</strong></td>
+                    <td style="color:var(--green); font-weight:bold;">R$ ${item.bruto}</td>
                     <td>R$ ${item.eficiencia}</td>
-                    <td>${item.obs}</td>
-                    <td><button class="btn-del" onclick="deletarItem(${i})">X</button></td>
-                </tr>
-            `).join('');
+                    <td><span class="badge-obs ${badgeClass}">${item.obs}</span></td>
+                    <td><button class="btn-del" onclick="deletarItem(${i})" title="Apagar e Desfazer">✕</button></td>
+                </tr>`;
+            }).join('') : '<tr><td colspan="5" style="color:#777; padding: 15px;">Nenhum lançamento registrado.</td></tr>';
         }
 
         function mudarTipoContaForm() {
@@ -1145,7 +921,7 @@
             const valor = parseFloat(document.getElementById('saida_valor').value);
 
             if(!desc || isNaN(valor) || valor <= 0) {
-                alert('Preencha a descrição e um valor válido!');
+                alert('Preencha a descrição e um valor válido para a saída!');
                 return;
             }
 
@@ -1173,7 +949,7 @@
 
             document.getElementById('saida_desc').value = '';
             document.getElementById('saida_valor').value = '';
-            alert(`Retirada de R$ ${valor.toFixed(2)} efetuada com sucesso!`);
+            alert(`Retirada de R$ ${valor.toFixed(2)} registrada com sucesso!`);
         }
 
         function cadastrarConta() {
@@ -1222,7 +998,7 @@
             const totalDisponivel = cofresGerais[cofre] || 0;
 
             if (valor > totalDisponivel) {
-                alert(`Saldo insuficiente no cofre ${cofre.toUpperCase()}! Disponível: R$ ${totalDisponivel.toFixed(2)}`);
+                alert(`Saldo insuficiente no cofre ${cofre.toUpperCase()} para pagar esta conta! Disponível: R$ ${totalDisponivel.toFixed(2)}`);
                 return;
             }
 
@@ -1260,12 +1036,12 @@
                 salvarNoFirebase();
                 atualizarTelasCaixas();
                 renderGerenciador();
-                alert('Pagamento efetuado com sucesso!');
+                alert('Pagamento efetuado e abatido do cofre!');
             }
         }
 
         function excluirConta(id) {
-            if (confirm('Deseja excluir esta conta?')) {
+            if (confirm('Deseja realmente excluir este cadastro de conta?')) {
                 contasCadastradas = contasCadastradas.filter(c => c.id !== id);
                 salvarNoFirebase();
                 renderGerenciador();
@@ -1313,7 +1089,7 @@
                     <td>${s.cofre.toUpperCase()}</td>
                     <td>${s.desc}</td>
                     <td style="color:var(--red);">R$ ${s.valor.toFixed(2)}</td>
-                    <td><button class="btn-del" onclick="deletarSaida(${s.id})">X</button></td>
+                    <td><button class="btn-del" onclick="deletarSaida(${s.id})">✕</button></td>
                 </tr>
             `).join('') : '<tr><td colspan="5" style="color:#777;">Sem retiradas registradas.</td></tr>';
 
@@ -1366,32 +1142,32 @@
             let msgs = [];
             
             if (tripOleo >= metaOleo) {
-                msgs.push(`🚨 <strong style="color:var(--red);">Óleo Vencido!</strong> Trip em <strong>${tripOleo.toFixed(1)} km</strong> (Meta: ${metaOleo} km). <br><button class="btn-reset-trip" onclick="zerarTripOleo()">🔄 Zerar Trip Óleo</button>`);
+                msgs.push(`🚨 <strong style="color:var(--red);">Óleo Vencido!</strong> Trip do Óleo em <strong>${tripOleo.toFixed(1)} km</strong> (Meta: ${metaOleo} km). Troque o óleo e zere abaixo! <br><button class="btn-reset-trip" onclick="zerarTripOleo()">🔄 Zerar Trip Óleo</button>`);
             } else if (tripOleo >= (metaOleo - 300)) {
-                msgs.push(`⚠️ <em>Atenção Troca de Óleo:</em> Faltam ${(metaOleo - tripOleo).toFixed(1)} km para atingir a meta.`);
+                msgs.push(`⚠️ <em>Atenção Troca de Óleo:</em> Faltam ${(metaOleo - tripOleo).toFixed(1)} km para atingir a meta de ${metaOleo} km.`);
             } else {
                 msgs.push(`🛢️ <strong>Óleo:</strong> ${tripOleo.toFixed(1)} / ${metaOleo} km.`);
             }
 
             let alertasManual = [];
             if (tripGeral >= 10000) {
-                alertasManual.push(`⚡ <strong>Vela / Filtro de Ar / Válvulas:</strong> ${tripGeral.toFixed(1)} km (Revisão 10k).`);
+                alertasManual.push(`⚡ <strong>Vela de Ignição / Filtro de Ar / Válvulas:</strong> Atingiu ${tripGeral.toFixed(1)} km (Revisão de 10.000 km).`);
             }
             if (tripGeral >= 20000) {
-                alertasManual.push(`⚙️ <strong>Kit Relação:</strong> ${tripGeral.toFixed(1)} km (Verificar desgaste).`);
+                alertasManual.push(`⚙️ <strong>Kit Relação (Coroa/Pinhão/Corrente):</strong> Atingiu ${tripGeral.toFixed(1)} km (Verificar desgaste).`);
             }
             
             if (alertasManual.length > 0) {
                 msgs.push(`🔧 <strong style="color:var(--accent);">Manutenção do Manual:</strong><br>` + alertasManual.join('<br>') + `<br><button class="btn-reset-trip" onclick="zerarTripGeral()">🔄 Zerar Ciclo Geral</button>`);
             } else {
-                msgs.push(`⚙️ <strong>Próxima Revisão Manual:</strong> Faltam ${(10000 - tripGeral).toFixed(1)} km para os 10k.`);
+                msgs.push(`⚙️ <strong>Próxima Revisão Manual:</strong> Daqui a ${(10000 - tripGeral).toFixed(1)} km (Faltam para os 10k).`);
             }
 
             const diaHoje = new Date().getDate();
             let vencendoLogo = pendentes.filter(c => c.vencimento && c.vencimento >= diaHoje && c.vencimento <= (diaHoje + 3));
             if (vencendoLogo.length > 0) {
                 let nomes = vencendoLogo.map(c => `<strong>${c.nome} (Dia ${c.vencimento})</strong>`).join(', ');
-                msgs.push(`🚨 <em>Contas vencendo:</em> ${nomes}!`);
+                msgs.push(`🚨 <em>Contas vencendo:</em> ${nomes} nos próximos dias!`);
             }
 
             if (totalFixas < somaPendentes) {
@@ -1435,8 +1211,9 @@
                     carregarConfigNaTela();
                     renderPainelGastos();
                     renderTable();
+                    atualizarCardUltimoLancamento();
                     renderGerenciador();
-                    alert('Backup restaurado e sincronizado!');
+                    alert('Backup restaurado e sincronizado com o Firebase!');
                 } catch (err) {
                     alert('Erro ao ler o arquivo de backup.');
                 }
