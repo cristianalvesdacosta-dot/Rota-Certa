@@ -57,7 +57,6 @@
         .toggle-container { display: flex; align-items: center; justify-content: space-between; background: #252525; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #444; font-size: 11px; }
         .toggle-container input { width: 20px; height: 20px; margin: 0; cursor: pointer; }
 
-        /* TABELA DE HISTÓRICO RE-ESTILIZADA PROFISSIONAL */
         .historico-card { background: var(--card); border: 1px solid #333; border-radius: 12px; padding: 15px; margin-top: 20px; }
         .historico-titulo { font-size: 12px; font-weight: bold; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
         
@@ -150,12 +149,12 @@
                         💵 <strong>CAIXINHAS 99 (PENDENTE):</strong><br>
                         <div style="margin: 4px 0;">
                             <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);"></div>
-                            <div class="linha-acumulado"><span>💵 Espécie:</span> <input type="number" id="edit-99-dinheiro" step="0.01" readonly style="color:var(--accent);"></div>
+                            <div class="linha-acumulado"><span>💵 Espécie:</span> <input type="number" id="edit-99-dinheiro" step="0.01" style="color:var(--accent);"></div>
                             <div class="linha-acumulado"><span>⛽ Gas:</span> <input type="number" id="edit-99-gas" step="0.01"></div>
                             <div class="linha-acumulado"><span>🏍️ Moto:</span> <input type="number" id="edit-99-moto" step="0.01"></div>
                             <div class="linha-acumulado"><span>🛢️ Manut:</span> <input type="number" id="edit-99-manut" step="0.01"></div>
                             <div class="linha-acumulado"><span>📄 Fixas:</span> <input type="number" id="edit-99-fixas" step="0.01"></div>
-                            <div class="linha-acumulado"><span>💰 Lucro:</span> <input type="number" id="edit-99-lucro" step="0.01" readonly style="color:var(--accent);"></div>
+                            <div class="linha-acumulado"><span>💰 Lucro:</span> <input type="number" id="edit-99-lucro" step="0.01" style="color:var(--accent);"></div>
                         </div>
                         <button class="btn-salvar-edicao" onclick="salvarEdicoes99()">💾 Salvar p/ Cofre</button>
                         <button class="btn-baixar-99" onclick="baixarCaixas99()">✅ Baixar / Zerar 99</button>
@@ -166,24 +165,23 @@
                         📅 <strong>CAIXINHAS UBER (PENDENTE):</strong><br>
                         <div style="margin: 4px 0;">
                             <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);"></div>
-                            <div class="linha-acumulado"><span>💵 Esp/Pix:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" readonly style="color:var(--accent);"></div>
+                            <div class="linha-acumulado"><span>💵 Esp/Pix:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" style="color:var(--accent);"></div>
                             <div class="linha-acumulado"><span>⛽ Gas:</span> <input type="number" id="edit-ub-gas" step="0.01"></div>
                             <div class="linha-acumulado"><span>🏍️ Moto:</span> <input type="number" id="edit-ub-moto" step="0.01"></div>
                             <div class="linha-acumulado"><span>🛢️ Manut:</span> <input type="number" id="edit-ub-manut" step="0.01"></div>
                             <div class="linha-acumulado"><span>📄 Fixas:</span> <input type="number" id="edit-ub-fixas" step="0.01"></div>
-                            <div class="linha-acumulado"><span>💰 Lucro:</span> <input type="number" id="edit-ub-lucro" step="0.01" readonly style="color:var(--accent);"></div>
+                            <div class="linha-acumulado"><span>💰 Lucro:</span> <input type="number" id="edit-ub-lucro" step="0.01" style="color:var(--accent);"></div>
                         </div>
                         <button class="btn-salvar-edicao" onclick="salvarEdicoesUber()">💾 Salvar p/ Cofre</button>
                         <button class="btn-receber-uber" onclick="receberRepasseUber()">💰 Baixar / Zerar Uber</button>
                     </div>
                 </div>
 
-                <!-- BOTÃO DE LIMPEZA GERAL DE PENDENTES (CASO ACUMULE) -->
                 <button class="btn-limpar-pendentes" style="grid-column: span 2;" onclick="zerarCaixasPendentesManualmente()">🧹 Zerar Caixas Pendentes (99 & Uber)</button>
             </div>
         </div>
         
-        <!-- RESUMO / HISTÓRICO DE LANÇAMENTOS COM DESIGN PROFISSIONAL -->
+        <!-- RESUMO / HISTÓRICO DE LANÇAMENTOS -->
         <div class="historico-card">
             <div class="historico-titulo">
                 <span>📋 Histórico de Lançamentos</span>
@@ -198,24 +196,21 @@
 
     <!-- ABA GERENCIAR COFRES E DESPESAS -->
     <div id="gerenciar" class="container">
-        <!-- DIAGNÓSTICO E MANUAL DE MANUTENÇÃO COMPLETO -->
         <div class="ai-card">
             🤖 <strong>Manual de Manutenção Preventiva (Assistente):</strong>
             <div id="ai-feedback" style="margin-top: 5px;">Analisando manual e quilometragem...</div>
         </div>
 
-        <!-- QUADRO GERAL DOS COFRES -->
         <div class="card">
             <label style="color: var(--accent);">💰 SALDO ATUAL DOS COFRES (OFICIAL)</label>
             <div class="envelopes" style="margin-top: 5px; grid-template-columns: 1fr 1fr;">
-                <div class="env bg-gas">⛽ GASOLINA <strong id="ger-res-gas">R$ 24.61</strong></div>
-                <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="ger-res-moto">R$ 6.08</strong></div>
-                <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="ger-res-oleo">R$ 13.61</strong></div>
-                <div class="env bg-ipva">📄 CONTAS FIXAS <strong id="ger-res-ipva">R$ 10.37</strong></div>
+                <div class="env bg-gas">⛽ GASOLINA <strong id="ger-res-gas">R$ 0.00</strong></div>
+                <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="ger-res-moto">R$ 0.00</strong></div>
+                <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="ger-res-oleo">R$ 0.00</strong></div>
+                <div class="env bg-ipva">📄 CONTAS FIXAS <strong id="ger-res-ipva">R$ 0.00</strong></div>
             </div>
         </div>
 
-        <!-- PAINEL COMPARATIVO DE MESES -->
         <div class="card">
             <label style="color: var(--accent);">📊 COMPARATIVO DE MESES (MÊS ATUAL X ANTERIOR)</label>
             <div class="compare-box" id="comparativo-conteudo">
@@ -223,7 +218,6 @@
             </div>
         </div>
 
-        <!-- LANÇAMENTO DE RETIRADA RÁPIDA DE COFRE -->
         <div class="card">
             <label style="color: var(--accent);">💸 LANÇAR SAÍDA / RETIRADA RÁPIDA</label>
             <select id="saida_cofre">
@@ -242,7 +236,6 @@
             <button class="btn-add" style="background: var(--red); color: #fff;" onclick="lançarSaidaCofre()">CONFIRMAR RETIRADA</button>
         </div>
 
-        <!-- CADASTRO DE CONTAS INTELIGENTE -->
         <div class="card">
             <label>📌 CADASTRAR CONTA OU BOLETO</label>
             
@@ -280,7 +273,6 @@
             <button class="btn-add" style="background: var(--blue); color: #fff;" onclick="cadastrarConta()">SALVAR NOVO CADASTRO</button>
         </div>
 
-        <!-- LISTA DE CONTAS PENDENTES -->
         <div class="card">
             <label>📋 CONTAS PENDENTES</label>
             <table id="tabela-contas">
@@ -289,7 +281,6 @@
             </table>
         </div>
 
-        <!-- HISTÓRICO DE SAÍDAS DE COFRES -->
         <div class="card">
             <label>📜 HISTÓRICO DE RETIRADAS</label>
             <table id="tabela-saidas">
@@ -299,7 +290,7 @@
         </div>
     </div>
 
-    <!-- ABA GASTOS MENSAIS & SUGESTÃO -->
+    <!-- ABA GASTOS MENSAIS -->
     <div id="gastos" class="container">
         <div class="card">
             <label>Nome do Gasto Mensal (Ex: Seguro, Aluguel Baú)</label>
@@ -322,7 +313,7 @@
         </div>
     </div>
 
-    <!-- ABA CONFIGURAÇÕES & BACKUP -->
+    <!-- ABA CONFIGURAÇÕES -->
     <div id="config" class="container">
         <div class="card">
             <div class="mode-box">
@@ -336,7 +327,6 @@
             <label>Média Estimada de KM Rodados por Mês</label>
             <input type="number" id="cfg_km_mes" step="1">
 
-            <!-- CONTROLE DOS TRIPS DA MOTO (MANUAL DO FABRICANTE) -->
             <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
             <label style="color: var(--accent);">🏍️ CONTROLE DE KM (TRIPS DO PAINEL)</label>
             
@@ -353,7 +343,6 @@
                 O sistema acumula o KM diário nesses dois contadores. O óleo avisa com base na sua Meta de Óleo personalizada. O manual monitora as peças longas no Trip Geral!
             </div>
 
-            <!-- SEÇÃO MODO MANUAL -->
             <div id="bloco-manual">
                 <label>Taxa Gasolina por KM (R$)</label>
                 <input type="number" id="cfg_gas_km" step="0.01" oninput="calcularTotalConfigManual()">
@@ -373,13 +362,9 @@
                 </div>
             </div>
 
-            <!-- SEÇÃO MODO AUTOMÁTICO -->
             <div id="bloco-auto" style="display:none;">
                 <label>Custo Total Desejado por KM (Ex: R$ 0,46)</label>
                 <input type="number" id="cfg_custo_total_auto" step="0.01" placeholder="0.46">
-                <div style="font-size: 10px; color: #888; text-align: center; margin-bottom: 12px;">
-                    O sistema distribuirá o valor proporcionalmente entre Gasolina, Parcela, Manutenção e Fixas com base nas proporções padrão.
-                </div>
             </div>
 
             <button class="btn-add" onclick="salvarConfig()">Salvar Configurações</button>
@@ -423,11 +408,10 @@
 
         let gastosMensais = [];
         let db = [];
-        let cofresGerais = { gas: 24.61, moto: 6.08, manut: 13.61, fixas: 10.37 };
+        let cofresGerais = { gas: 0, moto: 0, manut: 0, fixas: 0 };
         
         let pendente99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
-        let pendenteUber = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
-
+        let pendenteUber = { total: 0, dinheiro: 0, gas: 0, manut: 0, moto: 0, fixas: 0, lucro: 0 };
         let ultimoLancamento = { gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
 
         let contasCadastradas = [];
@@ -547,83 +531,101 @@
             renderGerenciador();
         }
 
+        // SALVAR EDICÃO / TRANSFERIR APENAS OS CAMPOS DIGITADOS DA 99
         function salvarEdicoes99() {
-            const novoSaldoApp99 = parseFloat(document.getElementById('edit-99-tot').value) || 0;
-            pendente99.gas = parseFloat(document.getElementById('edit-99-gas').value) || 0;
-            pendente99.moto = parseFloat(document.getElementById('edit-99-moto').value) || 0;
-            pendente99.manut = parseFloat(document.getElementById('edit-99-manut').value) || 0;
-            pendente99.fixas = parseFloat(document.getElementById('edit-99-fixas').value) || 0;
-            pendente99.lucro = parseFloat(document.getElementById('edit-99-lucro').value) || 0;
-            pendente99.total = novoSaldoApp99 + (pendente99.dinheiro || 0);
+            const valGas = parseFloat(document.getElementById('edit-99-gas').value) || 0;
+            const valMoto = parseFloat(document.getElementById('edit-99-moto').value) || 0;
+            const valManut = parseFloat(document.getElementById('edit-99-manut').value) || 0;
+            const valFixas = parseFloat(document.getElementById('edit-99-fixas').value) || 0;
 
-            cofresGerais.gas += pendente99.gas;
-            cofresGerais.moto += pendente99.moto;
-            cofresGerais.manut += pendente99.manut;
-            cofresGerais.fixas += pendente99.fixas;
+            // Soma nos cofres oficiais apenas o que estiver preenchido nos inputs
+            cofresGerais.gas += valGas;
+            cofresGerais.moto += valMoto;
+            cofresGerais.manut += valManut;
+            cofresGerais.fixas += valFixas;
 
-            pendente99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+            // Abate das pendências o valor que foi transferido
+            pendente99.gas = Math.max(0, (pendente99.gas || 0) - valGas);
+            pendente99.moto = Math.max(0, (pendente99.moto || 0) - valMoto);
+            pendente99.manut = Math.max(0, (pendente99.manut || 0) - valManut);
+            pendente99.fixas = Math.max(0, (pendente99.fixas || 0) - valFixas);
 
             salvarNoFirebase();
             atualizarTelasCaixas();
-            alert('Valores da 99 salvos e somados ao cofre geral!');
+            alert('Valores editados da 99 foram somados ao cofre oficial!');
         }
 
+        // BAIXAR TUDO DA 99
         function baixarCaixas99() {
-            const saldoApp99 = pendente99.total - (pendente99.dinheiro || 0);
-            if (saldoApp99 <= 0 && pendente99.total <= 0) {
-                alert('Não há saldo pendente na 99 para dar baixa.');
+            const valGas = parseFloat(document.getElementById('edit-99-gas').value) || 0;
+            const valMoto = parseFloat(document.getElementById('edit-99-moto').value) || 0;
+            const valManut = parseFloat(document.getElementById('edit-99-manut').value) || 0;
+            const valFixas = parseFloat(document.getElementById('edit-99-fixas').value) || 0;
+
+            if (valGas === 0 && valMoto === 0 && valManut === 0 && valFixas === 0) {
+                alert('Não há saldo de custos pendente na 99 para dar baixa.');
                 return;
             }
-            if (confirm(`Confirma que deu baixa e deseja enviar os valores da 99 para o cofre real?`)) {
-                cofresGerais.gas += (pendente99.gas || 0);
-                cofresGerais.moto += (pendente99.moto || 0);
-                cofresGerais.manut += (pendente99.manut || 0);
-                cofresGerais.fixas += (pendente99.fixas || 0);
+
+            if (confirm(`Confirma que deseja baixar os valores da 99 para o cofre real?`)) {
+                cofresGerais.gas += valGas;
+                cofresGerais.moto += valMoto;
+                cofresGerais.manut += valManut;
+                cofresGerais.fixas += valFixas;
 
                 pendente99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+
                 salvarNoFirebase();
                 atualizarTelasCaixas();
-                alert('Baixa da 99 efetuada e integrada ao cofre!');
+                alert('Baixa da 99 concluída com sucesso!');
             }
         }
 
+        // SALVAR EDIÇÃO / TRANSFERIR APENAS OS CAMPOS DIGITADOS DA UBER
         function salvarEdicoesUber() {
-            const novoSaldoAppUber = parseFloat(document.getElementById('edit-ub-tot').value) || 0;
-            pendenteUber.gas = parseFloat(document.getElementById('edit-ub-gas').value) || 0;
-            pendenteUber.moto = parseFloat(document.getElementById('edit-ub-moto').value) || 0;
-            pendenteUber.manut = parseFloat(document.getElementById('edit-ub-manut').value) || 0;
-            pendenteUber.fixas = parseFloat(document.getElementById('edit-ub-fixas').value) || 0;
-            pendenteUber.lucro = parseFloat(document.getElementById('edit-ub-lucro').value) || 0;
-            pendenteUber.total = novoSaldoAppUber + (pendenteUber.dinheiro || 0);
+            const valGas = parseFloat(document.getElementById('edit-ub-gas').value) || 0;
+            const valMoto = parseFloat(document.getElementById('edit-ub-moto').value) || 0;
+            const valManut = parseFloat(document.getElementById('edit-ub-manut').value) || 0;
+            const valFixas = parseFloat(document.getElementById('edit-ub-fixas').value) || 0;
 
-            cofresGerais.gas += pendenteUber.gas;
-            cofresGerais.moto += pendenteUber.moto;
-            cofresGerais.manut += pendenteUber.manut;
-            cofresGerais.fixas += pendenteUber.fixas;
+            cofresGerais.gas += valGas;
+            cofresGerais.moto += valMoto;
+            cofresGerais.manut += valManut;
+            cofresGerais.fixas += valFixas;
 
-            pendenteUber = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+            pendenteUber.gas = Math.max(0, (pendenteUber.gas || 0) - valGas);
+            pendenteUber.moto = Math.max(0, (pendenteUber.moto || 0) - valMoto);
+            pendenteUber.manut = Math.max(0, (pendenteUber.manut || 0) - valManut);
+            pendenteUber.fixas = Math.max(0, (pendenteUber.fixas || 0) - valFixas);
 
             salvarNoFirebase();
             atualizarTelasCaixas();
-            alert('Valores da Uber salvos e somados ao cofre geral!');
+            alert('Valores editados da Uber foram somados ao cofre oficial!');
         }
 
+        // BAIXAR TUDO DA UBER
         function receberRepasseUber() {
-            const saldoAppUber = pendenteUber.total - (pendenteUber.dinheiro || 0);
-            if (saldoAppUber <= 0 && pendenteUber.total <= 0) {
-                alert('Não há saldo pendente na Uber para receber.');
+            const valGas = parseFloat(document.getElementById('edit-ub-gas').value) || 0;
+            const valMoto = parseFloat(document.getElementById('edit-ub-moto').value) || 0;
+            const valManut = parseFloat(document.getElementById('edit-ub-manut').value) || 0;
+            const valFixas = parseFloat(document.getElementById('edit-ub-fixas').value) || 0;
+
+            if (valGas === 0 && valMoto === 0 && valManut === 0 && valFixas === 0) {
+                alert('Não há saldo de custos pendente na Uber para dar baixa.');
                 return;
             }
-            if (confirm(`Confirma que recebeu o repasse da Uber e deseja integrar ao cofre real?`)) {
-                cofresGerais.gas += (pendenteUber.gas || 0);
-                cofresGerais.moto += (pendenteUber.moto || 0);
-                cofresGerais.manut += (pendenteUber.manut || 0);
-                cofresGerais.fixas += (pendenteUber.fixas || 0);
+
+            if (confirm(`Confirma que deseja baixar os valores da Uber para o cofre real?`)) {
+                cofresGerais.gas += valGas;
+                cofresGerais.moto += valMoto;
+                cofresGerais.manut += valManut;
+                cofresGerais.fixas += valFixas;
 
                 pendenteUber = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+
                 salvarNoFirebase();
                 atualizarTelasCaixas();
-                alert('Repasse da Uber recebido e integrado ao cofre!');
+                alert('Baixa da Uber concluída com sucesso!');
             }
         }
 
@@ -675,7 +677,7 @@
             config.tripGeral = parseFloat(document.getElementById('cfg_trip_geral').value) || 0;
 
             salvarNoFirebase();
-            alert('Configurações e Trips salvos com sucesso!');
+            alert('Configurações salvas com sucesso!');
             trocarTab('diario');
         }
 
@@ -683,14 +685,14 @@
             config.tripOleo = 0;
             salvarNoFirebase();
             renderGerenciador();
-            alert('Trip do Óleo zerado com sucesso!');
+            alert('Trip do Óleo zerado!');
         }
 
         function zerarTripGeral() {
             config.tripGeral = 0;
             salvarNoFirebase();
             renderGerenciador();
-            alert('Trip Geral / Revisão zerado com sucesso!');
+            alert('Trip Geral zerado!');
         }
 
         function trocarTab(tabId, evt) {
@@ -866,22 +868,18 @@
             document.getElementById('dinheiro_uber').value = '';
             document.getElementById('km_dia').value = '';
             document.getElementById('bruto').value = '';
-            alert('Lançamento registrado e adicionado com sucesso!');
+            alert('Lançamento registrado com sucesso!');
         }
 
-        // LIMPEZA / DELEÇÃO DO LANÇAMENTO PELO BOTÃO X
         function deletarItem(i) {
-            if (confirm('Deseja desfazer/apagar este lançamento do histórico? Os KM acumulados e pendências deste lançamento serão limpos.')) {
+            if (confirm('Deseja desfazer este lançamento do histórico?')) {
                 const itemRemovido = db[i];
-                
-                // Desfaz os KMs acumulados nos Trips da moto se houver valor gravado
                 if (itemRemovido && itemRemovido.km) {
                     const kmAbater = parseFloat(itemRemovido.km) || 0;
                     config.tripOleo = Math.max(0, (parseFloat(config.tripOleo) || 0) - kmAbater);
                     config.tripGeral = Math.max(0, (parseFloat(config.tripGeral) || 0) - kmAbater);
                 }
 
-                // Zera as caixas pendentes para evitar acúmulos incorretos
                 pendente99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
                 pendenteUber = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
                 ultimoLancamento = { gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
@@ -891,7 +889,7 @@
                 atualizarTelasCaixas();
                 atualizarCardUltimoLancamento();
                 renderTable();
-                alert('Lançamento apagado e valores corrigidos com sucesso!');
+                alert('Lançamento desfeito!');
             }
         }
 
@@ -905,7 +903,7 @@
                     <td style="color:var(--green); font-weight:bold;">R$ ${item.bruto}</td>
                     <td>R$ ${item.eficiencia}</td>
                     <td><span class="badge-obs ${badgeClass}">${item.obs}</span></td>
-                    <td><button class="btn-del" onclick="deletarItem(${i})" title="Apagar e Desfazer">✕</button></td>
+                    <td><button class="btn-del" onclick="deletarItem(${i})" title="Apagar">✕</button></td>
                 </tr>`;
             }).join('') : '<tr><td colspan="5" style="color:#777; padding: 15px;">Nenhum lançamento registrado.</td></tr>';
         }
@@ -949,7 +947,7 @@
 
             document.getElementById('saida_desc').value = '';
             document.getElementById('saida_valor').value = '';
-            alert(`Retirada de R$ ${valor.toFixed(2)} registrada com sucesso!`);
+            alert(`Retirada de R$ ${valor.toFixed(2)} registrada!`);
         }
 
         function cadastrarConta() {
@@ -962,7 +960,7 @@
             const parcelas = parseInt(document.getElementById('conta_parcelas').value) || 1;
 
             if(!nome || isNaN(valor) || valor <= 0 || !mesAno) {
-                alert('Preencha o nome, valor e o mês/ano de referência corretamente!');
+                alert('Preencha o nome, valor e mês/ano corretamente!');
                 return;
             }
 
@@ -998,7 +996,7 @@
             const totalDisponivel = cofresGerais[cofre] || 0;
 
             if (valor > totalDisponivel) {
-                alert(`Saldo insuficiente no cofre ${cofre.toUpperCase()} para pagar esta conta! Disponível: R$ ${totalDisponivel.toFixed(2)}`);
+                alert(`Saldo insuficiente no cofre ${cofre.toUpperCase()}! Disponível: R$ ${totalDisponivel.toFixed(2)}`);
                 return;
             }
 
@@ -1036,12 +1034,12 @@
                 salvarNoFirebase();
                 atualizarTelasCaixas();
                 renderGerenciador();
-                alert('Pagamento efetuado e abatido do cofre!');
+                alert('Pagamento efetuado!');
             }
         }
 
         function excluirConta(id) {
-            if (confirm('Deseja realmente excluir este cadastro de conta?')) {
+            if (confirm('Deseja excluir esta conta?')) {
                 contasCadastradas = contasCadastradas.filter(c => c.id !== id);
                 salvarNoFirebase();
                 renderGerenciador();
