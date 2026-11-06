@@ -41,11 +41,6 @@
         .envelopes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
         .env { padding: 10px; border-radius: 6px; font-size: 10px; text-align: center; border: 1px solid #333; }
         .env strong { display: block; font-size: 14px; margin-top: 4px; }
-        .bg-gas { background: #b71c1c; } 
-        .bg-moto { background: #e65100; }
-        .bg-oleo { background: #004d40; border: 1px solid var(--green); }
-        .bg-ipva { background: #01579b; }
-        .bg-lucro { background: #1b5e20; border: 1px solid var(--green); }
         
         .painel-duplo-container { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px; }
         .bg-acumulado-99 { background: #004d40; border: 1px dashed var(--green); padding: 10px; border-radius: 6px; font-size: 10px; text-align: left; }
@@ -129,16 +124,10 @@
                 <span id="res-eficiencia" class="metric-val">R$ 0,00 / km</span>
             </div>
 
-            <!-- CARD VISUAL DO ÚLTIMO LANÇAMENTO -->
+            <!-- CARD VISUAL DO ÚLTIMO LANÇAMENTO (DINÂMICO) -->
             <div id="card-ultimo-lancamento" class="card" style="margin-top: 15px; border: 1px dashed var(--accent); background: #151515;">
-                <label style="color: var(--accent); text-align: center; font-size: 12px;">📊 DISTRIBUIÇÃO DAS CAIXINHAS (ÚLTIMO LANÇAMENTO)</label>
-                <div class="envelopes" style="margin-top: 8px;">
-                    <div class="env bg-gas">⛽ GASOLINA <strong id="card-res-gas">R$ 0,00</strong></div>
-                    <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="card-res-moto">R$ 0,00</strong></div>
-                    <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="card-res-manut">R$ 0,00</strong></div>
-                    <div class="env bg-ipva">📄 CONTAS FIXAS <strong id="card-res-fixas">R$ 0,00</strong></div>
-                    <div class="env bg-lucro" style="grid-column: span 2;">💰 LUCRO LÍQUIDO DO DIA <strong id="card-res-lucro" style="font-size: 16px; color: var(--green);">R$ 0,00</strong></div>
-                </div>
+                <label style="color: var(--accent); text-align: center; font-size: 12px;">📊 DISTRIBUIÇÃO DAS CAIXINHAS</label>
+                <div id="grid-envelopes-ultimo" class="envelopes" style="margin-top: 8px;"></div>
             </div>
 
             <div class="envelopes">
@@ -150,11 +139,7 @@
                         <div style="margin: 4px 0;">
                             <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);"></div>
                             <div class="linha-acumulado"><span>💵 Espécie:</span> <input type="number" id="edit-99-dinheiro" step="0.01" style="color:var(--accent);"></div>
-                            <div class="linha-acumulado"><span>⛽ Gas:</span> <input type="number" id="edit-99-gas" step="0.01"></div>
-                            <div class="linha-acumulado"><span>🏍️ Moto:</span> <input type="number" id="edit-99-moto" step="0.01"></div>
-                            <div class="linha-acumulado"><span>🛢️ Manut:</span> <input type="number" id="edit-99-manut" step="0.01"></div>
-                            <div class="linha-acumulado"><span>📄 Fixas:</span> <input type="number" id="edit-99-fixas" step="0.01"></div>
-                            <div class="linha-acumulado"><span>💰 Lucro:</span> <input type="number" id="edit-99-lucro" step="0.01" style="color:var(--accent);"></div>
+                            <div id="linhas-dinamicas-99"></div>
                         </div>
                         <button class="btn-salvar-edicao" onclick="salvarEdicoes99()">💾 Salvar p/ Cofre</button>
                         <button class="btn-baixar-99" onclick="baixarCaixas99()">✅ Baixar / Zerar 99</button>
@@ -166,11 +151,7 @@
                         <div style="margin: 4px 0;">
                             <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);"></div>
                             <div class="linha-acumulado"><span>💵 Esp/Pix:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" style="color:var(--accent);"></div>
-                            <div class="linha-acumulado"><span>⛽ Gas:</span> <input type="number" id="edit-ub-gas" step="0.01"></div>
-                            <div class="linha-acumulado"><span>🏍️ Moto:</span> <input type="number" id="edit-ub-moto" step="0.01"></div>
-                            <div class="linha-acumulado"><span>🛢️ Manut:</span> <input type="number" id="edit-ub-manut" step="0.01"></div>
-                            <div class="linha-acumulado"><span>📄 Fixas:</span> <input type="number" id="edit-ub-fixas" step="0.01"></div>
-                            <div class="linha-acumulado"><span>💰 Lucro:</span> <input type="number" id="edit-ub-lucro" step="0.01" style="color:var(--accent);"></div>
+                            <div id="linhas-dinamicas-uber"></div>
                         </div>
                         <button class="btn-salvar-edicao" onclick="salvarEdicoesUber()">💾 Salvar p/ Cofre</button>
                         <button class="btn-receber-uber" onclick="receberRepasseUber()">💰 Baixar / Zerar Uber</button>
@@ -203,29 +184,17 @@
 
         <div class="card">
             <label style="color: var(--accent);">💰 SALDO ATUAL DOS COFRES (OFICIAL)</label>
-            <div class="envelopes" style="margin-top: 5px; grid-template-columns: 1fr 1fr;">
-                <div class="env bg-gas">⛽ GASOLINA <strong id="ger-res-gas">R$ 0.00</strong></div>
-                <div class="env bg-moto">🏍️ PARCELA MOTO <strong id="ger-res-moto">R$ 0.00</strong></div>
-                <div class="env bg-oleo">🛢️ MANUTENÇÃO <strong id="ger-res-oleo">R$ 0.00</strong></div>
-                <div class="env bg-ipva">📄 CONTAS FIXAS <strong id="ger-res-ipva">R$ 0.00</strong></div>
-            </div>
+            <div id="grid-cofres-geral" class="envelopes" style="margin-top: 5px; grid-template-columns: 1fr 1fr;"></div>
         </div>
 
         <div class="card">
             <label style="color: var(--accent);">📊 COMPARATIVO DE MESES (MÊS ATUAL X ANTERIOR)</label>
-            <div class="compare-box" id="comparativo-conteudo">
-                Carregando comparativo...
-            </div>
+            <div class="compare-box" id="comparativo-conteudo">Carregando comparativo...</div>
         </div>
 
         <div class="card">
             <label style="color: var(--accent);">💸 LANÇAR SAÍDA / RETIRADA RÁPIDA</label>
-            <select id="saida_cofre">
-                <option value="gas">⛽ Gasolina</option>
-                <option value="moto">🏍️ Parcela Moto</option>
-                <option value="manut">🛢️ Manutenção</option>
-                <option value="fixas">📄 Contas Fixas</option>
-            </select>
+            <select id="saida_cofre"></select>
 
             <label>Descrição (Ex: Calibrar Pneu, Combustível)</label>
             <input type="text" id="saida_desc" placeholder="Ex: Calibragem Pneu">
@@ -241,17 +210,13 @@
             
             <label style="margin-top: 8px;">Tipo da Conta</label>
             <select id="conta_tipo" onchange="mudarTipoContaForm()">
-                <option value="recorrente">🔄 Recorrente (Contínua Todo Mês - Ex: Wi-Fi)</option>
-                <option value="parcelada">💳 Parcelada (Com Fim - Ex: Peça em 5x)</option>
-                <option value="unica">⚡ Única / Casual (Paga só uma vez)</option>
+                <option value="recorrente">🔄 Recorrente (Contínua Todo Mês)</option>
+                <option value="parcelada">💳 Parcelada (Com Fim)</option>
+                <option value="unica">⚡ Única / Casual</option>
             </select>
 
-            <label>Cofre Destinado</label>
-            <select id="conta_cofre">
-                <option value="fixas">📄 Contas Fixas</option>
-                <option value="moto">🏍️ Parcela Moto</option>
-                <option value="manut">🛢️ Manutenção</option>
-            </select>
+            <label>Cofre / Caixinha Destinada</label>
+            <select id="conta_cofre"></select>
 
             <label>Nome da Conta</label>
             <input type="text" id="conta_nome" placeholder="Ex: Internet Wi-Fi, Parcela Baú">
@@ -259,7 +224,7 @@
             <label>Valor (R$)</label>
             <input type="number" id="conta_valor" step="0.01" placeholder="R$ 0,00">
 
-            <label>Mês e Ano de Referência (Ex: Dezembro/2026)</label>
+            <label>Mês e Ano de Referência</label>
             <input type="month" id="conta_mes_ano" style="text-align: center;">
 
             <label>Dia do Vencimento (Ex: 10)</label>
@@ -276,7 +241,7 @@
         <div class="card">
             <label>📋 CONTAS PENDENTES</label>
             <table id="tabela-contas">
-                <thead><tr><th>Conta</th><th>Cofre</th><th>Valor</th><th>Vencimento / Ref.</th><th>Ação</th></tr></thead>
+                <thead><tr><th>Conta</th><th>Caixinha</th><th>Valor</th><th>Vencimento</th><th>Ação</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
@@ -284,30 +249,41 @@
         <div class="card">
             <label>📜 HISTÓRICO DE RETIRADAS</label>
             <table id="tabela-saidas">
-                <thead><tr><th>Data</th><th>Cofre</th><th>Descrição</th><th>Valor</th><th>X</th></tr></thead>
+                <thead><tr><th>Data</th><th>Caixinha</th><th>Descrição</th><th>Valor</th><th>X</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
     </div>
 
-    <!-- ABA GASTOS MENSAIS -->
+    <!-- ABA GASTOS MENSAIS (CAIXINHAS DINÂMICAS) -->
     <div id="gastos" class="container">
         <div class="card">
-            <label>Nome do Gasto Mensal (Ex: Seguro, Aluguel Baú)</label>
-            <input type="text" id="gasto_nome" placeholder="Ex: Seguro da Moto">
+            <label style="color: var(--accent);">⚙️ CRIE E PERSONALIZE SUAS CAIXINHAS</label>
+            
+            <label>Nome da Caixinha / Gasto</label>
+            <input type="text" id="gasto_nome" placeholder="Ex: Gasolina, Parcela Moto, Seguro">
 
-            <label>Valor Mensal (R$)</label>
+            <div style="display: flex; gap: 10px;">
+                <div style="flex: 1;">
+                    <label>Emoji</label>
+                    <input type="text" id="gasto_emoji" placeholder="⛽" maxlength="4" style="text-align: center;">
+                </div>
+                <div style="flex: 1;">
+                    <label>Cor do Card</label>
+                    <input type="color" id="gasto_cor" value="#2ecc71" style="height: 48px; width: 100%; padding: 2px; cursor: pointer; background: #2b2b2b; border: 2px solid #444; border-radius: 8px;">
+                </div>
+            </div>
+
+            <label>Valor Mensal Estimado (R$)</label>
             <input type="number" id="gasto_valor" step="0.01" placeholder="R$ 0,00">
 
-            <button class="btn-add" onclick="adicionarGasto()">➕ Adicionar Gasto Mensal</button>
+            <button class="btn-add" onclick="adicionarGasto()">➕ Adicionar / Atualizar Caixinha</button>
 
             <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
 
-            <label>Sugestão de Distribuição (Ativar / Desativar)</label>
-            <div id="lista-toggles"></div>
-
-            <table id="tabela-gastos" style="margin-top: 20px;">
-                <thead><tr><th>Gasto Mensal</th><th>Valor</th><th>Ação</th></tr></thead>
+            <label>Caixinhas Cadastradas (Ativas no Sistema)</label>
+            <table id="tabela-gastos" style="margin-top: 10px;">
+                <thead><tr><th>Caixinha</th><th>Valor/Mês</th><th>Ativa</th><th>Ação</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
@@ -316,62 +292,80 @@
     <!-- ABA CONFIGURAÇÕES -->
     <div id="config" class="container">
         <div class="card">
+            <label style="color: var(--accent);">🏍️ CADASTRO DO VEÍCULO & METAS DE PERÍODO</label>
+            
+            <label>Modelo da Moto</label>
+            <input type="text" id="cfg_moto_modelo" placeholder="Ex: Yamaha Lander 250">
+
+            <label>Consumo Médio (Km por Litro)</label>
+            <input type="number" id="cfg_km_litro" step="0.1" placeholder="Ex: 30">
+
+            <label>Preço Médio do Litro da Gasolina (R$)</label>
+            <input type="number" id="cfg_preco_litro" step="0.01" placeholder="Ex: 5.89">
+
+            <label>Média Estimada de KM Rodados por Mês</label>
+            <input type="number" id="cfg_km_mes" step="1" value="3000" oninput="atualizarPreviewConfig()">
+
+            <label style="margin-top: 12px; color: var(--accent);">🎯 ESCOLHER PERÍODO DE PLANEJAMENTO</label>
+            <select id="cfg_periodo" onchange="atualizarPreviewConfig()">
+                <option value="dia">📅 Planejamento Diário</option>
+                <option value="semana">📆 Planejamento Semanal (7 dias)</option>
+                <option value="quinzena">🗓️ Planejamento Quinzenal (15 dias)</option>
+                <option value="mes" selected>📊 Planejamento Mensal (30 dias)</option>
+            </select>
+
+            <!-- PAINEL DE RESULTADO E METAS CALCULADAS -->
+            <div id="painel-metas-periodo" class="total-box" style="background: #111; border: 1px dashed var(--accent); margin: 15px 0; text-align: left; padding: 12px; font-size: 11px; color: #fff;"></div>
+
+            <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
+
             <div class="mode-box">
-                <label>MODO DE CONFIGURAÇÃO DO CUSTO KM</label>
+                <label>MODO DE CÁLCULO DA DISTRIBUIÇÃO POR KM</label>
                 <div class="toggle-container" style="margin-top: 8px;">
-                    <span>Modo Automático (Definir Custo Total p/ Km)</span>
-                    <input type="checkbox" id="cfg_modo_auto" onchange="mudarModoConfig()">
+                    <span>Modo Automático (Distribuir pelo Custo Desejado)</span>
+                    <input type="checkbox" id="cfg_modo_auto" checked onchange="mudarModoConfig()">
                 </div>
             </div>
 
-            <label>Média Estimada de KM Rodados por Mês</label>
-            <input type="number" id="cfg_km_mes" step="1">
+            <!-- MODO AUTOMÁTICO (DIGITA O CUSTO TOTAL E DISTRIBUI PROPORCIONALMENTE) -->
+            <div id="bloco-auto">
+                <label>Custo Total Desejado por KM (Ex: 0.55)</label>
+                <input type="number" id="cfg_custo_total_auto" step="0.01" value="0.55" oninput="atualizarPreviewConfig()">
+                <div style="font-size: 11px; color: #aaa; margin-bottom: 10px; text-align: center;">
+                    O sistema distribuirá esse valor por KM proporcionalmente entre todas as suas caixinhas ativas.
+                </div>
+                <div id="preview-auto-km" style="margin-bottom: 15px;"></div>
+            </div>
+
+            <!-- MODO MANUAL (DIGITA A TAXA DE CADA CAIXINHA) -->
+            <div id="bloco-manual" style="display:none;">
+                <div style="font-size: 11px; color: var(--accent); margin-bottom: 10px; text-align: center;">
+                    Defina manualmente a taxa em R$ por KM para cada caixinha:
+                </div>
+                <div id="inputs-manual-km" style="margin-bottom: 15px;"></div>
+                <div class="total-box" id="soma-total-manual">
+                    SOMA TOTAL DA DISTRIBUIÇÃO POR KM
+                    <strong>R$ 0,00 / km</strong>
+                </div>
+            </div>
 
             <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
-            <label style="color: var(--accent);">🏍️ CONTROLE DE KM (TRIPS DO PAINEL)</label>
+            <label style="color: var(--accent);">⚙️ CONTROLE DE MANUTENÇÃO (TRIPS)</label>
             
-            <label>Meta da Troca de Óleo (KM Ex: 3000)</label>
+            <label>Meta da Troca de Óleo (KM)</label>
             <input type="number" id="cfg_meta_oleo" step="100" placeholder="3000">
 
             <label>Trip do Óleo (Desde a última troca)</label>
-            <input type="number" id="cfg_trip_oleo" step="0.1" placeholder="Ex: 500">
+            <input type="number" id="cfg_trip_oleo" step="0.1" placeholder="0">
 
-            <label>Trip Geral / Peças (Rodagem desde a revisão geral)</label>
-            <input type="number" id="cfg_trip_geral" step="0.1" placeholder="Ex: 1500">
-
-            <div style="font-size: 10px; color: #888; text-align: center; margin-bottom: 12px;">
-                O sistema acumula o KM diário nesses dois contadores. O óleo avisa com base na sua Meta de Óleo personalizada. O manual monitora as peças longas no Trip Geral!
-            </div>
-
-            <div id="bloco-manual">
-                <label>Taxa Gasolina por KM (R$)</label>
-                <input type="number" id="cfg_gas_km" step="0.01" oninput="calcularTotalConfigManual()">
-
-                <label>Taxa Parcela Moto por KM (R$)</label>
-                <input type="number" id="cfg_parcela" step="0.01" oninput="calcularTotalConfigManual()">
-
-                <label>Taxa Manutenção por KM (R$)</label>
-                <input type="number" id="cfg_manut" step="0.01" oninput="calcularTotalConfigManual()">
-
-                <label>Taxa Contas/Fixas por KM (R$)</label>
-                <input type="number" id="cfg_fixas" step="0.01" oninput="calcularTotalConfigManual()">
-
-                <div class="total-box" style="margin-bottom: 12px;">
-                    SOMA TOTAL DA DISTRIBUIÇÃO POR KM
-                    <strong id="cfg_total_manual">R$ 0,00 / km</strong>
-                </div>
-            </div>
-
-            <div id="bloco-auto" style="display:none;">
-                <label>Custo Total Desejado por KM (Ex: R$ 0,46)</label>
-                <input type="number" id="cfg_custo_total_auto" step="0.01" placeholder="0.46">
-            </div>
+            <label>Trip Geral / Peças (Rodagem desde a revisão)</label>
+            <input type="number" id="cfg_trip_geral" step="0.1" placeholder="0">
 
             <button class="btn-add" onclick="salvarConfig()">Salvar Configurações</button>
 
             <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
 
-            <label>Gerenciamento de Dados (Backup Local Extra)</label>
+            <label>Gerenciamento de Dados (Backup)</label>
             <button class="btn-backup" onclick="exportarBackup()">Exportar Backup (Salvar Arquivo)</button>
             <button class="btn-restore" onclick="importarBackupClick()">Restaurar Backup</button>
             <input type="file" id="fileInput" style="display:none" onchange="importarBackup(event)">
@@ -394,35 +388,34 @@
         const dbRef = firebase.database().ref('motoboy_elite');
 
         let config = {
+            motoModelo: "Yamaha Lander 250",
+            kmLitro: 30,
+            precoLitro: 5.89,
             kmMes: 3000,
-            modoAuto: false,
-            custoTotalAuto: 0.46,
-            gasolinaKm: 0.22,
-            parcela: 0.08,
-            manutencao: 0.06,
-            fixas: 0.10,
+            periodoMeta: "mes",
+            modoAuto: true,
+            custoTotalAuto: 0.55,
+            taxasManuais: {},
             metaOleo: 3000,
             tripOleo: 0,
             tripGeral: 0
         };
 
-        let gastosMensais = [];
+        let gastosMensais = [
+            { id: 1, nome: "Gasolina", emoji: "⛽", cor: "#b71c1c", valor: 660, ativo: true },
+            { id: 2, nome: "Parcela Moto", emoji: "🏍️", cor: "#e65100", valor: 500, ativo: true },
+            { id: 3, nome: "Manutenção", emoji: "🛢️", cor: "#004d40", valor: 180, ativo: true },
+            { id: 4, nome: "Contas Fixas", emoji: "📄", cor: "#01579b", valor: 300, ativo: true }
+        ];
+
         let db = [];
-        let cofresGerais = { gas: 0, moto: 0, manut: 0, fixas: 0 };
-        
-        let pendente99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
-        let pendenteUber = { total: 0, dinheiro: 0, gas: 0, manut: 0, moto: 0, fixas: 0, lucro: 0 };
-        let ultimoLancamento = { gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
+        let cofresGerais = { 1: 0, 2: 0, 3: 0, 4: 0 };
+        let pendente99 = { total: 0, dinheiro: 0, itens: {} };
+        let pendenteUber = { total: 0, dinheiro: 0, itens: {} };
+        let ultimoLancamento = { itens: {}, lucro: 0 };
 
         let contasCadastradas = [];
         let historicoSaidas = [];
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const agora = new Date();
-            const anoMes = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}`;
-            const inputMes = document.getElementById('conta_mes_ano');
-            if(inputMes && !inputMes.value) inputMes.value = anoMes;
-        });
 
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
@@ -440,9 +433,7 @@
             carregarConfigNaTela();
             renderPainelGastos();
             renderTable();
-            atualizarCardUltimoLancamento();
-            atualizarQuadroGeral();
-            renderGerenciador();
+            atualizarInterfaceDinamica();
             document.getElementById('sync-status').innerText = "Conectado ao Firebase ☁️";
             document.getElementById('sync-status').style.color = "#2ecc71";
         }, (error) => {
@@ -452,224 +443,124 @@
 
         function salvarNoFirebase() {
             dbRef.set({
-                config: config,
-                gastosMensais: gastosMensais,
-                db: db,
-                cofresGerais: cofresGerais,
-                pendente99: pendente99,
-                pendenteUber: pendenteUber,
-                ultimoLancamento: ultimoLancamento,
-                contasCadastradas: contasCadastradas,
-                historicoSaidas: historicoSaidas
+                config, gastosMensais, db, cofresGerais, pendente99, pendenteUber,
+                ultimoLancamento, contasCadastradas, historicoSaidas
             });
         }
 
-        function atualizarQuadroGeral() {
-            document.getElementById('ger-res-gas').innerText = "R$ " + (cofresGerais.gas || 0).toFixed(2);
-            document.getElementById('ger-res-moto').innerText = "R$ " + (cofresGerais.moto || 0).toFixed(2);
-            document.getElementById('ger-res-oleo').innerText = "R$ " + (cofresGerais.manut || 0).toFixed(2);
-            document.getElementById('ger-res-ipva').innerText = "R$ " + (cofresGerais.fixas || 0).toFixed(2);
-        }
-
-        function atualizarCardUltimoLancamento() {
-            document.getElementById('card-res-gas').innerText = "R$ " + (ultimoLancamento.gas || 0).toFixed(2);
-            document.getElementById('card-res-moto').innerText = "R$ " + (ultimoLancamento.moto || 0).toFixed(2);
-            document.getElementById('card-res-manut').innerText = "R$ " + (ultimoLancamento.manut || 0).toFixed(2);
-            document.getElementById('card-res-fixas').innerText = "R$ " + (ultimoLancamento.fixas || 0).toFixed(2);
-            document.getElementById('card-res-lucro').innerText = "R$ " + (ultimoLancamento.lucro || 0).toFixed(2);
-        }
-
-        function calcularBrutoTotal() {
-            const b99 = parseFloat(document.getElementById('bruto_99').value) || 0;
-            const uber = parseFloat(document.getElementById('bruto_uber').value) || 0;
-            const total = b99 + uber;
-            document.getElementById('bruto').value = total > 0 ? total.toFixed(2) : '';
-        }
-
         function carregarConfigNaTela() {
-            document.getElementById('cfg_km_mes').value = config.kmMes;
-            document.getElementById('cfg_modo_auto').checked = config.modoAuto;
-            document.getElementById('cfg_custo_total_auto').value = config.custoTotalAuto || 0.46;
-            
-            document.getElementById('cfg_gas_km').value = config.gasolinaKm;
-            document.getElementById('cfg_parcela').value = config.parcela;
-            document.getElementById('cfg_manut').value = config.manutencao;
-            document.getElementById('cfg_fixas').value = config.fixas;
+            document.getElementById('cfg_moto_modelo').value = config.motoModelo || "";
+            document.getElementById('cfg_km_litro').value = config.kmLitro || 30;
+            document.getElementById('cfg_preco_litro').value = config.precoLitro || 5.89;
+            document.getElementById('cfg_km_mes').value = config.kmMes || 3000;
+            document.getElementById('cfg_periodo').value = config.periodoMeta || "mes";
+            document.getElementById('cfg_modo_auto').checked = config.modoAuto !== false;
+            document.getElementById('cfg_custo_total_auto').value = config.custoTotalAuto || 0.55;
             
             document.getElementById('cfg_meta_oleo').value = config.metaOleo || 3000;
             document.getElementById('cfg_trip_oleo').value = config.tripOleo || 0;
             document.getElementById('cfg_trip_geral').value = config.tripGeral || 0;
 
             mudarModoConfig();
-            calcularTotalConfigManual();
-            renderPainelGastos();
-            atualizarTelasCaixas();
-            atualizarQuadroGeral();
-        }
-
-        function atualizarTelasCaixas() {
-            const saldoApp99 = pendente99.total - (pendente99.dinheiro || 0);
-            const saldoAppUber = pendenteUber.total - (pendenteUber.dinheiro || 0);
-
-            document.getElementById('edit-99-tot').value = Math.max(0, saldoApp99).toFixed(2);
-            document.getElementById('edit-99-dinheiro').value = (pendente99.dinheiro || 0).toFixed(2);
-            document.getElementById('edit-99-gas').value = (pendente99.gas || 0).toFixed(2);
-            document.getElementById('edit-99-moto').value = (pendente99.moto || 0).toFixed(2);
-            document.getElementById('edit-99-manut').value = (pendente99.manut || 0).toFixed(2);
-            document.getElementById('edit-99-fixas').value = (pendente99.fixas || 0).toFixed(2);
-            document.getElementById('edit-99-lucro').value = (pendente99.lucro || 0).toFixed(2);
-
-            document.getElementById('edit-ub-tot').value = Math.max(0, saldoAppUber).toFixed(2);
-            document.getElementById('edit-ub-dinheiro').value = (pendenteUber.dinheiro || 0).toFixed(2);
-            document.getElementById('edit-ub-gas').value = (pendenteUber.gas || 0).toFixed(2);
-            document.getElementById('edit-ub-moto').value = (pendenteUber.moto || 0).toFixed(2);
-            document.getElementById('edit-ub-manut').value = (pendenteUber.manut || 0).toFixed(2);
-            document.getElementById('edit-ub-fixas').value = (pendenteUber.fixas || 0).toFixed(2);
-            document.getElementById('edit-ub-lucro').value = (pendenteUber.lucro || 0).toFixed(2);
-            
-            atualizarQuadroGeral();
-            renderGerenciador();
-        }
-
-        // SALVAR EDICÃO / TRANSFERIR APENAS OS CAMPOS DIGITADOS DA 99
-        function salvarEdicoes99() {
-            const valGas = parseFloat(document.getElementById('edit-99-gas').value) || 0;
-            const valMoto = parseFloat(document.getElementById('edit-99-moto').value) || 0;
-            const valManut = parseFloat(document.getElementById('edit-99-manut').value) || 0;
-            const valFixas = parseFloat(document.getElementById('edit-99-fixas').value) || 0;
-
-            // Soma nos cofres oficiais apenas o que estiver preenchido nos inputs
-            cofresGerais.gas += valGas;
-            cofresGerais.moto += valMoto;
-            cofresGerais.manut += valManut;
-            cofresGerais.fixas += valFixas;
-
-            // Abate das pendências o valor que foi transferido
-            pendente99.gas = Math.max(0, (pendente99.gas || 0) - valGas);
-            pendente99.moto = Math.max(0, (pendente99.moto || 0) - valMoto);
-            pendente99.manut = Math.max(0, (pendente99.manut || 0) - valManut);
-            pendente99.fixas = Math.max(0, (pendente99.fixas || 0) - valFixas);
-
-            salvarNoFirebase();
-            atualizarTelasCaixas();
-            alert('Valores editados da 99 foram somados ao cofre oficial!');
-        }
-
-        // BAIXAR TUDO DA 99
-        function baixarCaixas99() {
-            const valGas = parseFloat(document.getElementById('edit-99-gas').value) || 0;
-            const valMoto = parseFloat(document.getElementById('edit-99-moto').value) || 0;
-            const valManut = parseFloat(document.getElementById('edit-99-manut').value) || 0;
-            const valFixas = parseFloat(document.getElementById('edit-99-fixas').value) || 0;
-
-            if (valGas === 0 && valMoto === 0 && valManut === 0 && valFixas === 0) {
-                alert('Não há saldo de custos pendente na 99 para dar baixa.');
-                return;
-            }
-
-            if (confirm(`Confirma que deseja baixar os valores da 99 para o cofre real?`)) {
-                cofresGerais.gas += valGas;
-                cofresGerais.moto += valMoto;
-                cofresGerais.manut += valManut;
-                cofresGerais.fixas += valFixas;
-
-                pendente99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
-
-                salvarNoFirebase();
-                atualizarTelasCaixas();
-                alert('Baixa da 99 concluída com sucesso!');
-            }
-        }
-
-        // SALVAR EDIÇÃO / TRANSFERIR APENAS OS CAMPOS DIGITADOS DA UBER
-        function salvarEdicoesUber() {
-            const valGas = parseFloat(document.getElementById('edit-ub-gas').value) || 0;
-            const valMoto = parseFloat(document.getElementById('edit-ub-moto').value) || 0;
-            const valManut = parseFloat(document.getElementById('edit-ub-manut').value) || 0;
-            const valFixas = parseFloat(document.getElementById('edit-ub-fixas').value) || 0;
-
-            cofresGerais.gas += valGas;
-            cofresGerais.moto += valMoto;
-            cofresGerais.manut += valManut;
-            cofresGerais.fixas += valFixas;
-
-            pendenteUber.gas = Math.max(0, (pendenteUber.gas || 0) - valGas);
-            pendenteUber.moto = Math.max(0, (pendenteUber.moto || 0) - valMoto);
-            pendenteUber.manut = Math.max(0, (pendenteUber.manut || 0) - valManut);
-            pendenteUber.fixas = Math.max(0, (pendenteUber.fixas || 0) - valFixas);
-
-            salvarNoFirebase();
-            atualizarTelasCaixas();
-            alert('Valores editados da Uber foram somados ao cofre oficial!');
-        }
-
-        // BAIXAR TUDO DA UBER
-        function receberRepasseUber() {
-            const valGas = parseFloat(document.getElementById('edit-ub-gas').value) || 0;
-            const valMoto = parseFloat(document.getElementById('edit-ub-moto').value) || 0;
-            const valManut = parseFloat(document.getElementById('edit-ub-manut').value) || 0;
-            const valFixas = parseFloat(document.getElementById('edit-ub-fixas').value) || 0;
-
-            if (valGas === 0 && valMoto === 0 && valManut === 0 && valFixas === 0) {
-                alert('Não há saldo de custos pendente na Uber para dar baixa.');
-                return;
-            }
-
-            if (confirm(`Confirma que deseja baixar os valores da Uber para o cofre real?`)) {
-                cofresGerais.gas += valGas;
-                cofresGerais.moto += valMoto;
-                cofresGerais.manut += valManut;
-                cofresGerais.fixas += valFixas;
-
-                pendenteUber = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
-
-                salvarNoFirebase();
-                atualizarTelasCaixas();
-                alert('Baixa da Uber concluída com sucesso!');
-            }
-        }
-
-        function zerarCaixasPendentesManualmente() {
-            if (confirm('Deseja realmente zerar as caixinhas pendentes da 99 e da Uber sem enviar para o cofre?')) {
-                pendente99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
-                pendenteUber = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
-                salvarNoFirebase();
-                atualizarTelasCaixas();
-                alert('Caixinhas pendentes limpas com sucesso!');
-            }
         }
 
         function mudarModoConfig() {
             const auto = document.getElementById('cfg_modo_auto').checked;
-            document.getElementById('bloco-manual').style.display = auto ? 'none' : 'block';
             document.getElementById('bloco-auto').style.display = auto ? 'block' : 'none';
+            document.getElementById('bloco-manual').style.display = auto ? 'none' : 'block';
+            atualizarPreviewConfig();
         }
 
-        function calcularTotalConfigManual() {
-            const g = parseFloat(document.getElementById('cfg_gas_km').value) || 0;
-            const p = parseFloat(document.getElementById('cfg_parcela').value) || 0;
-            const m = parseFloat(document.getElementById('cfg_manut').value) || 0;
-            const f = parseFloat(document.getElementById('cfg_fixas').value) || 0;
-            const total = g + p + m + f;
-            document.getElementById('cfg_total_manual').innerText = "R$ " + total.toFixed(2) + " / km";
+        function atualizarPreviewConfig() {
+            const kmMes = parseFloat(document.getElementById('cfg_km_mes').value) || 3000;
+            const periodo = document.getElementById('cfg_periodo').value;
+            const auto = document.getElementById('cfg_modo_auto').checked;
+            const ativos = gastosMensais.filter(g => g.ativo);
+
+            const totalGastosMes = ativos.reduce((acc, g) => acc + g.valor, 0);
+
+            let fator = 1; 
+            let nomePeriodo = "Mês (30 dias)";
+            let dias = 30;
+            if(periodo === 'dia') { fator = 1 / 30; nomePeriodo = "Dia"; dias = 1; }
+            else if(periodo === 'semana') { fator = 7 / 30; nomePeriodo = "Semana (7 dias)"; dias = 7; }
+            else if(periodo === 'quinzena') { fator = 15 / 30; nomePeriodo = "Quinzena (15 dias)"; dias = 15; }
+
+            const kmNecessarioPeriodo = kmMes * fator;
+            const custoNecessarioPeriodo = totalGastosMes * fator;
+
+            document.getElementById('painel-metas-periodo').innerHTML = `
+                🎯 <strong>META PARA O PERÍODO (${nomePeriodo.toUpperCase()}):</strong><br>
+                📌 Custos / Gastos Totais: <strong style="color:var(--accent);">R$ ${custoNecessarioPeriodo.toFixed(2)}</strong><br>
+                🏍️ KM Necessário Rodar: <strong style="color:var(--green);">${kmNecessarioPeriodo.toFixed(1)} km</strong><br>
+                💡 Média por Dia no Período: <strong style="color:var(--accent);">${(kmNecessarioPeriodo / dias).toFixed(1)} km/dia</strong>
+            `;
+
+            if (auto) {
+                const custoTotalDesejado = parseFloat(document.getElementById('cfg_custo_total_auto').value) || 0;
+                let somaValoresAtivos = ativos.reduce((acc, g) => acc + g.valor, 0);
+                
+                let html = '';
+                ativos.forEach(g => {
+                    let proporcao = somaValoresAtivos > 0 ? (g.valor / somaValoresAtivos) : (1 / ativos.length);
+                    let custoKmItem = custoTotalDesejado * proporcao;
+                    html += `
+                        <div style="display: flex; justify-content: space-between; margin: 4px 0; background: #222; padding: 6px; border-radius: 4px; font-size: 11px;">
+                            <span>${g.emoji} ${g.nome}</span>
+                            <strong style="color: var(--green);">R$ ${custoKmItem.toFixed(4)} / km</strong>
+                        </div>
+                    `;
+                });
+                html += `
+                    <div class="total-box" style="margin-top: 8px;">
+                        CUSTO TOTAL APLICADO POR KM
+                        <strong>R$ ${custoTotalDesejado.toFixed(2)} / km</strong>
+                    </div>
+                `;
+                document.getElementById('preview-auto-km').innerHTML = html;
+            } else {
+                let html = '';
+                let somaManual = 0;
+                ativos.forEach(g => {
+                    const taxaAtual = (config.taxasManuais && config.taxasManuais[g.id] !== undefined) ? config.taxasManuais[g.id] : (g.valor / kmMes);
+                    somaManual += taxaAtual;
+                    html += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 6px 0; background: #222; padding: 8px; border-radius: 6px; font-size: 11px;">
+                            <span>${g.emoji} ${g.nome}</span>
+                            <input type="number" id="taxa_manual_${g.id}" step="0.01" value="${taxaAtual.toFixed(2)}" oninput="calcularSomaManual()" style="width: 80px; padding: 4px; font-size: 12px; margin: 0; text-align: right;">
+                        </div>
+                    `;
+                });
+                document.getElementById('inputs-manual-km').innerHTML = html;
+                document.getElementById('soma-total-manual').innerHTML = `SOMA TOTAL DA DISTRIBUIÇÃO POR KM<strong style="color:var(--green); font-size:15px; display:block; margin-top:4px;">R$ ${somaManual.toFixed(2)} / km</strong>`;
+            }
+        }
+
+        function calcularSomaManual() {
+            let soma = 0;
+            const ativos = gastosMensais.filter(g => g.ativo);
+            ativos.forEach(g => {
+                const inp = document.getElementById(`taxa_manual_${g.id}`);
+                if(inp) soma += parseFloat(inp.value) || 0;
+            });
+            document.getElementById('soma-total-manual').innerHTML = `SOMA TOTAL DA DISTRIBUIÇÃO POR KM<strong style="color:var(--green); font-size:15px; display:block; margin-top:4px;">R$ ${soma.toFixed(2)} / km</strong>`;
         }
 
         function salvarConfig() {
+            config.motoModelo = document.getElementById('cfg_moto_modelo').value;
+            config.kmLitro = parseFloat(document.getElementById('cfg_km_litro').value) || 30;
+            config.precoLitro = parseFloat(document.getElementById('cfg_preco_litro').value) || 5.89;
             config.kmMes = parseFloat(document.getElementById('cfg_km_mes').value) || 3000;
+            config.periodoMeta = document.getElementById('cfg_periodo').value;
             config.modoAuto = document.getElementById('cfg_modo_auto').checked;
+            config.custoTotalAuto = parseFloat(document.getElementById('cfg_custo_total_auto').value) || 0.55;
 
-            if (config.modoAuto) {
-                const totalAuto = parseFloat(document.getElementById('cfg_custo_total_auto').value) || 0.46;
-                config.custoTotalAuto = totalAuto;
-                config.gasolinaKm = totalAuto * 0.48;
-                config.parcela = totalAuto * 0.17;
-                config.manutencao = totalAuto * 0.13;
-                config.fixas = totalAuto * 0.22;
-            } else {
-                config.gasolinaKm = parseFloat(document.getElementById('cfg_gas_km').value) || 0;
-                config.parcela = parseFloat(document.getElementById('cfg_parcela').value) || 0;
-                config.manutencao = parseFloat(document.getElementById('cfg_manut').value) || 0;
-                config.fixas = parseFloat(document.getElementById('cfg_fixas').value) || 0;
+            if (!config.modoAuto) {
+                if(!config.taxasManuais) config.taxasManuais = {};
+                gastosMensais.filter(g => g.ativo).forEach(g => {
+                    const inp = document.getElementById(`taxa_manual_${g.id}`);
+                    if(inp) { config.taxasManuais[g.id] = parseFloat(inp.value) || 0; }
+                });
             }
 
             config.metaOleo = parseFloat(document.getElementById('cfg_meta_oleo').value) || 3000;
@@ -681,24 +572,12 @@
             trocarTab('diario');
         }
 
-        function zerarTripOleo() {
-            config.tripOleo = 0;
-            salvarNoFirebase();
-            renderGerenciador();
-            alert('Trip do Óleo zerado!');
-        }
-
-        function zerarTripGeral() {
-            config.tripGeral = 0;
-            salvarNoFirebase();
-            renderGerenciador();
-            alert('Trip Geral zerado!');
-        }
+        function zerarTripOleo() { config.tripOleo = 0; salvarNoFirebase(); renderGerenciador(); alert('Trip Óleo zerado!'); }
+        function zerarTripGeral() { config.tripGeral = 0; salvarNoFirebase(); renderGerenciador(); alert('Trip Geral zerado!'); }
 
         function trocarTab(tabId, evt) {
             document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            
             document.getElementById(tabId).classList.add('active');
             if (evt && evt.currentTarget) {
                 evt.currentTarget.classList.add('active');
@@ -706,59 +585,123 @@
                 const idx = tabId === 'diario' ? 0 : tabId === 'gerenciar' ? 1 : tabId === 'gastos' ? 2 : 3;
                 document.querySelectorAll('.tab-btn')[idx].classList.add('active');
             }
-            if(tabId === 'config' || tabId === 'gastos') carregarConfigNaTela();
+            if(tabId === 'config') carregarConfigNaTela();
             if(tabId === 'gerenciar') renderGerenciador();
         }
 
         function adicionarGasto() {
             const nome = document.getElementById('gasto_nome').value.trim();
+            const emoji = document.getElementById('gasto_emoji').value.trim() || "📌";
+            const cor = document.getElementById('gasto_cor').value;
             const valor = parseFloat(document.getElementById('gasto_valor').value);
 
             if(!nome || isNaN(valor)) {
-                alert('Preencha o nome e o valor mensal corretamente!');
+                alert('Preencha o nome e o valor mensal!');
                 return;
             }
 
-            gastosMensais.push({ id: Date.now(), nome, valor, ativo: true });
+            const novoId = Date.now();
+            gastosMensais.push({ id: novoId, nome, emoji, cor, valor, ativo: true });
+            if(cofresGerais[novoId] === undefined) cofresGerais[novoId] = 0;
+
             salvarNoFirebase();
-            
-            document.getElementById('gasto_nome').value = '';
-            document.getElementById('gasto_valor').value = '';
             renderPainelGastos();
+            atualizarInterfaceDinamica();
+
+            document.getElementById('gasto_nome').value = '';
+            document.getElementById('gasto_emoji').value = '';
+            document.getElementById('gasto_valor').value = '';
         }
 
         function removerGasto(id) {
-            gastosMensais = gastosMensais.filter(g => g.id !== id);
-            salvarNoFirebase();
-            renderPainelGastos();
+            if(confirm('Excluir caixinha?')) {
+                gastosMensais = gastosMensais.filter(g => g.id !== id);
+                salvarNoFirebase();
+                renderPainelGastos();
+                atualizarInterfaceDinamica();
+            }
         }
 
         function alternarGastoAtivo(id) {
-            const gasto = gastosMensais.find(g => g.id === id);
-            if(gasto) {
-                gasto.ativo = !gasto.ativo;
-                salvarNoFirebase();
-            }
+            const g = gastosMensais.find(x => x.id === id);
+            if(g) { g.ativo = !g.ativo; salvarNoFirebase(); atualizarInterfaceDinamica(); }
         }
 
         function renderPainelGastos() {
             const tbody = document.querySelector('#tabela-gastos tbody');
-            const listaToggles = document.getElementById('lista-toggles');
-
             tbody.innerHTML = gastosMensais.map(g => `
                 <tr>
-                    <td><strong>${g.nome}</strong></td>
-                    <td>R$ ${g.valor.toFixed(2)} /mês</td>
+                    <td><span style="color:${g.cor}; font-size:14px; margin-right:5px;">${g.emoji}</span> <strong>${g.nome}</strong></td>
+                    <td>R$ ${g.valor.toFixed(2)}</td>
+                    <td><input type="checkbox" ${g.ativo ? 'checked' : ''} onchange="alternarGastoAtivo(${g.id})"></td>
                     <td><button class="btn-del" onclick="removerGasto(${g.id})">✕</button></td>
                 </tr>
             `).join('');
+        }
 
-            listaToggles.innerHTML = gastosMensais.map(g => `
-                <div class="toggle-container">
-                    <span>${g.nome} (R$ ${g.valor.toFixed(2)}/mês)</span>
-                    <input type="checkbox" ${g.ativo ? 'checked' : ''} onchange="alternarGastoAtivo(${g.id})">
+        function atualizarInterfaceDinamica() {
+            const ativos = gastosMensais.filter(g => g.ativo);
+
+            document.getElementById('grid-envelopes-ultimo').innerHTML = ativos.map(g => `
+                <div class="env" style="background:${g.cor}22; border: 1px solid ${g.cor};">
+                    ${g.emoji} ${g.nome.toUpperCase()} 
+                    <strong id="card-res-${g.id}" style="color:${g.cor};">R$ 0,00</strong>
+                </div>
+            `).join('') + `<div class="env" style="grid-column: span 2; background:#1b5e20; border:1px solid var(--green);">💰 LUCRO LÍQUIDO <strong id="card-res-lucro" style="font-size:16px; color:var(--green);">R$ 0,00</strong></div>`;
+
+            document.getElementById('linhas-dinamicas-99').innerHTML = ativos.map(g => `
+                <div class="linha-acumulado"><span>${g.emoji} ${g.nome}:</span> <input type="number" id="edit-99-${g.id}" step="0.01"></div>
+            `).join('');
+
+            document.getElementById('linhas-dinamicas-uber').innerHTML = ativos.map(g => `
+                <div class="linha-acumulado"><span>${g.emoji} ${g.nome}:</span> <input type="number" id="edit-ub-${g.id}" step="0.01"></div>
+            `).join('');
+
+            document.getElementById('grid-cofres-geral').innerHTML = ativos.map(g => `
+                <div class="env" style="background:${g.cor}22; border: 1px solid ${g.cor};">
+                    ${g.emoji} ${g.nome.toUpperCase()} 
+                    <strong id="ger-res-${g.id}" style="color:${g.cor};">R$ ${(cofresGerais[g.id] || 0).toFixed(2)}</strong>
                 </div>
             `).join('');
+
+            document.getElementById('saida_cofre').innerHTML = ativos.map(g => `<option value="${g.id}">${g.emoji} ${g.nome}</option>`).join('');
+            document.getElementById('conta_cofre').innerHTML = ativos.map(g => `<option value="${g.id}">${g.emoji} ${g.nome}</option>`).join('');
+
+            preencherValoresPendentesNaTela();
+            if(document.getElementById('cfg_modo_auto')) atualizarPreviewConfig();
+        }
+
+        function preencherValoresPendentesNaTela() {
+            const ativos = gastosMensais.filter(g => g.ativo);
+            
+            document.getElementById('edit-99-tot').value = Math.max(0, pendente99.total - (pendente99.dinheiro || 0)).toFixed(2);
+            document.getElementById('edit-99-dinheiro').value = (pendente99.dinheiro || 0).toFixed(2);
+            ativos.forEach(g => {
+                const inp = document.getElementById(`edit-99-${g.id}`);
+                if(inp) inp.value = (pendente99.itens && pendente99.itens[g.id] ? pendente99.itens[g.id] : 0).toFixed(2);
+            });
+
+            document.getElementById('edit-ub-tot').value = Math.max(0, pendenteUber.total - (pendenteUber.dinheiro || 0)).toFixed(2);
+            document.getElementById('edit-ub-dinheiro').value = (pendenteUber.dinheiro || 0).toFixed(2);
+            ativos.forEach(g => {
+                const inp = document.getElementById(`edit-ub-${g.id}`);
+                if(inp) inp.value = (pendenteUber.itens && pendenteUber.itens[g.id] ? pendenteUber.itens[g.id] : 0).toFixed(2);
+            });
+
+            if(ultimoLancamento.itens) {
+                ativos.forEach(g => {
+                    const el = document.getElementById(`card-res-${g.id}`);
+                    if(el) el.innerText = "R$ " + (ultimoLancamento.itens[g.id] || 0).toFixed(2);
+                });
+            }
+            const elLucro = document.getElementById('card-res-lucro');
+            if(elLucro) elLucro.innerText = "R$ " + (ultimoLancamento.lucro || 0).toFixed(2);
+        }
+
+        function calcularBrutoTotal() {
+            const b99 = parseFloat(document.getElementById('bruto_99').value) || 0;
+            const uber = parseFloat(document.getElementById('bruto_uber').value) || 0;
+            document.getElementById('bruto').value = (b99 + uber) > 0 ? (b99 + uber).toFixed(2) : '';
         }
 
         function registrar() {
@@ -771,95 +714,64 @@
             const km = parseFloat(document.getElementById('km_dia').value) || 0;
 
             if (bruto <= 0 || km <= 0) {
-                alert('Preencha os valores de faturamento e KM corretamente.');
+                alert('Preencha faturamento e KM corretamente.');
                 return;
             }
 
             config.tripOleo = (parseFloat(config.tripOleo) || 0) + km;
             config.tripGeral = (parseFloat(config.tripGeral) || 0) + km;
 
-            const gas = km * config.gasolinaKm;
-            const resParcela = km * config.parcela;
-            const resManut = km * config.manutencao;
-            const resFixas = km * config.fixas;
-            
-            let totalExtrasDia = 0;
             const kmMes = config.kmMes > 0 ? config.kmMes : 3000;
+            const ativos = gastosMensais.filter(g => g.ativo);
+            const modoAuto = config.modoAuto !== false;
 
-            gastosMensais.forEach(g => {
-                if(g.ativo) {
-                    const custoKmGasto = g.valor / kmMes;
-                    totalExtrasDia += (km * custoKmGasto);
+            let custosDiaItens = {};
+            let totalCustosGerais = 0;
+            let somaGastos = ativos.reduce((acc, g) => acc + g.valor, 0);
+
+            ativos.forEach(g => {
+                let custoKmItem = 0;
+                if(modoAuto) {
+                    const custoTotalDesejado = parseFloat(config.custoTotalAuto) || 0.55;
+                    let proporcao = somaGastos > 0 ? (g.valor / somaGastos) : (1 / ativos.length);
+                    custoKmItem = custoTotalDesejado * proporcao;
+                } else {
+                    custoKmItem = (config.taxasManuais && config.taxasManuais[g.id] !== undefined) ? config.taxasManuais[g.id] : (g.valor / kmMes);
                 }
+                const valorItemDia = km * custoKmItem;
+                custosDiaItens[g.id] = valorItemDia;
+                totalCustosGerais += valorItemDia;
             });
 
-            const custoTotalPorKmBase = config.gasolinaKm + config.parcela + config.manutencao + config.fixas;
-            const custoExtraPorKm = gastosMensais.filter(g => g.ativo).reduce((acc, g) => acc + (g.valor / kmMes), 0);
-            const custoTotalPorKm = custoTotalPorKmBase + custoExtraPorKm;
-
+            const lucroTotalDia = bruto - totalCustosGerais;
             const eficiencia = km > 0 ? (bruto / km) : 0;
             document.getElementById('res-eficiencia').innerText = `R$ ${eficiencia.toFixed(2)} / km`;
 
-            const totalCustosGerais = gas + resParcela + resManut + resFixas + totalExtrasDia;
-            const lucroTotalDia = bruto - totalCustosGerais;
-
-            ultimoLancamento = {
-                gas: gas,
-                moto: resParcela,
-                manut: resManut,
-                fixas: resFixas,
-                lucro: lucroTotalDia
-            };
+            ultimoLancamento = { itens: custosDiaItens, lucro: lucroTotalDia };
+            pendente99 = { total: b99, dinheiro: dinheiro99, itens: {} };
+            pendenteUber = { total: uber, dinheiro: dinheiroUber, itens: {} };
 
             if (b99 > 0) {
                 const prop99 = b99 / bruto;
-                const totalCustos99 = totalCustosGerais * prop99;
-                const lucro99 = b99 - totalCustos99;
-
-                pendente99 = {
-                    total: b99,
-                    dinheiro: dinheiro99,
-                    gas: gas * prop99,
-                    moto: resParcela * prop99,
-                    manut: resManut * prop99,
-                    fixas: resFixas * prop99,
-                    lucro: lucro99
-                };
+                ativos.forEach(g => { pendente99.itens[g.id] = (custosDiaItens[g.id] || 0) * prop99; });
             }
-
             if (uber > 0) {
                 const propUber = uber / bruto;
-                const totalCustosUber = totalCustosGerais * propUber;
-                const lucroUber = uber - totalCustosUber;
-
-                pendenteUber = {
-                    total: uber,
-                    dinheiro: dinheiroUber,
-                    gas: gas * propUber,
-                    moto: resParcela * propUber,
-                    manut: resManut * propUber,
-                    fixas: resFixas * propUber,
-                    lucro: lucroUber
-                };
+                ativos.forEach(g => { pendenteUber.itens[g.id] = (custosDiaItens[g.id] || 0) * propUber; });
             }
 
-            const agora = new Date();
             const obsTexto = (eficiencia < 1.50) ? "RUIM" : (eficiencia < 2.00 ? "MÉDIO" : "EXCELENTE");
             document.getElementById('obs').value = obsTexto;
 
             db.unshift({ 
                 id: Date.now(),
-                data: agora.toLocaleDateString('pt-BR'), 
-                mesAno: `${String(agora.getMonth() + 1).padStart(2, '0')}/${agora.getFullYear()}`,
-                bruto: bruto.toFixed(2), 
-                km: km,
-                eficiencia: eficiencia.toFixed(2),
-                obs: obsTexto
+                data: new Date().toLocaleDateString('pt-BR'), 
+                mesAno: `${String(new Date().getMonth() + 1).padStart(2, '0')}/${new Date().getFullYear()}`,
+                bruto: bruto.toFixed(2), km, eficiencia: eficiencia.toFixed(2), obs: obsTexto
             });
 
             salvarNoFirebase();
-            atualizarTelasCaixas();
-            atualizarCardUltimoLancamento();
+            atualizarInterfaceDinamica();
             renderTable();
 
             document.getElementById('bruto_99').value = '';
@@ -868,28 +780,78 @@
             document.getElementById('dinheiro_uber').value = '';
             document.getElementById('km_dia').value = '';
             document.getElementById('bruto').value = '';
-            alert('Lançamento registrado com sucesso!');
+            alert('Lançamento registrado!');
+        }
+
+        function salvarEdicoes99() {
+            gastosMensais.filter(g => g.ativo).forEach(g => {
+                const val = parseFloat(document.getElementById(`edit-99-${g.id}`).value) || 0;
+                cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
+                if(pendente99.itens && pendente99.itens[g.id]) {
+                    pendente99.itens[g.id] = Math.max(0, pendente99.itens[g.id] - val);
+                }
+            });
+            salvarNoFirebase();
+            atualizarInterfaceDinamica();
+            alert('Valores da 99 salvos no cofre oficial!');
+        }
+
+        function baixarCaixas99() {
+            gastosMensais.filter(g => g.ativo).forEach(g => {
+                const val = parseFloat(document.getElementById(`edit-99-${g.id}`).value) || 0;
+                cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
+            });
+            pendente99 = { total: 0, dinheiro: 0, itens: {} };
+            salvarNoFirebase();
+            atualizarInterfaceDinamica();
+            alert('Baixa da 99 concluída!');
+        }
+
+        function salvarEdicoesUber() {
+            gastosMensais.filter(g => g.ativo).forEach(g => {
+                const val = parseFloat(document.getElementById(`edit-ub-${g.id}`).value) || 0;
+                cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
+                if(pendenteUber.itens && pendenteUber.itens[g.id]) {
+                    pendenteUber.itens[g.id] = Math.max(0, pendenteUber.itens[g.id] - val);
+                }
+            });
+            salvarNoFirebase();
+            atualizarInterfaceDinamica();
+            alert('Valores da Uber salvos no cofre oficial!');
+        }
+
+        function receberRepasseUber() {
+            gastosMensais.filter(g => g.ativo).forEach(g => {
+                const val = parseFloat(document.getElementById(`edit-ub-${g.id}`).value) || 0;
+                cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
+            });
+            pendenteUber = { total: 0, dinheiro: 0, itens: {} };
+            salvarNoFirebase();
+            atualizarInterfaceDinamica();
+            alert('Baixa da Uber concluída!');
+        }
+
+        function zerarCaixasPendentesManualmente() {
+            if(confirm('Zerar caixas pendentes?')) {
+                pendente99 = { total: 0, dinheiro: 0, itens: {} };
+                pendenteUber = { total: 0, dinheiro: 0, itens: {} };
+                salvarNoFirebase();
+                atualizarInterfaceDinamica();
+                alert('Pendências limpas!');
+            }
         }
 
         function deletarItem(i) {
-            if (confirm('Deseja desfazer este lançamento do histórico?')) {
-                const itemRemovido = db[i];
-                if (itemRemovido && itemRemovido.km) {
-                    const kmAbater = parseFloat(itemRemovido.km) || 0;
-                    config.tripOleo = Math.max(0, (parseFloat(config.tripOleo) || 0) - kmAbater);
-                    config.tripGeral = Math.max(0, (parseFloat(config.tripGeral) || 0) - kmAbater);
+            if (confirm('Desfazer lançamento?')) {
+                const item = db[i];
+                if(item && item.km) {
+                    config.tripOleo = Math.max(0, config.tripOleo - item.km);
+                    config.tripGeral = Math.max(0, config.tripGeral - item.km);
                 }
-
-                pendente99 = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
-                pendenteUber = { total: 0, dinheiro: 0, gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
-                ultimoLancamento = { gas: 0, moto: 0, manut: 0, fixas: 0, lucro: 0 };
-
                 db.splice(i, 1);
                 salvarNoFirebase();
-                atualizarTelasCaixas();
-                atualizarCardUltimoLancamento();
                 renderTable();
-                alert('Lançamento desfeito!');
+                alert('Desfeito!');
             }
         }
 
@@ -903,9 +865,9 @@
                     <td style="color:var(--green); font-weight:bold;">R$ ${item.bruto}</td>
                     <td>R$ ${item.eficiencia}</td>
                     <td><span class="badge-obs ${badgeClass}">${item.obs}</span></td>
-                    <td><button class="btn-del" onclick="deletarItem(${i})" title="Apagar">✕</button></td>
+                    <td><button class="btn-del" onclick="deletarItem(${i})">✕</button></td>
                 </tr>`;
-            }).join('') : '<tr><td colspan="5" style="color:#777; padding: 15px;">Nenhum lançamento registrado.</td></tr>';
+            }).join('') : '<tr><td colspan="5" style="color:#777; padding: 15px;">Nenhum lançamento.</td></tr>';
         }
 
         function mudarTipoContaForm() {
@@ -914,45 +876,40 @@
         }
 
         function lançarSaidaCofre() {
-            const cofre = document.getElementById('saida_cofre').value;
+            const cofreId = document.getElementById('saida_cofre').value;
             const desc = document.getElementById('saida_desc').value.trim();
             const valor = parseFloat(document.getElementById('saida_valor').value);
 
             if(!desc || isNaN(valor) || valor <= 0) {
-                alert('Preencha a descrição e um valor válido para a saída!');
+                alert('Preencha descrição e valor!');
                 return;
             }
 
-            const totalDisponivel = cofresGerais[cofre] || 0;
-
-            if (valor > totalDisponivel) {
-                alert(`Saldo insuficiente no cofre ${cofre.toUpperCase()}! Disponível: R$ ${totalDisponivel.toFixed(2)}`);
+            const disponivel = cofresGerais[cofreId] || 0;
+            if (valor > disponivel) {
+                alert(`Saldo insuficiente! Disponível: R$ ${disponivel.toFixed(2)}`);
                 return;
             }
 
-            cofresGerais[cofre] = Math.max(0, totalDisponivel - valor);
+            cofresGerais[cofreId] = Math.max(0, disponivel - valor);
+            const gInfo = gastosMensais.find(x => x.id == cofreId);
 
-            const agora = new Date();
             historicoSaidas.unshift({
-                id: Date.now(),
-                data: agora.toLocaleDateString('pt-BR'),
-                mesAno: `${String(agora.getMonth() + 1).padStart(2, '0')}/${agora.getFullYear()}`,
-                cofre: cofre,
-                desc: desc,
-                valor: valor
+                id: Date.now(), data: new Date().toLocaleDateString('pt-BR'),
+                cofreNome: gInfo ? `${gInfo.emoji} ${gInfo.nome}` : 'Caixa', desc, valor
             });
 
             salvarNoFirebase();
-            atualizarTelasCaixas();
-
+            atualizarInterfaceDinamica();
+            renderGerenciador();
             document.getElementById('saida_desc').value = '';
             document.getElementById('saida_valor').value = '';
-            alert(`Retirada de R$ ${valor.toFixed(2)} registrada!`);
+            alert('Retirada registrada!');
         }
 
         function cadastrarConta() {
             const tipo = document.getElementById('conta_tipo').value;
-            const cofre = document.getElementById('conta_cofre').value;
+            const cofreId = document.getElementById('conta_cofre').value;
             const nome = document.getElementById('conta_nome').value.trim();
             const valor = parseFloat(document.getElementById('conta_valor').value);
             const mesAno = document.getElementById('conta_mes_ano').value;
@@ -960,122 +917,87 @@
             const parcelas = parseInt(document.getElementById('conta_parcelas').value) || 1;
 
             if(!nome || isNaN(valor) || valor <= 0 || !mesAno) {
-                alert('Preencha o nome, valor e mês/ano corretamente!');
+                alert('Preencha os dados da conta!');
                 return;
             }
 
             contasCadastradas.push({
-                id: Date.now(),
-                tipo: tipo, 
-                cofre: cofre,
-                nome: nome,
-                valor: valor,
-                mesAnoRef: mesAno,
-                vencimento: vencimento,
-                parcelaAtual: 1,
-                totalParcelas: parcelas,
-                paga: false
+                id: Date.now(), tipo, cofreId, nome, valor, mesAnoRef: mesAno,
+                vencimento, parcelaAtual: 1, totalParcelas: parcelas, paga: false
             });
 
             salvarNoFirebase();
             renderGerenciador();
-
             document.getElementById('conta_nome').value = '';
             document.getElementById('conta_valor').value = '';
-            document.getElementById('conta_vencimento').value = '';
-            document.getElementById('conta_parcelas').value = '1';
-            alert('Conta cadastrada com sucesso!');
+            alert('Conta cadastrada!');
         }
 
         function pagarConta(id) {
-            const conta = contasCadastradas.find(c => c.id === id);
-            if (!conta) return;
+            const c = contasCadastradas.find(x => x.id === id);
+            if(!c) return;
 
-            const cofre = conta.cofre;
-            const valor = conta.valor;
-            const totalDisponivel = cofresGerais[cofre] || 0;
-
-            if (valor > totalDisponivel) {
-                alert(`Saldo insuficiente no cofre ${cofre.toUpperCase()}! Disponível: R$ ${totalDisponivel.toFixed(2)}`);
+            const disponivel = cofresGerais[c.cofreId] || 0;
+            if(c.valor > disponivel) {
+                alert(`Saldo insuficiente! Disponível: R$ ${disponivel.toFixed(2)}`);
                 return;
             }
 
-            let infoTexto = conta.tipo === 'parcelada' ? `parcela ${conta.parcelaAtual}/${conta.totalParcelas}` : conta.tipo === 'recorrente' ? 'mensalidade' : 'conta única';
+            if(confirm(`Pagar "${c.nome}" no valor de R$ ${c.valor.toFixed(2)}?`)) {
+                cofresGerais[c.cofreId] = Math.max(0, disponivel - c.valor);
+                const gInfo = gastosMensais.find(x => x.id == c.cofreId);
 
-            if (confirm(`Confirmar PAGAMENTO de "${conta.nome}" (${infoTexto}) no valor de R$ ${valor.toFixed(2)} usando o cofre ${cofre.toUpperCase()}?`)) {
-                cofresGerais[cofre] = Math.max(0, totalDisponivel - valor);
-
-                const agora = new Date();
                 historicoSaidas.unshift({
-                    id: Date.now(),
-                    data: agora.toLocaleDateString('pt-BR'),
-                    mesAno: `${String(agora.getMonth() + 1).padStart(2, '0')}/${agora.getFullYear()}`,
-                    cofre: cofre,
-                    desc: `Pago: ${conta.nome} (${infoTexto})`,
-                    valor: valor
+                    id: Date.now(), data: new Date().toLocaleDateString('pt-BR'),
+                    cofreNome: gInfo ? `${gInfo.emoji} ${gInfo.nome}` : 'Caixa', desc: `Pago: ${c.nome}`, valor: c.valor
                 });
 
-                if (conta.tipo === 'parcelada') {
-                    if (conta.parcelaAtual < conta.totalParcelas) {
-                        conta.parcelaAtual += 1;
-                    } else {
-                        conta.paga = true; 
-                    }
-                } else if (conta.tipo === 'unica') {
-                    conta.paga = true; 
-                } else if (conta.tipo === 'recorrente') {
-                    let [ano, mes] = conta.mesAnoRef.split('-').map(Number);
-                    mes += 1;
-                    if (mes > 12) { mes = 1; ano += 1; }
-                    conta.mesAnoRef = `${ano}-${String(mes).padStart(2, '0')}`;
-                    conta.paga = false; 
+                if(c.tipo === 'parcelada') {
+                    if(c.parcelaAtual < c.totalParcelas) c.parcelaAtual++;
+                    else c.paga = true;
+                } else if(c.tipo === 'unica') {
+                    c.paga = true;
+                } else if(c.tipo === 'recorrente') {
+                    let [ano, mes] = c.mesAnoRef.split('-').map(Number);
+                    mes++; if(mes > 12) { mes = 1; ano++; }
+                    c.mesAnoRef = `${ano}-${String(mes).padStart(2, '0')}`;
                 }
 
                 salvarNoFirebase();
-                atualizarTelasCaixas();
+                atualizarInterfaceDinamica();
                 renderGerenciador();
-                alert('Pagamento efetuado!');
+                alert('Conta paga!');
             }
         }
 
         function excluirConta(id) {
-            if (confirm('Deseja excluir esta conta?')) {
-                contasCadastradas = contasCadastradas.filter(c => c.id !== id);
+            if(confirm('Excluir conta?')) {
+                contasCadastradas = contasCadastradas.filter(x => x.id !== id);
                 salvarNoFirebase();
                 renderGerenciador();
             }
         }
 
         function deletarSaida(id) {
-            historicoSaidas = historicoSaidas.filter(s => s.id !== id);
+            historicoSaidas = historicoSaidas.filter(x => x.id !== id);
             salvarNoFirebase();
             renderGerenciador();
         }
 
-        function formatarMesAno(anoMesStr) {
-            if (!anoMesStr) return '';
-            let [ano, mes] = anoMesStr.split('-');
-            const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-            return `${meses[parseInt(mes) - 1]}/${ano}`;
-        }
-
         function renderGerenciador() {
             const tbodyContas = document.querySelector('#tabela-contas tbody');
-            const pendentes = contasCadastradas.filter(c => !c.paga);
+            const pendentes = contasCadastradas.filter(x => !x.paga);
             tbodyContas.innerHTML = pendentes.length ? pendentes.map(c => {
-                let badgeInfo = c.tipo === 'recorrente' ? '🔄 Recorrente' : c.tipo === 'parcelada' ? `${c.parcelaAtual}/${c.totalParcelas} Parc.` : '⚡ Única';
-                let refFormatada = formatarMesAno(c.mesAnoRef);
+                const gInfo = gastosMensais.find(x => x.id == c.cofreId);
                 return `
                 <tr>
                     <td><strong>${c.nome}</strong></td>
-                    <td>${c.cofre.toUpperCase()}</td>
+                    <td>${gInfo ? gInfo.emoji + ' ' + gInfo.nome : '-'}</td>
                     <td>R$ ${c.valor.toFixed(2)}</td>
-                    <td>Dia ${c.vencimento || '-'} (${refFormatada})<br><span style="font-size:8px; color:#888;">${badgeInfo}</span></td>
+                    <td>Dia ${c.vencimento}</td>
                     <td>
-                        <div class="btn-acao-grupo">
-                            <button class="btn-pagar" onclick="pagarConta(${c.id})">Pagar</button>
-                            <button class="btn-excluir" onclick="excluirConta(${c.id})">Excluir</button>
-                        </div>
+                        <button class="btn-pagar" onclick="pagarConta(${c.id})" style="background:var(--green); border:none; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer;">Pagar</button>
+                        <button class="btn-excluir" onclick="excluirConta(${c.id})" style="background:var(--red); color:#fff; border:none; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer; margin-top:2px;">✕</button>
                     </td>
                 </tr>`;
             }).join('') : '<tr><td colspan="5" style="color:#777;">Nenhuma conta pendente.</td></tr>';
@@ -1084,137 +1006,67 @@
             tbodySaidas.innerHTML = historicoSaidas.length ? historicoSaidas.slice(0, 10).map(s => `
                 <tr>
                     <td>${s.data}</td>
-                    <td>${s.cofre.toUpperCase()}</td>
+                    <td>${s.cofreNome}</td>
                     <td>${s.desc}</td>
                     <td style="color:var(--red);">R$ ${s.valor.toFixed(2)}</td>
                     <td><button class="btn-del" onclick="deletarSaida(${s.id})">✕</button></td>
                 </tr>
-            `).join('') : '<tr><td colspan="5" style="color:#777;">Sem retiradas registradas.</td></tr>';
+            `).join('') : '<tr><td colspan="5" style="color:#777;">Sem retiradas.</td></tr>';
 
             gerarDiagnosticoIA();
-            gerarComparativoMeses();
-            atualizarQuadroGeral();
-        }
-
-        function gerarComparativoMeses() {
-            const compBox = document.getElementById('comparativo-conteudo');
-            const agora = new Date();
-            const mesAtualNum = agora.getMonth() + 1;
-            const anoAtualNum = agora.getFullYear();
-            
-            let mesAntNum = mesAtualNum - 1;
-            let anoAntNum = anoAtualNum;
-            if (mesAntNum === 0) { mesAntNum = 12; anoAntNum -= 1; }
-
-            const strMesAtual = `${String(mesAtualNum).padStart(2, '0')}/${anoAtualNum}`;
-            const strMesAnt = `${String(mesAntNum).padStart(2, '0')}/${anoAntNum}`;
-
-            const itensAtual = db.filter(item => item.mesAno === strMesAtual);
-            const brutoAtual = itensAtual.reduce((acc, i) => acc + parseFloat(i.bruto), 0);
-
-            const itensAnt = db.filter(item => item.mesAno === strMesAnt);
-            const brutoAnt = itensAnt.reduce((acc, i) => acc + parseFloat(i.bruto), 0);
-
-            compBox.innerHTML = `
-                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid #333; padding-bottom: 4px;">
-                    <span>📅 <strong>${strMesAnt} (Anterior)</strong></span>
-                    <span>Bruto: <strong>R$ ${brutoAnt.toFixed(2)}</strong></span>
-                </div>
-                <div style="display: flex; justify-content: space-between;">
-                    <span>📅 <strong>${strMesAtual} (Atual)</strong></span>
-                    <span>Bruto: <strong style="color:var(--green);">R$ ${brutoAtual.toFixed(2)}</strong></span>
-                </div>
-            `;
         }
 
         function gerarDiagnosticoIA() {
             const aiElem = document.getElementById('ai-feedback');
-            const totalFixas = cofresGerais.fixas || 0;
-            const pendentes = contasCadastradas.filter(c => !c.paga);
-            const somaPendentes = pendentes.reduce((acc, c) => acc + c.valor, 0);
-            
             const metaOleo = parseFloat(config.metaOleo) || 3000;
             const tripOleo = parseFloat(config.tripOleo) || 0;
             const tripGeral = parseFloat(config.tripGeral) || 0;
-            
             let msgs = [];
-            
+
             if (tripOleo >= metaOleo) {
-                msgs.push(`🚨 <strong style="color:var(--red);">Óleo Vencido!</strong> Trip do Óleo em <strong>${tripOleo.toFixed(1)} km</strong> (Meta: ${metaOleo} km). Troque o óleo e zere abaixo! <br><button class="btn-reset-trip" onclick="zerarTripOleo()">🔄 Zerar Trip Óleo</button>`);
-            } else if (tripOleo >= (metaOleo - 300)) {
-                msgs.push(`⚠️ <em>Atenção Troca de Óleo:</em> Faltam ${(metaOleo - tripOleo).toFixed(1)} km para atingir a meta de ${metaOleo} km.`);
+                msgs.push(`🚨 <strong style="color:var(--red);">Óleo Vencido!</strong> Trip do Óleo em <strong>${tripOleo.toFixed(1)} km</strong>. Troque o óleo! <br><button class="btn-reset-trip" onclick="zerarTripOleo()">🔄 Zerar Trip Óleo</button>`);
             } else {
                 msgs.push(`🛢️ <strong>Óleo:</strong> ${tripOleo.toFixed(1)} / ${metaOleo} km.`);
             }
 
-            let alertasManual = [];
             if (tripGeral >= 10000) {
-                alertasManual.push(`⚡ <strong>Vela de Ignição / Filtro de Ar / Válvulas:</strong> Atingiu ${tripGeral.toFixed(1)} km (Revisão de 10.000 km).`);
-            }
-            if (tripGeral >= 20000) {
-                alertasManual.push(`⚙️ <strong>Kit Relação (Coroa/Pinhão/Corrente):</strong> Atingiu ${tripGeral.toFixed(1)} km (Verificar desgaste).`);
-            }
-            
-            if (alertasManual.length > 0) {
-                msgs.push(`🔧 <strong style="color:var(--accent);">Manutenção do Manual:</strong><br>` + alertasManual.join('<br>') + `<br><button class="btn-reset-trip" onclick="zerarTripGeral()">🔄 Zerar Ciclo Geral</button>`);
+                msgs.push(`⚡ <strong>Revisão Geral:</strong> Atingiu ${tripGeral.toFixed(1)} km.<br><button class="btn-reset-trip" onclick="zerarTripGeral()">🔄 Zerar Ciclo Geral</button>`);
             } else {
-                msgs.push(`⚙️ <strong>Próxima Revisão Manual:</strong> Daqui a ${(10000 - tripGeral).toFixed(1)} km (Faltam para os 10k).`);
-            }
-
-            const diaHoje = new Date().getDate();
-            let vencendoLogo = pendentes.filter(c => c.vencimento && c.vencimento >= diaHoje && c.vencimento <= (diaHoje + 3));
-            if (vencendoLogo.length > 0) {
-                let nomes = vencendoLogo.map(c => `<strong>${c.nome} (Dia ${c.vencimento})</strong>`).join(', ');
-                msgs.push(`🚨 <em>Contas vencendo:</em> ${nomes} nos próximos dias!`);
-            }
-
-            if (totalFixas < somaPendentes) {
-                msgs.push(`⚠️ <em>Aviso:</em> Cofre Fixas (R$ ${totalFixas.toFixed(2)}) menor que as contas cadastradas.`);
+                msgs.push(`⚙️ <strong>Próxima Revisão:</strong> Faltam ${(10000 - tripGeral).toFixed(1)} km.`);
             }
 
             aiElem.innerHTML = msgs.join('<br><br>');
         }
 
         function exportarBackup() {
-            const dadosBackup = { config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, ultimoLancamento, contasCadastradas, historicoSaidas };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dadosBackup));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "backup_motoboy_elite.json");
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
+            const dados = { config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, ultimoLancamento, contasCadastradas, historicoSaidas };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dados));
+            const a = document.createElement('a'); a.href = dataStr; a.download = "backup_motoboy_elite.json";
+            document.body.appendChild(a); a.click(); a.remove();
         }
 
         function importarBackupClick() { document.getElementById('fileInput').click(); }
 
         function importarBackup(event) {
             const file = event.target.files[0];
-            if (!file) return;
+            if(!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const conteudo = JSON.parse(e.target.result);
-                    if (conteudo.config) config = conteudo.config;
-                    if (conteudo.gastosMensais) gastosMensais = conteudo.gastosMensais;
-                    if (conteudo.db) db = conteudo.db;
-                    cofresGerais = conteudo.cofresGerais || cofresGerais;
-                    pendente99 = conteudo.pendente99 || pendente99;
-                    pendenteUber = conteudo.pendenteUber || pendenteUber;
-                    ultimoLancamento = conteudo.ultimoLancamento || ultimoLancamento;
-                    contasCadastradas = conteudo.contasCadastradas || [];
-                    historicoSaidas = conteudo.historicoSaidas || [];
-
+                    const c = JSON.parse(e.target.result);
+                    if(c.config) config = c.config;
+                    if(c.gastosMensais) gastosMensais = c.gastosMensais;
+                    if(c.db) db = c.db;
+                    if(c.cofresGerais) cofresGerais = c.cofresGerais;
+                    if(c.contasCadastradas) contasCadastradas = c.contasCadastradas;
+                    if(c.historicoSaidas) historicoSaidas = c.historicoSaidas;
                     salvarNoFirebase();
                     carregarConfigNaTela();
                     renderPainelGastos();
                     renderTable();
-                    atualizarCardUltimoLancamento();
-                    renderGerenciador();
-                    alert('Backup restaurado e sincronizado com o Firebase!');
-                } catch (err) {
-                    alert('Erro ao ler o arquivo de backup.');
-                }
+                    atualizarInterfaceDinamica();
+                    alert('Backup restaurado!');
+                } catch(err) { alert('Erro ao carregar backup.'); }
             };
             reader.readAsText(file);
         }
