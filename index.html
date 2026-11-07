@@ -40,18 +40,17 @@
         select { text-align-last: left; }
 
         /* BOTÕES MODERNOS */
-        .btn-add { width: 100%; padding: 14px; background: var(--green); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; transition: opacity 0.2s; }
-        .btn-add:active { opacity: 0.8; }
+        .btn-add { width: 100%; padding: 14px; background: var(--green); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
         .btn-backup { width: 100%; padding: 10px; background: var(--blue); border: none; color: #fff; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 8px; }
         .btn-restore { width: 100%; padding: 10px; background: var(--accent); border: none; color: #000; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 8px; }
         
-        .btn-limpar-pendentes { width: 100%; padding: 8px; background: #252525; border: 1px solid #444; color: #aaa; font-weight: 600; border-radius: 6px; cursor: pointer; font-size: 10px; text-transform: uppercase; margin-top: 8px; }
+        .btn-limpar-pendentes { width: 100%; padding: 10px; background: #252525; border: 1px solid #444; color: #aaa; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 12px; }
         
-        .btn-baixar-99 { width: 100%; padding: 9px; background: var(--green); border: none; color: #000; font-weight: 700; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 8px; }
-        .btn-receber-uber { width: 100%; padding: 9px; background: var(--accent); border: none; color: #000; font-weight: 700; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 8px; }
+        .btn-baixar-99 { width: 100%; padding: 11px; background: var(--green); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 10px; }
+        .btn-receber-uber { width: 100%; padding: 11px; background: var(--accent); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 10px; }
         
-        /* BOTÕES DE CHECK COMPACTOS E ALINHADOS */
-        .btn-check { background-color: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid var(--green); padding: 5px 8px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 10px; text-transform: uppercase; transition: 0.2s; white-space: nowrap; }
+        /* BOTÕES DE CHECK INDIVIDUAL OTIMIZADOS */
+        .btn-check { background-color: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid var(--green); padding: 6px 10px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 11px; text-transform: uppercase; transition: 0.2s; white-space: nowrap; }
         .btn-check.checked { background-color: #262626; color: #666; border-color: #444; text-decoration: line-through; }
 
         .btn-reset-trip { background: var(--accent); color: #000; border: none; padding: 4px 8px; font-size: 10px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 4px; display: inline-block; }
@@ -63,16 +62,16 @@
         .env { padding: 8px 10px; border-radius: 8px; font-size: 10px; text-align: center; border: 1px solid #333; background: #1a1a1a; }
         .env strong { display: block; font-size: 13px; margin-top: 2px; }
         
-        /* PAINÉIS LADO A LADO DA 99 E UBER */
-        .painel-duplo-container { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
-        .bg-acumulado-99 { background: #11221c; border: 1px solid #1b4d3e; padding: 10px; border-radius: 10px; font-size: 10px; text-align: left; }
-        .bg-acumulado-uber { background: #1b242a; border: 1px solid #283c48; padding: 10px; border-radius: 10px; font-size: 10px; text-align: left; }
+        /* PAINÉIS EMPILHADOS VERTICALMENTE (ZERO QUEBRA DE TELA) */
+        .painel-vertical-container { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
+        .bg-acumulado-99 { background: #11221c; border: 1px solid #1b4d3e; padding: 14px; border-radius: 12px; font-size: 11px; text-align: left; }
+        .bg-acumulado-uber { background: #1b242a; border: 1px solid #283c48; padding: 14px; border-radius: 12px; font-size: 11px; text-align: left; }
         
-        .linha-acumulado { display: flex; justify-content: space-between; align-items: center; margin: 4px 0; background: rgba(0,0,0,0.25); padding: 5px 6px; border-radius: 6px; font-size: 10px; gap: 4px; }
-        .linha-acumulado span { flex: 1; color: #ccc; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .linha-acumulado input { width: 55px; padding: 3px 4px; font-size: 11px; margin: 0; background: #111; border: 1px solid #333; color: #fff; text-align: right; border-radius: 4px; }
+        .linha-acumulado { display: flex; justify-content: space-between; align-items: center; margin: 6px 0; background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 8px; font-size: 11px; gap: 8px; }
+        .linha-acumulado span { flex: 1; color: #ddd; font-weight: 600; }
+        .linha-acumulado input { width: 80px; padding: 6px; font-size: 12px; margin: 0; background: #111; border: 1px solid #333; color: #fff; text-align: right; border-radius: 6px; }
 
-        .saldo-restante-box { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); padding: 6px; border-radius: 6px; text-align: center; margin: 6px 0; font-size: 9px; color: var(--accent); font-weight: 700; }
+        .saldo-restante-box { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); padding: 8px; border-radius: 6px; text-align: center; margin: 8px 0; font-size: 10px; color: var(--accent); font-weight: 700; }
 
         .toggle-container { display: flex; align-items: center; justify-content: space-between; background: #202020; padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #333; font-size: 11px; }
         .toggle-container input { width: 18px; height: 18px; margin: 0; cursor: pointer; accent-color: var(--green); }
@@ -170,39 +169,33 @@
                 <div id="grid-envelopes-ultimo" class="envelopes" style="margin-top: 4px;"></div>
             </div>
 
-            <div class="envelopes">
-                <!-- PAINÉIS LADO A LADO (99 E UBER) -->
-                <div class="painel-duplo-container">
-                    <!-- PAINEL DA 99 -->
-                    <div class="bg-acumulado-99">
-                        <strong style="color: var(--green); font-size: 10px;">💵 99 PENDENTE:</strong>
-                        <div style="margin: 4px 0;">
-                            <div class="linha-acumulado"><span>App:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);" oninput="atualizarValoresDigitados('99')"></div>
-                            <div class="linha-acumulado"><span>Esp:</span> <input type="number" id="edit-99-dinheiro" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('99')"></div>
-                            
-                            <div class="saldo-restante-box" id="restante-99-box">Restante: R$ <span id="restante-99">0.00</span></div>
+            <!-- PAINÉIS EMPILHADOS VERTICALMENTE (ORGANIZADOS E AMPLOS) -->
+            <div class="painel-vertical-container">
+                <!-- PAINEL DA 99 -->
+                <div class="bg-acumulado-99">
+                    <strong style="color: var(--green); font-size: 12px; display: block; margin-bottom: 8px;">💵 CAIXINHAS 99 (PENDENTE)</strong>
+                    <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);" oninput="atualizarValoresDigitados('99')"></div>
+                    <div class="linha-acumulado"><span>💵 Espécie:</span> <input type="number" id="edit-99-dinheiro" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('99')"></div>
+                    
+                    <div class="saldo-restante-box" id="restante-99-box">Restante Espécie: R$ <span id="restante-99">0.00</span></div>
 
-                            <div id="linhas-dinamicas-99"></div>
-                        </div>
-                        <button class="btn-baixar-99" onclick="baixarCaixas99()">✅ Baixar 99</button>
-                    </div>
-
-                    <!-- PAINEL DA UBER -->
-                    <div class="bg-acumulado-uber">
-                        <strong style="color: var(--accent); font-size: 10px;">📅 UBER PENDENTE:</strong>
-                        <div style="margin: 4px 0;">
-                            <div class="linha-acumulado"><span>App:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('uber')"></div>
-                            <div class="linha-acumulado"><span>Pix:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('uber')"></div>
-                            
-                            <div class="saldo-restante-box" id="restante-uber-box">Restante: R$ <span id="restante-uber">0.00</span></div>
-
-                            <div id="linhas-dinamicas-uber"></div>
-                        </div>
-                        <button class="btn-receber-uber" onclick="receberRepasseUber()">💰 Baixar Uber</button>
-                    </div>
+                    <div id="linhas-dinamicas-99"></div>
+                    <button class="btn-baixar-99" onclick="baixarCaixas99()">✅ Baixar / Zerar 99</button>
                 </div>
 
-                <button class="btn-limpar-pendentes" style="grid-column: span 2;" onclick="zerarCaixasPendentesManualmente()">🧹 Zerar Caixas Pendentes (99 & Uber)</button>
+                <!-- PAINEL DA UBER -->
+                <div class="bg-acumulado-uber">
+                    <strong style="color: var(--accent); font-size: 12px; display: block; margin-bottom: 8px;">📅 CAIXINHAS UBER (PENDENTE)</strong>
+                    <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('uber')"></div>
+                    <div class="linha-acumulado"><span>💵 Esp/Pix:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('uber')"></div>
+                    
+                    <div class="saldo-restante-box" id="restante-uber-box">Restante Espécie: R$ <span id="restante-uber">0.00</span></div>
+
+                    <div id="linhas-dinamicas-uber"></div>
+                    <button class="btn-receber-uber" onclick="receberRepasseUber()">💰 Baixar / Zerar Uber</button>
+                </div>
+
+                <button class="btn-limpar-pendentes" onclick="zerarCaixasPendentesManualmente()">🧹 Zerar Caixas Pendentes (99 & Uber)</button>
             </div>
         </div>
         
