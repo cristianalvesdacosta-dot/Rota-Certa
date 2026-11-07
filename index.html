@@ -1,1018 +1,1052 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="h-full bg-slate-900 text-slate-100">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catálogo Digital</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA MOTOBOY ELITE</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'sans-serif'] },
-          colors: { brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a', 700: '#15803d' } }
+    <style>
+        :root { 
+            --green: #2ecc71; 
+            --blue: #3498db; 
+            --dark: #0d0d0d; 
+            --card-bg: #161616; 
+            --card-border: #262626;
+            --text: #f5f5f5; 
+            --text-muted: #888;
+            --accent: #f1c40f; 
+            --red: #e74c3c; 
         }
-      }
-    }
-  </script>
+        
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--dark); color: var(--text); padding: 0; margin: 0; padding-bottom: 80px; -webkit-font-smoothing: antialiased; }
+        
+        /* BARRA DE ABAS PREMIUM */
+        .tab-bar { display: flex; background: #121212; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #222; backdrop-filter: blur(10px); }
+        .tab-btn { flex: 1; padding: 14px 4px; border: none; background: none; color: var(--text-muted); font-weight: 600; cursor: pointer; font-size: 10px; text-transform: uppercase; text-align: center; letter-spacing: 0.5px; transition: 0.2s; }
+        .tab-btn.active { color: var(--green); border-bottom: 2px solid var(--green); background: rgba(46, 204, 113, 0.05); }
 
-  <style>
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0f172a; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #475569; }
-    .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-  </style>
+        .container { padding: 12px; max-width: 480px; margin: auto; display: none; }
+        .container.active { display: block; }
+
+        /* CARDS E FORMULÁRIOS ESTILO APP */
+        .card { background: var(--card-bg); padding: 16px; border-radius: 14px; border: 1px solid var(--card-border); margin-bottom: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        
+        label { display: block; font-size: 10px; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        input, select { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #333; background: #202020; color: #fff; box-sizing: border-box; margin-bottom: 10px; text-align: left; font-size: 14px; outline: none; transition: border-color 0.2s; }
+        input:focus, select:focus { border-color: var(--green); }
+        select { text-align-last: left; }
+
+        /* BOTÕES MODERNOS */
+        .btn-add { width: 100%; padding: 14px; background: var(--green); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-backup { width: 100%; padding: 10px; background: var(--blue); border: none; color: #fff; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 8px; }
+        .btn-restore { width: 100%; padding: 10px; background: var(--accent); border: none; color: #000; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 8px; }
+        
+        .btn-limpar-pendentes { width: 100%; padding: 10px; background: #252525; border: 1px solid #444; color: #aaa; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 12px; }
+        
+        .btn-baixar-99 { width: 100%; padding: 11px; background: var(--green); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 10px; }
+        .btn-receber-uber { width: 100%; padding: 11px; background: var(--accent); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 10px; }
+        
+        /* BOTÕES DE CHECK INDIVIDUAL */
+        .btn-check { background-color: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid var(--green); padding: 6px 10px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 11px; text-transform: uppercase; transition: 0.2s; white-space: nowrap; }
+        .btn-check.checked { background-color: #262626; color: #666; border-color: #444; text-decoration: line-through; }
+
+        .btn-reset-trip { background: var(--accent); color: #000; border: none; padding: 4px 8px; font-size: 10px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 4px; display: inline-block; }
+
+        .metric-box { display: flex; justify-content: space-between; align-items: center; background: #202020; padding: 10px 14px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #2a2a2a; }
+        .metric-val { color: var(--green); font-weight: 700; font-size: 15px; }
+
+        .envelopes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+        .env { padding: 8px 10px; border-radius: 8px; font-size: 10px; text-align: center; border: 1px solid #333; background: #1a1a1a; }
+        .env strong { display: block; font-size: 13px; margin-top: 2px; }
+        
+        /* PAINÉIS EMPILHADOS VERTICALMENTE */
+        .painel-vertical-container { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
+        .bg-acumulado-99 { background: #11221c; border: 1px solid #1b4d3e; padding: 14px; border-radius: 12px; font-size: 11px; text-align: left; }
+        .bg-acumulado-uber { background: #1b242a; border: 1px solid #283c48; padding: 14px; border-radius: 12px; font-size: 11px; text-align: left; }
+        
+        .linha-acumulado { display: flex; justify-content: space-between; align-items: center; margin: 6px 0; background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 8px; font-size: 11px; gap: 8px; }
+        .linha-acumulado span { flex: 1; color: #ddd; font-weight: 600; }
+        .linha-acumulado input { width: 80px; padding: 6px; font-size: 12px; margin: 0; background: #111; border: 1px solid #333; color: #fff; text-align: right; border-radius: 6px; }
+
+        .saldo-restante-box { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); padding: 8px; border-radius: 6px; text-align: center; margin: 8px 0; font-size: 11px; color: var(--accent); font-weight: 700; }
+
+        .toggle-container { display: flex; align-items: center; justify-content: space-between; background: #202020; padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #333; font-size: 11px; }
+        .toggle-container input { width: 18px; height: 18px; margin: 0; cursor: pointer; accent-color: var(--green); }
+
+        .historico-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 14px; margin-top: 16px; }
+        .historico-titulo { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; letter-spacing: 0.5px; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        th { background: #111; color: var(--green); padding: 8px 4px; border-bottom: 2px solid #262626; text-transform: uppercase; font-size: 9px; letter-spacing: 0.5px; }
+        td { border-bottom: 1px solid #222; padding: 8px 4px; text-align: center; color: #ccc; }
+        tr:hover { background: rgba(255,255,255,0.01); }
+
+        .badge-obs { padding: 3px 6px; border-radius: 4px; font-weight: 700; font-size: 8px; text-transform: uppercase; display: inline-block; }
+        .badge-ruim { background: rgba(231, 76, 60, 0.15); color: var(--red); border: 1px solid rgba(231, 76, 60, 0.3); }
+        .badge-medio { background: rgba(241, 196, 15, 0.15); color: var(--accent); border: 1px solid rgba(241, 196, 15, 0.3); }
+        .badge-excelente { background: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid rgba(46, 204, 113, 0.3); }
+        
+        .btn-del { background: rgba(231, 76, 60, 0.2); color: var(--red); border: 1px solid rgba(231, 76, 60, 0.4); width: 22px; height: 22px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-del:hover { background: var(--red); color: #fff; }
+
+        .total-box { background: #141414; border: 1px dashed rgba(46, 204, 113, 0.4); padding: 10px; border-radius: 8px; margin-top: 12px; font-size: 11px; text-align: center; color: var(--text-muted); }
+        .total-box strong { font-size: 14px; color: var(--green); display: block; margin-top: 2px; }
+
+        .mode-box { background: #1a1a1a; padding: 12px; border-radius: 10px; border: 1px solid #333; margin-bottom: 12px; }
+        .mode-box label { color: var(--accent); margin-bottom: 6px; }
+        
+        .ai-card { background: #131c24; border: 1px solid #1f3544; padding: 12px; border-radius: 10px; margin-bottom: 12px; font-size: 11px; line-height: 1.4; color: #d0dbe3; }
+        .ai-card strong { color: var(--accent); }
+
+        .compare-box { background: #111; border: 1px solid #222; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 11px; }
+
+        #sync-status { position: fixed; bottom: 6px; right: 6px; background: rgba(18,18,18,0.9); border: 1px solid #333; color: var(--green); padding: 4px 8px; font-size: 8px; border-radius: 6px; z-index: 1000; backdrop-filter: blur(5px); }
+    </style>
 </head>
-<body class="h-full font-sans antialiased selection:bg-brand-500 selection:text-white flex flex-col min-h-screen">
+<body>
 
-  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3">
-    <div class="max-w-4xl mx-auto flex items-center justify-between">
-      <div class="flex items-center space-x-2">
-        <div class="bg-gradient-to-tr from-brand-600 to-emerald-400 p-2 rounded-xl text-white shadow-lg shadow-brand-500/20">
-          <i class="fa-solid fa-store text-lg"></i>
-        </div>
-        <span class="font-bold text-lg tracking-tight text-white">Ora et Labora</span>
-      </div>
+    <div id="sync-status">Conectando ao Firebase...</div>
 
-      <div class="flex items-center gap-2">
-        <button id="btn-auth-open" class="px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition border border-slate-700 flex items-center gap-2">
-          <i class="fa-solid fa-user-gear"></i>
-          <span id="txt-painel-btn">Painel Ativo</span>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <main class="flex-grow max-w-4xl w-full mx-auto pb-16">
-    <div class="relative w-full">
-      <div id="display-cover" class="h-44 sm:h-56 w-full bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 bg-cover bg-center transition-all duration-300 relative">
-        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-black/30"></div>
-      </div>
-
-      <div class="px-4 sm:px-6 relative -mt-16 sm:-mt-20">
-        <div class="flex flex-col sm:flex-row items-center sm:items-end gap-4 text-center sm:text-left">
-          <div class="relative group">
-            <img id="display-logo" src="https://via.placeholder.com/150?text=LOGO" alt="Logo Loja" class="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl object-cover border-4 border-slate-900 shadow-xl bg-slate-800">
-          </div>
-          
-          <div class="flex-1 pb-1">
-            <h1 id="display-title" class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Ora et Labora</h1>
-            <p id="display-bio" class="text-slate-400 text-sm mt-1 max-w-2xl leading-relaxed">Confira nossos produtos e cupons de desconto exclusivos abaixo.</p>
-          </div>
-
-          <div class="flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-slate-300">
-            <i class="fa-solid fa-boxes-stacked text-brand-500"></i>
-            <span id="stat-total-products">0 Produtos</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div style="margin-top: 10px; text-align: center;">
-      <a href="https://wa.me/5519997648211?text=Olá!%20Procuro%20um%20produto%20específico%20que%20não%20encontrei%20no%20catálogo." 
-         target="_blank" 
-         style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background-color: #1f2937; color: #25d366; padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: bold; font-size: 14px; border: 1px solid #25d366; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.558 6.558 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.348.1-.1.133-.173.2-.298.065-.125.034-.234-.016-.33-.05-.099-.445-1.072-.61-1.47-.16-.389-.323-.337-.45-.343-.112-.007-.24-.007-.368-.007s-.33.048-.503.23c-.173.183-66.666 65.999-66.666 65.999s.184.181.368.365c.184.184 1.106 1.696 2.692 2.378.376.162.669.259.897.332.378.121.722.104.994.063.304-.045 1.17-.478 1.334-.941.164-.464.164-.862.115-.941-.049-.079-.183-.125-.38-.224z"/>
-        </svg>
-        Pedir outro produto no WhatsApp
-      </a>
+    <div class="tab-bar">
+        <button class="tab-btn active" onclick="trocarTab('diario', event)">Lançamento</button>
+        <button class="tab-btn" onclick="trocarTab('gerenciar', event)">Gerenciar</button>
+        <button class="tab-btn" onclick="trocarTab('gastos', event)">Meus Gastos</button>
+        <button class="tab-btn" onclick="trocarTab('config', event)">Configurar</button>
     </div>
 
-    <div class="px-4 sm:px-6 mt-8 flex flex-col sm:flex-row gap-3 items-center justify-between">
-      <div class="relative w-full sm:w-80">
-        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-        <input type="text" id="input-search" placeholder="Buscar produto ou cupom..." class="w-full bg-slate-800 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-brand-500 transition">
-      </div>
-
-      <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-        <select id="filter-status" class="bg-slate-800 border border-slate-700/80 text-xs sm:text-sm text-slate-300 rounded-xl px-3 py-2 focus:outline-none focus:border-brand-500">
-          <option value="all">Todos os Produtos</option>
-          <option value="available">Em Estoque</option>
-          <option value="soldout">Esgotados</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="px-4 sm:px-6 mt-6">
-      <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        <div class="bg-slate-800/50 rounded-2xl p-4 border border-slate-800 animate-pulse h-80"></div>
-        <div class="bg-slate-800/50 rounded-2xl p-4 border border-slate-800 animate-pulse h-80"></div>
-      </div>
-
-      <div id="empty-state" class="hidden text-center py-16 px-4">
-        <div class="w-16 h-16 bg-slate-800 text-slate-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-          <i class="fa-solid fa-box-open"></i>
-        </div>
-        <h3 class="text-lg font-semibold text-slate-300">Nenhum produto encontrado</h3>
-        <p class="text-slate-500 text-sm mt-1">Nenhum produto cadastrado no catálogo até o momento.</p>
-      </div>
-    </div>
-  </main>
-
-  <div id="modal-image-viewer" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden">
-    <button class="absolute top-5 right-5 text-white text-3xl z-50 hover:text-slate-300 focus:outline-none p-2" onclick="closeImageViewer()">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-    <div class="relative max-w-4xl w-full max-h-[90vh] flex flex-col items-center justify-center">
-      <img id="viewer-img-element" src="" alt="Ampliada" class="max-h-[75vh] max-w-full object-contain rounded-xl shadow-2xl border border-slate-700">
-      <div id="viewer-thumbnails" class="flex items-center gap-2 mt-4 overflow-x-auto max-w-full p-2 no-scrollbar"></div>
-    </div>
-  </div>
-
-  <div id="modal-timer-redirect" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
-    <div class="bg-slate-800 border-2 border-brand-500 rounded-3xl max-w-sm w-full p-6 shadow-2xl text-center space-y-4">
-      <div class="w-14 h-14 bg-brand-500/20 text-brand-400 rounded-2xl flex items-center justify-center mx-auto text-2xl border border-brand-500/30">
-        <i class="fa-solid fa-circle-check"></i>
-      </div>
-
-      <div>
-        <h3 class="text-lg font-bold text-white">Cupom Copiado!</h3>
-        <p class="text-sm font-bold text-brand-400 mt-1" id="timer-coupon-code">Cupom: CLIENTEVIP</p>
-      </div>
-
-      <p class="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-700">
-        ✔ Cole-o no carrinho da loja para aplicar seu desconto.<br>
-        Entrando na loja em <strong id="countdown-seconds" class="text-brand-400">8s</strong>...
-      </p>
-
-      <div class="pt-2">
-        <button type="button" onclick="cancelRedirectTimer()" class="w-full py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold rounded-xl text-xs transition">
-          Cancelar e Continuar no Catálogo
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500 mt-auto">
-    <p>© Ora et Labora. Todos os direitos reservados.</p>
-  </footer>
-
-  <div id="modal-auth" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden">
-    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-      <button class="btn-close-modal absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-
-      <div id="panel-unlogged">
-        <div class="text-center mb-6">
-          <div class="w-12 h-12 bg-brand-500/10 text-brand-500 rounded-xl flex items-center justify-center mx-auto mb-2 text-xl border border-brand-500/20">
-            <i class="fa-solid fa-lock"></i>
-          </div>
-          <h2 id="auth-modal-title" class="text-xl font-bold text-white">Entrar no Painel</h2>
-          <p class="text-xs text-slate-400 mt-1">Acesse com e-mail e senha para gerenciar seu catálogo.</p>
-        </div>
-
-        <form id="form-auth" class="space-y-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">E-mail</label>
-            <input type="email" id="auth-email" required placeholder="seu@email.com" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Senha</label>
-            <input type="password" id="auth-password" required minlength="6" placeholder="******" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
-          </div>
-
-          <button type="submit" id="btn-auth-submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-xl text-sm transition shadow-lg shadow-brand-600/30">
-            Entrar no Painel
-          </button>
-        </form>
-      </div>
-
-      <div id="panel-logged" class="hidden space-y-6">
-        <div class="p-3.5 bg-brand-500/10 border border-brand-500/30 rounded-xl flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="relative flex h-3 w-3">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-3 w-3 bg-brand-500"></span>
-            </span>
-            <span class="text-sm font-bold text-brand-400">Modo Administrativo Ativo</span>
-          </div>
-          <button id="btn-logout" type="button" class="px-2.5 py-1 text-xs font-semibold bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-lg border border-red-500/30 transition">
-            <i class="fa-solid fa-right-from-bracket mr-1"></i> Sair
-          </button>
-        </div>
-
-        <div class="p-4 bg-brand-500/10 border border-brand-500/30 rounded-2xl space-y-3">
-          <span class="text-xs font-bold text-brand-400 uppercase tracking-wider flex items-center gap-1.5">
-            <i class="fa-solid fa-bolt"></i> Gestão Rápida do Cupom Único da Loja
-          </span>
-          <p class="text-[11px] text-slate-300 leading-relaxed">
-            Deseja dar baixa no uso de <strong>todos os produtos de uma vez só</strong>?
-          </p>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-            <button type="button" onclick="decreaseAllProductsUsage(1)" class="py-2 px-3 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition shadow-md flex items-center justify-center gap-1.5">
-              <i class="fa-solid fa-minus-circle"></i> Baixa Global (-1 em Todos)
-            </button>
-            <button type="button" onclick="openCustomBatchModal()" class="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1.5">
-              <i class="fa-solid fa-sliders"></i> Ajustar Outra Qtd em Todos
-            </button>
-          </div>
-        </div>
-
-        <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700/80 space-y-4">
-          <h3 id="form-prod-title" class="text-sm font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-box text-brand-500"></i> Cadastrar Novo Produto
-          </h3>
-
-          <div class="p-3 bg-slate-800/80 rounded-xl border border-brand-500/30 space-y-2">
-            <label class="block text-xs font-bold text-brand-400 flex items-center gap-1.5">
-              <i class="fa-solid fa-wand-magic-sparkles"></i> Importar Rápido via Link
-            </label>
-            <div class="flex gap-2">
-              <input type="url" id="auto-import-link" placeholder="Cole o link do produto aqui..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-brand-500">
-              <button type="button" id="btn-fetch-link" onclick="fetchProductFromLink()" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition flex-shrink-0 flex items-center gap-1">
-                <i class="fa-solid fa-download"></i> Puxar
-              </button>
-            </div>
-          </div>
-
-          <form id="form-product" class="space-y-4">
-            <input type="hidden" id="product-id">
-            <input type="hidden" id="fetched-image-url">
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1">Nome do Produto *</label>
-              <input type="text" id="product-name" required placeholder="Ex: Produto Exemplo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1">Adicionar Fotos Manualmente (Opcional)</label>
-              <input type="file" id="product-image-file" accept="image/*" multiple class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-700 file:text-slate-200">
-            </div>
-
-            <div id="preview-container" class="hidden">
-              <label class="block text-xs font-semibold text-slate-300 mb-1">Fotos do Produto:</label>
-              <div id="preview-gallery" class="flex items-center gap-3 overflow-x-auto py-2 no-scrollbar"></div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Preço Original (R$) *</label>
-                <input type="number" step="0.01" id="product-price" required placeholder="Ex: 159.90" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Desconto (%)</label>
-                <select id="product-discount-percent" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
-                  <option value="0">Sem desconto</option>
-                  <option value="5">5% OFF</option>
-                  <option value="10" selected>10% OFF</option>
-                  <option value="15">15% OFF</option>
-                  <option value="20">20% OFF</option>
-                  <option value="30">30% OFF</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1">Descrição do Produto</label>
-              <textarea id="product-description" rows="3" placeholder="Insira a descrição..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-brand-500"></textarea>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Link do Produto</label>
-                <input type="url" id="product-link" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Cupom de Desconto</label>
-                <input type="text" id="product-code" value="CLIENTEVIP" placeholder="CLIENTEVIP" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1">Validade do Cupom (Dias)</label>
-              <input type="number" id="product-validity-days" min="1" value="30" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
-            </div>
-
-            <div class="p-3 bg-slate-800/60 rounded-xl border border-slate-700/60 space-y-3">
-              <span class="text-xs font-bold text-brand-400 uppercase tracking-wider block">Controle de Estoque & Usos</span>
-              <div class="grid grid-cols-2 gap-3">
+    <!-- ABA DIÁRIO -->
+    <div id="diario" class="container active">
+        <div class="card">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                 <div>
-                  <label class="block text-[11px] font-medium text-slate-300 mb-1">Total de Estoque / Limite</label>
-                  <input type="number" id="product-total-uses" min="1" required value="30" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
+                    <label>Bruto 99 (R$)</label>
+                    <input type="number" id="bruto_99" step="0.01" placeholder="0,00" oninput="calcularBrutoTotal()">
                 </div>
                 <div>
-                  <label class="block text-[11px] font-medium text-slate-300 mb-1">Já Utilizado</label>
-                  <input type="number" id="product-used-count" min="0" required value="0" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
+                    <label>Dinheiro 99</label>
+                    <input type="number" id="dinheiro_99" step="0.01" placeholder="0,00">
                 </div>
-              </div>
             </div>
 
-            <div class="flex justify-end gap-2">
-              <button type="button" id="btn-cancel-prod-edit" onclick="resetProductForm()" class="hidden px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-xl text-xs font-medium">Cancelar Edição</button>
-              <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold shadow-md transition">
-                Salvar Produto
-              </button>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <label>Bruto Uber (R$)</label>
+                    <input type="number" id="bruto_uber" step="0.01" placeholder="0,00" oninput="calcularBrutoTotal()">
+                </div>
+                <div>
+                    <label>Esp/Pix Uber</label>
+                    <input type="number" id="dinheiro_uber" step="0.01" placeholder="0,00">
+                </div>
             </div>
-          </form>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <label>Total Geral do Dia</label>
+                    <input type="number" id="bruto" step="0.01" placeholder="0,00" readonly style="color: var(--accent); background: #111;">
+                </div>
+                <div>
+                    <label>KM Rodado</label>
+                    <input type="number" id="km_dia" step="0.1" placeholder="0 km">
+                </div>
+            </div>
+
+            <label>Avaliação Automática</label>
+            <input type="text" id="obs" placeholder="Aguardando dados..." readonly style="color: var(--accent); background: #111; font-weight: 600;">
+            
+            <button class="btn-add" onclick="registrar()">REGISTRAR LANÇAMENTO</button>
+
+            <div class="metric-box" style="margin-top: 10px;">
+                <span style="font-size: 11px; color: var(--text-muted);">Eficiência Média:</span>
+                <span id="res-eficiencia" class="metric-val">R$ 0,00 / km</span>
+            </div>
+
+            <!-- CARD VISUAL DO ÚLTIMO LANÇAMENTO -->
+            <div id="card-ultimo-lancamento" class="card" style="margin-top: 10px; border: 1px dashed rgba(241, 196, 15, 0.3); background: #121212; padding: 12px;">
+                <label style="color: var(--accent); text-align: center; font-size: 10px; margin-bottom: 6px;">📊 DISTRIBUIÇÃO DO ÚLTIMO LANÇAMENTO</label>
+                <div id="grid-envelopes-ultimo" class="envelopes" style="margin-top: 4px;"></div>
+            </div>
+
+            <!-- PAINÉIS EMPILHADOS VERTICALMENTE -->
+            <div class="painel-vertical-container">
+                <!-- PAINEL DA 99 -->
+                <div class="bg-acumulado-99">
+                    <strong style="color: var(--green); font-size: 12px; display: block; margin-bottom: 8px;">💵 CAIXINHAS 99 (PENDENTE)</strong>
+                    <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);" oninput="atualizarValoresDigitados('99')"></div>
+                    <div class="linha-acumulado"><span>💵 Espécie:</span> <input type="number" id="edit-99-dinheiro" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('99')"></div>
+                    
+                    <div class="saldo-restante-box" id="restante-99-box">Restante Espécie: R$ <span id="restante-99">0.00</span></div>
+
+                    <div id="linhas-dinamicas-99"></div>
+                    <button class="btn-baixar-99" onclick="baixarCaixas99()">✅ Baixar / Zerar 99</button>
+                </div>
+
+                <!-- PAINEL DA UBER -->
+                <div class="bg-acumulado-uber">
+                    <strong style="color: var(--accent); font-size: 12px; display: block; margin-bottom: 8px;">📅 CAIXINHAS UBER (PENDENTE)</strong>
+                    <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('uber')"></div>
+                    <div class="linha-acumulado"><span>💵 Esp/Pix:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('uber')"></div>
+                    
+                    <div class="saldo-restante-box" id="restante-uber-box">Restante Espécie: R$ <span id="restante-uber">0.00</span></div>
+
+                    <div id="linhas-dinamicas-uber"></div>
+                    <button class="btn-receber-uber" onclick="receberRepasseUber()">💰 Baixar / Zerar Uber</button>
+                </div>
+
+                <button class="btn-limpar-pendentes" onclick="zerarCaixasPendentesManualmente()">🧹 Zerar Caixas Pendentes (99 & Uber)</button>
+            </div>
         </div>
-
-        <div class="pt-4 border-t border-slate-700/60 space-y-4">
-          <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
-            <i class="fa-solid fa-sliders text-brand-500"></i> Personalizar Capa e Perfil da Loja
-          </h3>
-
-          <form id="form-profile" class="space-y-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1">Nome / Título da Loja</label>
-              <input type="text" id="profile-title" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
+        
+        <!-- RESUMO / HISTÓRICO DE LANÇAMENTOS -->
+        <div class="historico-card">
+            <div class="historico-titulo">
+                <span>📋 Histórico</span>
+                <span style="font-size: 8px; color: var(--text-muted);">Toque no X para desfazer</span>
             </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1">Biografia / Descrição da Loja</label>
-              <textarea id="profile-bio" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-brand-500"></textarea>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Foto da Capa</label>
-                <input type="file" id="profile-cover-file" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:bg-slate-700 file:text-slate-200">
-              </div>
-
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Logo da Loja</label>
-                <input type="file" id="profile-logo-file" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:bg-slate-700 file:text-slate-200">
-              </div>
-            </div>
-
-            <button type="submit" class="w-full py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-xl text-xs font-bold transition">
-              Salvar Perfil e Capa
-            </button>
-          </form>
+            <table id="tabela">
+                <thead><tr><th>Data</th><th>Bruto</th><th>R$/Km</th><th>Avaliação</th><th>X</th></tr></thead>
+                <tbody></tbody>
+            </table>
         </div>
-
-      </div>
-
     </div>
-  </div>
 
-  <div id="modal-admin-manage" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden">
-    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-      <button class="btn-close-modal absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+    <!-- ABA GERENCIAR COFRES E DESPESAS -->
+    <div id="gerenciar" class="container">
+        <div class="ai-card">
+            🤖 <strong>Assistente de Manutenção:</strong>
+            <div id="ai-feedback" style="margin-top: 4px;">Analisando quilometragem...</div>
+        </div>
 
-      <h2 class="text-base font-bold text-white mb-4 flex items-center gap-2">
-        <i class="fa-solid fa-list-check text-brand-500"></i> Gerenciar Produtos Cadastrados
-      </h2>
-      <div id="admin-products-list" class="space-y-3"></div>
+        <div class="card">
+            <label style="color: var(--accent);">💰 SALDO DOS COFRES OFICIAIS</label>
+            <div id="grid-cofres-geral" class="envelopes" style="margin-top: 4px; grid-template-columns: 1fr 1fr;"></div>
+        </div>
+
+        <div class="card">
+            <label style="color: var(--accent);">📊 COMPARATIVO MENSAL</label>
+            <div class="compare-box" id="comparativo-conteudo">Carregando comparativo...</div>
+        </div>
+
+        <div class="card">
+            <label style="color: var(--accent);">💸 LANÇAR RETIRADA RÁPIDA</label>
+            <select id="saida_cofre"></select>
+
+            <label>Descrição</label>
+            <input type="text" id="saida_desc" placeholder="Ex: Calibragem Pneu">
+
+            <label>Valor (R$)</label>
+            <input type="number" id="saida_valor" step="0.01" placeholder="0,00">
+
+            <button class="btn-add" style="background: var(--red); color: #fff;" onclick="lançarSaidaCofre()">CONFIRMAR RETIRADA</button>
+        </div>
+
+        <div class="card">
+            <label>📌 CADASTRAR CONTA OU BOLETO</label>
+            
+            <label style="margin-top: 6px;">Tipo</label>
+            <select id="conta_tipo" onchange="mudarTipoContaForm()">
+                <option value="recorrente">🔄 Recorrente (Contínua)</option>
+                <option value="parcelada">💳 Parcelada</option>
+                <option value="unica">⚡ Única / Casual</option>
+            </select>
+
+            <label>Cofre Destino</label>
+            <select id="conta_cofre"></select>
+
+            <label>Nome da Conta</label>
+            <input type="text" id="conta_nome" placeholder="Ex: Internet Wi-Fi">
+
+            <label>Valor (R$)</label>
+            <input type="number" id="conta_valor" step="0.01" placeholder="0,00">
+
+            <label>Mês de Referência</label>
+            <input type="month" id="conta_mes_ano" style="text-align: center;">
+
+            <label>Dia Vencimento</label>
+            <input type="number" id="conta_vencimento" min="1" max="31" placeholder="1 a 31">
+
+            <div id="bloco_qtd_parcelas" style="display:none;">
+                <label>Total de Parcelas</label>
+                <input type="number" id="conta_parcelas" value="1" min="1">
+            </div>
+
+            <button class="btn-add" style="background: var(--blue); color: #fff;" onclick="cadastrarConta()">SALVAR CONTA</button>
+        </div>
+
+        <div class="card">
+            <label>📋 CONTAS PENDENTES</label>
+            <table id="tabela-contas">
+                <thead><tr><th>Conta</th><th>Cofre</th><th>Valor</th><th>Venc</th><th>Ação</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <label>📜 HISTÓRICO DE RETIRADAS</label>
+            <table id="tabela-saidas">
+                <thead><tr><th>Data</th><th>Cofre</th><th>Desc</th><th>Valor</th><th>X</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
-  </div>
 
-  <div id="modal-quick-use" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden">
-    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-sm w-full p-6 shadow-2xl relative">
-      <button class="btn-close-modal absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+    <!-- ABA GASTOS MENSAIS (CAIXINHAS DINÂMICAS) -->
+    <div id="gastos" class="container">
+        <div class="card">
+            <label style="color: var(--accent);">⚙️ GERENCIAR CAIXINHAS</label>
+            
+            <label>Nome da Caixinha</label>
+            <input type="text" id="gasto_nome" placeholder="Ex: Gasolina, Seguro">
 
-      <h2 class="text-base font-bold text-white mb-2 flex items-center gap-2">
-        <i class="fa-solid fa-calculator text-brand-500"></i> Atualizar Estoque / Uso
-      </h2>
-      <p id="quick-use-product-name" class="text-xs font-medium text-slate-400 mb-4 truncate"></p>
+            <div style="display: flex; gap: 8px;">
+                <div style="flex: 1;">
+                    <label>Emoji</label>
+                    <input type="text" id="gasto_emoji" placeholder="⛽" maxlength="4" style="text-align: center;">
+                </div>
+                <div style="flex: 1;">
+                    <label>Cor</label>
+                    <input type="color" id="gasto_cor" value="#2ecc71" style="height: 40px; width: 100%; padding: 2px; cursor: pointer; background: #202020; border: 1px solid #333; border-radius: 8px;">
+                </div>
+            </div>
 
-      <form id="form-quick-use" class="space-y-4">
-        <input type="hidden" id="quick-use-id">
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Quantidade Já Usada</label>
-          <input type="number" id="quick-use-val" min="0" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
+            <label>Valor Mensal Estimado (R$)</label>
+            <input type="number" id="gasto_valor" step="0.01" placeholder="0,00">
+
+            <button class="btn-add" onclick="adicionarGasto()">➕ Adicionar / Atualizar</button>
+
+            <hr style="border: 0; border-top: 1px solid #222; margin: 15px 0;">
+
+            <label>Caixinhas Ativas</label>
+            <table id="tabela-gastos" style="margin-top: 8px;">
+                <thead><tr><th>Caixinha</th><th>Valor</th><th>Ativa</th><th>X</th></tr></thead>
+                <tbody></tbody>
+            </table>
         </div>
-        <div class="pt-2 flex justify-end gap-2">
-          <button type="button" class="btn-close-modal px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-xl text-xs font-medium">Cancelar</button>
-          <button type="submit" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-semibold">Salvar</button>
-        </div>
-      </form>
     </div>
-  </div>
 
-  <div id="modal-batch-use" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden">
-    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-sm w-full p-6 shadow-2xl relative">
-      <button class="btn-close-modal absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+    <!-- ABA CONFIGURAÇÕES -->
+    <div id="config" class="container">
+        <div class="card">
+            <label style="color: var(--accent);">🏍️ VEÍCULO & METAS</label>
+            
+            <label>Modelo da Moto</label>
+            <input type="text" id="cfg_moto_modelo" placeholder="Yamaha Lander 250">
 
-      <h2 class="text-base font-bold text-white mb-2 flex items-center gap-2">
-        <i class="fa-solid fa-layer-group text-brand-500"></i> Dar Baixa Global em Lote
-      </h2>
-      <form id="form-batch-use" class="space-y-4">
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Quantidade a adicionar ao 'Já Usado'</label>
-          <input type="number" id="batch-use-val" min="1" value="1" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <label>Km / Litro</label>
+                    <input type="number" id="cfg_km_litro" step="0.1" placeholder="30">
+                </div>
+                <div>
+                    <label>Preço Litro (R$)</label>
+                    <input type="number" id="cfg_preco_litro" step="0.01" placeholder="5.89">
+                </div>
+            </div>
+
+            <label>Média KM por Mês</label>
+            <input type="number" id="cfg_km_mes" step="1" value="3000" oninput="atualizarPreviewConfig()">
+
+            <label style="margin-top: 8px; color: var(--accent);">🎯 PERÍODO DE PLANEJAMENTO</label>
+            <select id="cfg_periodo" onchange="atualizarPreviewConfig()">
+                <option value="dia">📅 Diário</option>
+                <option value="semana">📆 Semanal</option>
+                <option value="quinzena">🗓️ Quinzena</option>
+                <option value="mes" selected>📊 Mensal (30 dias)</option>
+            </select>
+
+            <div id="painel-metas-periodo" class="total-box" style="margin: 10px 0; text-align: left; padding: 10px; font-size: 10px;"></div>
+
+            <div class="mode-box">
+                <label>MODO DE CÁLCULO POR KM</label>
+                <div class="toggle-container" style="margin-top: 6px;">
+                    <span style="font-size: 10px;">Modo Automático Proporcional</span>
+                    <input type="checkbox" id="cfg_modo_auto" checked onchange="mudarModoConfig()">
+                </div>
+            </div>
+
+            <div id="bloco-auto">
+                <label>Custo Total por KM (R$)</label>
+                <input type="number" id="cfg_custo_total_auto" step="0.01" value="0.55" oninput="atualizarPreviewConfig()">
+                <div id="preview-auto-km" style="margin-bottom: 10px;"></div>
+            </div>
+
+            <div id="bloco-manual" style="display:none;">
+                <div id="inputs-manual-km" style="margin-bottom: 10px;"></div>
+                <div class="total-box" id="soma-total-manual">SOMA MANUAL<strong>R$ 0,00 / km</strong></div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #222; margin: 15px 0;">
+            <label style="color: var(--accent);">⚙️ CONTROLE DE ÓLEO & TRIPS</label>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <label>Meta Óleo (Km)</label>
+                    <input type="number" id="cfg_meta_oleo" step="100" placeholder="3000">
+                </div>
+                <div>
+                    <label>Trip Óleo Atual</label>
+                    <input type="number" id="cfg_trip_oleo" step="0.1" placeholder="0">
+                </div>
+            </div>
+
+            <label>Trip Geral / Peças</label>
+            <input type="number" id="cfg_trip_geral" step="0.1" placeholder="0">
+
+            <button class="btn-add" onclick="salvarConfig()">Salvar Configurações</button>
+
+            <hr style="border: 0; border-top: 1px solid #222; margin: 15px 0;">
+
+            <label>Backup de Dados</label>
+            <button class="btn-backup" onclick="exportarBackup()">Exportar Backup (JSON)</button>
+            <button class="btn-restore" onclick="importarBackupClick()">Restaurar Backup</button>
+            <input type="file" id="fileInput" style="display:none" onchange="importarBackup(event)">
         </div>
-        <div class="pt-2 flex justify-end gap-2">
-          <button type="button" class="btn-close-modal px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-xl text-xs font-medium">Cancelar</button>
-          <button type="submit" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-semibold">Aplicar em Todos</button>
-        </div>
-      </form>
     </div>
-  </div>
 
-  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-xs w-full bg-slate-800 border border-slate-700 text-slate-100 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
-    <i id="toast-icon" class="fa-solid fa-circle-check text-brand-500 text-lg"></i>
-    <span id="toast-msg" class="text-xs font-medium">Sucesso!</span>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { 
-      getAuth, 
-      signInWithEmailAndPassword,
-      signOut,
-      onAuthStateChanged 
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { 
-      getFirestore, 
-      doc, 
-      setDoc, 
-      collection, 
-      onSnapshot, 
-      addDoc, 
-      updateDoc, 
-      deleteDoc,
-      writeBatch
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyA2ZuYtBx7_yFL2Nwvg3X7TfsrolnUfFBE",
-      authDomain: "minhalojacatalogo-1febf.firebaseapp.com",
-      projectId: "minhalojacatalogo-1febf",
-      storageBucket: "minhalojacatalogo-1febf.firebasestorage.app",
-      messagingSenderId: "802481935569",
-      appId: "1:802481935569:web:f91376c8abfb11f0e561f0",
-      measurementId: "G-XBWR1SED5Z"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    let currentUser = null;
-    let productsList = [];
-    let profileData = {
-      title: "Ora et Labora",
-      bio: "Confira nossos produtos e cupons de desconto exclusivos abaixo.",
-      cover: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80",
-      logo: "https://via.placeholder.com/150?text=LOGO"
-    };
-    let currentFetchedImages = [];
-    let redirectTimer = null;
-    let redirectInterval = null;
-
-    function showToast(msg, type = 'success') {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toast-msg');
-      const toastIcon = document.getElementById('toast-icon');
-
-      toastMsg.innerText = msg;
-      toastIcon.className = type === 'error' 
-        ? "fa-solid fa-circle-exclamation text-red-500 text-lg" 
-        : "fa-solid fa-circle-check text-brand-500 text-lg";
-
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3500);
-    }
-
-    window.copyCoupon = (codeText) => {
-      const couponToCopy = codeText || "CLIENTEVIP";
-      navigator.clipboard.writeText(couponToCopy).then(() => {
-        showToast(`Cupom "${couponToCopy}" copiado com sucesso!`);
-      }).catch(err => {
-        showToast("Erro ao copiar cupom", "error");
-      });
-    };
-
-    window.openProductAndCopyCoupon = (productUrl, couponCode) => {
-      const couponToCopy = couponCode || "CLIENTEVIP";
-      navigator.clipboard.writeText(couponToCopy).catch(err => console.warn(err));
-
-      document.getElementById('timer-coupon-code').innerText = `Cupom: ${couponToCopy}`;
-      document.getElementById('modal-timer-redirect').classList.remove('hidden');
-
-      let secondsLeft = 8;
-      const countdownElem = document.getElementById('countdown-seconds');
-      countdownElem.innerText = `${secondsLeft}s`;
-
-      if (redirectTimer) clearTimeout(redirectTimer);
-      if (redirectInterval) clearInterval(redirectInterval);
-
-      redirectInterval = setInterval(() => {
-        secondsLeft--;
-        if (secondsLeft >= 0) countdownElem.innerText = `${secondsLeft}s`;
-      }, 1000);
-
-      redirectTimer = setTimeout(() => {
-        clearInterval(redirectInterval);
-        if (productUrl) window.location.href = productUrl;
-      }, 8000);
-    };
-
-    window.cancelRedirectTimer = () => {
-      if (redirectTimer) clearTimeout(redirectTimer);
-      if (redirectInterval) clearInterval(redirectInterval);
-      document.getElementById('modal-timer-redirect').classList.add('hidden');
-    };
-
-    window.openImageViewer = (imgUrl, allImagesJson) => {
-      let images = [];
-      try { images = JSON.parse(decodeURIComponent(allImagesJson)); } catch(e) { images = [imgUrl]; }
-
-      const modal = document.getElementById('modal-image-viewer');
-      const mainImg = document.getElementById('viewer-img-element');
-      const thumbsContainer = document.getElementById('viewer-thumbnails');
-
-      mainImg.src = imgUrl;
-      if (images.length > 1) {
-        thumbsContainer.innerHTML = images.map(url => `
-          <button type="button" onclick="document.getElementById('viewer-img-element').src='${url}'" class="focus:outline-none flex-shrink-0">
-            <img src="${url}" class="w-16 h-16 rounded-xl object-cover border-2 border-slate-600 hover:border-brand-500 transition">
-          </button>
-        `).join('');
-        thumbsContainer.classList.remove('hidden');
-      } else {
-        thumbsContainer.innerHTML = '';
-        thumbsContainer.classList.add('hidden');
-      }
-      modal.classList.remove('hidden');
-    };
-
-    window.closeImageViewer = () => {
-      document.getElementById('modal-image-viewer').classList.add('hidden');
-    };
-
-    window.decreaseAllProductsUsage = async (qtyToSubtract = 1) => {
-      if (productsList.length === 0) {
-        showToast("Nenhum produto cadastrado.", "error");
-        return;
-      }
-      if (!confirm(`Confirmar baixa de -${qtyToSubtract} em todos os ${productsList.length} produtos?`)) return;
-
-      try {
-        const batch = writeBatch(db);
-        productsList.forEach(prod => {
-          const prodRef = doc(db, 'products', prod.id);
-          const currentUsed = Number(prod.usedCount) || Number(prod.used) || 0;
-          const newUsed = currentUsed + Number(qtyToSubtract);
-          batch.update(prodRef, { usedCount: newUsed, used: newUsed, updatedAt: new Date().toISOString() });
-        });
-        await batch.commit();
-        showToast("Baixa global realizada com sucesso!");
-      } catch (err) {
-        showToast("Erro: " + err.message, "error");
-      }
-    };
-
-    window.openCustomBatchModal = () => {
-      document.getElementById('modal-batch-use').classList.remove('hidden');
-    };
-
-    document.getElementById('form-batch-use').onsubmit = async (e) => {
-      e.preventDefault();
-      const val = Number(document.getElementById('batch-use-val').value);
-      if (val > 0) {
-        document.getElementById('modal-batch-use').classList.add('hidden');
-        await window.decreaseAllProductsUsage(val);
-      }
-    };
-
-    window.renderPreviewGallery = () => {
-      const previewContainer = document.getElementById('preview-container');
-      const previewGallery = document.getElementById('preview-gallery');
-
-      if (currentFetchedImages.length === 0) {
-        previewContainer.classList.add('hidden');
-        document.getElementById('fetched-image-url').value = "";
-        return;
-      }
-
-      document.getElementById('fetched-image-url').value = JSON.stringify(currentFetchedImages);
-      previewGallery.innerHTML = currentFetchedImages.map((imgUrl, index) => `
-        <div class="relative group flex-shrink-0">
-          <img src="${imgUrl}" class="w-16 h-16 rounded-xl object-cover border border-slate-700">
-          <button type="button" onclick="removeFetchedImage(${index})" class="absolute -top-1.5 -right-1.5 bg-red-600 hover:bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow-md transition">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-      `).join('');
-      previewContainer.classList.remove('hidden');
-    };
-
-    window.removeFetchedImage = (index) => {
-      currentFetchedImages.splice(index, 1);
-      renderPreviewGallery();
-    };
-
-    window.fetchProductFromLink = async () => {
-      const urlInput = document.getElementById('auto-import-link').value.trim();
-      if (!urlInput) {
-        showToast("Cole o link do produto primeiro!", "error");
-        return;
-      }
-
-      showToast("Buscando dados...", "success");
-      try {
-        const microlinkUrl = `https://api.microlink.io/?url=${encodeURIComponent(urlInput)}`;
-        const response = await fetch(microlinkUrl);
-        const json = await response.json();
-        currentFetchedImages = [];
-
-        if (json.status === 'success' && json.data) {
-          if (json.data.title) {
-            document.getElementById('product-name').value = json.data.title.split('|')[0].trim();
-          }
-          if (json.data.description) {
-            document.getElementById('product-description').value = json.data.description;
-          }
-          if (json.data.image && json.data.image.url) {
-            currentFetchedImages.push(json.data.image.url);
-          }
-        }
-        renderPreviewGallery();
-        document.getElementById('product-link').value = urlInput;
-        showToast("Dados importados!");
-      } catch (err) {
-        showToast("Preencha manualmente os dados.", "error");
-      }
-    };
-
-    function processImageFile(file) {
-      return new Promise((resolve) => {
-        if (!file) resolve(null);
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-          const img = new Image();
-          img.src = event.target.result;
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            let width = img.width, height = img.height;
-            const max = 1000;
-            if (width > height && width > max) { height *= max / width; width = max; }
-            else if (height > max) { width *= max / height; height = max; }
-            canvas.width = width; canvas.height = height;
-            canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-            resolve(canvas.toDataURL('image/jpeg', 0.85));
-          };
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCX1k0PN_yOd3QWauBQhwX0FRwqhn7Clo",
+            authDomain: "gestao-financeira-motoboy.firebaseapp.com",
+            databaseURL: "https://gestao-financeira-motoboy-default-rtdb.firebaseio.com",
+            projectId: "gestao-financeira-motoboy",
+            storageBucket: "gestao-financeira-motoboy.firebasestorage.app",
+            messagingSenderId: "107405414927",
+            appId: "1:107405414927:web:71eae0a1917ce9e512897a",
+            measurementId: "G-M6XG8S0KBX"
         };
-      });
-    }
 
-    function updateAdminUI() {
-      const txtPainel = document.getElementById('txt-painel-btn');
-      const panelUnlogged = document.getElementById('panel-unlogged');
-      const panelLogged = document.getElementById('panel-logged');
+        firebase.initializeApp(firebaseConfig);
+        const dbRef = firebase.database().ref('motoboy_elite');
 
-      if (currentUser) {
-        txtPainel.textContent = "Painel Ativo (On)";
-        panelUnlogged.classList.add('hidden');
-        panelLogged.classList.remove('hidden');
-        document.getElementById('profile-title').value = profileData.title || "";
-        document.getElementById('profile-bio').value = profileData.bio || "";
-      } else {
-        txtPainel.textContent = "Painel Ativo";
-        panelUnlogged.classList.remove('hidden');
-        panelLogged.classList.add('hidden');
-      }
-      renderProducts();
-    }
+        let config = {
+            motoModelo: "Yamaha Lander 250",
+            kmLitro: 30,
+            precoLitro: 5.89,
+            kmMes: 3000,
+            periodoMeta: "mes",
+            modoAuto: true,
+            custoTotalAuto: 0.55,
+            taxasManuais: {},
+            metaOleo: 3000,
+            tripOleo: 0,
+            tripGeral: 0
+        };
 
-    onAuthStateChanged(auth, (user) => {
-      currentUser = user;
-      updateAdminUI();
-    });
+        let gastosMensais = [
+            { id: 1, nome: "Gasolina", emoji: "⛽", cor: "#b71c1c", valor: 660, ativo: true },
+            { id: 2, nome: "Parcela Moto", emoji: "🏍️", cor: "#e65100", valor: 500, ativo: true },
+            { id: 3, nome: "Manutenção", emoji: "🛢️", cor: "#004d40", valor: 180, ativo: true },
+            { id: 4, nome: "Contas Fixas", emoji: "📄", cor: "#01579b", valor: 300, ativo: true }
+        ];
 
-    function setupDataListeners() {
-      onSnapshot(doc(db, 'settings', 'profile'), (docSnap) => {
-        if (docSnap.exists()) {
-          profileData = { ...profileData, ...docSnap.data() };
-          renderProfile();
-        } else {
-          renderProfile();
+        let db = [];
+        let cofresGerais = { 1: 0, 2: 0, 3: 0, 4: 0 };
+        let pendente99 = { total: 0, dinheiro: 0, itens: {} };
+        let pendenteUber = { total: 0, dinheiro: 0, itens: {} };
+        let ultimoLancamento = { itens: {}, lucro: 0 };
+
+        let contasCadastradas = [];
+        let historicoSaidas = [];
+
+        dbRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                if (data.config) config = data.config;
+                if (data.gastosMensais) gastosMensais = data.gastosMensais;
+                if (data.db) db = data.db;
+                if (data.cofresGerais) cofresGerais = data.cofresGerais;
+                if (data.pendente99) pendente99 = data.pendente99;
+                if (data.pendenteUber) pendenteUber = data.pendenteUber;
+                if (data.ultimoLancamento) ultimoLancamento = data.ultimoLancamento;
+                if (data.contasCadastradas) contasCadastradas = data.contasCadastradas;
+                if (data.historicoSaidas) historicoSaidas = data.historicoSaidas;
+            }
+            carregarConfigNaTela();
+            renderPainelGastos();
+            renderTable();
+            atualizarInterfaceDinamica();
+            verificarAlertaSegundaFeira();
+
+            document.getElementById('sync-status').innerText = "Conectado ☁️";
+            document.getElementById('sync-status').style.color = "#2ecc71";
+        }, (error) => {
+            document.getElementById('sync-status').innerText = "Erro ⚠️";
+            document.getElementById('sync-status').style.color = "#e74c3c";
+        });
+
+        function verificarAlertaSegundaFeira() {
+            const hoje = new Date();
+            if (hoje.getDay() === 1 && !sessionStorage.getItem('alertaSegundaExibido')) {
+                setTimeout(() => {
+                    alert("📅 DIA DE ACERTO! Segunda-feira: confira os repasses e atualize os cofres.");
+                    sessionStorage.setItem('alertaSegundaExibido', 'true');
+                }, 1000);
+            }
         }
-      });
 
-      onSnapshot(collection(db, 'products'), (snapshot) => {
-        productsList = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        renderProducts();
-        if (currentUser) renderAdminProductsList();
-      });
-    }
-
-    function renderProfile() {
-      document.getElementById('display-title').innerText = profileData.title || "Ora et Labora";
-      document.getElementById('display-bio').innerText = profileData.bio || "";
-      if (profileData.cover) document.getElementById('display-cover').style.backgroundImage = `url('${profileData.cover}')`;
-      if (profileData.logo) document.getElementById('display-logo').src = profileData.logo;
-    }
-
-    window.setMainImage = (prodId, imgUrl) => {
-      const imgElement = document.getElementById(`prod-img-${prodId}`);
-      if (imgElement) imgElement.src = imgUrl;
-    };
-
-    function renderProducts() {
-      const grid = document.getElementById('products-grid');
-      const emptyState = document.getElementById('empty-state');
-      const totalStat = document.getElementById('stat-total-products');
-      const searchVal = document.getElementById('input-search').value.toLowerCase().trim();
-      const filterStatus = document.getElementById('filter-status').value;
-
-      totalStat.innerText = `${productsList.length} Produtos`;
-
-      let filtered = productsList.filter(prod => {
-        const matchesSearch = (prod.name && prod.name.toLowerCase().includes(searchVal)) || 
-                              (prod.code && prod.code.toLowerCase().includes(searchVal));
-        const totalUses = Number(prod.totalUses) || Number(prod.total) || 1;
-        const usedCount = Number(prod.usedCount) || Number(prod.used) || 0;
-        const remaining = Math.max(0, totalUses - usedCount);
-        const isSoldOut = remaining <= 0;
-
-        if (filterStatus === 'available' && isSoldOut) return false;
-        if (filterStatus === 'soldout' && !isSoldOut) return false;
-        return matchesSearch;
-      });
-
-      if (filtered.length === 0) {
-        grid.innerHTML = '';
-        emptyState.classList.remove('hidden');
-        return;
-      }
-      emptyState.classList.add('hidden');
-
-      grid.innerHTML = filtered.map(prod => {
-        const totalUses = Number(prod.totalUses) || Number(prod.total) || 1;
-        const usedCount = Number(prod.usedCount) || Number(prod.used) || 0;
-        const remaining = Math.max(0, totalUses - usedCount);
-        const isSoldOut = remaining <= 0;
-        const percentUsed = Math.min(100, Math.round((usedCount / totalUses) * 100));
-        const percentRemaining = Math.max(0, 100 - percentUsed);
-
-        let barColor = "bg-brand-500";
-        if (percentRemaining < 20) barColor = "bg-red-500";
-        else if (percentRemaining < 50) barColor = "bg-amber-500";
-
-        let prodImages = prod.images && prod.images.length > 0 ? prod.images : (prod.image ? [prod.image] : ["https://via.placeholder.com/400x300?text=Sem+Imagem"]);
-        const mainImg = prodImages[0];
-        const encodedImagesJson = encodeURIComponent(JSON.stringify(prodImages));
-
-        const originalPrice = prod.price ? Number(prod.price) : null;
-        const discountPercent = Number(prod.discountPercent) || 0;
-        let finalDiscountPrice = originalPrice && discountPercent > 0 ? originalPrice - (originalPrice * (discountPercent / 100)) : null;
-
-        const formattedOriginal = originalPrice ? originalPrice.toFixed(2).replace('.', ',') : null;
-        const formattedDiscount = finalDiscountPrice ? finalDiscountPrice.toFixed(2).replace('.', ',') : null;
-        const couponCode = prod.code || "CLIENTEVIP";
-
-        return `
-          <div class="glass-card rounded-2xl overflow-hidden border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition group">
-            <div>
-              <div class="relative h-48 w-full bg-slate-800 overflow-hidden cursor-pointer" onclick="openImageViewer('${mainImg}', '${encodedImagesJson}')">
-                <img id="prod-img-${prod.id}" src="${mainImg}" alt="${prod.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                ${isSoldOut ? `
-                  <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center">
-                    <span class="px-3 py-1 bg-red-600/90 text-white text-xs font-black tracking-widest rounded-full uppercase shadow-lg animate-pulse">Produto Esgotado</span>
-                  </div>
-                ` : ''}
-                <button type="button" onclick="event.stopPropagation(); copyCoupon('${couponCode}')" class="absolute top-3 left-3 bg-brand-600/90 hover:bg-brand-500 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg shadow transition flex items-center gap-1.5 cursor-pointer z-10">
-                  <i class="fa-solid fa-ticket"></i> Cupom: ${couponCode}
-                </button>
-              </div>
-
-              ${prodImages.length > 1 ? `
-                <div class="flex items-center gap-1.5 px-4 pt-2.5 overflow-x-auto no-scrollbar">
-                  ${prodImages.map(imgUrl => `
-                    <button type="button" onclick="setMainImage('${prod.id}', '${imgUrl}')" class="focus:outline-none flex-shrink-0">
-                      <img src="${imgUrl}" class="w-10 h-10 rounded-lg object-cover border border-slate-700 hover:border-brand-500 transition">
-                    </button>
-                  `).join('')}
-                </div>
-              ` : ''}
-
-              <div class="p-4">
-                <h3 class="font-bold text-slate-100 text-base leading-snug">${prod.name}</h3>
-                ${formattedOriginal ? `
-                  <div class="flex items-baseline gap-2 mt-2">
-                    ${formattedDiscount ? `
-                      <span class="text-lg font-black text-brand-400">R$ ${formattedDiscount}</span>
-                      <span class="text-xs text-slate-400 line-through">R$ ${formattedOriginal}</span>
-                    ` : `
-                      <span class="text-lg font-black text-slate-100">R$ ${formattedOriginal}</span>
-                    `}
-                  </div>
-                ` : ''}
-                <p class="text-xs text-slate-400 mt-2 whitespace-pre-line">${prod.description || ''}</p>
-
-                <div class="mt-4 p-3 bg-slate-900/80 rounded-xl border border-slate-800">
-                  <div class="flex items-center justify-between text-xs font-semibold mb-1.5">
-                    <span class="text-slate-400">Estoque / Uso</span>
-                    <span class="${isSoldOut ? 'text-red-400 font-bold' : 'text-slate-200'}">${remaining} restantes de ${totalUses}</span>
-                  </div>
-                  <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-700">
-                    <div class="h-full ${barColor} rounded-full transition-all duration-500" style="width: ${percentRemaining}%"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="p-4 pt-0">
-              ${prod.link ? `
-                <button type="button" onclick="openProductAndCopyCoupon('${prod.link}', '${couponCode}')" class="w-full py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-medium flex items-center justify-center gap-2 border border-slate-700 transition">
-                  <i class="fa-solid fa-arrow-up-right-from-square text-brand-400"></i> Ver Link do Produto
-                </button>
-              ` : ''}
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function renderAdminProductsList() {
-      const container = document.getElementById('admin-products-list');
-      if (!container) return;
-      if (productsList.length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">Nenhum produto cadastrado.</p>';
-        return;
-      }
-      container.innerHTML = productsList.map(prod => `
-        <div class="bg-slate-900 p-3 rounded-xl border border-slate-700 flex items-center justify-between gap-2">
-          <div class="truncate">
-            <h4 class="text-xs font-bold text-white truncate">${prod.name}</h4>
-            <span class="text-[10px] text-slate-400">Usados: ${prod.usedCount || 0} / Total: ${prod.totalUses || 30}</span>
-          </div>
-          <div class="flex items-center gap-1 flex-shrink-0">
-            <button onclick="openQuickUseModal('${prod.id}')" class="px-2.5 py-1 bg-brand-600/20 text-brand-300 rounded-lg text-xs border border-brand-500/30"><i class="fa-solid fa-pen-to-square"></i></button>
-            <button onclick="openEditProductModal('${prod.id}')" class="px-2.5 py-1 bg-slate-800 text-slate-300 rounded-lg text-xs border border-slate-700"><i class="fa-solid fa-gear"></i></button>
-            <button onclick="deleteProduct('${prod.id}')" class="px-2.5 py-1 bg-red-500/10 text-red-400 rounded-lg text-xs border border-red-500/20"><i class="fa-solid fa-trash"></i></button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    document.querySelectorAll('.btn-close-modal').forEach(btn => {
-      btn.onclick = () => btn.closest('.fixed').classList.add('hidden');
-    });
-
-    document.getElementById('btn-auth-open').onclick = () => {
-      document.getElementById('modal-auth').classList.remove('hidden');
-    };
-
-    document.getElementById('form-auth').onsubmit = async (e) => {
-      e.preventDefault();
-      try {
-        await signInWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-password').value);
-        showToast("Login realizado!");
-      } catch (err) {
-        showToast("Erro: " + err.message, "error");
-      }
-    };
-
-    document.getElementById('btn-logout').onclick = async () => {
-      await signOut(auth);
-      showToast("Você saiu.");
-    };
-
-    document.getElementById('form-profile').onsubmit = async (e) => {
-      e.preventDefault();
-      const title = document.getElementById('profile-title').value;
-      const bio = document.getElementById('profile-bio').value;
-      const coverFile = document.getElementById('profile-cover-file').files[0];
-      const logoFile = document.getElementById('profile-logo-file').files[0];
-
-      let newCover = profileData.cover, newLogo = profileData.logo;
-      if (coverFile) newCover = await processImageFile(coverFile);
-      if (logoFile) newLogo = await processImageFile(logoFile);
-
-      try {
-        await setDoc(doc(db, 'settings', 'profile'), { title, bio, cover: newCover, logo: newLogo, updatedAt: new Date().toISOString() }, { merge: true });
-        showToast("Perfil atualizado!");
-      } catch (err) {
-        showToast("Erro: " + err.message, "error");
-      }
-    };
-
-    window.resetProductForm = () => {
-      document.getElementById('form-product').reset();
-      document.getElementById('auto-import-link').value = "";
-      document.getElementById('fetched-image-url').value = "";
-      currentFetchedImages = [];
-      document.getElementById('preview-gallery').innerHTML = "";
-      document.getElementById('preview-container').classList.add('hidden');
-      document.getElementById('product-id').value = "";
-    };
-
-    window.openEditProductModal = (prodId) => {
-      const prod = productsList.find(p => p.id === prodId);
-      if (!prod) return;
-      document.getElementById('modal-admin-manage').classList.add('hidden');
-      document.getElementById('product-id').value = prod.id;
-      document.getElementById('product-name').value = prod.name || "";
-      document.getElementById('product-price').value = prod.price || "";
-      document.getElementById('product-discount-percent').value = prod.discountPercent || "10";
-      document.getElementById('product-description').value = prod.description || "";
-      document.getElementById('product-link').value = prod.link || "";
-      document.getElementById('product-code').value = prod.code || "CLIENTEVIP";
-      document.getElementById('product-total-uses').value = prod.totalUses || 30;
-      document.getElementById('product-used-count').value = prod.usedCount || 0;
-
-      currentFetchedImages = prod.images ? [...prod.images] : (prod.image ? [prod.image] : []);
-      renderPreviewGallery();
-    };
-
-    document.getElementById('form-product').onsubmit = async (e) => {
-      e.preventDefault();
-      const id = document.getElementById('product-id').value;
-      const name = document.getElementById('product-name').value;
-      const price = document.getElementById('product-price').value;
-      const discountPercent = document.getElementById('product-discount-percent').value;
-      const description = document.getElementById('product-description').value;
-      const link = document.getElementById('product-link').value;
-      const code = document.getElementById('product-code').value || "CLIENTEVIP";
-      const validityDays = Number(document.getElementById('product-validity-days').value) || 30;
-      const totalUses = Number(document.getElementById('product-total-uses').value);
-      const usedCount = Number(document.getElementById('product-used-count').value);
-      const imgFiles = Array.from(document.getElementById('product-image-file').files);
-
-      let newImages = imgFiles.length > 0 ? await Promise.all(imgFiles.map(file => processImageFile(file))) : [...currentFetchedImages];
-
-      try {
-        if (id) {
-          await updateDoc(doc(db, 'products', id), {
-            name, price, discountPercent, description, link, code, validityDays, totalUses, usedCount,
-            images: newImages, image: newImages[0] || "", updatedAt: new Date().toISOString()
-          });
-          showToast("Produto atualizado!");
-        } else {
-          await addDoc(collection(db, 'products'), {
-            name, price, discountPercent, description, link, code, validityDays, totalUses, usedCount,
-            images: newImages, image: newImages[0] || "", createdAt: new Date().toISOString()
-          });
-          showToast("Produto cadastrado!");
+        function salvarNoFirebase() {
+            dbRef.set({ config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, ultimoLancamento, contasCadastradas, historicoSaidas });
         }
-        resetProductForm();
-      } catch (err) {
-        showToast("Erro: " + err.message, "error");
-      }
-    };
 
-    window.openQuickUseModal = (prodId) => {
-      const prod = productsList.find(p => p.id === prodId);
-      if (!prod) return;
-      document.getElementById('modal-admin-manage').classList.add('hidden');
-      document.getElementById('quick-use-id').value = prod.id;
-      document.getElementById('quick-use-product-name').innerText = prod.name;
-      document.getElementById('quick-use-val').value = prod.usedCount || 0;
-      document.getElementById('modal-quick-use').classList.remove('hidden');
-    };
+        function carregarConfigNaTela() {
+            document.getElementById('cfg_moto_modelo').value = config.motoModelo || "";
+            document.getElementById('cfg_km_litro').value = config.kmLitro || 30;
+            document.getElementById('cfg_preco_litro').value = config.precoLitro || 5.89;
+            document.getElementById('cfg_km_mes').value = config.kmMes || 3000;
+            document.getElementById('cfg_periodo').value = config.periodoMeta || "mes";
+            document.getElementById('cfg_modo_auto').checked = config.modoAuto !== false;
+            document.getElementById('cfg_custo_total_auto').value = config.custoTotalAuto || 0.55;
+            document.getElementById('cfg_meta_oleo').value = config.metaOleo || 3000;
+            document.getElementById('cfg_trip_oleo').value = config.tripOleo || 0;
+            document.getElementById('cfg_trip_geral').value = config.tripGeral || 0;
+            mudarModoConfig();
+        }
 
-    document.getElementById('form-quick-use').onsubmit = async (e) => {
-      e.preventDefault();
-      const id = document.getElementById('quick-use-id').value;
-      const newVal = Number(document.getElementById('quick-use-val').value);
-      try {
-        await updateDoc(doc(db, 'products', id), { usedCount: Math.max(0, newVal), used: Math.max(0, newVal) });
-        showToast("Estoque atualizado!");
-        document.getElementById('modal-quick-use').classList.add('hidden');
-      } catch (err) {
-        showToast("Erro: " + err.message, "error");
-      }
-    };
+        function mudarModoConfig() {
+            const auto = document.getElementById('cfg_modo_auto').checked;
+            document.getElementById('bloco-auto').style.display = auto ? 'block' : 'none';
+            document.getElementById('bloco-manual').style.display = auto ? 'none' : 'block';
+            atualizarPreviewConfig();
+        }
 
-    window.deleteProduct = async (prodId) => {
-      if (!confirm("Excluir este produto?")) return;
-      try {
-        await deleteDoc(doc(db, 'products', prodId));
-        showToast("Produto removido.");
-        renderAdminProductsList();
-      } catch (err) {
-        showToast("Erro: " + err.message, "error");
-      }
-    };
+        function atualizarPreviewConfig() {
+            const kmMes = parseFloat(document.getElementById('cfg_km_mes').value) || 3000;
+            const periodo = document.getElementById('cfg_periodo').value;
+            const auto = document.getElementById('cfg_modo_auto').checked;
+            const ativos = gastosMensais.filter(g => g.ativo);
+            const totalGastosMes = ativos.reduce((acc, g) => acc + g.valor, 0);
 
-    const panelLogged = document.getElementById('panel-logged');
-    if (panelLogged && !document.getElementById('btn-open-admin-manage')) {
-      const manageDiv = document.createElement('div');
-      manageDiv.className = "pt-2";
-      manageDiv.innerHTML = `
-        <button type="button" id="btn-open-admin-manage" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold border border-slate-700 transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-list-check text-brand-500"></i> Gerenciar / Excluir Produtos Cadastrados
-        </button>
-      `;
-      panelLogged.insertBefore(manageDiv, panelLogged.firstChild);
-      document.getElementById('btn-open-admin-manage').onclick = () => {
-        renderAdminProductsList();
-        document.getElementById('modal-admin-manage').classList.remove('hidden');
-      };
-    }
+            let fator = 1, nomePeriodo = "Mês", dias = 30;
+            if(periodo === 'dia') { fator = 1 / 30; nomePeriodo = "Dia"; dias = 1; }
+            else if(periodo === 'semana') { fator = 7 / 30; nomePeriodo = "Semana"; dias = 7; }
+            else if(periodo === 'quinzena') { fator = 15 / 30; nomePeriodo = "Quinzena"; dias = 15; }
 
-    document.getElementById('input-search').oninput = renderProducts;
-    document.getElementById('filter-status').onchange = renderProducts;
+            const kmPeriodo = kmMes * fator;
+            const custoPeriodo = totalGastosMes * fator;
 
-    setupDataListeners();
-  </script>
+            document.getElementById('painel-metas-periodo').innerHTML = `
+                🎯 <strong>META (${nomePeriodo.toUpperCase()}):</strong><br>
+                Custos: <strong style="color:var(--accent);">R$ ${custoPeriodo.toFixed(2)}</strong> | KM: <strong style="color:var(--green);">${kmPeriodo.toFixed(1)} km</strong>
+            `;
+
+            if (auto) {
+                const custoTotal = parseFloat(document.getElementById('cfg_custo_total_auto').value) || 0;
+                let soma = ativos.reduce((acc, g) => acc + g.valor, 0);
+                let html = '';
+                ativos.forEach(g => {
+                    let prop = soma > 0 ? (g.valor / soma) : (1 / ativos.length);
+                    html += `<div style="display:flex; justify-content:space-between; margin:2px 0; font-size:10px;"><span>${g.emoji} ${g.nome}</span><strong style="color:var(--green);">R$ ${(custoTotal * prop).toFixed(4)}/km</strong></div>`;
+                });
+                document.getElementById('preview-auto-km').innerHTML = html;
+            }
+        }
+
+        function salvarConfig() {
+            config.motoModelo = document.getElementById('cfg_moto_modelo').value;
+            config.kmLitro = parseFloat(document.getElementById('cfg_km_litro').value) || 30;
+            config.precoLitro = parseFloat(document.getElementById('cfg_preco_litro').value) || 5.89;
+            config.kmMes = parseFloat(document.getElementById('cfg_km_mes').value) || 3000;
+            config.periodoMeta = document.getElementById('cfg_periodo').value;
+            config.modoAuto = document.getElementById('cfg_modo_auto').checked;
+            config.custoTotalAuto = parseFloat(document.getElementById('cfg_custo_total_auto').value) || 0.55;
+            config.metaOleo = parseFloat(document.getElementById('cfg_meta_oleo').value) || 3000;
+            config.tripOleo = parseFloat(document.getElementById('cfg_trip_oleo').value) || 0;
+            config.tripGeral = parseFloat(document.getElementById('cfg_trip_geral').value) || 0;
+
+            salvarNoFirebase();
+            alert('Configurações salvas!');
+            trocarTab('diario');
+        }
+
+        function zerarTripOleo() { config.tripOleo = 0; salvarNoFirebase(); renderGerenciador(); alert('Trip Óleo zerado!'); }
+        function zerarTripGeral() { config.tripGeral = 0; salvarNoFirebase(); renderGerenciador(); alert('Trip Geral zerado!'); }
+
+        function trocarTab(tabId, evt) {
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            if (evt && evt.currentTarget) {
+                evt.currentTarget.classList.add('active');
+            } else {
+                const idx = tabId === 'diario' ? 0 : tabId === 'gerenciar' ? 1 : tabId === 'gastos' ? 2 : 3;
+                document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+            }
+            if(tabId === 'config') carregarConfigNaTela();
+            if(tabId === 'gerenciar') renderGerenciador();
+        }
+
+        function adicionarGasto() {
+            const nome = document.getElementById('gasto_nome').value.trim();
+            const emoji = document.getElementById('gasto_emoji').value.trim() || "📌";
+            const cor = document.getElementById('gasto_cor').value;
+            const valor = parseFloat(document.getElementById('gasto_valor').value);
+
+            if(!nome || isNaN(valor)) { alert('Preencha nome e valor!'); return; }
+
+            const novoId = Date.now();
+            gastosMensais.push({ id: novoId, nome, emoji, cor, valor, ativo: true });
+            if(cofresGerais[novoId] === undefined) cofresGerais[novoId] = 0;
+
+            salvarNoFirebase();
+            renderPainelGastos();
+            atualizarInterfaceDinamica();
+            document.getElementById('gasto_nome').value = '';
+            document.getElementById('gasto_emoji').value = '';
+            document.getElementById('gasto_valor').value = '';
+        }
+
+        function removerGasto(id) {
+            if(confirm('Excluir caixinha?')) {
+                gastosMensais = gastosMensais.filter(g => g.id !== id);
+                salvarNoFirebase();
+                renderPainelGastos();
+                atualizarInterfaceDinamica();
+            }
+        }
+
+        function alternarGastoAtivo(id) {
+            const g = gastosMensais.find(x => x.id === id);
+            if(g) { g.ativo = !g.ativo; salvarNoFirebase(); atualizarInterfaceDinamica(); }
+        }
+
+        function renderPainelGastos() {
+            const tbody = document.querySelector('#tabela-gastos tbody');
+            tbody.innerHTML = gastosMensais.map(g => `
+                <tr>
+                    <td><span style="color:${g.cor};">${g.emoji}</span> <strong>${g.nome}</strong></td>
+                    <td>R$ ${g.valor.toFixed(2)}</td>
+                    <td><input type="checkbox" ${g.ativo ? 'checked' : ''} onchange="alternarGastoAtivo(${g.id})" style="width:16px; height:16px; accent-color:var(--green);"></td>
+                    <td><button class="btn-del" onclick="removerGasto(${g.id})">✕</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function atualizarInterfaceDinamica() {
+            const ativos = gastosMensais.filter(g => g.ativo);
+
+            document.getElementById('grid-envelopes-ultimo').innerHTML = ativos.map(g => `
+                <div class="env" style="border-left: 3px solid ${g.cor};">
+                    ${g.emoji} ${g.nome.toUpperCase()} 
+                    <strong id="card-res-${g.id}" style="color:${g.cor};">R$ ${(ultimoLancamento.itens && ultimoLancamento.itens[g.id] ? ultimoLancamento.itens[g.id] : 0).toFixed(2)}</strong>
+                </div>
+            `).join('') + `<div class="env" style="grid-column: span 2; background:#112518; border:1px solid #1b4d3e;">💰 LUCRO LÍQUIDO <strong id="card-res-lucro" style="font-size:14px; color:var(--green);">R$ ${(ultimoLancamento.lucro || 0).toFixed(2)}</strong></div>`;
+
+            document.getElementById('linhas-dinamicas-99').innerHTML = ativos.map(g => `
+                <div class="linha-acumulado">
+                    <span>${g.emoji} ${g.nome}:</span> 
+                    <input type="number" id="edit-99-${g.id}" step="0.01" oninput="atualizarValoresDigitados('99')">
+                    <button class="btn-check" id="btn-check-99-${g.id}" onclick="darCheckItem('99', ${g.id})">✔ Baixa</button>
+                </div>
+            `).join('');
+
+            document.getElementById('linhas-dinamicas-uber').innerHTML = ativos.map(g => `
+                <div class="linha-acumulado">
+                    <span>${g.emoji} ${g.nome}:</span> 
+                    <input type="number" id="edit-ub-${g.id}" step="0.01" oninput="atualizarValoresDigitados('uber')">
+                    <button class="btn-check" id="btn-check-ub-${g.id}" onclick="darCheckItem('uber', ${g.id})">✔ Baixa</button>
+                </div>
+            `).join('');
+
+            document.getElementById('grid-cofres-geral').innerHTML = ativos.map(g => `
+                <div class="env" style="border-left: 3px solid ${g.cor};">
+                    ${g.emoji} ${g.nome.toUpperCase()} 
+                    <strong id="ger-res-${g.id}" style="color:${g.cor};">R$ ${(cofresGerais[g.id] || 0).toFixed(2)}</strong>
+                </div>
+            `).join('');
+
+            document.getElementById('saida_cofre').innerHTML = ativos.map(g => `<option value="${g.id}">${g.emoji} ${g.nome}</option>`).join('');
+            document.getElementById('conta_cofre').innerHTML = ativos.map(g => `<option value="${g.id}">${g.emoji} ${g.nome}</option>`).join('');
+
+            preencherValoresPendentesNaTela();
+            if(document.getElementById('cfg_modo_auto')) atualizarPreviewConfig();
+        }
+
+        function preencherValoresPendentesNaTela() {
+            const ativos = gastosMensais.filter(g => g.ativo);
+            
+            document.getElementById('edit-99-tot').value = Math.max(0, (pendente99.total || 0) - (pendente99.dinheiro || 0)).toFixed(2);
+            document.getElementById('edit-99-dinheiro').value = (pendente99.dinheiro || 0).toFixed(2);
+            ativos.forEach(g => {
+                const inp = document.getElementById(`edit-99-${g.id}`);
+                if(inp) inp.value = (pendente99.itens && pendente99.itens[g.id] ? pendente99.itens[g.id] : 0).toFixed(2);
+            });
+
+            document.getElementById('edit-ub-tot').value = Math.max(0, (pendenteUber.total || 0) - (pendenteUber.dinheiro || 0)).toFixed(2);
+            document.getElementById('edit-ub-dinheiro').value = (pendenteUber.dinheiro || 0).toFixed(2);
+            ativos.forEach(g => {
+                const inp = document.getElementById(`edit-ub-${g.id}`);
+                if(inp) inp.value = (pendenteUber.itens && pendenteUber.itens[g.id] ? pendenteUber.itens[g.id] : 0).toFixed(2);
+            });
+
+            ativos.forEach(g => {
+                const el = document.getElementById(`card-res-${g.id}`);
+                if(el) el.innerText = "R$ " + (ultimoLancamento.itens && ultimoLancamento.itens[g.id] ? ultimoLancamento.itens[g.id] : 0).toFixed(2);
+            });
+            const elLucro = document.getElementById('card-res-lucro');
+            if(elLucro) elLucro.innerText = "R$ " + (ultimoLancamento.lucro || 0).toFixed(2);
+
+            atualizarValoresDigitados('99');
+            atualizarValoresDigitados('uber');
+        }
+
+        // LÓGICA DO SALDO DECRESCENTE EM ESPÉCIE INTEGRADA E ATIVADA
+        function atualizarValoresDigitados(plat) {
+            const prefixo = plat === '99' ? '99' : 'ub';
+            const dinheiroTotalEmEspecie = parseFloat(document.getElementById(`edit-${prefixo}-dinheiro`).value) || 0;
+            let totalJaBaixadoEspecie = 0;
+            const ativos = gastosMensais.filter(g => g.ativo);
+            
+            ativos.forEach(g => {
+                const btn = document.getElementById(`btn-check-${prefixo}-${g.id}`);
+                if (btn && btn.classList.contains('checked')) {
+                    const inp = document.getElementById(`edit-${prefixo}-${g.id}`);
+                    totalJaBaixadoEspecie += parseFloat(inp ? inp.value : 0) || 0;
+                }
+            });
+
+            let saldoRestanteNaMao = dinheiroTotalEmEspecie - totalJaBaixadoEspecie;
+            const spanRestante = document.getElementById(`restante-${plat}`);
+            const boxRestante = document.getElementById(`restante-${plat}-box`);
+            
+            if(spanRestante) {
+                spanRestante.innerText = saldoRestanteNaMao.toFixed(2);
+                if (saldoRestanteNaMao < 0) {
+                    boxRestante.style.color = "var(--red)";
+                } else if (saldoRestanteNaMao === 0 && dinheiroTotalEmEspecie > 0) {
+                    boxRestante.style.color = "var(--green)";
+                } else {
+                    boxRestante.style.color = "var(--accent)";
+                }
+            }
+        }
+
+        function darCheckItem(plat, idGasto) {
+            const prefixo = plat === '99' ? '99' : 'ub';
+            const btn = document.getElementById(`btn-check-${prefixo}-${idGasto}`);
+            const inp = document.getElementById(`edit-${prefixo}-${idGasto}`);
+            const val = parseFloat(inp ? inp.value : 0) || 0;
+
+            if (!btn.classList.contains('checked')) {
+                if (val <= 0) { alert('Valor zerado nesta caixinha.'); return; }
+                cofresGerais[idGasto] = (cofresGerais[idGasto] || 0) + val;
+                
+                if (plat === '99' && pendente99.itens && pendente99.itens[idGasto]) {
+                    pendente99.itens[idGasto] = Math.max(0, pendente99.itens[idGasto] - val);
+                } else if (plat === 'uber' && pendenteUber.itens && pendenteUber.itens[idGasto]) {
+                    pendenteUber.itens[idGasto] = Math.max(0, pendenteUber.itens[idGasto] - val);
+                }
+
+                btn.classList.add('checked');
+                btn.innerText = "✔ Feito";
+            } else {
+                cofresGerais[idGasto] = Math.max(0, (cofresGerais[idGasto] || 0) - val);
+                btn.classList.remove('checked');
+                btn.innerText = "✔ Baixa";
+            }
+
+            salvarNoFirebase();
+            atualizarValoresDigitados(plat); // ATUALIZA O SALDO RESTANTE EM TEMPO REAL NO CLIQUE
+            
+            const gerRes = document.getElementById(`ger-res-${idGasto}`);
+            if(gerRes) gerRes.innerText = "R$ " + (cofresGerais[idGasto] || 0).toFixed(2);
+        }
+
+        function calcularBrutoTotal() {
+            const b99 = parseFloat(document.getElementById('bruto_99').value) || 0;
+            const uber = parseFloat(document.getElementById('bruto_uber').value) || 0;
+            document.getElementById('bruto').value = (b99 + uber) > 0 ? (b99 + uber).toFixed(2) : '';
+        }
+
+        function registrar() {
+            const b99 = parseFloat(document.getElementById('bruto_99').value) || 0;
+            const dinheiro99 = parseFloat(document.getElementById('dinheiro_99').value) || 0;
+            const uber = parseFloat(document.getElementById('bruto_uber').value) || 0;
+            const dinheiroUber = parseFloat(document.getElementById('dinheiro_uber').value) || 0;
+            const bruto = b99 + uber;
+            const km = parseFloat(document.getElementById('km_dia').value) || 0;
+
+            if (bruto <= 0 || km <= 0) { alert('Preencha faturamento e KM.'); return; }
+
+            config.tripOleo = (parseFloat(config.tripOleo) || 0) + km;
+            config.tripGeral = (parseFloat(config.tripGeral) || 0) + km;
+
+            const kmMes = config.kmMes > 0 ? config.kmMes : 3000;
+            const ativos = gastosMensais.filter(g => g.ativo);
+            const modoAuto = config.modoAuto !== false;
+
+            let custosDiaItens = {}, totalCustosGerais = 0;
+            let somaGastos = ativos.reduce((acc, g) => acc + g.valor, 0);
+
+            ativos.forEach(g => {
+                let custoKmItem = modoAuto ? ((parseFloat(config.custoTotalAuto) || 0.55) * (somaGastos > 0 ? g.valor / somaGastos : 1 / ativos.length)) : ((config.taxasManuais && config.taxasManuais[g.id]) || (g.valor / kmMes));
+                let valorItemDia = km * custoKmItem;
+                custosDiaItens[g.id] = valorItemDia;
+                totalCustosGerais += valorItemDia;
+            });
+
+            const lucroTotalDia = bruto - totalCustosGerais;
+            const eficiencia = km > 0 ? (bruto / km) : 0;
+            document.getElementById('res-eficiencia').innerText = `R$ ${eficiencia.toFixed(2)} / km`;
+
+            ultimoLancamento = { itens: custosDiaItens, lucro: lucroTotalDia };
+            pendente99 = { total: b99, dinheiro: dinheiro99, itens: {} };
+            pendenteUber = { total: uber, dinheiro: dinheiroUber, itens: {} };
+
+            if (b99 > 0) ativos.forEach(g => { pendente99.itens[g.id] = (custosDiaItens[g.id] || 0) * (b99 / bruto); });
+            if (uber > 0) ativos.forEach(g => { pendenteUber.itens[g.id] = (custosDiaItens[g.id] || 0) * (uber / bruto); });
+
+            let custoCfg = parseFloat(config.custoTotalAuto) || 0.55;
+            let obsTexto = eficiencia < custoCfg ? "RUIM" : (eficiencia < (custoCfg * 1.5) ? "MÉDIO" : "EXCELENTE");
+            document.getElementById('obs').value = obsTexto;
+
+            db.unshift({ 
+                id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), 
+                mesAno: `${String(new Date().getMonth() + 1).padStart(2, '0')}/${new Date().getFullYear()}`,
+                bruto: bruto.toFixed(2), km, eficiencia: eficiencia.toFixed(2), obs: obsTexto
+            });
+
+            salvarNoFirebase();
+            atualizarInterfaceDinamica();
+            renderTable();
+
+            document.getElementById('bruto_99').value = '';
+            document.getElementById('dinheiro_99').value = '';
+            document.getElementById('bruto_uber').value = '';
+            document.getElementById('dinheiro_uber').value = '';
+            document.getElementById('km_dia').value = '';
+            document.getElementById('bruto').value = '';
+            alert('Lançamento registrado!');
+        }
+
+        function baixarCaixas99() {
+            gastosMensais.filter(g => g.ativo).forEach(g => {
+                const val = parseFloat(document.getElementById(`edit-99-${g.id}`).value) || 0;
+                cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
+            });
+            pendente99 = { total: 0, dinheiro: 0, itens: {} };
+            salvarNoFirebase();
+            atualizarInterfaceDinamica();
+            alert('Baixa da 99 concluída!');
+        }
+
+        function receberRepasseUber() {
+            gastosMensais.filter(g => g.ativo).forEach(g => {
+                const val = parseFloat(document.getElementById(`edit-ub-${g.id}`).value) || 0;
+                cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
+            });
+            pendenteUber = { total: 0, dinheiro: 0, itens: {} };
+            salvarNoFirebase();
+            atualizarInterfaceDinamica();
+            alert('Baixa da Uber concluída!');
+        }
+
+        function zerarCaixasPendentesManualmente() {
+            if(confirm('Zerar pendências?')) {
+                pendente99 = { total: 0, dinheiro: 0, itens: {} };
+                pendenteUber = { total: 0, dinheiro: 0, itens: {} };
+                ultimoLancamento = { itens: {}, lucro: 0 };
+                salvarNoFirebase();
+                atualizarInterfaceDinamica();
+                alert('Pendências zeradas!');
+            }
+        }
+
+        function deletarItem(i) {
+            if (confirm('Desfazer lançamento?')) {
+                const item = db[i];
+                if(item && item.km) {
+                    config.tripOleo = Math.max(0, config.tripOleo - item.km);
+                    config.tripGeral = Math.max(0, config.tripGeral - item.km);
+                }
+                db.splice(i, 1);
+                if (db.length === 0) {
+                    ultimoLancamento = { itens: {}, lucro: 0 };
+                    pendente99 = { total: 0, dinheiro: 0, itens: {} };
+                    pendenteUber = { total: 0, dinheiro: 0, itens: {} };
+                }
+                salvarNoFirebase();
+                atualizarInterfaceDinamica();
+                renderTable();
+            }
+        }
+
+        function renderTable() {
+            const tbody = document.querySelector('#tabela tbody');
+            tbody.innerHTML = db.length ? db.map((item, i) => {
+                let badgeClass = item.obs === 'RUIM' ? 'badge-ruim' : (item.obs === 'MÉDIO' ? 'badge-medio' : 'badge-excelente');
+                return `<tr>
+                    <td><strong>${item.data}</strong></td>
+                    <td style="color:var(--green); font-weight:700;">R$ ${item.bruto}</td>
+                    <td>R$ ${item.eficiencia}</td>
+                    <td><span class="badge-obs ${badgeClass}">${item.obs}</span></td>
+                    <td><button class="btn-del" onclick="deletarItem(${i})">✕</button></td>
+                </tr>`;
+            }).join('') : '<tr><td colspan="5" style="color:var(--text-muted); padding: 12px;">Nenhum lançamento.</td></tr>';
+        }
+
+        function mudarTipoContaForm() {
+            document.getElementById('bloco_qtd_parcelas').style.display = (document.getElementById('conta_tipo').value === 'parcelada') ? 'block' : 'none';
+        }
+
+        function lançarSaidaCofre() {
+            const cofreId = document.getElementById('saida_cofre').value;
+            const desc = document.getElementById('saida_desc').value.trim();
+            const valor = parseFloat(document.getElementById('saida_valor').value);
+
+            if(!desc || isNaN(valor) || valor <= 0) { alert('Preencha descrição e valor!'); return; }
+            if (valor > (cofresGerais[cofreId] || 0)) { alert('Saldo insuficiente no cofre!'); return; }
+
+            cofresGerais[cofreId] = Math.max(0, cofresGerais[cofreId] - valor);
+            const gInfo = gastosMensais.find(x => x.id == cofreId);
+
+            historicoSaidas.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), cofreNome: gInfo ? `${gInfo.emoji} ${gInfo.nome}` : 'Caixa', desc, valor });
+            salvarNoFirebase();
+            atualizarInterfaceDinamica();
+            renderGerenciador();
+            document.getElementById('saida_desc').value = '';
+            document.getElementById('saida_valor').value = '';
+            alert('Retirada registrada!');
+        }
+
+        function cadastrarConta() {
+            const tipo = document.getElementById('conta_tipo').value;
+            const cofreId = document.getElementById('conta_cofre').value;
+            const nome = document.getElementById('conta_nome').value.trim();
+            const valor = parseFloat(document.getElementById('conta_valor').value);
+            const mesAno = document.getElementById('conta_mes_ano').value;
+            const vencimento = parseInt(document.getElementById('conta_vencimento').value) || 1;
+            const parcelas = parseInt(document.getElementById('conta_parcelas').value) || 1;
+
+            if(!nome || isNaN(valor) || valor <= 0 || !mesAno) { alert('Preencha os dados da conta!'); return; }
+
+            contasCadastradas.push({ id: Date.now(), tipo, cofreId, nome, valor, mesAnoRef: mesAno, vencimento, parcelaAtual: 1, totalParcelas: parcelas, paga: false });
+            salvarNoFirebase();
+            renderGerenciador();
+            document.getElementById('conta_nome').value = '';
+            document.getElementById('conta_valor').value = '';
+            alert('Conta cadastrada!');
+        }
+
+        function pagarConta(id) {
+            const c = contasCadastradas.find(x => x.id === id);
+            if(!c) return;
+            if(c.valor > (cofresGerais[c.cofreId] || 0)) { alert('Saldo insuficiente no cofre!'); return; }
+
+            if(confirm(`Pagar "${c.nome}"?`)) {
+                cofresGerais[c.cofreId] = Math.max(0, cofresGerais[c.cofreId] - c.valor);
+                const gInfo = gastosMensais.find(x => x.id == c.cofreId);
+                historicoSaidas.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), cofreNome: gInfo ? `${gInfo.emoji} ${gInfo.nome}` : 'Caixa', desc: `Pago: ${c.nome}`, valor: c.valor });
+
+                if(c.tipo === 'parcelada') { if(c.parcelaAtual < c.totalParcelas) c.parcelaAtual++; else c.paga = true; }
+                else if(c.tipo === 'unica') { c.paga = true; }
+                else if(c.tipo === 'recorrente') {
+                    let [ano, mes] = c.mesAnoRef.split('-').map(Number);
+                    mes++; if(mes > 12) { mes = 1; ano++; }
+                    c.mesAnoRef = `${ano}-${String(mes).padStart(2, '0')}`;
+                }
+                salvarNoFirebase();
+                atualizarInterfaceDinamica();
+                renderGerenciador();
+                alert('Conta paga!');
+            }
+        }
+
+        function excluirConta(id) {
+            if(confirm('Excluir conta?')) { contasCadastradas = contasCadastradas.filter(x => x.id !== id); salvarNoFirebase(); renderGerenciador(); }
+        }
+
+        function deletarSaida(id) {
+            historicoSaidas = historicoSaidas.filter(x => x.id !== id);
+            salvarNoFirebase();
+            renderGerenciador();
+        }
+
+        function renderGerenciador() {
+            const tbodyContas = document.querySelector('#tabela-contas tbody');
+            const pendentes = contasCadastradas.filter(x => !x.paga);
+            tbodyContas.innerHTML = pendentes.length ? pendentes.map(c => {
+                const gInfo = gastosMensais.find(x => x.id == c.cofreId);
+                return `<tr>
+                    <td><strong>${c.nome}</strong></td>
+                    <td>${gInfo ? gInfo.emoji : '-'}</td>
+                    <td>R$ ${c.valor.toFixed(2)}</td>
+                    <td>Dia ${c.vencimento}</td>
+                    <td>
+                        <button onclick="pagarConta(${c.id})" style="background:var(--green); border:none; padding:3px 6px; border-radius:4px; font-weight:700; cursor:pointer; font-size:9px;">Pagar</button>
+                        <button onclick="excluirConta(${c.id})" style="background:var(--red); color:#fff; border:none; padding:3px 6px; border-radius:4px; font-weight:700; cursor:pointer; font-size:9px; margin-top:2px;">✕</button>
+                    </td>
+                </tr>`;
+            }).join('') : '<tr><td colspan="5" style="color:var(--text-muted);">Nenhuma conta pendente.</td></tr>';
+
+            const tbodySaidas = document.querySelector('#tabela-saidas tbody');
+            tbodySaidas.innerHTML = historicoSaidas.length ? historicoSaidas.slice(0, 8).map(s => `
+                <tr>
+                    <td>${s.data}</td>
+                    <td>${s.cofreNome}</td>
+                    <td>${s.desc}</td>
+                    <td style="color:var(--red);">R$ ${s.valor.toFixed(2)}</td>
+                    <td><button class="btn-del" onclick="deletarSaida(${s.id})">✕</button></td>
+                </tr>
+            `).join('') : '<tr><td colspan="5" style="color:var(--text-muted);">Sem retiradas.</td></tr>';
+
+            gerarDiagnosticoIA();
+        }
+
+        function gerarDiagnosticoIA() {
+            const aiElem = document.getElementById('ai-feedback');
+            const metaOleo = parseFloat(config.metaOleo) || 3000;
+            const tripOleo = parseFloat(config.tripOleo) || 0;
+            const tripGeral = parseFloat(config.tripGeral) || 0;
+            let msgs = [];
+
+            if (tripOleo >= metaOleo) {
+                msgs.push(`🚨 <strong style="color:var(--red);">Óleo Vencido!</strong> (${tripOleo.toFixed(1)} km). <br><button class="btn-reset-trip" onclick="zerarTripOleo()">🔄 Zerar Trip Óleo</button>`);
+            } else {
+                msgs.push(`🛢️ <strong>Óleo:</strong> ${tripOleo.toFixed(1)} / ${metaOleo} km.`);
+            }
+
+            if (tripGeral >= 10000) {
+                msgs.push(`⚡ <strong>Revisão Geral atingida!</strong><br><button class="btn-reset-trip" onclick="zerarTripGeral()">🔄 Zerar Ciclo Geral</button>`);
+            } else {
+                msgs.push(`⚙️ <strong>Próxima Revisão Geral:</strong> Faltam ${(10000 - tripGeral).toFixed(1)} km.`);
+            }
+            aiElem.innerHTML = msgs.join('<br>');
+        }
+
+        function exportarBackup() {
+            const dados = { config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, ultimoLancamento, contasCadastradas, historicoSaidas };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dados));
+            const a = document.createElement('a'); a.href = dataStr; a.download = "backup_motoboy_elite.json";
+            document.body.appendChild(a); a.click(); a.remove();
+        }
+
+        function importarBackupClick() { document.getElementById('fileInput').click(); }
+
+        function importarBackup(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const c = JSON.parse(e.target.result);
+                    if(c.config) config = c.config;
+                    if(c.gastosMensais) gastosMensais = c.gastosMensais;
+                    if(c.db) db = c.db;
+                    if(c.cofresGerais) cofresGerais = c.cofresGerais;
+                    if(c.contasCadastradas) contasCadastradas = c.contasCadastradas;
+                    if(c.historicoSaidas) historicoSaidas = c.historicoSaidas;
+                    salvarNoFirebase();
+                    carregarConfigNaTela();
+                    renderPainelGastos();
+                    renderTable();
+                    atualizarInterfaceDinamica();
+                    alert('Backup restaurado!');
+                } catch(err) { alert('Erro ao carregar backup.'); }
+            };
+            reader.readAsText(file);
+        }
+    </script>
 </body>
 </html>
