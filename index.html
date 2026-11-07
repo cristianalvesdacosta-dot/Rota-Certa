@@ -691,21 +691,38 @@
             atualizarValoresDigitados('uber');
         }
 
-        // LÓGICA DO SALDO DECRESCENTE EM ESPÉCIE INTEGRADA E ATIVADA
+        // INTELIGÊNCIA DE VASOS COMUNICANTES: ESPÉCIE & SALDO DO APP EM TEMPO REAL
         function atualizarValoresDigitados(plat) {
             const prefixo = plat === '99' ? '99' : 'ub';
             const dinheiroTotalEmEspecie = parseFloat(document.getElementById(`edit-${prefixo}-dinheiro`).value) || 0;
+            const saldoAppTotalOriginal = plat === '99' ? (pendente99.total - pendente99.dinheiro) : (pendenteUber.total - pendenteUber.dinheiro);
+            
             let totalJaBaixadoEspecie = 0;
+            let totalBaixadoApp = 0;
             const ativos = gastosMensais.filter(g => g.ativo);
             
             ativos.forEach(g => {
                 const btn = document.getElementById(`btn-check-${prefixo}-${g.id}`);
+                const inp = document.getElementById(`edit-${prefixo}-${g.id}`);
+                const valorCaixa = parseFloat(inp ? inp.value : 0) || 0;
+
                 if (btn && btn.classList.contains('checked')) {
-                    const inp = document.getElementById(`edit-${prefixo}-${g.id}`);
-                    totalJaBaixadoEspecie += parseFloat(inp ? inp.value : 0) || 0;
+                    // Descobre quanto desse valor veio do dinheiro em espécie ou do app
+                    if (totalJaBaixadoEspecie < dinheiroTotalEmEspecie) {
+                        let quantoFaltaDinheiro = dinheiroTotalEmEspecie - totalJaBaixadoEspecie;
+                        if (valorCaixa <= quantoFaltaDinheiro) {
+                            totalJaBaixadoEspecie += valorCaixa;
+                        } else {
+                            totalJaBaixadoEspecie = dinheiroTotalEmEspecie;
+                            totalBaixadoApp += (valorCaixa - quantoFaltaDinheiro);
+                        }
+                    } else {
+                        totalBaixadoApp += valorCaixa;
+                    }
                 }
             });
 
+            // 1. Calcula o Restante em Espécie na Mão
             let saldoRestanteNaMao = dinheiroTotalEmEspecie - totalJaBaixadoEspecie;
             const spanRestante = document.getElementById(`restante-${plat}`);
             const boxRestante = document.getElementById(`restante-${plat}-box`);
@@ -719,6 +736,13 @@
                 } else {
                     boxRestante.style.color = "var(--accent)";
                 }
+            }
+
+            // 2. Desconta automaticamente do Saldo do App o que passou do dinheiro em espécie
+            let saldoAppAtualizado = Math.max(0, saldoAppTotalOriginal - totalBaixadoApp);
+            const inputApp = document.getElementById(`edit-${prefixo}-tot`);
+            if (inputApp) {
+                inputApp.value = saldoAppAtualizado.toFixed(2);
             }
         }
 
@@ -747,7 +771,7 @@
             }
 
             salvarNoFirebase();
-            atualizarValoresDigitados(plat); // ATUALIZA O SALDO RESTANTE EM TEMPO REAL NO CLIQUE
+            atualizarValoresDigitados(plat); // ATUALIZA O SALDO RESTANTE E O APP EM TEMPO REAL NO CLIQUE
             
             const gerRes = document.getElementById(`ger-res-${idGasto}`);
             if(gerRes) gerRes.innerText = "R$ " + (cofresGerais[idGasto] || 0).toFixed(2);
@@ -1002,7 +1026,7 @@
             let msgs = [];
 
             if (tripOleo >= metaOleo) {
-                msgs.push(`🚨 <strong style="color:var(--red);">Óleo Vencido!</strong> (${tripOleo.setItem(1) || tripOleo.toFixed(1)} km). <br><button class="btn-reset-trip" onclick="zerarTripOleo()">🔄 Zerar Trip Óleo</button>`);
+                msgs.push(`🚨 <strong style="color:var(--red);">Óleo Vencido!</strong> (${tripOleo.toFixed(1)} km). <br><button class="btn-reset-trip" onclick="zerarTripOleo()">🔄 Zerar Trip Óleo</button>`);
             } else {
                 msgs.push(`🛢️ <strong>Óleo:</strong> ${tripOleo.toFixed(1)} / ${metaOleo} km.`);
             }
