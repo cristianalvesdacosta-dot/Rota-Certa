@@ -32,7 +32,11 @@
         
         .btn-baixar-99 { width: 100%; padding: 10px; background: var(--green); border: none; color: #000; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 10px; }
         .btn-receber-uber { width: 100%; padding: 10px; background: var(--accent); border: none; color: #000; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 10px; }
-        .btn-salvar-edicao { width: 100%; padding: 8px; background: var(--blue); border: none; color: #fff; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 6px; }
+        
+        /* ESTILO DOS BOTÕES DE CHECK INDIVIDUAL */
+        .btn-check { background-color: var(--green); color: #000; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 11px; text-transform: uppercase; transition: 0.2s; white-space: nowrap; }
+        .btn-check.checked { background-color: #555; color: #aaa; text-decoration: line-through; }
+
         .btn-reset-trip { background: var(--accent); color: #000; border: none; padding: 4px 8px; font-size: 10px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 4px; display: inline-block; }
 
         .metric-box { display: flex; justify-content: space-between; align-items: center; background: #333; padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #444; }
@@ -46,8 +50,11 @@
         .bg-acumulado-99 { background: #004d40; border: 1px dashed var(--green); padding: 10px; border-radius: 6px; font-size: 10px; text-align: left; }
         .bg-acumulado-uber { background: #263238; border: 1px dashed var(--accent); padding: 10px; border-radius: 6px; font-size: 10px; text-align: left; }
         
-        .linha-acumulado { display: flex; justify-content: space-between; align-items: center; margin: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2px; font-size: 10px; }
-        .linha-acumulado input { width: 65px; padding: 3px; font-size: 11px; margin: 0; background: #111; border: 1px solid #555; color: #fff; text-align: right; }
+        .linha-acumulado { display: flex; justify-content: space-between; align-items: center; margin: 6px 0; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 6px; font-size: 10px; gap: 6px; }
+        .linha-acumulado span { flex: 1; }
+        .linha-acumulado input { width: 70px; padding: 4px; font-size: 11px; margin: 0; background: #111; border: 1px solid #555; color: #fff; text-align: right; }
+
+        .saldo-restante-box { background: #111; border: 1px solid #444; padding: 8px; border-radius: 6px; text-align: center; margin: 8px 0; font-size: 10px; color: var(--accent); font-weight: bold; }
 
         .toggle-container { display: flex; align-items: center; justify-content: space-between; background: #252525; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #444; font-size: 11px; }
         .toggle-container input { width: 20px; height: 20px; margin: 0; cursor: pointer; }
@@ -137,11 +144,13 @@
                     <div class="bg-acumulado-99">
                         💵 <strong>CAIXINHAS 99 (PENDENTE):</strong><br>
                         <div style="margin: 4px 0;">
-                            <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);"></div>
-                            <div class="linha-acumulado"><span>💵 Espécie:</span> <input type="number" id="edit-99-dinheiro" step="0.01" style="color:var(--accent);"></div>
+                            <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);" oninput="atualizarValoresDigitados('99')"></div>
+                            <div class="linha-acumulado"><span>💵 Espécie:</span> <input type="number" id="edit-99-dinheiro" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('99')"></div>
+                            
+                            <div class="saldo-restante-box" id="restante-99-box">Restante Espécie: R$ <span id="restante-99">0.00</span></div>
+
                             <div id="linhas-dinamicas-99"></div>
                         </div>
-                        <button class="btn-salvar-edicao" onclick="salvarEdicoes99()">💾 Salvar p/ Cofre</button>
                         <button class="btn-baixar-99" onclick="baixarCaixas99()">✅ Baixar / Zerar 99</button>
                     </div>
 
@@ -149,11 +158,13 @@
                     <div class="bg-acumulado-uber">
                         📅 <strong>CAIXINHAS UBER (PENDENTE):</strong><br>
                         <div style="margin: 4px 0;">
-                            <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);"></div>
-                            <div class="linha-acumulado"><span>💵 Esp/Pix:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" style="color:var(--accent);"></div>
+                            <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('uber')"></div>
+                            <div class="linha-acumulado"><span>💵 Esp/Pix:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('uber')"></div>
+                            
+                            <div class="saldo-restante-box" id="restante-uber-box">Restante Espécie: R$ <span id="restante-uber">0.00</span></div>
+
                             <div id="linhas-dinamicas-uber"></div>
                         </div>
-                        <button class="btn-salvar-edicao" onclick="salvarEdicoesUber()">💾 Salvar p/ Cofre</button>
                         <button class="btn-receber-uber" onclick="receberRepasseUber()">💰 Baixar / Zerar Uber</button>
                     </div>
                 </div>
@@ -664,12 +675,21 @@
                 </div>
             `).join('') + `<div class="env" style="grid-column: span 2; background:#1b5e20; border:1px solid var(--green);">💰 LUCRO LÍQUIDO <strong id="card-res-lucro" style="font-size:16px; color:var(--green);">R$ ${(ultimoLancamento.lucro || 0).toFixed(2)}</strong></div>`;
 
+            // RENDERIZAÇÃO DAS LINHAS COM O BOTÃO DE CHECK INDIVIDUAL
             document.getElementById('linhas-dinamicas-99').innerHTML = ativos.map(g => `
-                <div class="linha-acumulado"><span>${g.emoji} ${g.nome}:</span> <input type="number" id="edit-99-${g.id}" step="0.01"></div>
+                <div class="linha-acumulado">
+                    <span>${g.emoji} ${g.nome}:</span> 
+                    <input type="number" id="edit-99-${g.id}" step="0.01" oninput="atualizarValoresDigitados('99')">
+                    <button class="btn-check" id="btn-check-99-${g.id}" onclick="darCheckItem('99', ${g.id})">✔ Baixa</button>
+                </div>
             `).join('');
 
             document.getElementById('linhas-dinamicas-uber').innerHTML = ativos.map(g => `
-                <div class="linha-acumulado"><span>${g.emoji} ${g.nome}:</span> <input type="number" id="edit-ub-${g.id}" step="0.01"></div>
+                <div class="linha-acumulado">
+                    <span>${g.emoji} ${g.nome}:</span> 
+                    <input type="number" id="edit-ub-${g.id}" step="0.01" oninput="atualizarValoresDigitados('uber')">
+                    <button class="btn-check" id="btn-check-ub-${g.id}" onclick="darCheckItem('uber', ${g.id})">✔ Baixa</button>
+                </div>
             `).join('');
 
             document.getElementById('grid-cofres-geral').innerHTML = ativos.map(g => `
@@ -709,6 +729,72 @@
             });
             const elLucro = document.getElementById('card-res-lucro');
             if(elLucro) elLucro.innerText = "R$ " + (ultimoLancamento.lucro || 0).toFixed(2);
+
+            atualizarValoresDigitados('99');
+            atualizarValoresDigitados('uber');
+        }
+
+        // LÓGICA DO SALDO DECRESCENTE EM ESPÉCIE
+        function atualizarValoresDigitados(plat) {
+            const prefixo = plat === '99' ? '99' : 'ub';
+            const dinheiroInput = parseFloat(document.getElementById(`edit-${prefixo}-dinheiro`).value) || 0;
+            
+            let totalDistribuidoNosChecks = 0;
+            const ativos = gastosMensais.filter(g => g.ativo);
+            
+            ativos.forEach(g => {
+                const btn = document.getElementById(`btn-check-${prefixo}-${g.id}`);
+                if (btn && btn.classList.contains('checked')) {
+                    const inp = document.getElementById(`edit-${prefixo}-${g.id}`);
+                    totalDistribuidoNosChecks += parseFloat(inp ? inp.value : 0) || 0;
+                }
+            });
+
+            let restante = dinheiroInput - totalDistribuidoNosChecks;
+            const spanRestante = document.getElementById(`restante-${plat}`);
+            if(spanRestante) {
+                spanRestante.innerText = restante.toFixed(2);
+                document.getElementById(`restante-${plat}-box`).style.color = restante < 0 ? 'var(--red)' : 'var(--accent)';
+            }
+        }
+
+        // CHECK INDIVIDUAL POR CAIXINHA
+        function darCheckItem(plat, idGasto) {
+            const prefixo = plat === '99' ? '99' : 'ub';
+            const btn = document.getElementById(`btn-check-${prefixo}-${idGasto}`);
+            const inp = document.getElementById(`edit-${prefixo}-${idGasto}`);
+            const val = parseFloat(inp ? inp.value : 0) || 0;
+
+            if (!btn.classList.contains('checked')) {
+                if (val <= 0) {
+                    alert('Valor zerado nesta caixinha.');
+                    return;
+                }
+                // Adiciona ao cofre oficial imediatamente
+                cofresGerais[idGasto] = (cofresGerais[idGasto] || 0) + val;
+                
+                // Abate das pendências globais correspondentes
+                if (plat === '99' && pendente99.itens && pendente99.itens[idGasto]) {
+                    pendente99.itens[idGasto] = Math.max(0, pendente99.itens[idGasto] - val);
+                } else if (plat === 'uber' && pendenteUber.itens && pendenteUber.itens[idGasto]) {
+                    pendenteUber.itens[idGasto] = Math.max(0, pendenteUber.itens[idGasto] - val);
+                }
+
+                btn.classList.add('checked');
+                btn.innerText = "✔ Feito";
+            } else {
+                // Desfaz caso clique de novo
+                cofresGerais[idGasto] = Math.max(0, (cofresGerais[idGasto] || 0) - val);
+                btn.classList.remove('checked');
+                btn.innerText = "✔ Baixa";
+            }
+
+            salvarNoFirebase();
+            atualizarValoresDigitados(plat);
+            
+            // Atualiza exibição dos cofres gerais em tempo real
+            const gerRes = document.getElementById(`ger-res-${idGasto}`);
+            if(gerRes) gerRes.innerText = "R$ " + (cofresGerais[idGasto] || 0).toFixed(2);
         }
 
         function calcularBrutoTotal() {
@@ -803,19 +889,7 @@
             alert('Lançamento registrado!');
         }
 
-        function salvarEdicoes99() {
-            gastosMensais.filter(g => g.ativo).forEach(g => {
-                const val = parseFloat(document.getElementById(`edit-99-${g.id}`).value) || 0;
-                cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
-                if(pendente99.itens && pendente99.itens[g.id]) {
-                    pendente99.itens[g.id] = Math.max(0, pendente99.itens[g.id] - val);
-                }
-            });
-            salvarNoFirebase();
-            atualizarInterfaceDinamica();
-            alert('Valores da 99 salvos no cofre oficial!');
-        }
-
+        // BAIXA GERAL / ZERAR 99
         function baixarCaixas99() {
             gastosMensais.filter(g => g.ativo).forEach(g => {
                 const val = parseFloat(document.getElementById(`edit-99-${g.id}`).value) || 0;
@@ -824,22 +898,10 @@
             pendente99 = { total: 0, dinheiro: 0, itens: {} };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
-            alert('Baixa da 99 concluída!');
+            alert('Baixa da 99 concluída e valores salvos nos cofres!');
         }
 
-        function salvarEdicoesUber() {
-            gastosMensais.filter(g => g.ativo).forEach(g => {
-                const val = parseFloat(document.getElementById(`edit-ub-${g.id}`).value) || 0;
-                cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
-                if(pendenteUber.itens && pendenteUber.itens[g.id]) {
-                    pendenteUber.itens[g.id] = Math.max(0, pendenteUber.itens[g.id] - val);
-                }
-            });
-            salvarNoFirebase();
-            atualizarInterfaceDinamica();
-            alert('Valores da Uber salvos no cofre oficial!');
-        }
-
+        // BAIXA GERAL / ZERAR UBER
         function receberRepasseUber() {
             gastosMensais.filter(g => g.ativo).forEach(g => {
                 const val = parseFloat(document.getElementById(`edit-ub-${g.id}`).value) || 0;
@@ -848,7 +910,7 @@
             pendenteUber = { total: 0, dinheiro: 0, itens: {} };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
-            alert('Baixa da Uber concluída!');
+            alert('Baixa da Uber concluída e valores salvos nos cofres!');
         }
 
         function zerarCaixasPendentesManualmente() {
@@ -871,7 +933,6 @@
                 }
                 db.splice(i, 1);
                 
-                // SE O HISTÓRICO FICAR VAZIO OU APAGAR O LTIMO, ZERA A DISTRIBUIÇÃO VISUAL E PENDENTES
                 if (db.length === 0) {
                     ultimoLancamento = { itens: {}, lucro: 0 };
                     pendente99 = { total: 0, dinheiro: 0, itens: {} };
@@ -883,7 +944,7 @@
                 salvarNoFirebase();
                 atualizarInterfaceDinamica();
                 renderTable();
-                alert('Lançamento desfeito e caixas atualizadas!');
+                alert('Lançamento desfeito!');
             }
         }
 
