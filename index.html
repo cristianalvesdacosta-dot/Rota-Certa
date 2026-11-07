@@ -9,84 +9,102 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
     <style>
-        :root { --green: #2ecc71; --blue: #3498db; --dark: #0a0a0a; --card: #1e1e1e; --text: #f5f5f5; --accent: #f1c40f; --red: #e74c3c; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: var(--text); padding: 0; margin: 0; padding-bottom: 70px; }
+        :root { 
+            --green: #2ecc71; 
+            --blue: #3498db; 
+            --dark: #0d0d0d; 
+            --card-bg: #161616; 
+            --card-border: #262626;
+            --text: #f5f5f5; 
+            --text-muted: #888;
+            --accent: #f1c40f; 
+            --red: #e74c3c; 
+        }
         
-        .tab-bar { display: flex; background: #111; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #333; }
-        .tab-btn { flex: 1; padding: 15px 2px; border: none; background: none; color: #888; font-weight: bold; cursor: pointer; font-size: 9px; text-transform: uppercase; text-align: center; }
-        .tab-btn.active { color: var(--green); border-bottom: 3px solid var(--green); }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--dark); color: var(--text); padding: 0; margin: 0; padding-bottom: 80px; -webkit-font-smoothing: antialiased; }
+        
+        /* BARRA DE ABAS PREMIUM */
+        .tab-bar { display: flex; background: #121212; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #222; backdrop-filter: blur(10px); }
+        .tab-btn { flex: 1; padding: 14px 4px; border: none; background: none; color: var(--text-muted); font-weight: 600; cursor: pointer; font-size: 10px; text-transform: uppercase; text-align: center; letter-spacing: 0.5px; transition: 0.2s; }
+        .tab-btn.active { color: var(--green); border-bottom: 2px solid var(--green); background: rgba(46, 204, 113, 0.05); }
 
-        .container { padding: 15px; max-width: 500px; margin: auto; display: none; }
+        .container { padding: 12px; max-width: 480px; margin: auto; display: none; }
         .container.active { display: block; }
 
-        .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #333; margin-bottom: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+        /* CARDS E FORMULÁRIOS ESTILO APP */
+        .card { background: var(--card-bg); padding: 16px; border-radius: 14px; border: 1px solid var(--card-border); margin-bottom: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
         
-        label { display: block; font-size: 11px; color: var(--green); font-weight: bold; margin-bottom: 4px; text-transform: uppercase; }
-        input, select { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #444; background: #2b2b2b; color: #fff; box-sizing: border-box; margin-bottom: 12px; text-align: center; font-size: 15px; outline: none; }
-        select { text-align-last: center; }
+        label { display: block; font-size: 10px; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        input, select { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #333; background: #202020; color: #fff; box-sizing: border-box; margin-bottom: 10px; text-align: left; font-size: 14px; outline: none; transition: border-color 0.2s; }
+        input:focus, select:focus { border-color: var(--green); }
+        select { text-align-last: left; }
 
-        .btn-add { width: 100%; padding: 16px; background: var(--green); border: none; color: #000; font-weight: 800; border-radius: 8px; cursor: pointer; font-size: 16px; text-transform: uppercase; }
-        .btn-backup { width: 100%; padding: 12px; background: var(--blue); border: none; color: #fff; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 14px; text-transform: uppercase; margin-top: 10px; }
-        .btn-restore { width: 100%; padding: 12px; background: var(--accent); border: none; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 14px; text-transform: uppercase; margin-top: 10px; }
-        .btn-limpar-pendentes { width: 100%; padding: 10px; background: #444; border: 1px solid #666; color: #fff; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 10px; }
+        /* BOTÕES MODERNOS */
+        .btn-add { width: 100%; padding: 14px; background: var(--green); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; transition: opacity 0.2s; }
+        .btn-add:active { opacity: 0.8; }
+        .btn-backup { width: 100%; padding: 10px; background: var(--blue); border: none; color: #fff; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 8px; }
+        .btn-restore { width: 100%; padding: 10px; background: var(--accent); border: none; color: #000; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 8px; }
         
-        .btn-baixar-99 { width: 100%; padding: 10px; background: var(--green); border: none; color: #000; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 10px; }
-        .btn-receber-uber { width: 100%; padding: 10px; background: var(--accent); border: none; color: #000; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 10px; }
+        .btn-limpar-pendentes { width: 100%; padding: 8px; background: #252525; border: 1px solid #444; color: #aaa; font-weight: 600; border-radius: 6px; cursor: pointer; font-size: 10px; text-transform: uppercase; margin-top: 8px; }
         
-        /* ESTILO DOS BOTÕES DE CHECK INDIVIDUAL */
-        .btn-check { background-color: var(--green); color: #000; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 11px; text-transform: uppercase; transition: 0.2s; white-space: nowrap; }
-        .btn-check.checked { background-color: #555; color: #aaa; text-decoration: line-through; }
+        .btn-baixar-99 { width: 100%; padding: 9px; background: var(--green); border: none; color: #000; font-weight: 700; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 8px; }
+        .btn-receber-uber { width: 100%; padding: 9px; background: var(--accent); border: none; color: #000; font-weight: 700; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 8px; }
+        
+        /* BOTÕES DE CHECK COMPACTOS E ALINHADOS */
+        .btn-check { background-color: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid var(--green); padding: 5px 8px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 10px; text-transform: uppercase; transition: 0.2s; white-space: nowrap; }
+        .btn-check.checked { background-color: #262626; color: #666; border-color: #444; text-decoration: line-through; }
 
         .btn-reset-trip { background: var(--accent); color: #000; border: none; padding: 4px 8px; font-size: 10px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 4px; display: inline-block; }
 
-        .metric-box { display: flex; justify-content: space-between; align-items: center; background: #333; padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #444; }
-        .metric-val { color: var(--green); font-weight: bold; font-size: 16px; }
+        .metric-box { display: flex; justify-content: space-between; align-items: center; background: #202020; padding: 10px 14px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #2a2a2a; }
+        .metric-val { color: var(--green); font-weight: 700; font-size: 15px; }
 
-        .envelopes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
-        .env { padding: 10px; border-radius: 6px; font-size: 10px; text-align: center; border: 1px solid #333; }
-        .env strong { display: block; font-size: 14px; margin-top: 4px; }
+        .envelopes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+        .env { padding: 8px 10px; border-radius: 8px; font-size: 10px; text-align: center; border: 1px solid #333; background: #1a1a1a; }
+        .env strong { display: block; font-size: 13px; margin-top: 2px; }
         
-        .painel-duplo-container { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px; }
-        .bg-acumulado-99 { background: #004d40; border: 1px dashed var(--green); padding: 10px; border-radius: 6px; font-size: 10px; text-align: left; }
-        .bg-acumulado-uber { background: #263238; border: 1px dashed var(--accent); padding: 10px; border-radius: 6px; font-size: 10px; text-align: left; }
+        /* PAINÉIS LADO A LADO DA 99 E UBER */
+        .painel-duplo-container { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+        .bg-acumulado-99 { background: #11221c; border: 1px solid #1b4d3e; padding: 10px; border-radius: 10px; font-size: 10px; text-align: left; }
+        .bg-acumulado-uber { background: #1b242a; border: 1px solid #283c48; padding: 10px; border-radius: 10px; font-size: 10px; text-align: left; }
         
-        .linha-acumulado { display: flex; justify-content: space-between; align-items: center; margin: 6px 0; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 6px; font-size: 10px; gap: 6px; }
-        .linha-acumulado span { flex: 1; }
-        .linha-acumulado input { width: 70px; padding: 4px; font-size: 11px; margin: 0; background: #111; border: 1px solid #555; color: #fff; text-align: right; }
+        .linha-acumulado { display: flex; justify-content: space-between; align-items: center; margin: 4px 0; background: rgba(0,0,0,0.25); padding: 5px 6px; border-radius: 6px; font-size: 10px; gap: 4px; }
+        .linha-acumulado span { flex: 1; color: #ccc; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .linha-acumulado input { width: 55px; padding: 3px 4px; font-size: 11px; margin: 0; background: #111; border: 1px solid #333; color: #fff; text-align: right; border-radius: 4px; }
 
-        .saldo-restante-box { background: #111; border: 1px solid #444; padding: 8px; border-radius: 6px; text-align: center; margin: 8px 0; font-size: 10px; color: var(--accent); font-weight: bold; }
+        .saldo-restante-box { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); padding: 6px; border-radius: 6px; text-align: center; margin: 6px 0; font-size: 9px; color: var(--accent); font-weight: 700; }
 
-        .toggle-container { display: flex; align-items: center; justify-content: space-between; background: #252525; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #444; font-size: 11px; }
-        .toggle-container input { width: 20px; height: 20px; margin: 0; cursor: pointer; }
+        .toggle-container { display: flex; align-items: center; justify-content: space-between; background: #202020; padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #333; font-size: 11px; }
+        .toggle-container input { width: 18px; height: 18px; margin: 0; cursor: pointer; accent-color: var(--green); }
 
-        .historico-card { background: var(--card); border: 1px solid #333; border-radius: 12px; padding: 15px; margin-top: 20px; }
-        .historico-titulo { font-size: 12px; font-weight: bold; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+        .historico-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 14px; margin-top: 16px; }
+        .historico-titulo { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; letter-spacing: 0.5px; }
         
         table { width: 100%; border-collapse: collapse; font-size: 11px; }
-        th { background: #151515; color: var(--green); padding: 10px 6px; border-bottom: 2px solid #333; text-transform: uppercase; font-size: 10px; }
-        td { border-bottom: 1px solid #2a2a2a; padding: 10px 4px; text-align: center; color: #ddd; }
-        tr:hover { background: rgba(255,255,255,0.02); }
+        th { background: #111; color: var(--green); padding: 8px 4px; border-bottom: 2px solid #262626; text-transform: uppercase; font-size: 9px; letter-spacing: 0.5px; }
+        td { border-bottom: 1px solid #222; padding: 8px 4px; text-align: center; color: #ccc; }
+        tr:hover { background: rgba(255,255,255,0.01); }
 
-        .badge-obs { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 9px; text-transform: uppercase; display: inline-block; }
-        .badge-ruim { background: rgba(231, 76, 60, 0.2); color: var(--red); border: 1px solid var(--red); }
-        .badge-medio { background: rgba(241, 196, 15, 0.2); color: var(--accent); border: 1px solid var(--accent); }
-        .badge-excelente { background: rgba(46, 204, 113, 0.2); color: var(--green); border: 1px solid var(--green); }
+        .badge-obs { padding: 3px 6px; border-radius: 4px; font-weight: 700; font-size: 8px; text-transform: uppercase; display: inline-block; }
+        .badge-ruim { background: rgba(231, 76, 60, 0.15); color: var(--red); border: 1px solid rgba(231, 76, 60, 0.3); }
+        .badge-medio { background: rgba(241, 196, 15, 0.15); color: var(--accent); border: 1px solid rgba(241, 196, 15, 0.3); }
+        .badge-excelente { background: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid rgba(46, 204, 113, 0.3); }
         
-        .btn-del { background: var(--red); color: #fff; border: none; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .btn-del:hover { background: #c0392b; transform: scale(1.1); }
+        .btn-del { background: rgba(231, 76, 60, 0.2); color: var(--red); border: 1px solid rgba(231, 76, 60, 0.4); width: 22px; height: 22px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-del:hover { background: var(--red); color: #fff; }
 
-        .total-box { background: #151515; border: 1px dashed var(--green); padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 12px; text-align: center; color: var(--accent); }
-        .total-box strong { font-size: 15px; color: var(--green); display: block; margin-top: 4px; }
+        .total-box { background: #141414; border: 1px dashed rgba(46, 204, 113, 0.4); padding: 10px; border-radius: 8px; margin-top: 12px; font-size: 11px; text-align: center; color: var(--text-muted); }
+        .total-box strong { font-size: 14px; color: var(--green); display: block; margin-top: 2px; }
 
-        .mode-box { background: #222; padding: 12px; border-radius: 8px; border: 1px solid #444; margin-bottom: 15px; }
-        .mode-box label { color: var(--accent); margin-bottom: 8px; }
+        .mode-box { background: #1a1a1a; padding: 12px; border-radius: 10px; border: 1px solid #333; margin-bottom: 12px; }
+        .mode-box label { color: var(--accent); margin-bottom: 6px; }
         
-        .ai-card { background: #1a252f; border: 1px solid #34495e; padding: 12px; border-radius: 10px; margin-bottom: 15px; font-size: 11px; line-height: 1.4; color: #ecf0f1; }
+        .ai-card { background: #131c24; border: 1px solid #1f3544; padding: 12px; border-radius: 10px; margin-bottom: 12px; font-size: 11px; line-height: 1.4; color: #d0dbe3; }
         .ai-card strong { color: var(--accent); }
 
-        .compare-box { background: #111; border: 1px solid #333; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 11px; }
+        .compare-box { background: #111; border: 1px solid #222; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 11px; }
 
-        #sync-status { position: fixed; bottom: 5px; right: 5px; background: rgba(0,0,0,0.8); color: var(--green); padding: 4px 8px; font-size: 9px; border-radius: 4px; z-index: 1000; }
+        #sync-status { position: fixed; bottom: 6px; right: 6px; background: rgba(18,18,18,0.9); border: 1px solid #333; color: var(--green); padding: 4px 8px; font-size: 8px; border-radius: 6px; z-index: 1000; backdrop-filter: blur(5px); }
     </style>
 </head>
 <body>
@@ -103,38 +121,53 @@
     <!-- ABA DIÁRIO -->
     <div id="diario" class="container active">
         <div class="card">
-            <label>VALOR TOTAL NA 99 (R$)</label>
-            <input type="number" id="bruto_99" step="0.01" placeholder="R$ 0,00" oninput="calcularBrutoTotal()">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <label>Bruto 99 (R$)</label>
+                    <input type="number" id="bruto_99" step="0.01" placeholder="0,00" oninput="calcularBrutoTotal()">
+                </div>
+                <div>
+                    <label>Dinheiro 99</label>
+                    <input type="number" id="dinheiro_99" step="0.01" placeholder="0,00">
+                </div>
+            </div>
 
-            <label>QUANTO DISSO FOI EM DINHEIRO (99 - Espécie)?</label>
-            <input type="number" id="dinheiro_99" step="0.01" placeholder="R$ 0,00 (Opcional)">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <label>Bruto Uber (R$)</label>
+                    <input type="number" id="bruto_uber" step="0.01" placeholder="0,00" oninput="calcularBrutoTotal()">
+                </div>
+                <div>
+                    <label>Esp/Pix Uber</label>
+                    <input type="number" id="dinheiro_uber" step="0.01" placeholder="0,00">
+                </div>
+            </div>
 
-            <label>VALOR TOTAL NA UBER (R$)</label>
-            <input type="number" id="bruto_uber" step="0.01" placeholder="R$ 0,00" oninput="calcularBrutoTotal()">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <label>Total Geral do Dia</label>
+                    <input type="number" id="bruto" step="0.01" placeholder="0,00" readonly style="color: var(--accent); background: #111;">
+                </div>
+                <div>
+                    <label>KM Rodado</label>
+                    <input type="number" id="km_dia" step="0.1" placeholder="0 km">
+                </div>
+            </div>
 
-            <label>QUANTO DISSO FOI EM DINHEIRO/PIX (Uber - Direto)?</label>
-            <input type="number" id="dinheiro_uber" step="0.01" placeholder="R$ 0,00 (Opcional)">
-
-            <label>TOTAL GERAL DO DIA (Soma Automática)</label>
-            <input type="number" id="bruto" step="0.01" placeholder="R$ 0,00" readonly style="color: var(--accent); background: #151515;">
-
-            <label>KM TOTAL RODADO NO DIA (PAINEL)</label>
-            <input type="number" id="km_dia" step="0.1" placeholder="0 km">
-
-            <label>ANÁLISE AUTOMÁTICA DE DESEMPENHO</label>
-            <input type="text" id="obs" placeholder="Gerado automaticamente..." readonly style="color: var(--accent); background: #1a1a1a;">
+            <label>Avaliação Automática</label>
+            <input type="text" id="obs" placeholder="Aguardando dados..." readonly style="color: var(--accent); background: #111; font-weight: 600;">
             
             <button class="btn-add" onclick="registrar()">REGISTRAR LANÇAMENTO</button>
 
-            <div class="metric-box" style="margin-top: 15px;">
-                <span>Eficiência Média:</span>
+            <div class="metric-box" style="margin-top: 10px;">
+                <span style="font-size: 11px; color: var(--text-muted);">Eficiência Média:</span>
                 <span id="res-eficiencia" class="metric-val">R$ 0,00 / km</span>
             </div>
 
-            <!-- CARD VISUAL DO ÚLTIMO LANÇAMENTO (DINÂMICO) -->
-            <div id="card-ultimo-lancamento" class="card" style="margin-top: 15px; border: 1px dashed var(--accent); background: #151515;">
-                <label style="color: var(--accent); text-align: center; font-size: 12px;">📊 DISTRIBUIÇÃO DAS CAIXINHAS</label>
-                <div id="grid-envelopes-ultimo" class="envelopes" style="margin-top: 8px;"></div>
+            <!-- CARD VISUAL DO ÚLTIMO LANÇAMENTO -->
+            <div id="card-ultimo-lancamento" class="card" style="margin-top: 10px; border: 1px dashed rgba(241, 196, 15, 0.3); background: #121212; padding: 12px;">
+                <label style="color: var(--accent); text-align: center; font-size: 10px; margin-bottom: 6px;">📊 DISTRIBUIÇÃO DO ÚLTIMO LANÇAMENTO</label>
+                <div id="grid-envelopes-ultimo" class="envelopes" style="margin-top: 4px;"></div>
             </div>
 
             <div class="envelopes">
@@ -142,30 +175,30 @@
                 <div class="painel-duplo-container">
                     <!-- PAINEL DA 99 -->
                     <div class="bg-acumulado-99">
-                        💵 <strong>CAIXINHAS 99 (PENDENTE):</strong><br>
+                        <strong style="color: var(--green); font-size: 10px;">💵 99 PENDENTE:</strong>
                         <div style="margin: 4px 0;">
-                            <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);" oninput="atualizarValoresDigitados('99')"></div>
-                            <div class="linha-acumulado"><span>💵 Espécie:</span> <input type="number" id="edit-99-dinheiro" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('99')"></div>
+                            <div class="linha-acumulado"><span>App:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);" oninput="atualizarValoresDigitados('99')"></div>
+                            <div class="linha-acumulado"><span>Esp:</span> <input type="number" id="edit-99-dinheiro" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('99')"></div>
                             
-                            <div class="saldo-restante-box" id="restante-99-box">Restante Espécie: R$ <span id="restante-99">0.00</span></div>
+                            <div class="saldo-restante-box" id="restante-99-box">Restante: R$ <span id="restante-99">0.00</span></div>
 
                             <div id="linhas-dinamicas-99"></div>
                         </div>
-                        <button class="btn-baixar-99" onclick="baixarCaixas99()">✅ Baixar / Zerar 99</button>
+                        <button class="btn-baixar-99" onclick="baixarCaixas99()">✅ Baixar 99</button>
                     </div>
 
                     <!-- PAINEL DA UBER -->
                     <div class="bg-acumulado-uber">
-                        📅 <strong>CAIXINHAS UBER (PENDENTE):</strong><br>
+                        <strong style="color: var(--accent); font-size: 10px;">📅 UBER PENDENTE:</strong>
                         <div style="margin: 4px 0;">
-                            <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('uber')"></div>
-                            <div class="linha-acumulado"><span>💵 Esp/Pix:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('uber')"></div>
+                            <div class="linha-acumulado"><span>App:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('uber')"></div>
+                            <div class="linha-acumulado"><span>Pix:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" style="color:var(--accent);" oninput="atualizarValoresDigitados('uber')"></div>
                             
-                            <div class="saldo-restante-box" id="restante-uber-box">Restante Espécie: R$ <span id="restante-uber">0.00</span></div>
+                            <div class="saldo-restante-box" id="restante-uber-box">Restante: R$ <span id="restante-uber">0.00</span></div>
 
                             <div id="linhas-dinamicas-uber"></div>
                         </div>
-                        <button class="btn-receber-uber" onclick="receberRepasseUber()">💰 Baixar / Zerar Uber</button>
+                        <button class="btn-receber-uber" onclick="receberRepasseUber()">💰 Baixar Uber</button>
                     </div>
                 </div>
 
@@ -176,11 +209,11 @@
         <!-- RESUMO / HISTÓRICO DE LANÇAMENTOS -->
         <div class="historico-card">
             <div class="historico-titulo">
-                <span>📋 Histórico de Lançamentos</span>
-                <span style="font-size: 9px; color: #777;">Aperte o X para desfazer</span>
+                <span>📋 Histórico</span>
+                <span style="font-size: 8px; color: var(--text-muted);">Toque no X para desfazer</span>
             </div>
             <table id="tabela">
-                <thead><tr><th>Data</th><th>Bruto</th><th>R$/Km</th><th>Avaliação</th><th>Ação</th></tr></thead>
+                <thead><tr><th>Data</th><th>Bruto</th><th>R$/Km</th><th>Avaliação</th><th>X</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
@@ -189,29 +222,29 @@
     <!-- ABA GERENCIAR COFRES E DESPESAS -->
     <div id="gerenciar" class="container">
         <div class="ai-card">
-            🤖 <strong>Manual de Manutenção Preventiva (Assistente):</strong>
-            <div id="ai-feedback" style="margin-top: 5px;">Analisando manual e quilometragem...</div>
+            🤖 <strong>Assistente de Manutenção:</strong>
+            <div id="ai-feedback" style="margin-top: 4px;">Analisando quilometragem...</div>
         </div>
 
         <div class="card">
-            <label style="color: var(--accent);">💰 SALDO ATUAL DOS COFRES (OFICIAL)</label>
-            <div id="grid-cofres-geral" class="envelopes" style="margin-top: 5px; grid-template-columns: 1fr 1fr;"></div>
+            <label style="color: var(--accent);">💰 SALDO DOS COFRES OFICIAIS</label>
+            <div id="grid-cofres-geral" class="envelopes" style="margin-top: 4px; grid-template-columns: 1fr 1fr;"></div>
         </div>
 
         <div class="card">
-            <label style="color: var(--accent);">📊 COMPARATIVO DE MESES (MÊS ATUAL X ANTERIOR)</label>
+            <label style="color: var(--accent);">📊 COMPARATIVO MENSAL</label>
             <div class="compare-box" id="comparativo-conteudo">Carregando comparativo...</div>
         </div>
 
         <div class="card">
-            <label style="color: var(--accent);">💸 LANÇAR SAÍDA / RETIRADA RÁPIDA</label>
+            <label style="color: var(--accent);">💸 LANÇAR RETIRADA RÁPIDA</label>
             <select id="saida_cofre"></select>
 
-            <label>Descrição (Ex: Calibrar Pneu, Combustível)</label>
+            <label>Descrição</label>
             <input type="text" id="saida_desc" placeholder="Ex: Calibragem Pneu">
 
-            <label>Valor da Saída (R$)</label>
-            <input type="number" id="saida_valor" step="0.01" placeholder="R$ 0,00">
+            <label>Valor (R$)</label>
+            <input type="number" id="saida_valor" step="0.01" placeholder="0,00">
 
             <button class="btn-add" style="background: var(--red); color: #fff;" onclick="lançarSaidaCofre()">CONFIRMAR RETIRADA</button>
         </div>
@@ -219,40 +252,40 @@
         <div class="card">
             <label>📌 CADASTRAR CONTA OU BOLETO</label>
             
-            <label style="margin-top: 8px;">Tipo da Conta</label>
+            <label style="margin-top: 6px;">Tipo</label>
             <select id="conta_tipo" onchange="mudarTipoContaForm()">
-                <option value="recorrente">🔄 Recorrente (Contínua Todo Mês)</option>
-                <option value="parcelada">💳 Parcelada (Com Fim)</option>
+                <option value="recorrente">🔄 Recorrente (Contínua)</option>
+                <option value="parcelada">💳 Parcelada</option>
                 <option value="unica">⚡ Única / Casual</option>
             </select>
 
-            <label>Cofre / Caixinha Destinada</label>
+            <label>Cofre Destino</label>
             <select id="conta_cofre"></select>
 
             <label>Nome da Conta</label>
-            <input type="text" id="conta_nome" placeholder="Ex: Internet Wi-Fi, Parcela Baú">
+            <input type="text" id="conta_nome" placeholder="Ex: Internet Wi-Fi">
 
             <label>Valor (R$)</label>
-            <input type="number" id="conta_valor" step="0.01" placeholder="R$ 0,00">
+            <input type="number" id="conta_valor" step="0.01" placeholder="0,00">
 
-            <label>Mês e Ano de Referência</label>
+            <label>Mês de Referência</label>
             <input type="month" id="conta_mes_ano" style="text-align: center;">
 
-            <label>Dia do Vencimento (Ex: 10)</label>
-            <input type="number" id="conta_vencimento" min="1" max="31" placeholder="Dia (1 a 31)">
+            <label>Dia Vencimento</label>
+            <input type="number" id="conta_vencimento" min="1" max="31" placeholder="1 a 31">
 
             <div id="bloco_qtd_parcelas" style="display:none;">
-                <label>Total de Parcelas (Ex: 5)</label>
+                <label>Total de Parcelas</label>
                 <input type="number" id="conta_parcelas" value="1" min="1">
             </div>
 
-            <button class="btn-add" style="background: var(--blue); color: #fff;" onclick="cadastrarConta()">SALVAR NOVO CADASTRO</button>
+            <button class="btn-add" style="background: var(--blue); color: #fff;" onclick="cadastrarConta()">SALVAR CONTA</button>
         </div>
 
         <div class="card">
             <label>📋 CONTAS PENDENTES</label>
             <table id="tabela-contas">
-                <thead><tr><th>Conta</th><th>Caixinha</th><th>Valor</th><th>Vencimento</th><th>Ação</th></tr></thead>
+                <thead><tr><th>Conta</th><th>Cofre</th><th>Valor</th><th>Venc</th><th>Ação</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
@@ -260,7 +293,7 @@
         <div class="card">
             <label>📜 HISTÓRICO DE RETIRADAS</label>
             <table id="tabela-saidas">
-                <thead><tr><th>Data</th><th>Caixinha</th><th>Descrição</th><th>Valor</th><th>X</th></tr></thead>
+                <thead><tr><th>Data</th><th>Cofre</th><th>Desc</th><th>Valor</th><th>X</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
@@ -269,32 +302,32 @@
     <!-- ABA GASTOS MENSAIS (CAIXINHAS DINÂMICAS) -->
     <div id="gastos" class="container">
         <div class="card">
-            <label style="color: var(--accent);">⚙️ CRIE E PERSONALIZE SUAS CAIXINHAS</label>
+            <label style="color: var(--accent);">⚙️ GERENCIAR CAIXINHAS</label>
             
-            <label>Nome da Caixinha / Gasto</label>
-            <input type="text" id="gasto_nome" placeholder="Ex: Gasolina, Parcela Moto, Seguro">
+            <label>Nome da Caixinha</label>
+            <input type="text" id="gasto_nome" placeholder="Ex: Gasolina, Seguro">
 
-            <div style="display: flex; gap: 10px;">
+            <div style="display: flex; gap: 8px;">
                 <div style="flex: 1;">
                     <label>Emoji</label>
                     <input type="text" id="gasto_emoji" placeholder="⛽" maxlength="4" style="text-align: center;">
                 </div>
                 <div style="flex: 1;">
-                    <label>Cor do Card</label>
-                    <input type="color" id="gasto_cor" value="#2ecc71" style="height: 48px; width: 100%; padding: 2px; cursor: pointer; background: #2b2b2b; border: 2px solid #444; border-radius: 8px;">
+                    <label>Cor</label>
+                    <input type="color" id="gasto_cor" value="#2ecc71" style="height: 40px; width: 100%; padding: 2px; cursor: pointer; background: #202020; border: 1px solid #333; border-radius: 8px;">
                 </div>
             </div>
 
             <label>Valor Mensal Estimado (R$)</label>
-            <input type="number" id="gasto_valor" step="0.01" placeholder="R$ 0,00">
+            <input type="number" id="gasto_valor" step="0.01" placeholder="0,00">
 
-            <button class="btn-add" onclick="adicionarGasto()">➕ Adicionar / Atualizar Caixinha</button>
+            <button class="btn-add" onclick="adicionarGasto()">➕ Adicionar / Atualizar</button>
 
-            <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
+            <hr style="border: 0; border-top: 1px solid #222; margin: 15px 0;">
 
-            <label>Caixinhas Cadastradas (Ativas no Sistema)</label>
-            <table id="tabela-gastos" style="margin-top: 10px;">
-                <thead><tr><th>Caixinha</th><th>Valor/Mês</th><th>Ativa</th><th>Ação</th></tr></thead>
+            <label>Caixinhas Ativas</label>
+            <table id="tabela-gastos" style="margin-top: 8px;">
+                <thead><tr><th>Caixinha</th><th>Valor</th><th>Ativa</th><th>X</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
@@ -303,81 +336,77 @@
     <!-- ABA CONFIGURAÇÕES -->
     <div id="config" class="container">
         <div class="card">
-            <label style="color: var(--accent);">🏍️ CADASTRO DO VEÍCULO & METAS DE PERÍODO</label>
+            <label style="color: var(--accent);">🏍️ VEÍCULO & METAS</label>
             
             <label>Modelo da Moto</label>
-            <input type="text" id="cfg_moto_modelo" placeholder="Ex: Yamaha Lander 250">
+            <input type="text" id="cfg_moto_modelo" placeholder="Yamaha Lander 250">
 
-            <label>Consumo Médio (Km por Litro)</label>
-            <input type="number" id="cfg_km_litro" step="0.1" placeholder="Ex: 30">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <label>Km / Litro</label>
+                    <input type="number" id="cfg_km_litro" step="0.1" placeholder="30">
+                </div>
+                <div>
+                    <label>Preço Litro (R$)</label>
+                    <input type="number" id="cfg_preco_litro" step="0.01" placeholder="5.89">
+                </div>
+            </div>
 
-            <label>Preço Médio do Litro da Gasolina (R$)</label>
-            <input type="number" id="cfg_preco_litro" step="0.01" placeholder="Ex: 5.89">
-
-            <label>Média Estimada de KM Rodados por Mês</label>
+            <label>Média KM por Mês</label>
             <input type="number" id="cfg_km_mes" step="1" value="3000" oninput="atualizarPreviewConfig()">
 
-            <label style="margin-top: 12px; color: var(--accent);">🎯 ESCOLHER PERÍODO DE PLANEJAMENTO</label>
+            <label style="margin-top: 8px; color: var(--accent);">🎯 PERÍODO DE PLANEJAMENTO</label>
             <select id="cfg_periodo" onchange="atualizarPreviewConfig()">
-                <option value="dia">📅 Planejamento Diário</option>
-                <option value="semana">📆 Planejamento Semanal (7 dias)</option>
-                <option value="quinzena">🗓️ Planejamento Quinzenal (15 dias)</option>
-                <option value="mes" selected>📊 Planejamento Mensal (30 dias)</option>
+                <option value="dia">📅 Diário</option>
+                <option value="semana">📆 Semanal</option>
+                <option value="quinzena">🗓️ Quinzena</option>
+                <option value="mes" selected>📊 Mensal (30 dias)</option>
             </select>
 
-            <!-- PAINEL DE RESULTADO E METAS CALCULADAS -->
-            <div id="painel-metas-periodo" class="total-box" style="background: #111; border: 1px dashed var(--accent); margin: 15px 0; text-align: left; padding: 12px; font-size: 11px; color: #fff;"></div>
-
-            <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
+            <div id="painel-metas-periodo" class="total-box" style="margin: 10px 0; text-align: left; padding: 10px; font-size: 10px;"></div>
 
             <div class="mode-box">
-                <label>MODO DE CÁLCULO DA DISTRIBUIÇÃO POR KM</label>
-                <div class="toggle-container" style="margin-top: 8px;">
-                    <span>Modo Automático (Distribuir pelo Custo Desejado)</span>
+                <label>MODO DE CÁLCULO POR KM</label>
+                <div class="toggle-container" style="margin-top: 6px;">
+                    <span style="font-size: 10px;">Modo Automático Proporcional</span>
                     <input type="checkbox" id="cfg_modo_auto" checked onchange="mudarModoConfig()">
                 </div>
             </div>
 
-            <!-- MODO AUTOMÁTICO (DIGITA O CUSTO TOTAL E DISTRIBUI PROPORCIONALMENTE) -->
             <div id="bloco-auto">
-                <label>Custo Total Desejado por KM (Ex: 0.55)</label>
+                <label>Custo Total por KM (R$)</label>
                 <input type="number" id="cfg_custo_total_auto" step="0.01" value="0.55" oninput="atualizarPreviewConfig()">
-                <div style="font-size: 11px; color: #aaa; margin-bottom: 10px; text-align: center;">
-                    O sistema distribuirá esse valor por KM proporcionalmente entre todas as suas caixinhas ativas.
-                </div>
-                <div id="preview-auto-km" style="margin-bottom: 15px;"></div>
+                <div id="preview-auto-km" style="margin-bottom: 10px;"></div>
             </div>
 
-            <!-- MODO MANUAL (DIGITA A TAXA DE CADA CAIXINHA) -->
             <div id="bloco-manual" style="display:none;">
-                <div style="font-size: 11px; color: var(--accent); margin-bottom: 10px; text-align: center;">
-                    Defina manualmente a taxa em R$ por KM para cada caixinha:
+                <div id="inputs-manual-km" style="margin-bottom: 10px;"></div>
+                <div class="total-box" id="soma-total-manual">SOMA MANUAL<strong>R$ 0,00 / km</strong></div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #222; margin: 15px 0;">
+            <label style="color: var(--accent);">⚙️ CONTROLE DE ÓLEO & TRIPS</label>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <label>Meta Óleo (Km)</label>
+                    <input type="number" id="cfg_meta_oleo" step="100" placeholder="3000">
                 </div>
-                <div id="inputs-manual-km" style="margin-bottom: 15px;"></div>
-                <div class="total-box" id="soma-total-manual">
-                    SOMA TOTAL DA DISTRIBUIÇÃO POR KM
-                    <strong>R$ 0,00 / km</strong>
+                <div>
+                    <label>Trip Óleo Atual</label>
+                    <input type="number" id="cfg_trip_oleo" step="0.1" placeholder="0">
                 </div>
             </div>
 
-            <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
-            <label style="color: var(--accent);">⚙️ CONTROLE DE MANUTENÇÃO (TRIPS)</label>
-            
-            <label>Meta da Troca de Óleo (KM)</label>
-            <input type="number" id="cfg_meta_oleo" step="100" placeholder="3000">
-
-            <label>Trip do Óleo (Desde a última troca)</label>
-            <input type="number" id="cfg_trip_oleo" step="0.1" placeholder="0">
-
-            <label>Trip Geral / Peças (Rodagem desde a revisão)</label>
+            <label>Trip Geral / Peças</label>
             <input type="number" id="cfg_trip_geral" step="0.1" placeholder="0">
 
             <button class="btn-add" onclick="salvarConfig()">Salvar Configurações</button>
 
-            <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
+            <hr style="border: 0; border-top: 1px solid #222; margin: 15px 0;">
 
-            <label>Gerenciamento de Dados (Backup)</label>
-            <button class="btn-backup" onclick="exportarBackup()">Exportar Backup (Salvar Arquivo)</button>
+            <label>Backup de Dados</label>
+            <button class="btn-backup" onclick="exportarBackup()">Exportar Backup (JSON)</button>
             <button class="btn-restore" onclick="importarBackupClick()">Restaurar Backup</button>
             <input type="file" id="fileInput" style="display:none" onchange="importarBackup(event)">
         </div>
@@ -445,33 +474,27 @@
             renderPainelGastos();
             renderTable();
             atualizarInterfaceDinamica();
-            
             verificarAlertaSegundaFeira();
 
-            document.getElementById('sync-status').innerText = "Conectado ao Firebase ☁️";
+            document.getElementById('sync-status').innerText = "Conectado ☁️";
             document.getElementById('sync-status').style.color = "#2ecc71";
         }, (error) => {
-            document.getElementById('sync-status').innerText = "Erro de Sincronização ⚠️";
+            document.getElementById('sync-status').innerText = "Erro ⚠️";
             document.getElementById('sync-status').style.color = "#e74c3c";
         });
 
         function verificarAlertaSegundaFeira() {
             const hoje = new Date();
-            if (hoje.getDay() === 1) {
-                if (!sessionStorage.getItem('alertaSegundaExibido')) {
-                    setTimeout(() => {
-                        alert("📅 DIA DE ACERTO! Hoje é segunda-feira. Não se esqueça de conferir os repasses da Uber/99 e realizar a baixa e o armazenamento dos saldos nas caixinhas!");
-                        sessionStorage.setItem('alertaSegundaExibido', 'true');
-                    }, 1000);
-                }
+            if (hoje.getDay() === 1 && !sessionStorage.getItem('alertaSegundaExibido')) {
+                setTimeout(() => {
+                    alert("📅 DIA DE ACERTO! Segunda-feira: confira os repasses e atualize os cofres.");
+                    sessionStorage.setItem('alertaSegundaExibido', 'true');
+                }, 1000);
             }
         }
 
         function salvarNoFirebase() {
-            dbRef.set({
-                config, gastosMensais, db, cofresGerais, pendente99, pendenteUber,
-                ultimoLancamento, contasCadastradas, historicoSaidas
-            });
+            dbRef.set({ config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, ultimoLancamento, contasCadastradas, historicoSaidas });
         }
 
         function carregarConfigNaTela() {
@@ -482,11 +505,9 @@
             document.getElementById('cfg_periodo').value = config.periodoMeta || "mes";
             document.getElementById('cfg_modo_auto').checked = config.modoAuto !== false;
             document.getElementById('cfg_custo_total_auto').value = config.custoTotalAuto || 0.55;
-            
             document.getElementById('cfg_meta_oleo').value = config.metaOleo || 3000;
             document.getElementById('cfg_trip_oleo').value = config.tripOleo || 0;
             document.getElementById('cfg_trip_geral').value = config.tripGeral || 0;
-
             mudarModoConfig();
         }
 
@@ -502,74 +523,31 @@
             const periodo = document.getElementById('cfg_periodo').value;
             const auto = document.getElementById('cfg_modo_auto').checked;
             const ativos = gastosMensais.filter(g => g.ativo);
-
             const totalGastosMes = ativos.reduce((acc, g) => acc + g.valor, 0);
 
-            let fator = 1; 
-            let nomePeriodo = "Mês (30 dias)";
-            let dias = 30;
+            let fator = 1, nomePeriodo = "Mês", dias = 30;
             if(periodo === 'dia') { fator = 1 / 30; nomePeriodo = "Dia"; dias = 1; }
-            else if(periodo === 'semana') { fator = 7 / 30; nomePeriodo = "Semana (7 dias)"; dias = 7; }
-            else if(periodo === 'quinzena') { fator = 15 / 30; nomePeriodo = "Quinzena (15 dias)"; dias = 15; }
+            else if(periodo === 'semana') { fator = 7 / 30; nomePeriodo = "Semana"; dias = 7; }
+            else if(periodo === 'quinzena') { fator = 15 / 30; nomePeriodo = "Quinzena"; dias = 15; }
 
-            const kmNecessarioPeriodo = kmMes * fator;
-            const custoNecessarioPeriodo = totalGastosMes * fator;
+            const kmPeriodo = kmMes * fator;
+            const custoPeriodo = totalGastosMes * fator;
 
             document.getElementById('painel-metas-periodo').innerHTML = `
-                🎯 <strong>META PARA O PERÍODO (${nomePeriodo.toUpperCase()}):</strong><br>
-                📌 Custos / Gastos Totais: <strong style="color:var(--accent);">R$ ${custoNecessarioPeriodo.toFixed(2)}</strong><br>
-                🏍️ KM Necessário Rodar: <strong style="color:var(--green);">${kmNecessarioPeriodo.toFixed(1)} km</strong><br>
-                💡 Média por Dia no Período: <strong style="color:var(--accent);">${(kmNecessarioPeriodo / dias).toFixed(1)} km/dia</strong>
+                🎯 <strong>META (${nomePeriodo.toUpperCase()}):</strong><br>
+                Custos: <strong style="color:var(--accent);">R$ ${custoPeriodo.toFixed(2)}</strong> | KM: <strong style="color:var(--green);">${kmPeriodo.toFixed(1)} km</strong>
             `;
 
             if (auto) {
-                const custoTotalDesejado = parseFloat(document.getElementById('cfg_custo_total_auto').value) || 0;
-                let somaValoresAtivos = ativos.reduce((acc, g) => acc + g.valor, 0);
-                
+                const custoTotal = parseFloat(document.getElementById('cfg_custo_total_auto').value) || 0;
+                let soma = ativos.reduce((acc, g) => acc + g.valor, 0);
                 let html = '';
                 ativos.forEach(g => {
-                    let proporcao = somaValoresAtivos > 0 ? (g.valor / somaValoresAtivos) : (1 / ativos.length);
-                    let custoKmItem = custoTotalDesejado * proporcao;
-                    html += `
-                        <div style="display: flex; justify-content: space-between; margin: 4px 0; background: #222; padding: 6px; border-radius: 4px; font-size: 11px;">
-                            <span>${g.emoji} ${g.nome}</span>
-                            <strong style="color: var(--green);">R$ ${custoKmItem.toFixed(4)} / km</strong>
-                        </div>
-                    `;
+                    let prop = soma > 0 ? (g.valor / soma) : (1 / ativos.length);
+                    html += `<div style="display:flex; justify-content:space-between; margin:2px 0; font-size:10px;"><span>${g.emoji} ${g.nome}</span><strong style="color:var(--green);">R$ ${(custoTotal * prop).toFixed(4)}/km</strong></div>`;
                 });
-                html += `
-                    <div class="total-box" style="margin-top: 8px;">
-                        CUSTO TOTAL APLICADO POR KM
-                        <strong>R$ ${custoTotalDesejado.toFixed(2)} / km</strong>
-                    </div>
-                `;
                 document.getElementById('preview-auto-km').innerHTML = html;
-            } else {
-                let html = '';
-                let somaManual = 0;
-                ativos.forEach(g => {
-                    const taxaAtual = (config.taxasManuais && config.taxasManuais[g.id] !== undefined) ? config.taxasManuais[g.id] : (g.valor / kmMes);
-                    somaManual += taxaAtual;
-                    html += `
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 6px 0; background: #222; padding: 8px; border-radius: 6px; font-size: 11px;">
-                            <span>${g.emoji} ${g.nome}</span>
-                            <input type="number" id="taxa_manual_${g.id}" step="0.01" value="${taxaAtual.toFixed(2)}" oninput="calcularSomaManual()" style="width: 80px; padding: 4px; font-size: 12px; margin: 0; text-align: right;">
-                        </div>
-                    `;
-                });
-                document.getElementById('inputs-manual-km').innerHTML = html;
-                document.getElementById('soma-total-manual').innerHTML = `SOMA TOTAL DA DISTRIBUIÇÃO POR KM<strong style="color:var(--green); font-size:15px; display:block; margin-top:4px;">R$ ${somaManual.toFixed(2)} / km</strong>`;
             }
-        }
-
-        function calcularSomaManual() {
-            let soma = 0;
-            const ativos = gastosMensais.filter(g => g.ativo);
-            ativos.forEach(g => {
-                const inp = document.getElementById(`taxa_manual_${g.id}`);
-                if(inp) soma += parseFloat(inp.value) || 0;
-            });
-            document.getElementById('soma-total-manual').innerHTML = `SOMA TOTAL DA DISTRIBUIÇÃO POR KM<strong style="color:var(--green); font-size:15px; display:block; margin-top:4px;">R$ ${soma.toFixed(2)} / km</strong>`;
         }
 
         function salvarConfig() {
@@ -580,21 +558,12 @@
             config.periodoMeta = document.getElementById('cfg_periodo').value;
             config.modoAuto = document.getElementById('cfg_modo_auto').checked;
             config.custoTotalAuto = parseFloat(document.getElementById('cfg_custo_total_auto').value) || 0.55;
-
-            if (!config.modoAuto) {
-                if(!config.taxasManuais) config.taxasManuais = {};
-                gastosMensais.filter(g => g.ativo).forEach(g => {
-                    const inp = document.getElementById(`taxa_manual_${g.id}`);
-                    if(inp) { config.taxasManuais[g.id] = parseFloat(inp.value) || 0; }
-                });
-            }
-
             config.metaOleo = parseFloat(document.getElementById('cfg_meta_oleo').value) || 3000;
             config.tripOleo = parseFloat(document.getElementById('cfg_trip_oleo').value) || 0;
             config.tripGeral = parseFloat(document.getElementById('cfg_trip_geral').value) || 0;
 
             salvarNoFirebase();
-            alert('Configurações salvas com sucesso!');
+            alert('Configurações salvas!');
             trocarTab('diario');
         }
 
@@ -621,10 +590,7 @@
             const cor = document.getElementById('gasto_cor').value;
             const valor = parseFloat(document.getElementById('gasto_valor').value);
 
-            if(!nome || isNaN(valor)) {
-                alert('Preencha o nome e o valor mensal!');
-                return;
-            }
+            if(!nome || isNaN(valor)) { alert('Preencha nome e valor!'); return; }
 
             const novoId = Date.now();
             gastosMensais.push({ id: novoId, nome, emoji, cor, valor, ativo: true });
@@ -633,7 +599,6 @@
             salvarNoFirebase();
             renderPainelGastos();
             atualizarInterfaceDinamica();
-
             document.getElementById('gasto_nome').value = '';
             document.getElementById('gasto_emoji').value = '';
             document.getElementById('gasto_valor').value = '';
@@ -657,9 +622,9 @@
             const tbody = document.querySelector('#tabela-gastos tbody');
             tbody.innerHTML = gastosMensais.map(g => `
                 <tr>
-                    <td><span style="color:${g.cor}; font-size:14px; margin-right:5px;">${g.emoji}</span> <strong>${g.nome}</strong></td>
+                    <td><span style="color:${g.cor};">${g.emoji}</span> <strong>${g.nome}</strong></td>
                     <td>R$ ${g.valor.toFixed(2)}</td>
-                    <td><input type="checkbox" ${g.ativo ? 'checked' : ''} onchange="alternarGastoAtivo(${g.id})"></td>
+                    <td><input type="checkbox" ${g.ativo ? 'checked' : ''} onchange="alternarGastoAtivo(${g.id})" style="width:16px; height:16px; accent-color:var(--green);"></td>
                     <td><button class="btn-del" onclick="removerGasto(${g.id})">✕</button></td>
                 </tr>
             `).join('');
@@ -669,13 +634,12 @@
             const ativos = gastosMensais.filter(g => g.ativo);
 
             document.getElementById('grid-envelopes-ultimo').innerHTML = ativos.map(g => `
-                <div class="env" style="background:${g.cor}22; border: 1px solid ${g.cor};">
+                <div class="env" style="border-left: 3px solid ${g.cor};">
                     ${g.emoji} ${g.nome.toUpperCase()} 
                     <strong id="card-res-${g.id}" style="color:${g.cor};">R$ ${(ultimoLancamento.itens && ultimoLancamento.itens[g.id] ? ultimoLancamento.itens[g.id] : 0).toFixed(2)}</strong>
                 </div>
-            `).join('') + `<div class="env" style="grid-column: span 2; background:#1b5e20; border:1px solid var(--green);">💰 LUCRO LÍQUIDO <strong id="card-res-lucro" style="font-size:16px; color:var(--green);">R$ ${(ultimoLancamento.lucro || 0).toFixed(2)}</strong></div>`;
+            `).join('') + `<div class="env" style="grid-column: span 2; background:#112518; border:1px solid #1b4d3e;">💰 LUCRO LÍQUIDO <strong id="card-res-lucro" style="font-size:14px; color:var(--green);">R$ ${(ultimoLancamento.lucro || 0).toFixed(2)}</strong></div>`;
 
-            // RENDERIZAÇÃO DAS LINHAS COM O BOTÃO DE CHECK INDIVIDUAL
             document.getElementById('linhas-dinamicas-99').innerHTML = ativos.map(g => `
                 <div class="linha-acumulado">
                     <span>${g.emoji} ${g.nome}:</span> 
@@ -693,7 +657,7 @@
             `).join('');
 
             document.getElementById('grid-cofres-geral').innerHTML = ativos.map(g => `
-                <div class="env" style="background:${g.cor}22; border: 1px solid ${g.cor};">
+                <div class="env" style="border-left: 3px solid ${g.cor};">
                     ${g.emoji} ${g.nome.toUpperCase()} 
                     <strong id="ger-res-${g.id}" style="color:${g.cor};">R$ ${(cofresGerais[g.id] || 0).toFixed(2)}</strong>
                 </div>
@@ -734,23 +698,21 @@
             atualizarValoresDigitados('uber');
         }
 
-        // LÓGICA DO SALDO DECRESCENTE EM ESPÉCIE
         function atualizarValoresDigitados(plat) {
             const prefixo = plat === '99' ? '99' : 'ub';
             const dinheiroInput = parseFloat(document.getElementById(`edit-${prefixo}-dinheiro`).value) || 0;
-            
-            let totalDistribuidoNosChecks = 0;
+            let usado = 0;
             const ativos = gastosMensais.filter(g => g.ativo);
             
             ativos.forEach(g => {
                 const btn = document.getElementById(`btn-check-${prefixo}-${g.id}`);
                 if (btn && btn.classList.contains('checked')) {
                     const inp = document.getElementById(`edit-${prefixo}-${g.id}`);
-                    totalDistribuidoNosChecks += parseFloat(inp ? inp.value : 0) || 0;
+                    usado += parseFloat(inp ? inp.value : 0) || 0;
                 }
             });
 
-            let restante = dinheiroInput - totalDistribuidoNosChecks;
+            let restante = dinheiroInput - usado;
             const spanRestante = document.getElementById(`restante-${plat}`);
             if(spanRestante) {
                 spanRestante.innerText = restante.toFixed(2);
@@ -758,7 +720,6 @@
             }
         }
 
-        // CHECK INDIVIDUAL POR CAIXINHA
         function darCheckItem(plat, idGasto) {
             const prefixo = plat === '99' ? '99' : 'ub';
             const btn = document.getElementById(`btn-check-${prefixo}-${idGasto}`);
@@ -766,14 +727,9 @@
             const val = parseFloat(inp ? inp.value : 0) || 0;
 
             if (!btn.classList.contains('checked')) {
-                if (val <= 0) {
-                    alert('Valor zerado nesta caixinha.');
-                    return;
-                }
-                // Adiciona ao cofre oficial imediatamente
+                if (val <= 0) { alert('Valor zerado.'); return; }
                 cofresGerais[idGasto] = (cofresGerais[idGasto] || 0) + val;
                 
-                // Abate das pendências globais correspondentes
                 if (plat === '99' && pendente99.itens && pendente99.itens[idGasto]) {
                     pendente99.itens[idGasto] = Math.max(0, pendente99.itens[idGasto] - val);
                 } else if (plat === 'uber' && pendenteUber.itens && pendenteUber.itens[idGasto]) {
@@ -783,7 +739,6 @@
                 btn.classList.add('checked');
                 btn.innerText = "✔ Feito";
             } else {
-                // Desfaz caso clique de novo
                 cofresGerais[idGasto] = Math.max(0, (cofresGerais[idGasto] || 0) - val);
                 btn.classList.remove('checked');
                 btn.innerText = "✔ Baixa";
@@ -791,8 +746,6 @@
 
             salvarNoFirebase();
             atualizarValoresDigitados(plat);
-            
-            // Atualiza exibição dos cofres gerais em tempo real
             const gerRes = document.getElementById(`ger-res-${idGasto}`);
             if(gerRes) gerRes.innerText = "R$ " + (cofresGerais[idGasto] || 0).toFixed(2);
         }
@@ -808,14 +761,10 @@
             const dinheiro99 = parseFloat(document.getElementById('dinheiro_99').value) || 0;
             const uber = parseFloat(document.getElementById('bruto_uber').value) || 0;
             const dinheiroUber = parseFloat(document.getElementById('dinheiro_uber').value) || 0;
-
             const bruto = b99 + uber;
             const km = parseFloat(document.getElementById('km_dia').value) || 0;
 
-            if (bruto <= 0 || km <= 0) {
-                alert('Preencha faturamento e KM corretamente.');
-                return;
-            }
+            if (bruto <= 0 || km <= 0) { alert('Preencha faturamento e KM.'); return; }
 
             config.tripOleo = (parseFloat(config.tripOleo) || 0) + km;
             config.tripGeral = (parseFloat(config.tripGeral) || 0) + km;
@@ -824,20 +773,12 @@
             const ativos = gastosMensais.filter(g => g.ativo);
             const modoAuto = config.modoAuto !== false;
 
-            let custosDiaItens = {};
-            let totalCustosGerais = 0;
+            let custosDiaItens = {}, totalCustosGerais = 0;
             let somaGastos = ativos.reduce((acc, g) => acc + g.valor, 0);
 
             ativos.forEach(g => {
-                let custoKmItem = 0;
-                if(modoAuto) {
-                    const custoTotalDesejado = parseFloat(config.custoTotalAuto) || 0.55;
-                    let proporcao = somaGastos > 0 ? (g.valor / somaGastos) : (1 / ativos.length);
-                    custoKmItem = custoTotalDesejado * proporcao;
-                } else {
-                    custoKmItem = (config.taxasManuais && config.taxasManuais[g.id] !== undefined) ? config.taxasManuais[g.id] : (g.valor / kmMes);
-                }
-                const valorItemDia = km * custoKmItem;
+                let custoKmItem = modoAuto ? ((parseFloat(config.custoTotalAuto) || 0.55) * (somaGastos > 0 ? g.valor / somaGastos : 1 / ativos.length)) : ((config.taxasManuais && config.taxasManuais[g.id]) || (g.valor / kmMes));
+                let valorItemDia = km * custoKmItem;
                 custosDiaItens[g.id] = valorItemDia;
                 totalCustosGerais += valorItemDia;
             });
@@ -850,28 +791,15 @@
             pendente99 = { total: b99, dinheiro: dinheiro99, itens: {} };
             pendenteUber = { total: uber, dinheiro: dinheiroUber, itens: {} };
 
-            if (b99 > 0) {
-                const prop99 = b99 / bruto;
-                ativos.forEach(g => { pendente99.itens[g.id] = (custosDiaItens[g.id] || 0) * prop99; });
-            }
-            if (uber > 0) {
-                const propUber = uber / bruto;
-                ativos.forEach(g => { pendenteUber.itens[g.id] = (custosDiaItens[g.id] === undefined ? 0 : custosDiaItens[g.id]) * propUber; });
-            }
+            if (b99 > 0) ativos.forEach(g => { pendente99.itens[g.id] = (custosDiaItens[g.id] || 0) * (b99 / bruto); });
+            if (uber > 0) ativos.forEach(g => { pendenteUber.itens[g.id] = (custosDiaItens[g.id] || 0) * (uber / bruto); });
 
-            const custoPorKmConfigurado = parseFloat(config.custoTotalAuto) || 0.55;
-            let obsTexto = "EXCELENTE";
-            if (eficiencia < custoPorKmConfigurado) {
-                obsTexto = "RUIM";
-            } else if (eficiencia < (custoPorKmConfigurado * 1.5)) {
-                obsTexto = "MÉDIO";
-            }
-            
+            let custoCfg = parseFloat(config.custoTotalAuto) || 0.55;
+            let obsTexto = eficiencia < custoCfg ? "RUIM" : (eficiencia < (custoCfg * 1.5) ? "MÉDIO" : "EXCELENTE");
             document.getElementById('obs').value = obsTexto;
 
             db.unshift({ 
-                id: Date.now(),
-                data: new Date().toLocaleDateString('pt-BR'), 
+                id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), 
                 mesAno: `${String(new Date().getMonth() + 1).padStart(2, '0')}/${new Date().getFullYear()}`,
                 bruto: bruto.toFixed(2), km, eficiencia: eficiencia.toFixed(2), obs: obsTexto
             });
@@ -889,7 +817,6 @@
             alert('Lançamento registrado!');
         }
 
-        // BAIXA GERAL / ZERAR 99
         function baixarCaixas99() {
             gastosMensais.filter(g => g.ativo).forEach(g => {
                 const val = parseFloat(document.getElementById(`edit-99-${g.id}`).value) || 0;
@@ -898,10 +825,9 @@
             pendente99 = { total: 0, dinheiro: 0, itens: {} };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
-            alert('Baixa da 99 concluída e valores salvos nos cofres!');
+            alert('Baixa da 99 concluída!');
         }
 
-        // BAIXA GERAL / ZERAR UBER
         function receberRepasseUber() {
             gastosMensais.filter(g => g.ativo).forEach(g => {
                 const val = parseFloat(document.getElementById(`edit-ub-${g.id}`).value) || 0;
@@ -910,17 +836,17 @@
             pendenteUber = { total: 0, dinheiro: 0, itens: {} };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
-            alert('Baixa da Uber concluída e valores salvos nos cofres!');
+            alert('Baixa da Uber concluída!');
         }
 
         function zerarCaixasPendentesManualmente() {
-            if(confirm('Zerar caixas pendentes e distribuição visual?')) {
+            if(confirm('Zerar pendências?')) {
                 pendente99 = { total: 0, dinheiro: 0, itens: {} };
                 pendenteUber = { total: 0, dinheiro: 0, itens: {} };
                 ultimoLancamento = { itens: {}, lucro: 0 };
                 salvarNoFirebase();
                 atualizarInterfaceDinamica();
-                alert('Pendências e telas zeradas!');
+                alert('Pendências zeradas!');
             }
         }
 
@@ -932,19 +858,14 @@
                     config.tripGeral = Math.max(0, config.tripGeral - item.km);
                 }
                 db.splice(i, 1);
-                
                 if (db.length === 0) {
                     ultimoLancamento = { itens: {}, lucro: 0 };
                     pendente99 = { total: 0, dinheiro: 0, itens: {} };
                     pendenteUber = { total: 0, dinheiro: 0, itens: {} };
-                    document.getElementById('res-eficiencia').innerText = 'R$ 0,00 / km';
-                    document.getElementById('obs').value = '';
                 }
-
                 salvarNoFirebase();
                 atualizarInterfaceDinamica();
                 renderTable();
-                alert('Lançamento desfeito!');
             }
         }
 
@@ -952,20 +873,18 @@
             const tbody = document.querySelector('#tabela tbody');
             tbody.innerHTML = db.length ? db.map((item, i) => {
                 let badgeClass = item.obs === 'RUIM' ? 'badge-ruim' : (item.obs === 'MÉDIO' ? 'badge-medio' : 'badge-excelente');
-                return `
-                <tr>
+                return `<tr>
                     <td><strong>${item.data}</strong></td>
-                    <td style="color:var(--green); font-weight:bold;">R$ ${item.bruto}</td>
+                    <td style="color:var(--green); font-weight:700;">R$ ${item.bruto}</td>
                     <td>R$ ${item.eficiencia}</td>
                     <td><span class="badge-obs ${badgeClass}">${item.obs}</span></td>
                     <td><button class="btn-del" onclick="deletarItem(${i})">✕</button></td>
                 </tr>`;
-            }).join('') : '<tr><td colspan="5" style="color:#777; padding: 15px;">Nenhum lançamento.</td></tr>';
+            }).join('') : '<tr><td colspan="5" style="color:var(--text-muted); padding: 12px;">Nenhum lançamento.</td></tr>';
         }
 
         function mudarTipoContaForm() {
-            const tipo = document.getElementById('conta_tipo').value;
-            document.getElementById('bloco_qtd_parcelas').style.display = (tipo === 'parcelada') ? 'block' : 'none';
+            document.getElementById('bloco_qtd_parcelas').style.display = (document.getElementById('conta_tipo').value === 'parcelada') ? 'block' : 'none';
         }
 
         function lançarSaidaCofre() {
@@ -973,25 +892,13 @@
             const desc = document.getElementById('saida_desc').value.trim();
             const valor = parseFloat(document.getElementById('saida_valor').value);
 
-            if(!desc || isNaN(valor) || valor <= 0) {
-                alert('Preencha descrição e valor!');
-                return;
-            }
+            if(!desc || isNaN(valor) || valor <= 0) { alert('Preencha descrição e valor!'); return; }
+            if (valor > (cofresGerais[cofreId] || 0)) { alert('Saldo insuficiente no cofre!'); return; }
 
-            const disponivel = cofresGerais[cofreId] || 0;
-            if (valor > disponivel) {
-                alert(`Saldo insuficiente! Disponível: R$ ${disponivel.toFixed(2)}`);
-                return;
-            }
-
-            cofresGerais[cofreId] = Math.max(0, disponivel - valor);
+            cofresGerais[cofreId] = Math.max(0, cofresGerais[cofreId] - valor);
             const gInfo = gastosMensais.find(x => x.id == cofreId);
 
-            historicoSaidas.unshift({
-                id: Date.now(), data: new Date().toLocaleDateString('pt-BR'),
-                cofreNome: gInfo ? `${gInfo.emoji} ${gInfo.nome}` : 'Caixa', desc, valor
-            });
-
+            historicoSaidas.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), cofreNome: gInfo ? `${gInfo.emoji} ${gInfo.nome}` : 'Caixa', desc, valor });
             salvarNoFirebase();
             atualizarInterfaceDinamica();
             renderGerenciador();
@@ -1009,16 +916,9 @@
             const vencimento = parseInt(document.getElementById('conta_vencimento').value) || 1;
             const parcelas = parseInt(document.getElementById('conta_parcelas').value) || 1;
 
-            if(!nome || isNaN(valor) || valor <= 0 || !mesAno) {
-                alert('Preencha os dados da conta!');
-                return;
-            }
+            if(!nome || isNaN(valor) || valor <= 0 || !mesAno) { alert('Preencha os dados da conta!'); return; }
 
-            contasCadastradas.push({
-                id: Date.now(), tipo, cofreId, nome, valor, mesAnoRef: mesAno,
-                vencimento, parcelaAtual: 1, totalParcelas: parcelas, paga: false
-            });
-
+            contasCadastradas.push({ id: Date.now(), tipo, cofreId, nome, valor, mesAnoRef: mesAno, vencimento, parcelaAtual: 1, totalParcelas: parcelas, paga: false });
             salvarNoFirebase();
             renderGerenciador();
             document.getElementById('conta_nome').value = '';
@@ -1029,33 +929,20 @@
         function pagarConta(id) {
             const c = contasCadastradas.find(x => x.id === id);
             if(!c) return;
+            if(c.valor > (cofresGerais[c.cofreId] || 0)) { alert('Saldo insuficiente no cofre!'); return; }
 
-            const disponivel = cofresGerais[c.cofreId] || 0;
-            if(c.valor > disponivel) {
-                alert(`Saldo insuficiente! Disponível: R$ ${disponivel.toFixed(2)}`);
-                return;
-            }
-
-            if(confirm(`Pagar "${c.nome}" no valor de R$ ${c.valor.toFixed(2)}?`)) {
-                cofresGerais[c.cofreId] = Math.max(0, disponivel - c.valor);
+            if(confirm(`Pagar "${c.nome}"?`)) {
+                cofresGerais[c.cofreId] = Math.max(0, cofresGerais[c.cofreId] - c.valor);
                 const gInfo = gastosMensais.find(x => x.id == c.cofreId);
+                historicoSaidas.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), cofreNome: gInfo ? `${gInfo.emoji} ${gInfo.nome}` : 'Caixa', desc: `Pago: ${c.nome}`, valor: c.valor });
 
-                historicoSaidas.unshift({
-                    id: Date.now(), data: new Date().toLocaleDateString('pt-BR'),
-                    cofreNome: gInfo ? `${gInfo.emoji} ${gInfo.nome}` : 'Caixa', desc: `Pago: ${c.nome}`, valor: c.valor
-                });
-
-                if(c.tipo === 'parcelada') {
-                    if(c.parcelaAtual < c.totalParcelas) c.parcelaAtual++;
-                    else c.paga = true;
-                } else if(c.tipo === 'unica') {
-                    c.paga = true;
-                } else if(c.tipo === 'recorrente') {
+                if(c.tipo === 'parcelada') { if(c.parcelaAtual < c.totalParcelas) c.parcelaAtual++; else c.paga = true; }
+                else if(c.tipo === 'unica') { c.paga = true; }
+                else if(c.tipo === 'recorrente') {
                     let [ano, mes] = c.mesAnoRef.split('-').map(Number);
                     mes++; if(mes > 12) { mes = 1; ano++; }
                     c.mesAnoRef = `${ano}-${String(mes).padStart(2, '0')}`;
                 }
-
                 salvarNoFirebase();
                 atualizarInterfaceDinamica();
                 renderGerenciador();
@@ -1064,11 +951,7 @@
         }
 
         function excluirConta(id) {
-            if(confirm('Excluir conta?')) {
-                contasCadastradas = contasCadastradas.filter(x => x.id !== id);
-                salvarNoFirebase();
-                renderGerenciador();
-            }
+            if(confirm('Excluir conta?')) { contasCadastradas = contasCadastradas.filter(x => x.id !== id); salvarNoFirebase(); renderGerenciador(); }
         }
 
         function deletarSaida(id) {
@@ -1082,21 +965,20 @@
             const pendentes = contasCadastradas.filter(x => !x.paga);
             tbodyContas.innerHTML = pendentes.length ? pendentes.map(c => {
                 const gInfo = gastosMensais.find(x => x.id == c.cofreId);
-                return `
-                <tr>
+                return `<tr>
                     <td><strong>${c.nome}</strong></td>
-                    <td>${gInfo ? gInfo.emoji + ' ' + gInfo.nome : '-'}</td>
+                    <td>${gInfo ? gInfo.emoji : '-'}</td>
                     <td>R$ ${c.valor.toFixed(2)}</td>
                     <td>Dia ${c.vencimento}</td>
                     <td>
-                        <button class="btn-pagar" onclick="pagarConta(${c.id})" style="background:var(--green); border:none; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer;">Pagar</button>
-                        <button class="btn-excluir" onclick="excluirConta(${c.id})" style="background:var(--red); color:#fff; border:none; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer; margin-top:2px;">✕</button>
+                        <button onclick="pagarConta(${c.id})" style="background:var(--green); border:none; padding:3px 6px; border-radius:4px; font-weight:700; cursor:pointer; font-size:9px;">Pagar</button>
+                        <button onclick="excluirConta(${c.id})" style="background:var(--red); color:#fff; border:none; padding:3px 6px; border-radius:4px; font-weight:700; cursor:pointer; font-size:9px; margin-top:2px;">✕</button>
                     </td>
                 </tr>`;
-            }).join('') : '<tr><td colspan="5" style="color:#777;">Nenhuma conta pendente.</td></tr>';
+            }).join('') : '<tr><td colspan="5" style="color:var(--text-muted);">Nenhuma conta pendente.</td></tr>';
 
             const tbodySaidas = document.querySelector('#tabela-saidas tbody');
-            tbodySaidas.innerHTML = historicoSaidas.length ? historicoSaidas.slice(0, 10).map(s => `
+            tbodySaidas.innerHTML = historicoSaidas.length ? historicoSaidas.slice(0, 8).map(s => `
                 <tr>
                     <td>${s.data}</td>
                     <td>${s.cofreNome}</td>
@@ -1104,7 +986,7 @@
                     <td style="color:var(--red);">R$ ${s.valor.toFixed(2)}</td>
                     <td><button class="btn-del" onclick="deletarSaida(${s.id})">✕</button></td>
                 </tr>
-            `).join('') : '<tr><td colspan="5" style="color:#777;">Sem retiradas.</td></tr>';
+            `).join('') : '<tr><td colspan="5" style="color:var(--text-muted);">Sem retiradas.</td></tr>';
 
             gerarDiagnosticoIA();
         }
@@ -1117,18 +999,17 @@
             let msgs = [];
 
             if (tripOleo >= metaOleo) {
-                msgs.push(`🚨 <strong style="color:var(--red);">Óleo Vencido!</strong> Trip do Óleo em <strong>${tripOleo.toFixed(1)} km</strong>. Troque o óleo! <br><button class="btn-reset-trip" onclick="zerarTripOleo()">🔄 Zerar Trip Óleo</button>`);
+                msgs.push(`🚨 <strong style="color:var(--red);">Óleo Vencido!</strong> (${tripOleo.toFixed(1)} km). <br><button class="btn-reset-trip" onclick="zerarTripOleo()">🔄 Zerar Trip Óleo</button>`);
             } else {
                 msgs.push(`🛢️ <strong>Óleo:</strong> ${tripOleo.toFixed(1)} / ${metaOleo} km.`);
             }
 
             if (tripGeral >= 10000) {
-                msgs.push(`⚡ <strong>Revisão Geral:</strong> Atingiu ${tripGeral.toFixed(1)} km.<br><button class="btn-reset-trip" onclick="zerarTripGeral()">🔄 Zerar Ciclo Geral</button>`);
+                msgs.push(`⚡ <strong>Revisão Geral atingida!</strong><br><button class="btn-reset-trip" onclick="zerarTripGeral()">🔄 Zerar Ciclo Geral</button>`);
             } else {
-                msgs.push(`⚙️ <strong>Próxima Revisão:</strong> Faltam ${(10000 - tripGeral).toFixed(1)} km.`);
+                msgs.push(`⚙️ <strong>Próxima Revisão Geral:</strong> Faltam ${(10000 - tripGeral).toFixed(1)} km.`);
             }
-
-            aiElem.innerHTML = msgs.join('<br><br>');
+            aiElem.innerHTML = msgs.join('<br>');
         }
 
         function exportarBackup() {
