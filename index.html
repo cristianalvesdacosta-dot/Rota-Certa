@@ -434,12 +434,30 @@
             renderPainelGastos();
             renderTable();
             atualizarInterfaceDinamica();
+            
+            // VERIFICA SE É SEGUNDA-FEIRA PARA EXIBIR O ALERTA AUTOMÁTICO
+            verificarAlertaSegundaFeira();
+
             document.getElementById('sync-status').innerText = "Conectado ao Firebase ☁️";
             document.getElementById('sync-status').style.color = "#2ecc71";
         }, (error) => {
             document.getElementById('sync-status').innerText = "Erro de Sincronização ⚠️";
             document.getElementById('sync-status').style.color = "#e74c3c";
         });
+
+        function verificarAlertaSegundaFeira() {
+            const hoje = new Date();
+            // getDay() retorna 1 para Segunda-Feira
+            if (hoje.getDay() === 1) {
+                // Garante que avisa apenas uma vez por sessão/abertura
+                if (!sessionStorage.getItem('alertaSegundaExibido')) {
+                    setTimeout(() => {
+                        alert("📅 DIA DE ACERTO! Hoje é segunda-feira. Não se esqueça de conferir os repasses da Uber/99 e realizar a baixa e o armazenamento dos saldos nas caixinhas!");
+                        sessionStorage.setItem('alertaSegundaExibido', 'true');
+                    }, 1000);
+                }
+            }
+        }
 
         function salvarNoFirebase() {
             dbRef.set({
@@ -757,10 +775,18 @@
             }
             if (uber > 0) {
                 const propUber = uber / bruto;
-                ativos.forEach(g => { pendenteUber.itens[g.id] = (custosDiaItens[g.id] || 0) * propUber; });
+                ativos.forEach(g => { pendenteUber.itens[g.id] = (custosDiaItens[g.id] === undefined ? 0 : custosDiaItens[g.id]) * propUber; });
             }
 
-            const obsTexto = (eficiencia < 1.50) ? "RUIM" : (eficiencia < 2.00 ? "MÉDIO" : "EXCELENTE");
+            // AVALIAÇÃO COM BASE NO SEU CUSTO CONFIGURADO POR KM
+            const custoPorKmConfigurado = parseFloat(config.custoTotalAuto) || 0.55;
+            let obsTexto = "EXCELENTE";
+            if (eficiencia < custoPorKmConfigurado) {
+                obsTexto = "RUIM";
+            } else if (eficiencia < (custoPorKmConfigurado * 1.5)) {
+                obsTexto = "MÉDIO";
+            }
+            
             document.getElementById('obs').value = obsTexto;
 
             db.unshift({ 
