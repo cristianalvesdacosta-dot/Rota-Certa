@@ -1002,7 +1002,7 @@
             let msgs = [];
 
             if (tripOleo >= metaOleo) {
-                msgs.push(`🚨 <strong style="color:var(--red);">Óleo Vencido!</strong> (${tripOleo.toFixed(1)} km). <br><button class="btn-reset-trip" onclick="zerarTripOleo()">🔄 Zerar Trip Óleo</button>`);
+                msgs.push(`🚨 <strong style="color:var(--red);">Óleo Vencido!</strong> (${tripOleo.setItem(1) || tripOleo.toFixed(1)} km). <br><button class="btn-reset-trip" onclick="zerarTripOleo()">🔄 Zerar Trip Óleo</button>`);
             } else {
                 msgs.push(`🛢️ <strong>Óleo:</strong> ${tripOleo.toFixed(1)} / ${metaOleo} km.`);
             }
