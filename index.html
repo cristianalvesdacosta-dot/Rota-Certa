@@ -23,7 +23,6 @@
         
         body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--dark); color: var(--text); padding: 0; margin: 0; padding-bottom: 80px; -webkit-font-smoothing: antialiased; }
         
-        /* BARRA DE ABAS PREMIUM */
         .tab-bar { display: flex; background: #121212; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #222; backdrop-filter: blur(10px); }
         .tab-btn { flex: 1; padding: 14px 4px; border: none; background: none; color: var(--text-muted); font-weight: 600; cursor: pointer; font-size: 10px; text-transform: uppercase; text-align: center; letter-spacing: 0.5px; transition: 0.2s; }
         .tab-btn.active { color: var(--green); border-bottom: 2px solid var(--green); background: rgba(46, 204, 113, 0.05); }
@@ -31,15 +30,12 @@
         .container { padding: 12px; max-width: 480px; margin: auto; display: none; }
         .container.active { display: block; }
 
-        /* CARDS E FORMULÁRIOS ESTILO APP */
         .card { background: var(--card-bg); padding: 16px; border-radius: 14px; border: 1px solid var(--card-border); margin-bottom: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
         
         label { display: block; font-size: 10px; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
         input, select { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #333; background: #202020; color: #fff; box-sizing: border-box; margin-bottom: 10px; text-align: left; font-size: 14px; outline: none; transition: border-color 0.2s; }
         input:focus, select:focus { border-color: var(--green); }
-        select { text-align-last: left; }
-
-        /* BOTÕES MODERNOS */
+        
         .btn-add { width: 100%; padding: 14px; background: var(--green); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
         .btn-backup { width: 100%; padding: 10px; background: var(--blue); border: none; color: #fff; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 8px; }
         .btn-restore { width: 100%; padding: 10px; background: var(--accent); border: none; color: #000; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 8px; }
@@ -49,6 +45,9 @@
         .btn-baixar-99 { width: 100%; padding: 11px; background: var(--green); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 10px; }
         .btn-receber-uber { width: 100%; padding: 11px; background: var(--accent); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 10px; }
         
+        .btn-check { background-color: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid var(--green); padding: 6px 10px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 11px; text-transform: uppercase; transition: 0.2s; white-space: nowrap; }
+        .btn-check.checked { background-color: #262626; color: #666; border-color: #444; text-decoration: line-through; }
+
         .btn-reset-trip { background: var(--accent); color: #000; border: none; padding: 4px 8px; font-size: 10px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 4px; display: inline-block; }
 
         .metric-box { display: flex; justify-content: space-between; align-items: center; background: #202020; padding: 10px 14px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #2a2a2a; }
@@ -58,16 +57,15 @@
         .env { padding: 8px 10px; border-radius: 8px; font-size: 10px; text-align: center; border: 1px solid #333; background: #1a1a1a; }
         .env strong { display: block; font-size: 13px; margin-top: 2px; }
         
-        /* PAINÉIS EMPILHADOS VERTICALMENTE */
-        .painel-vertical-container { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
-        .bg-acumulado-99 { background: #11221c; border: 1px solid #1b4d3e; padding: 14px; border-radius: 12px; font-size: 11px; text-align: left; }
-        .bg-acumulado-uber { background: #1b242a; border: 1px solid #283c48; padding: 14px; border-radius: 12px; font-size: 11px; text-align: left; }
+        .grid-duplo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; align-items: start; }
+        .bg-acumulado-99 { background: #11221c; border: 1px solid #1b4d3e; padding: 10px; border-radius: 12px; font-size: 10px; }
+        .bg-acumulado-uber { background: #1b242a; border: 1px solid #283c48; padding: 10px; border-radius: 12px; font-size: 10px; }
         
-        .linha-acumulado { display: flex; justify-content: space-between; align-items: center; margin: 6px 0; background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 8px; font-size: 11px; gap: 8px; }
+        .linha-acumulado { display: flex; justify-content: space-between; align-items: center; margin: 4px 0; background: rgba(0,0,0,0.3); padding: 6px 8px; border-radius: 6px; font-size: 10px; gap: 4px; }
         .linha-acumulado span { flex: 1; color: #ddd; font-weight: 600; }
-        .linha-acumulado input { width: 80px; padding: 6px; font-size: 12px; margin: 0; background: #111; border: 1px solid #333; color: #fff; text-align: right; border-radius: 6px; }
+        .linha-acumulado input { width: 55px; padding: 4px; font-size: 11px; margin: 0; background: #111; border: 1px solid #333; color: #fff; text-align: right; border-radius: 4px; }
 
-        .saldo-restante-box { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); padding: 8px; border-radius: 6px; text-align: center; margin: 8px 0; font-size: 11px; color: var(--accent); font-weight: 700; }
+        .saldo-restante-box { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); padding: 6px; border-radius: 6px; text-align: center; margin: 6px 0; font-size: 9px; color: var(--accent); font-weight: 700; }
 
         .toggle-container { display: flex; align-items: center; justify-content: space-between; background: #202020; padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #333; font-size: 11px; }
         .toggle-container input { width: 18px; height: 18px; margin: 0; cursor: pointer; accent-color: var(--green); }
@@ -165,37 +163,37 @@
                 <div id="grid-envelopes-ultimo" class="envelopes" style="margin-top: 4px;"></div>
             </div>
 
-            <!-- PAINÉIS EMPILHADOS VERTICALMENTE (COM ABATIMENTO AUTOMÁTICO) -->
-            <div class="painel-vertical-container">
+            <!-- SEU GRID DUPLO ORIGINAL LADO A LADO -->
+            <div class="grid-duplo">
                 <!-- PAINEL DA 99 -->
                 <div class="bg-acumulado-99">
-                    <strong style="color: var(--green); font-size: 12px; display: block; margin-bottom: 8px;">💵 CAIXINHAS 99 (PENDENTE)</strong>
-                    <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);" readonly></div>
-                    <div class="linha-acumulado"><span>💵 Espécie Recebida:</span> <input type="number" id="edit-99-dinheiro" step="0.01" style="color:var(--accent);" oninput="atualizarAbatimentoAutomatico('99')"></div>
+                    <strong style="color: var(--green); font-size: 11px; display: block; margin-bottom: 6px;">🟢 99 PENDENTE:</strong>
+                    <div class="linha-acumulado"><span>App:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);" readonly></div>
+                    <div class="linha-acumulado"><span>Esp:</span> <input type="number" id="edit-99-dinheiro" step="0.01" style="color:var(--accent);" oninput="atualizarCalculoRestanteOriginal('99')"></div>
                     
-                    <div class="saldo-restante-box" id="restante-99-box">Restante em Espécie para Alocar: R$ <span id="restante-99">0.00</span></div>
+                    <div class="saldo-restante-box" id="restante-99-box">Restante: R$ <span id="restante-99">0.00</span></div>
 
                     <div id="linhas-dinamicas-99"></div>
-                    <button class="btn-baixar-99" onclick="baixarCaixas99()">✅ Confirmar / Baixar 99</button>
+                    <button class="btn-baixar-99" onclick="baixarCaixas99()">✅ BAIXAR 99</button>
                 </div>
 
                 <!-- PAINEL DA UBER -->
                 <div class="bg-acumulado-uber">
-                    <strong style="color: var(--accent); font-size: 12px; display: block; margin-bottom: 8px;">📅 CAIXINHAS UBER (PENDENTE)</strong>
-                    <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" readonly></div>
-                    <div class="linha-acumulado"><span>💵 Esp/Pix Recebido:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" style="color:var(--accent);" oninput="atualizarAbatimentoAutomatico('uber')"></div>
+                    <strong style="color: var(--accent); font-size: 11px; display: block; margin-bottom: 6px;">🔴 UBER PENDENTE:</strong>
+                    <div class="linha-acumulado"><span>App:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" readonly></div>
+                    <div class="linha-acumulado"><span>Pix:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" style="color:var(--accent);" oninput="atualizarCalculoRestanteOriginal('uber')"></div>
                     
-                    <div class="saldo-restante-box" id="restante-uber-box">Restante em Espécie para Alocar: R$ <span id="restante-uber">0.00</span></div>
+                    <div class="saldo-restante-box" id="restante-uber-box">Restante: R$ <span id="restante-uber">0.00</span></div>
 
                     <div id="linhas-dinamicas-uber"></div>
-                    <button class="btn-receber-uber" onclick="receberRepasseUber()">💰 Confirmar / Baixar Uber</button>
+                    <button class="btn-receber-uber" onclick="receberRepasseUber()">💰 BAIXAR UBER</button>
                 </div>
-
-                <button class="btn-limpar-pendentes" onclick="zerarCaixasPendentesManualmente()">🧹 Zerar Caixas Pendentes (99 & Uber)</button>
             </div>
+
+            <button class="btn-limpar-pendentes" onclick="zerarCaixasPendentesManualmente()">🧹 ZERAR CAIXAS PENDENTES (99 & UBER)</button>
         </div>
         
-        <!-- RESUMO / HISTÓRICO DE LANÇAMENTOS -->
+        <!-- HISTÓRICO -->
         <div class="historico-card">
             <div class="historico-titulo">
                 <span>📋 Histórico</span>
@@ -208,7 +206,7 @@
         </div>
     </div>
 
-    <!-- ABA GERENCIAR COFRES E DESPESAS -->
+    <!-- ABA GERENCIAR -->
     <div id="gerenciar" class="container">
         <div class="ai-card">
             🤖 <strong>Assistente de Manutenção:</strong>
@@ -288,7 +286,7 @@
         </div>
     </div>
 
-    <!-- ABA GASTOS MENSAIS (CAIXINHAS DINÂMICAS) -->
+    <!-- ABA GASTOS MENSAIS -->
     <div id="gastos" class="container">
         <div class="card">
             <label style="color: var(--accent);">⚙️ GERENCIAR CAIXINHAS</label>
@@ -629,13 +627,13 @@
                 </div>
             `).join('') + `<div class="env" style="grid-column: span 2; background:#112518; border:1px solid #1b4d3e;">💰 LUCRO LÍQUIDO <strong id="card-res-lucro" style="font-size:14px; color:var(--green);">R$ ${(ultimoLancamento.lucro || 0).toFixed(2)}</strong></div>`;
 
-            // RENDERIZAÇÃO AUTOMÁTICA INTELIGENTE: APENAS CAIXINHAS QUE AINDA TÊM PENDÊNCIAS MAIORES QUE ZERO APARECEM
+            // RENDERIZAÇÃO INTELIGENTE: SE JÁ FOI ZERADO/BAIXADO, SOME DA TELA DO LADO ORIGINAL
             document.getElementById('linhas-dinamicas-99').innerHTML = ativos.map(g => {
                 let valItem = (pendente99.itens && pendente99.itens[g.id]) ? pendente99.itens[g.id] : 0;
-                if (valItem <= 0.001) return ''; // Se já foi totalmente baixado pelo lançamento, some da tela para limpar o visual!
+                if (valItem <= 0.001) return ''; 
                 return `
-                    <div class="linha-acumulado" id="linha-99-${g.id}">
-                        <span>${g.emoji} ${g.nome}:</span> 
+                    <div class="linha-acumulado">
+                        <span>${g.emoji}:</span> 
                         <strong style="color:var(--accent);">R$ ${valItem.toFixed(2)}</strong>
                     </div>
                 `;
@@ -643,10 +641,10 @@
 
             document.getElementById('linhas-dinamicas-uber').innerHTML = ativos.map(g => {
                 let valItem = (pendenteUber.itens && pendenteUber.itens[g.id]) ? pendenteUber.itens[g.id] : 0;
-                if (valItem <= 0.001) return ''; // Se já foi totalmente baixado, some da tela!
+                if (valItem <= 0.001) return ''; 
                 return `
-                    <div class="linha-acumulado" id="linha-uber-${g.id}">
-                        <span>${g.emoji} ${g.nome}:</span> 
+                    <div class="linha-acumulado">
+                        <span>${g.emoji}:</span> 
                         <strong style="color:var(--accent);">R$ ${valItem.toFixed(2)}</strong>
                     </div>
                 `;
@@ -681,36 +679,34 @@
             const elLucro = document.getElementById('card-res-lucro');
             if(elLucro) elLucro.innerText = "R$ " + (ultimoLancamento.lucro || 0).toFixed(2);
 
-            atualizarAbatimentoAutomatico('99');
-            atualizarAbatimentoAutomatico('uber');
+            atualizarCalculoRestanteOriginal('99');
+            atualizarCalculoRestanteOriginal('uber');
         }
 
-        // CÁLCULO AUTOMÁTICO DE RESTANTE: ABATE TUDO QUE FOI DISTRIBUÍDO DO DINHEIRO EM MÃOS
-        function atualizarAbatimentoAutomatico(plat) {
+        // CÁLCULO AUTOMÁTICO DO RESTANTE NO LAYOUT ORIGINAL
+        function atualizarCalculoRestanteOriginal(plat) {
             const prefixo = plat === '99' ? '99' : 'ub';
             const dinheiroRecebido = parseFloat(document.getElementById(`edit-${prefixo}-dinheiro`).value) || 0;
             const objPendente = plat === '99' ? pendente99 : pendenteUber;
             
-            let totalDistribuidoPelasCaixinhas = 0;
+            let totalDistribuido = 0;
             const ativos = gastosMensais.filter(g => g.ativo);
-            
             ativos.forEach(g => {
-                totalDistribuidoPelasCaixinhas += (objPendente.itens && objPendente.itens[g.id]) ? objPendente.itens[g.id] : 0;
+                totalDistribuido += (objPendente.itens && objPendente.itens[g.id]) ? objPendente.itens[g.id] : 0;
             });
 
-            // O saldo restante em espécie subtrai automaticamente o total que o sistema distribuiu nas caixinhas
-            let saldoRestanteNaMao = dinheiroRecebido - totalDistribuidoPelasCaixinhas;
+            let saldoRestante = dinheiroRecebido - totalDistribuido;
             const spanRestante = document.getElementById(`restante-${plat}`);
             const boxRestante = document.getElementById(`restante-${plat}-box`);
             
             if(spanRestante) {
-                spanRestante.innerText = Math.abs(saldoRestanteNaMao).toFixed(2);
-                if (saldoRestanteNaMao < 0) {
-                    boxRestante.innerHTML = `Excedido / Troco a acertar: R$ <span style="color:var(--red);">${Math.abs(saldoRestanteNaMao).toFixed(2)}</span>`;
-                } else if (saldoRestanteNaMao === 0) {
-                    boxRestante.innerHTML = `Tudo alocado perfeitamente! <span style="color:var(--green);">R$ 0.00</span>`;
+                spanRestante.innerText = Math.abs(saldoRestante).toFixed(2);
+                if (saldoRestante < 0) {
+                    boxRestante.style.color = "var(--red)";
+                } else if (saldoRestante === 0) {
+                    boxRestante.style.color = "var(--green)";
                 } else {
-                    boxRestante.innerHTML = `Restante em Espécie para Alocar: R$ <span style="color:var(--accent);">${saldoRestanteNaMao.toFixed(2)}</span>`;
+                    boxRestante.style.color = "var(--accent)";
                 }
             }
         }
@@ -756,7 +752,6 @@
             pendente99 = { total: b99, dinheiro: dinheiro99, itens: {} };
             pendenteUber = { total: uber, dinheiro: dinheiroUber, itens: {} };
 
-            // DISTRIBUIÇÃO PROPORCIONAL AUTOMÁTICA NAS CAIXINHAS
             if (b99 > 0) ativos.forEach(g => { pendente99.itens[g.id] = (custosDiaItens[g.id] || 0) * (b99 / bruto); });
             if (uber > 0) ativos.forEach(g => { pendenteUber.itens[g.id] = (custosDiaItens[g.id] || 0) * (uber / bruto); });
 
@@ -780,7 +775,7 @@
             document.getElementById('dinheiro_uber').value = '';
             document.getElementById('km_dia').value = '';
             document.getElementById('bruto').value = '';
-            alert('Lançamento registrado e distribuído automaticamente!');
+            alert('Lançamento registrado e distribuído!');
         }
 
         function baixarCaixas99() {
@@ -793,7 +788,7 @@
             pendente99 = { total: 0, dinheiro: 0, itens: {} };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
-            alert('Caixinhas 99 consolidadas nos cofres oficiais!');
+            alert('Baixa da 99 concluída!');
         }
 
         function receberRepasseUber() {
@@ -806,7 +801,7 @@
             pendenteUber = { total: 0, dinheiro: 0, itens: {} };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
-            alert('Caixinhas Uber consolidadas nos cofres oficiais!');
+            alert('Baixa da Uber concluída!');
         }
 
         function zerarCaixasPendentesManualmente() {
