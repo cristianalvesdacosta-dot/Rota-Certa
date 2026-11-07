@@ -691,7 +691,7 @@
             atualizarValoresDigitados('uber');
         }
 
-        // LÓGICA DO SALDO DECRESCENTE EM ESPÉCIE CORRIGIDA
+        // LÓGICA DO SALDO DECRESCENTE EM ESPÉCIE INTEGRADA E ATIVADA
         function atualizarValoresDigitados(plat) {
             const prefixo = plat === '99' ? '99' : 'ub';
             const dinheiroTotalEmEspecie = parseFloat(document.getElementById(`edit-${prefixo}-dinheiro`).value) || 0;
@@ -747,7 +747,8 @@
             }
 
             salvarNoFirebase();
-            atualizarValoresDigitados(plat);
+            atualizarValoresDigitados(plat); // ATUALIZA O SALDO RESTANTE EM TEMPO REAL NO CLIQUE
+            
             const gerRes = document.getElementById(`ger-res-${idGasto}`);
             if(gerRes) gerRes.innerText = "R$ " + (cofresGerais[idGasto] || 0).toFixed(2);
         }
