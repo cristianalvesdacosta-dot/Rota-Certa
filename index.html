@@ -435,7 +435,6 @@
             renderTable();
             atualizarInterfaceDinamica();
             
-            // VERIFICA SE É SEGUNDA-FEIRA PARA EXIBIR O ALERTA AUTOMÁTICO
             verificarAlertaSegundaFeira();
 
             document.getElementById('sync-status').innerText = "Conectado ao Firebase ☁️";
@@ -447,9 +446,7 @@
 
         function verificarAlertaSegundaFeira() {
             const hoje = new Date();
-            // getDay() retorna 1 para Segunda-Feira
             if (hoje.getDay() === 1) {
-                // Garante que avisa apenas uma vez por sessão/abertura
                 if (!sessionStorage.getItem('alertaSegundaExibido')) {
                     setTimeout(() => {
                         alert("📅 DIA DE ACERTO! Hoje é segunda-feira. Não se esqueça de conferir os repasses da Uber/99 e realizar a baixa e o armazenamento dos saldos nas caixinhas!");
@@ -663,9 +660,9 @@
             document.getElementById('grid-envelopes-ultimo').innerHTML = ativos.map(g => `
                 <div class="env" style="background:${g.cor}22; border: 1px solid ${g.cor};">
                     ${g.emoji} ${g.nome.toUpperCase()} 
-                    <strong id="card-res-${g.id}" style="color:${g.cor};">R$ 0,00</strong>
+                    <strong id="card-res-${g.id}" style="color:${g.cor};">R$ ${(ultimoLancamento.itens && ultimoLancamento.itens[g.id] ? ultimoLancamento.itens[g.id] : 0).toFixed(2)}</strong>
                 </div>
-            `).join('') + `<div class="env" style="grid-column: span 2; background:#1b5e20; border:1px solid var(--green);">💰 LUCRO LÍQUIDO <strong id="card-res-lucro" style="font-size:16px; color:var(--green);">R$ 0,00</strong></div>`;
+            `).join('') + `<div class="env" style="grid-column: span 2; background:#1b5e20; border:1px solid var(--green);">💰 LUCRO LÍQUIDO <strong id="card-res-lucro" style="font-size:16px; color:var(--green);">R$ ${(ultimoLancamento.lucro || 0).toFixed(2)}</strong></div>`;
 
             document.getElementById('linhas-dinamicas-99').innerHTML = ativos.map(g => `
                 <div class="linha-acumulado"><span>${g.emoji} ${g.nome}:</span> <input type="number" id="edit-99-${g.id}" step="0.01"></div>
@@ -692,26 +689,24 @@
         function preencherValoresPendentesNaTela() {
             const ativos = gastosMensais.filter(g => g.ativo);
             
-            document.getElementById('edit-99-tot').value = Math.max(0, pendente99.total - (pendente99.dinheiro || 0)).toFixed(2);
+            document.getElementById('edit-99-tot').value = Math.max(0, (pendente99.total || 0) - (pendente99.dinheiro || 0)).toFixed(2);
             document.getElementById('edit-99-dinheiro').value = (pendente99.dinheiro || 0).toFixed(2);
             ativos.forEach(g => {
                 const inp = document.getElementById(`edit-99-${g.id}`);
                 if(inp) inp.value = (pendente99.itens && pendente99.itens[g.id] ? pendente99.itens[g.id] : 0).toFixed(2);
             });
 
-            document.getElementById('edit-ub-tot').value = Math.max(0, pendenteUber.total - (pendenteUber.dinheiro || 0)).toFixed(2);
+            document.getElementById('edit-ub-tot').value = Math.max(0, (pendenteUber.total || 0) - (pendenteUber.dinheiro || 0)).toFixed(2);
             document.getElementById('edit-ub-dinheiro').value = (pendenteUber.dinheiro || 0).toFixed(2);
             ativos.forEach(g => {
                 const inp = document.getElementById(`edit-ub-${g.id}`);
                 if(inp) inp.value = (pendenteUber.itens && pendenteUber.itens[g.id] ? pendenteUber.itens[g.id] : 0).toFixed(2);
             });
 
-            if(ultimoLancamento.itens) {
-                ativos.forEach(g => {
-                    const el = document.getElementById(`card-res-${g.id}`);
-                    if(el) el.innerText = "R$ " + (ultimoLancamento.itens[g.id] || 0).toFixed(2);
-                });
-            }
+            ativos.forEach(g => {
+                const el = document.getElementById(`card-res-${g.id}`);
+                if(el) el.innerText = "R$ " + (ultimoLancamento.itens && ultimoLancamento.itens[g.id] ? ultimoLancamento.itens[g.id] : 0).toFixed(2);
+            });
             const elLucro = document.getElementById('card-res-lucro');
             if(elLucro) elLucro.innerText = "R$ " + (ultimoLancamento.lucro || 0).toFixed(2);
         }
@@ -778,7 +773,6 @@
                 ativos.forEach(g => { pendenteUber.itens[g.id] = (custosDiaItens[g.id] === undefined ? 0 : custosDiaItens[g.id]) * propUber; });
             }
 
-            // AVALIAÇÃO COM BASE NO SEU CUSTO CONFIGURADO POR KM
             const custoPorKmConfigurado = parseFloat(config.custoTotalAuto) || 0.55;
             let obsTexto = "EXCELENTE";
             if (eficiencia < custoPorKmConfigurado) {
@@ -858,12 +852,13 @@
         }
 
         function zerarCaixasPendentesManualmente() {
-            if(confirm('Zerar caixas pendentes?')) {
+            if(confirm('Zerar caixas pendentes e distribuição visual?')) {
                 pendente99 = { total: 0, dinheiro: 0, itens: {} };
                 pendenteUber = { total: 0, dinheiro: 0, itens: {} };
+                ultimoLancamento = { itens: {}, lucro: 0 };
                 salvarNoFirebase();
                 atualizarInterfaceDinamica();
-                alert('Pendências limpas!');
+                alert('Pendências e telas zeradas!');
             }
         }
 
@@ -875,9 +870,20 @@
                     config.tripGeral = Math.max(0, config.tripGeral - item.km);
                 }
                 db.splice(i, 1);
+                
+                // SE O HISTÓRICO FICAR VAZIO OU APAGAR O LTIMO, ZERA A DISTRIBUIÇÃO VISUAL E PENDENTES
+                if (db.length === 0) {
+                    ultimoLancamento = { itens: {}, lucro: 0 };
+                    pendente99 = { total: 0, dinheiro: 0, itens: {} };
+                    pendenteUber = { total: 0, dinheiro: 0, itens: {} };
+                    document.getElementById('res-eficiencia').innerText = 'R$ 0,00 / km';
+                    document.getElementById('obs').value = '';
+                }
+
                 salvarNoFirebase();
+                atualizarInterfaceDinamica();
                 renderTable();
-                alert('Desfeito!');
+                alert('Lançamento desfeito e caixas atualizadas!');
             }
         }
 
