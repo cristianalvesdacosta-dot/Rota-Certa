@@ -49,7 +49,7 @@
         .btn-baixar-99 { width: 100%; padding: 11px; background: var(--green); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 10px; }
         .btn-receber-uber { width: 100%; padding: 11px; background: var(--accent); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 10px; }
         
-        /* BOTÕES DE CHECK INDIVIDUAL OTIMIZADOS */
+        /* BOTÕES DE CHECK INDIVIDUAL */
         .btn-check { background-color: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid var(--green); padding: 6px 10px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 11px; text-transform: uppercase; transition: 0.2s; white-space: nowrap; }
         .btn-check.checked { background-color: #262626; color: #666; border-color: #444; text-decoration: line-through; }
 
@@ -62,7 +62,7 @@
         .env { padding: 8px 10px; border-radius: 8px; font-size: 10px; text-align: center; border: 1px solid #333; background: #1a1a1a; }
         .env strong { display: block; font-size: 13px; margin-top: 2px; }
         
-        /* PAINÉIS EMPILHADOS VERTICALMENTE (ZERO QUEBRA DE TELA) */
+        /* PAINÉIS EMPILHADOS VERTICALMENTE */
         .painel-vertical-container { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
         .bg-acumulado-99 { background: #11221c; border: 1px solid #1b4d3e; padding: 14px; border-radius: 12px; font-size: 11px; text-align: left; }
         .bg-acumulado-uber { background: #1b242a; border: 1px solid #283c48; padding: 14px; border-radius: 12px; font-size: 11px; text-align: left; }
@@ -71,7 +71,7 @@
         .linha-acumulado span { flex: 1; color: #ddd; font-weight: 600; }
         .linha-acumulado input { width: 80px; padding: 6px; font-size: 12px; margin: 0; background: #111; border: 1px solid #333; color: #fff; text-align: right; border-radius: 6px; }
 
-        .saldo-restante-box { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); padding: 8px; border-radius: 6px; text-align: center; margin: 8px 0; font-size: 10px; color: var(--accent); font-weight: 700; }
+        .saldo-restante-box { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); padding: 8px; border-radius: 6px; text-align: center; margin: 8px 0; font-size: 11px; color: var(--accent); font-weight: 700; }
 
         .toggle-container { display: flex; align-items: center; justify-content: space-between; background: #202020; padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #333; font-size: 11px; }
         .toggle-container input { width: 18px; height: 18px; margin: 0; cursor: pointer; accent-color: var(--green); }
@@ -169,7 +169,7 @@
                 <div id="grid-envelopes-ultimo" class="envelopes" style="margin-top: 4px;"></div>
             </div>
 
-            <!-- PAINÉIS EMPILHADOS VERTICALMENTE (ORGANIZADOS E AMPLOS) -->
+            <!-- PAINÉIS EMPILHADOS VERTICALMENTE -->
             <div class="painel-vertical-container">
                 <!-- PAINEL DA 99 -->
                 <div class="bg-acumulado-99">
@@ -691,25 +691,34 @@
             atualizarValoresDigitados('uber');
         }
 
+        // LÓGICA DO SALDO DECRESCENTE EM ESPÉCIE CORRIGIDA
         function atualizarValoresDigitados(plat) {
             const prefixo = plat === '99' ? '99' : 'ub';
-            const dinheiroInput = parseFloat(document.getElementById(`edit-${prefixo}-dinheiro`).value) || 0;
-            let usado = 0;
+            const dinheiroTotalEmEspecie = parseFloat(document.getElementById(`edit-${prefixo}-dinheiro`).value) || 0;
+            let totalJaBaixadoEspecie = 0;
             const ativos = gastosMensais.filter(g => g.ativo);
             
             ativos.forEach(g => {
                 const btn = document.getElementById(`btn-check-${prefixo}-${g.id}`);
                 if (btn && btn.classList.contains('checked')) {
                     const inp = document.getElementById(`edit-${prefixo}-${g.id}`);
-                    usado += parseFloat(inp ? inp.value : 0) || 0;
+                    totalJaBaixadoEspecie += parseFloat(inp ? inp.value : 0) || 0;
                 }
             });
 
-            let restante = dinheiroInput - usado;
+            let saldoRestanteNaMao = dinheiroTotalEmEspecie - totalJaBaixadoEspecie;
             const spanRestante = document.getElementById(`restante-${plat}`);
+            const boxRestante = document.getElementById(`restante-${plat}-box`);
+            
             if(spanRestante) {
-                spanRestante.innerText = restante.toFixed(2);
-                document.getElementById(`restante-${plat}-box`).style.color = restante < 0 ? 'var(--red)' : 'var(--accent)';
+                spanRestante.innerText = saldoRestanteNaMao.toFixed(2);
+                if (saldoRestanteNaMao < 0) {
+                    boxRestante.style.color = "var(--red)";
+                } else if (saldoRestanteNaMao === 0 && dinheiroTotalEmEspecie > 0) {
+                    boxRestante.style.color = "var(--green)";
+                } else {
+                    boxRestante.style.color = "var(--accent)";
+                }
             }
         }
 
@@ -720,7 +729,7 @@
             const val = parseFloat(inp ? inp.value : 0) || 0;
 
             if (!btn.classList.contains('checked')) {
-                if (val <= 0) { alert('Valor zerado.'); return; }
+                if (val <= 0) { alert('Valor zerado nesta caixinha.'); return; }
                 cofresGerais[idGasto] = (cofresGerais[idGasto] || 0) + val;
                 
                 if (plat === '99' && pendente99.itens && pendente99.itens[idGasto]) {
