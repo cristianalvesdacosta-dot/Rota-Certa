@@ -417,8 +417,14 @@
             measurementId: "G-M6XG8S0KBX"
         };
 
-        firebase.initializeApp(firebaseConfig);
-        // Retornado para o banco oficial correto
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+        } catch(e) {
+            console.error(e);
+        }
+
         const dbRef = firebase.database().ref('motoboy_elite');
 
         let config = {
@@ -527,10 +533,13 @@
             const kmPeriodo = kmMes * fator;
             const custoPeriodo = totalGastosMes * fator;
 
-            document.getElementById('painel-metas-periodo').innerHTML = `
-                🎯 <strong>META (${nomePeriodo.toUpperCase()}):</strong><br>
-                Custos: <strong style="color:var(--accent);">R$ ${custoPeriodo.toFixed(2)}</strong> | KM: <strong style="color:var(--green);">${kmPeriodo.toFixed(1)} km</strong>
-            `;
+            const elMetas = document.getElementById('painel-metas-periodo');
+            if(elMetas) {
+                elMetas.innerHTML = `
+                    🎯 <strong>META (${nomePeriodo.toUpperCase()}):</strong><br>
+                    Custos: <strong style="color:var(--accent);">R$ ${custoPeriodo.toFixed(2)}</strong> | KM: <strong style="color:var(--green);">${kmPeriodo.toFixed(1)} km</strong>
+                `;
+            }
 
             if (auto) {
                 const custoTotal = parseFloat(document.getElementById('cfg_custo_total_auto').value) || 0;
@@ -540,7 +549,8 @@
                     let prop = soma > 0 ? (g.valor / soma) : (1 / ativos.length);
                     html += `<div style="display:flex; justify-content:space-between; margin:2px 0; font-size:10px;"><span>${g.emoji} ${g.nome}</span><strong style="color:var(--green);">R$ ${(custoTotal * prop).toFixed(4)}/km</strong></div>`;
                 });
-                document.getElementById('preview-auto-km').innerHTML = html;
+                const elPreview = document.getElementById('preview-auto-km');
+                if(elPreview) elPreview.innerHTML = html;
             }
         }
 
@@ -614,62 +624,85 @@
 
         function renderPainelGastos() {
             const tbody = document.querySelector('#tabela-gastos tbody');
-            tbody.innerHTML = gastosMensais.map(g => `
-                <tr>
-                    <td><span style="color:${g.cor};">${g.emoji}</span> <strong>${g.nome}</strong></td>
-                    <td>R$ ${g.valor.toFixed(2)}</td>
-                    <td><input type="checkbox" ${g.ativo ? 'checked' : ''} onchange="alternarGastoAtivo(${g.id})" style="width:16px; height:16px; accent-color:var(--green);"></td>
-                    <td><button class="btn-del" onclick="removerGasto(${g.id})">✕</button></td>
-                </tr>
-            `).join('');
+            if(tbody) {
+                tbody.innerHTML = gastosMensais.map(g => `
+                    <tr>
+                        <td><span style="color:${g.cor};">${g.emoji}</span> <strong>${g.nome}</strong></td>
+                        <td>R$ ${g.valor.toFixed(2)}</td>
+                        <td><input type="checkbox" ${g.ativo ? 'checked' : ''} onchange="alternarGastoAtivo(${g.id})" style="width:16px; height:16px; accent-color:var(--green);"></td>
+                        <td><button class="btn-del" onclick="removerGasto(${g.id})">✕</button></td>
+                    </tr>
+                `).join('');
+            }
         }
 
         function atualizarInterfaceDinamica() {
             const ativos = gastosMensais.filter(g => g.ativo);
 
-            document.getElementById('grid-envelopes-ultimo').innerHTML = ativos.map(g => `
-                <div class="env" style="border-left: 3px solid ${g.cor};">
-                    ${g.emoji} ${g.nome.toUpperCase()} 
-                    <strong id="card-res-${g.id}" style="color:${g.cor};">R$ ${(ultimoLancamento.itens && ultimoLancamento.itens[g.id] ? ultimoLancamento.itens[g.id] : 0).toFixed(2)}</strong>
-                </div>
-            `).join('') + `<div class="env" style="grid-column: span 2; background:#112518; border:1px solid #1b4d3e;">💰 LUCRO LÍQUIDO <strong id="card-res-lucro" style="font-size:14px; color:var(--green);">R$ ${(ultimoLancamento.lucro || 0).toFixed(2)}</strong></div>`;
+            const gridEnv = document.getElementById('grid-envelopes-ultimo');
+            if(gridEnv) {
+                gridEnv.innerHTML = ativos.map(g => `
+                    <div class="env" style="border-left: 3px solid ${g.cor};">
+                        ${g.emoji} ${g.nome.toUpperCase()} 
+                        <strong id="card-res-${g.id}" style="color:${g.cor};">R$ ${(ultimoLancamento.itens && ultimoLancamento.itens[g.id] ? ultimoLancamento.itens[g.id] : 0).toFixed(2)}</strong>
+                    </div>
+                `).join('') + `<div class="env" style="grid-column: span 2; background:#112518; border:1px solid #1b4d3e;">💰 LUCRO LÍQUIDO <strong id="card-res-lucro" style="font-size:14px; color:var(--green);">R$ ${(ultimoLancamento.lucro || 0).toFixed(2)}</strong></div>`;
+            }
 
-            document.getElementById('linhas-dinamicas-99').innerHTML = ativos.map(g => `
-                <div class="linha-acumulado">
-                    <span>${g.emoji} ${g.nome}:</span> 
-                    <input type="number" id="edit-99-${g.id}" step="0.01" value="${(pendente99.itens && pendente99.itens[g.id] ? pendente99.itens[g.id] : 0).toFixed(2)}" readonly style="background:#111;">
-                    <button class="btn-check" id="btn-check-99-${g.id}" onclick="darCheckItem('99', ${g.id})">✔ Baixa</button>
-                </div>
-            `).join('');
+            const lin99 = document.getElementById('linhas-dinamicas-99');
+            if(lin99) {
+                lin99.innerHTML = ativos.map(g => `
+                    <div class="linha-acumulado">
+                        <span>${g.emoji} ${g.nome}:</span> 
+                        <input type="number" id="edit-99-${g.id}" step="0.01" value="${(pendente99.itens && pendente99.itens[g.id] ? pendente99.itens[g.id] : 0).toFixed(2)}" readonly style="background:#111;">
+                        <button class="btn-check" id="btn-check-99-${g.id}" onclick="darCheckItem('99', ${g.id})">✔ Baixa</button>
+                    </div>
+                `).join('');
+            }
 
-            document.getElementById('linhas-dinamicas-uber').innerHTML = ativos.map(g => `
-                <div class="linha-acumulado">
-                    <span>${g.emoji} ${g.nome}:</span> 
-                    <input type="number" id="edit-ub-${g.id}" step="0.01" value="${(pendenteUber.itens && pendenteUber.itens[g.id] ? pendenteUber.itens[g.id] : 0).toFixed(2)}" readonly style="background:#111;">
-                    <button class="btn-check" id="btn-check-ub-${g.id}" onclick="darCheckItem('uber', ${g.id})">✔ Baixa</button>
-                </div>
-            `).join('');
+            const linUb = document.getElementById('linhas-dinamicas-uber');
+            if(linUb) {
+                linUb.innerHTML = ativos.map(g => `
+                    <div class="linha-acumulado">
+                        <span>${g.emoji} ${g.nome}:</span> 
+                        <input type="number" id="edit-ub-${g.id}" step="0.01" value="${(pendenteUber.itens && pendenteUber.itens[g.id] ? pendenteUber.itens[g.id] : 0).toFixed(2)}" readonly style="background:#111;">
+                        <button class="btn-check" id="btn-check-ub-${g.id}" onclick="darCheckItem('uber', ${g.id})">✔ Baixa</button>
+                    </div>
+                `).join('');
+            }
 
-            document.getElementById('grid-cofres-geral').innerHTML = ativos.map(g => `
-                <div class="env" style="border-left: 3px solid ${g.cor};">
-                    ${g.emoji} ${g.nome.toUpperCase()} 
-                    <strong id="ger-res-${g.id}" style="color:${g.cor};">R$ ${(cofresGerais[g.id] || 0).toFixed(2)}</strong>
-                </div>
-            `).join('');
+            const gridCofres = document.getElementById('grid-cofres-geral');
+            if(gridCofres) {
+                gridCofres.innerHTML = ativos.map(g => `
+                    <div class="env" style="border-left: 3px solid ${g.cor};">
+                        ${g.emoji} ${g.nome.toUpperCase()} 
+                        <strong id="ger-res-${g.id}" style="color:${g.cor};">R$ ${(cofresGerais[g.id] || 0).toFixed(2)}</strong>
+                    </div>
+                `).join('');
+            }
 
-            document.getElementById('saida_cofre').innerHTML = ativos.map(g => `<option value="${g.id}">${g.emoji} ${g.nome}</option>`).join('');
-            document.getElementById('conta_cofre').innerHTML = ativos.map(g => `<option value="${g.id}">${g.emoji} ${g.nome}</option>`).join('');
+            const saidaCofre = document.getElementById('saida_cofre');
+            if(saidaCofre) saidaCofre.innerHTML = ativos.map(g => `<option value="${g.id}">${g.emoji} ${g.nome}</option>`).join('');
+            
+            const contaCofre = document.getElementById('conta_cofre');
+            if(contaCofre) contaCofre.innerHTML = ativos.map(g => `<option value="${g.id}">${g.emoji} ${g.nome}</option>`).join('');
 
             preencherValoresPendentesNaTela();
             if(document.getElementById('cfg_modo_auto')) atualizarPreviewConfig();
         }
 
         function preencherValoresPendentesNaTela() {
-            document.getElementById('edit-99-tot').value = (pendente99.totalBrutoAcumulado || 0).toFixed(2);
-            document.getElementById('edit-99-dinheiro').value = (pendente99.dinheiro || 0).toFixed(2);
+            const e99Tot = document.getElementById('edit-99-tot');
+            if(e99Tot) e99Tot.value = (pendente99.totalBrutoAcumulado || 0).toFixed(2);
+            
+            const e99Din = document.getElementById('edit-99-dinheiro');
+            if(e99Din) e99Din.value = (pendente99.dinheiro || 0).toFixed(2);
 
-            document.getElementById('edit-ub-tot').value = (pendenteUber.totalBrutoAcumulado || 0).toFixed(2);
-            document.getElementById('edit-ub-dinheiro').value = (pendenteUber.dinheiro || 0).toFixed(2);
+            const eUbTot = document.getElementById('edit-ub-tot');
+            if(eUbTot) eUbTot.value = (pendenteUber.totalBrutoAcumulado || 0).toFixed(2);
+
+            const eUbDin = document.getElementById('edit-ub-dinheiro');
+            if(eUbDin) eUbDin.value = (pendenteUber.dinheiro || 0).toFixed(2);
 
             const ativos = gastosMensais.filter(g => g.ativo);
             ativos.forEach(g => {
@@ -803,7 +836,6 @@
             if (!pendente99.itens) pendente99.itens = {};
             if (!pendenteUber.itens) pendenteUber.itens = {};
 
-            // ACUMULA OS TOTAIS BRUTOS SEM SOBRESCREVER OS ANTERIORES
             pendente99.totalBrutoAcumulado = (pendente99.totalBrutoAcumulado || 0) + b99;
             pendenteUber.totalBrutoAcumulado = (pendenteUber.totalBrutoAcumulado || 0) + uber;
 
@@ -898,20 +930,23 @@
 
         function renderTable() {
             const tbody = document.querySelector('#tabela tbody');
-            tbody.innerHTML = db.length ? db.map((item, i) => {
-                let badgeClass = item.obs === 'RUIM' ? 'badge-ruim' : (item.obs === 'MÉDIO' ? 'badge-medio' : 'badge-excelente');
-                return `<tr>
-                    <td><strong>${item.data}</strong></td>
-                    <td style="color:var(--green); font-weight:700;">R$ ${item.bruto}</td>
-                    <td>R$ ${item.eficiencia}</td>
-                    <td><span class="badge-obs ${badgeClass}">${item.obs}</span></td>
-                    <td><button class="btn-del" onclick="deletarItem(${i})">✕</button></td>
-                </tr>`;
-            }).join('') : '<tr><td colspan="5" style="color:var(--text-muted); padding: 12px;">Nenhum lançamento.</td></tr>';
+            if(tbody) {
+                tbody.innerHTML = db.length ? db.map((item, i) => {
+                    let badgeClass = item.obs === 'RUIM' ? 'badge-ruim' : (item.obs === 'MÉDIO' ? 'badge-medio' : 'badge-excelente');
+                    return `<tr>
+                        <td><strong>${item.data}</strong></td>
+                        <td style="color:var(--green); font-weight:700;">R$ ${item.bruto}</td>
+                        <td>R$ ${item.eficiencia}</td>
+                        <td><span class="badge-obs ${badgeClass}">${item.obs}</span></td>
+                        <td><button class="btn-del" onclick="deletarItem(${i})">✕</button></td>
+                    </tr>`;
+                }).join('') : '<tr><td colspan="5" style="color:var(--text-muted); padding: 12px;">Nenhum lançamento.</td></tr>';
+            }
         }
 
         function mudarTipoContaForm() {
-            document.getElementById('bloco_qtd_parcelas').style.display = (document.getElementById('conta_tipo').value === 'parcelada') ? 'block' : 'none';
+            const bloco = document.getElementById('bloco_qtd_parcelas');
+            if(bloco) bloco.style.display = (document.getElementById('conta_tipo').value === 'parcelada') ? 'block' : 'none';
         }
 
         function lançarSaidaCofre() {
@@ -990,36 +1025,41 @@
         function renderGerenciador() {
             const tbodyContas = document.querySelector('#tabela-contas tbody');
             const pendentes = contasCadastradas.filter(x => !x.paga);
-            tbodyContas.innerHTML = pendentes.length ? pendentes.map(c => {
-                const gInfo = gastosMensais.find(x => x.id == c.cofreId);
-                return `<tr>
-                    <td><strong>${c.nome}</strong></td>
-                    <td>${gInfo ? gInfo.emoji : '-'}</td>
-                    <td>R$ ${c.valor.toFixed(2)}</td>
-                    <td>Dia ${c.vencimento}</td>
-                    <td>
-                        <button onclick="pagarConta(${c.id})" style="background:var(--green); border:none; padding:3px 6px; border-radius:4px; font-weight:700; cursor:pointer; font-size:9px;">Pagar</button>
-                        <button onclick="excluirConta(${c.id})" style="background:var(--red); color:#fff; border:none; padding:3px 6px; border-radius:4px; font-weight:700; cursor:pointer; font-size:9px; margin-top:2px;">✕</button>
-                    </td>
-                </tr>`;
-            }).join('') : '<tr><td colspan="5" style="color:var(--text-muted);">Nenhuma conta pendente.</td></tr>';
+            if(tbodyContas) {
+                tbodyContas.innerHTML = pendentes.length ? pendentes.map(c => {
+                    const gInfo = gastosMensais.find(x => x.id == c.cofreId);
+                    return `<tr>
+                        <td><strong>${c.nome}</strong></td>
+                        <td>${gInfo ? gInfo.emoji : '-'}</td>
+                        <td>R$ ${c.valor.toFixed(2)}</td>
+                        <td>Dia ${c.vencimento}</td>
+                        <td>
+                            <button onclick="pagarConta(${c.id})" style="background:var(--green); border:none; padding:3px 6px; border-radius:4px; font-weight:700; cursor:pointer; font-size:9px;">Pagar</button>
+                            <button onclick="excluirConta(${c.id})" style="background:var(--red); color:#fff; border:none; padding:3px 6px; border-radius:4px; font-weight:700; cursor:pointer; font-size:9px; margin-top:2px;">✕</button>
+                        </td>
+                    </tr>`;
+                }).join('') : '<tr><td colspan="5" style="color:var(--text-muted);">Nenhuma conta pendente.</td></tr>';
+            }
 
             const tbodySaidas = document.querySelector('#tabela-saidas tbody');
-            tbodySaidas.innerHTML = historicoSaidas.length ? historicoSaidas.slice(0, 8).map(s => `
-                <tr>
-                    <td>${s.data}</td>
-                    <td>${s.cofreNome}</td>
-                    <td>${s.desc}</td>
-                    <td style="color:var(--red);">R$ ${s.valor.toFixed(2)}</td>
-                    <td><button class="btn-del" onclick="deletarSaida(${s.id})">✕</button></td>
-                </tr>
-            `).join('') : '<tr><td colspan="5" style="color:var(--text-muted);">Sem retiradas.</td></tr>';
+            if(tbodySaidas) {
+                tbodySaidas.innerHTML = historicoSaidas.length ? historicoSaidas.slice(0, 8).map(s => `
+                    <tr>
+                        <td>${s.data}</td>
+                        <td>${s.cofreNome}</td>
+                        <td>${s.desc}</td>
+                        <td style="color:var(--red);">R$ ${s.valor.toFixed(2)}</td>
+                        <td><button class="btn-del" onclick="deletarSaida(${s.id})">✕</button></td>
+                    </tr>
+                `).join('') : '<tr><td colspan="5" style="color:var(--text-muted);">Sem retiradas.</td></tr>';
+            }
 
             gerarDiagnosticoIA();
         }
 
         function gerarDiagnosticoIA() {
             const aiElem = document.getElementById('ai-feedback');
+            if(!aiElem) return;
             const metaOleo = parseFloat(config.metaOleo) || 3000;
             const tripOleo = parseFloat(config.tripOleo) || 0;
             const tripGeral = parseFloat(config.tripGeral) || 0;
@@ -1046,11 +1086,11 @@
             document.body.appendChild(a); a.click(); a.remove();
         }
 
-        function importarBackupClick() { document.getElementById('fileInput').click(); }
+        function importarBackupClick() { const el = document.getElementById('fileInput'); if(el) el.click(); }
 
         function importarBackup(event) {
             const file = event.target.files[0];
-            id(!file) return;
+            if(!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
