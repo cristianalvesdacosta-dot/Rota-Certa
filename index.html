@@ -418,7 +418,8 @@
         };
 
         firebase.initializeApp(firebaseConfig);
-        const dbRef = firebase.database().ref('motoboy_elite');
+        // Nó alterado para v2 para evitar cache travado do Firebase antigo
+        const dbRef = firebase.database().ref('motoboy_elite_v2');
 
         let config = {
             motoModelo: "Yamaha Lander 250",
