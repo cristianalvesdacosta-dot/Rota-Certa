@@ -69,7 +69,7 @@
         
         .linha-acumulado { display: flex; justify-content: space-between; align-items: center; margin: 6px 0; background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 8px; font-size: 11px; gap: 8px; }
         .linha-acumulado span { flex: 1; color: #ddd; font-weight: 600; }
-        .linha-acumulado input { width: 80px; padding: 6px; font-size: 12px; margin: 0; background: #111; border: 1px solid #333; color: #fff; text-align: right; border-radius: 6px; }
+        .linha-acumulado input { width: 90px; padding: 6px; font-size: 12px; margin: 0; background: #111; border: 1px solid #333; color: #fff; text-align: right; border-radius: 6px; }
 
         .saldo-restante-box { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); padding: 8px; border-radius: 6px; text-align: center; margin: 8px 0; font-size: 11px; color: var(--accent); font-weight: 700; }
 
@@ -174,8 +174,8 @@
                 <!-- PAINEL DA 99 -->
                 <div class="bg-acumulado-99">
                     <strong style="color: var(--green); font-size: 12px; display: block; margin-bottom: 8px;">💵 CAIXINHAS 99 (PENDENTE)</strong>
-                    <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);" oninput="calcularEspeciePorDiferenca('99')"></div>
-                    <div class="linha-acumulado"><span>💵 Espécie:</span> <input type="number" id="edit-99-dinheiro" step="0.01" style="color:var(--accent);" readonly style="background:#111;"></div>
+                    <div class="linha-acumulado"><span>Saldo App 99:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);" placeholder="Digite saldo app" oninput="calcularEspeciePorDiferenca('99')"></div>
+                    <div class="linha-acumulado"><span>💵 Espécie Calc:</span> <input type="number" id="edit-99-dinheiro" step="0.01" style="color:var(--accent);" readonly style="background:#111;"></div>
                     
                     <div class="saldo-restante-box" id="restante-99-box">Restante Espécie: R$ <span id="restante-99">0.00</span></div>
 
@@ -186,8 +186,8 @@
                 <!-- PAINEL DA UBER -->
                 <div class="bg-acumulado-uber">
                     <strong style="color: var(--accent); font-size: 12px; display: block; margin-bottom: 8px;">📅 CAIXINHAS UBER (PENDENTE)</strong>
-                    <div class="linha-acumulado"><span>Saldo App:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" oninput="calcularEspeciePorDiferenca('uber')"></div>
-                    <div class="linha-acumulado"><span>💵 Esp/Pix:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" style="color:var(--accent);" readonly style="background:#111;"></div>
+                    <div class="linha-acumulado"><span>Saldo App Uber:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" placeholder="Digite saldo app" oninput="calcularEspeciePorDiferenca('uber')"></div>
+                    <div class="linha-acumulado"><span>💵 Esp/Pix Calc:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" style="color:var(--accent);" readonly style="background:#111;"></div>
                     
                     <div class="saldo-restante-box" id="restante-uber-box">Restante Espécie: R$ <span id="restante-uber">0.00</span></div>
 
@@ -418,8 +418,8 @@
         };
 
         firebase.initializeApp(firebaseConfig);
-        // Nó alterado para v2 para evitar cache travado do Firebase antigo
-        const dbRef = firebase.database().ref('motoboy_elite_v2');
+        // Retornado para o banco oficial correto
+        const dbRef = firebase.database().ref('motoboy_elite');
 
         let config = {
             motoModelo: "Yamaha Lander 250",
@@ -690,7 +690,7 @@
             atualizarValoresDigitados('uber');
         }
 
-        // CÁLCULO INTELIGENTE POR DIFERENÇA (QUANDO VOCÊ DIGITA O SALDO REAL DA CARTEIRA DO APP)
+        // CÁLCULO INTELIGENTE POR DIFERENÇA
         function calcularEspeciePorDiferenca(plat) {
             const prefixo = plat === '99' ? '99' : 'ub';
             const pendenteObj = plat === '99' ? pendente99 : pendenteUber;
@@ -1050,7 +1050,7 @@
 
         function importarBackup(event) {
             const file = event.target.files[0];
-            if(!file) return;
+            id(!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
