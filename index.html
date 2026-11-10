@@ -577,7 +577,7 @@
                     return `
                         <div class="linha-acumulado">
                             <span>${g.emoji} ${g.nome}:</span> 
-                            <input type="number" id="edit-99-${g.id}" step="0.01" value="${valItem.toFixed(2)}" readonly>
+                            <input type="number" id="edit-99-${g.id}" step="0.01" value="${valItem.toFixed(2)}">
                             <button class="btn-check" onclick="darCheckItem('99', ${g.id})">✔ Baixa</button>
                         </div>
                     `;
@@ -591,7 +591,7 @@
                     return `
                         <div class="linha-acumulado">
                             <span>${g.emoji} ${g.nome}:</span> 
-                            <input type="number" id="edit-ub-${g.id}" step="0.01" value="${valItem.toFixed(2)}" readonly>
+                            <input type="number" id="edit-ub-${g.id}" step="0.01" value="${valItem.toFixed(2)}">
                             <button class="btn-check" onclick="darCheckItem('uber', ${g.id})">✔ Baixa</button>
                         </div>
                     `;
@@ -654,28 +654,31 @@
             }
         }
 
+        // DAR BAIXA PARCIAL (INDIVIDUAL) OU ABATER VALOR DIGITADO
         function darCheckItem(plat, idGasto) {
             const prefixo = plat === '99' ? '99' : 'ub';
             const inp = document.getElementById(`edit-${prefixo}-${idGasto}`);
-            const val = parseFloat(inp ? inp.value : 0) || 0;
+            const valInformado = parseFloat(inp ? inp.value : 0) || 0;
 
-            if (val <= 0) { alert('Valor zerado nesta caixinha.'); return; }
+            if (valInformado <= 0) { alert('Valor zerado ou inválido nesta caixinha.'); return; }
 
-            cofresGerais[idGasto] = (cofresGerais[idGasto] || 0) + val;
+            // Manda para o cofre oficial
+            cofresGerais[idGasto] = (cofresGerais[idGasto] || 0) + valInformado;
 
+            // Subtrai do acumulado pendente da plataforma (abatimento inteligente)
             if (plat === '99') {
                 if (pendente99.itens && pendente99.itens[idGasto]) {
-                    pendente99.itens[idGasto] = 0;
+                    pendente99.itens[idGasto] = Math.max(0, pendente99.itens[idGasto] - valInformado);
                 }
             } else {
                 if (pendenteUber.itens && pendenteUber.itens[idGasto]) {
-                    pendenteUber.itens[idGasto] = 0;
+                    pendenteUber.itens[idGasto] = Math.max(0, pendenteUber.itens[idGasto] - valInformado);
                 }
             }
 
             salvarNoFirebase();
             atualizarInterfaceDinamica();
-            alert('Baixa efetuada e valor enviado para o cofre!');
+            alert('Baixa parcial efetuada e abatida com sucesso!');
         }
 
         function calcularBrutoTotal() {
@@ -786,7 +789,7 @@
             pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
-            alert('Baixa da 99 concluída!');
+            alert('Baixa da 99 concluída e zerada!');
         }
 
         function receberRepasseUber() {
@@ -799,17 +802,17 @@
             pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
-            alert('Baixa da Uber concluída!');
+            alert('Baixa da Uber concluída e zerada!');
         }
 
         function zerarCaixasPendentesManualmente() {
-            if(confirm('Zerar pendências?')) {
+            if(confirm('Zerar todas as pendências?')) {
                 pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
                 pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
                 ultimoLancamento = { itens: {}, lucro: 0 };
                 salvarNoFirebase();
                 atualizarInterfaceDinamica();
-                alert('Pendências zeradas!');
+                alert('Pendências zeradas com sucesso!');
             }
         }
 
