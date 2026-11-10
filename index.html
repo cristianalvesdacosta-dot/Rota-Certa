@@ -424,6 +424,7 @@
             carregarConfigNaTela();
             renderPainelGastos();
             renderTable();
+            renderGerenciador();
             atualizarInterfaceDinamica();
 
             document.getElementById('sync-status').innerText = "Conectado ☁️";
@@ -574,7 +575,7 @@
             if(lin99) {
                 lin99.innerHTML = ativos.map(g => {
                     let valItem = (pendente99.itens && pendente99.itens[g.id] ? pendente99.itens[g.id] : 0);
-                    if (valItem <= 0.005) return ''; // Se zerou ou baixou, some da tela para ficar intuitivo!
+                    if (valItem <= 0.005) return ''; 
                     return `
                         <div class="linha-acumulado">
                             <span>${g.emoji} ${g.nome}:</span> 
@@ -589,7 +590,7 @@
             if(linUb) {
                 linUb.innerHTML = ativos.map(g => {
                     let valItem = (pendenteUber.itens && pendenteUber.itens[g.id] ? pendenteUber.itens[g.id] : 0);
-                    if (valItem <= 0.005) return ''; // Se zerou ou baixou, some da tela!
+                    if (valItem <= 0.005) return ''; 
                     return `
                         <div class="linha-acumulado">
                             <span>${g.emoji} ${g.nome}:</span> 
@@ -641,14 +642,6 @@
             const dinheiroTotalEmEspecie = parseFloat(document.getElementById(`edit-${prefixo}-dinheiro`).value) || 0;
             
             let totalJaBaixadoEspecie = 0;
-            const ativos = gastosMensais.filter(g => g.ativo);
-            
-            ativos.forEach(g => {
-                const inp = document.getElementById(`edit-${prefixo}-${g.id}`);
-                const valorCaixa = parseFloat(inp ? inp.value : 0) || 0;
-                // Se o input sumiu por ter sido baixado, consideramos que o item foi liquidado
-            });
-
             let saldoRestanteNaMao = dinheiroTotalEmEspecie - totalJaBaixadoEspecie;
             const spanRestante = document.getElementById(`restante-${plat}`);
             const boxRestante = document.getElementById(`restante-${plat}-box`);
@@ -672,10 +665,8 @@
 
             if (val <= 0) { alert('Valor zerado nesta caixinha.'); return; }
 
-            // Adiciona direto ao cofre oficial
             cofresGerais[idGasto] = (cofresGerais[idGasto] || 0) + val;
 
-            // Zera o item pendente específico para ele sumir da tela instantaneamente
             if (plat === '99') {
                 if (pendente99.itens && pendente99.itens[idGasto]) {
                     pendente99.itens[idGasto] = 0;
@@ -963,6 +954,14 @@
                         <td><button class="btn-del" onclick="deletarSaida(${s.id})">✕</button></td>
                     </tr>
                 `).join('') : '<tr><td colspan="5" style="color:var(--text-muted);">Sem retiradas.</td></tr>';
+            }
+
+            // Renderiza comparativo mensal
+            const compContainer = document.getElementById('comparativo-conteudo');
+            if(compContainer) {
+                let totalBrutoMes = db.reduce((acc, item) => acc + parseFloat(item.bruto || 0), 0);
+                let totalKmMes = db.reduce((acc, item) => acc + parseFloat(item.km || 0), 0);
+                compContainer.innerHTML = `📅 Total Faturado no Histórico: <strong style="color:var(--green);">R$ ${totalBrutoMes.toFixed(2)}</strong><br>🏍️ Total KM Rodado: <strong style="color:var(--accent);">${totalKmMes.toFixed(1)} km</strong>`;
             }
 
             gerarDiagnosticoIA();
