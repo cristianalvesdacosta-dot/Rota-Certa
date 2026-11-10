@@ -48,7 +48,6 @@
         .btn-receber-uber { width: 100%; padding: 11px; background: var(--accent); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 10px; }
         
         .btn-check { background-color: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid var(--green); padding: 6px 10px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 11px; text-transform: uppercase; transition: 0.2s; white-space: nowrap; }
-        .btn-check.checked { background-color: #262626; color: #666; border-color: #444; text-decoration: line-through; }
 
         .metric-box { display: flex; justify-content: space-between; align-items: center; background: #202020; padding: 10px 14px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #2a2a2a; }
         .metric-val { color: var(--green); font-weight: 700; font-size: 15px; }
@@ -575,12 +574,11 @@
             if(lin99) {
                 lin99.innerHTML = ativos.map(g => {
                     let valItem = (pendente99.itens && pendente99.itens[g.id] ? pendente99.itens[g.id] : 0);
-                    if (valItem <= 0.005) return ''; 
                     return `
                         <div class="linha-acumulado">
                             <span>${g.emoji} ${g.nome}:</span> 
-                            <input type="number" id="edit-99-${g.id}" step="0.01" value="${valItem.toFixed(2)}" readonly style="background:#111;">
-                            <button class="btn-check" id="btn-check-99-${g.id}" onclick="darCheckItem('99', ${g.id})">✔ Baixa</button>
+                            <input type="number" id="edit-99-${g.id}" step="0.01" value="${valItem.toFixed(2)}" readonly>
+                            <button class="btn-check" onclick="darCheckItem('99', ${g.id})">✔ Baixa</button>
                         </div>
                     `;
                 }).join('');
@@ -590,12 +588,11 @@
             if(linUb) {
                 linUb.innerHTML = ativos.map(g => {
                     let valItem = (pendenteUber.itens && pendenteUber.itens[g.id] ? pendenteUber.itens[g.id] : 0);
-                    if (valItem <= 0.005) return ''; 
                     return `
                         <div class="linha-acumulado">
                             <span>${g.emoji} ${g.nome}:</span> 
-                            <input type="number" id="edit-ub-${g.id}" step="0.01" value="${valItem.toFixed(2)}" readonly style="background:#111;">
-                            <button class="btn-check" id="btn-check-ub-${g.id}" onclick="darCheckItem('uber', ${g.id})">✔ Baixa</button>
+                            <input type="number" id="edit-ub-${g.id}" step="0.01" value="${valItem.toFixed(2)}" readonly>
+                            <button class="btn-check" onclick="darCheckItem('uber', ${g.id})">✔ Baixa</button>
                         </div>
                     `;
                 }).join('');
@@ -641,8 +638,7 @@
             const prefixo = plat === '99' ? '99' : 'ub';
             const dinheiroTotalEmEspecie = parseFloat(document.getElementById(`edit-${prefixo}-dinheiro`).value) || 0;
             
-            let totalJaBaixadoEspecie = 0;
-            let saldoRestanteNaMao = dinheiroTotalEmEspecie - totalJaBaixadoEspecie;
+            let saldoRestanteNaMao = dinheiroTotalEmEspecie;
             const spanRestante = document.getElementById(`restante-${plat}`);
             const boxRestante = document.getElementById(`restante-${plat}-box`);
             
