@@ -116,8 +116,8 @@
                     <input type="number" id="bruto_99" step="0.01" placeholder="0,00" oninput="calcularBrutoTotal()">
                 </div>
                 <div>
-                    <label>Dinheiro 99 (Opcional)</label>
-                    <input type="number" id="dinheiro_99" step="0.01" placeholder="0,00">
+                    <label>Saldo Carteira 99 Hoje</label>
+                    <input type="number" id="carteira_99_hoje" step="0.01" placeholder="Ex: 22.50">
                 </div>
             </div>
 
@@ -127,8 +127,8 @@
                     <input type="number" id="bruto_uber" step="0.01" placeholder="0,00" oninput="calcularBrutoTotal()">
                 </div>
                 <div>
-                    <label>Esp/Pix Uber (Opcional)</label>
-                    <input type="number" id="dinheiro_uber" step="0.01" placeholder="0,00">
+                    <label>Saldo Carteira Uber Hoje</label>
+                    <input type="number" id="carteira_uber_hoje" step="0.01" placeholder="Ex: 52.00">
                 </div>
             </div>
 
@@ -164,8 +164,8 @@
                 <!-- PAINEL DA 99 -->
                 <div class="bg-acumulado-99">
                     <strong style="color: var(--green); font-size: 12px; display: block; margin-bottom: 8px;">💵 CAIXINHAS 99 (PENDENTE)</strong>
-                    <div class="linha-acumulado"><span>Saldo App 99:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);" placeholder="Digite saldo app" oninput="calcularEspeciePorDiferenca('99')"></div>
-                    <div class="linha-acumulado"><span>💵 Espécie Calc:</span> <input type="number" id="edit-99-dinheiro" step="0.01" readonly style="color:var(--accent); background:#111; border:1px dashed #444; font-weight:bold;"></div>
+                    <div class="linha-acumulado"><span>Total Bruto Acumulado:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);" readonly style="background:#111;"></div>
+                    <div class="linha-acumulado"><span>💵 Espécie / PIX:</span> <input type="number" id="edit-99-dinheiro" step="0.01" readonly style="color:var(--accent); background:#111; font-weight:bold;"></div>
                     
                     <div class="saldo-restante-box" id="restante-99-box">Restante Espécie: R$ <span id="restante-99">0.00</span></div>
 
@@ -176,8 +176,8 @@
                 <!-- PAINEL DA UBER -->
                 <div class="bg-acumulado-uber">
                     <strong style="color: var(--accent); font-size: 12px; display: block; margin-bottom: 8px;">📅 CAIXINHAS UBER (PENDENTE)</strong>
-                    <div class="linha-acumulado"><span>Saldo App Uber:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" placeholder="Digite saldo app" oninput="calcularEspeciePorDiferenca('uber')"></div>
-                    <div class="linha-acumulado"><span>💵 Esp/Pix Calc:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" readonly style="color:var(--accent); background:#111; border:1px dashed #444; font-weight:bold;"></div>
+                    <div class="linha-acumulado"><span>Total Bruto Acumulado:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" readonly style="background:#111;"></div>
+                    <div class="linha-acumulado"><span>💵 Esp / PIX Calc:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" readonly style="color:var(--accent); background:#111; font-weight:bold;"></div>
                     
                     <div class="saldo-restante-box" id="restante-uber-box">Restante Espécie: R$ <span id="restante-uber">0.00</span></div>
 
@@ -302,6 +302,19 @@
     <!-- ABA CONFIGURAÇÕES -->
     <div id="config" class="container">
         <div class="card">
+            <label style="color: var(--accent);">🏍️ SALDO INICIAL NA CARTEIRA (APPS)</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <label>Saldo Inicial Uber (R$)</label>
+                    <input type="number" id="cfg_saldo_uber" step="0.01" placeholder="0,00">
+                </div>
+                <div>
+                    <label>Saldo Inicial 99 (R$)</label>
+                    <input type="number" id="cfg_saldo_99" step="0.01" placeholder="0,00">
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #222; margin: 15px 0;">
             <label style="color: var(--accent);">🏍️ VEÍCULO & METAS</label>
             <label>Modelo da Moto</label>
             <input type="text" id="cfg_moto_modelo" placeholder="Yamaha Lander 250">
@@ -379,7 +392,7 @@
         let config = {
             motoModelo: "Yamaha Lander 250", kmLitro: 30, precoLitro: 5.89, kmMes: 3000,
             periodoMeta: "mes", modoAuto: true, custoTotalAuto: 0.55, taxasManuais: {},
-            metaOleo: 3000, tripOleo: 0, tripGeral: 0
+            metaOleo: 3000, tripOleo: 0, tripGeral: 0, saldoInicialUber: 0, saldoInicial99: 0
         };
 
         let gastosMensais = [
@@ -391,8 +404,8 @@
 
         let db = [];
         let cofresGerais = { 1: 0, 2: 0, 3: 0, 4: 0 };
-        let pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {} };
-        let pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {} };
+        let pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
+        let pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
         let ultimoLancamento = { itens: {}, lucro: 0 };
         let contasCadastradas = [];
         let historicoSaidas = [];
@@ -437,6 +450,8 @@
             document.getElementById('cfg_meta_oleo').value = config.metaOleo || 3000;
             document.getElementById('cfg_trip_oleo').value = config.tripOleo || 0;
             document.getElementById('cfg_trip_geral').value = config.tripGeral || 0;
+            document.getElementById('cfg_saldo_uber').value = config.saldoInicialUber || 0;
+            document.getElementById('cfg_saldo_99').value = config.saldoInicial99 || 0;
             mudarModoConfig();
         }
 
@@ -477,6 +492,8 @@
             config.metaOleo = parseFloat(document.getElementById('cfg_meta_oleo').value) || 3000;
             config.tripOleo = parseFloat(document.getElementById('cfg_trip_oleo').value) || 0;
             config.tripGeral = parseFloat(document.getElementById('cfg_trip_geral').value) || 0;
+            config.saldoInicialUber = parseFloat(document.getElementById('cfg_saldo_uber').value) || 0;
+            config.saldoInicial99 = parseFloat(document.getElementById('cfg_saldo_99').value) || 0;
 
             salvarNoFirebase();
             alert('Configurações salvas!');
@@ -613,21 +630,6 @@
             atualizarValoresDigitados('uber');
         }
 
-        function calcularEspeciePorDiferenca(plat) {
-            const prefixo = plat === '99' ? '99' : 'ub';
-            const pendenteObj = plat === '99' ? pendente99 : pendenteUber;
-            
-            const inputAppVal = parseFloat(document.getElementById(`edit-${prefixo}-tot`).value) || 0;
-            const brutoAcumulado = pendenteObj.totalBrutoAcumulado || 0;
-
-            let especieCalculada = Math.max(0, brutoAcumulado - inputAppVal);
-            
-            document.getElementById(`edit-${prefixo}-dinheiro`).value = especieCalculada.toFixed(2);
-            pendenteObj.dinheiro = especieCalculada;
-
-            atualizarValoresDigitados(plat);
-        }
-
         function atualizarValoresDigitados(plat) {
             const prefixo = plat === '99' ? '99' : 'ub';
             const dinheiroTotalEmEspecie = parseFloat(document.getElementById(`edit-${prefixo}-dinheiro`).value) || 0;
@@ -693,13 +695,13 @@
 
         function registrar() {
             const b99 = parseFloat(document.getElementById('bruto_99').value) || 0;
-            const d99 = parseFloat(document.getElementById('dinheiro_99').value) || 0;
-            const uber = parseFloat(document.getElementById('bruto_uber').value) || 0;
-            const dUber = parseFloat(document.getElementById('dinheiro_uber').value) || 0;
-            const bruto = b99 + uber;
+            const carteira99Hoje = parseFloat(document.getElementById('carteira_99_hoje').value) || 0;
+            const bUber = parseFloat(document.getElementById('bruto_uber').value) || 0;
+            const carteiraUberHoje = parseFloat(document.getElementById('carteira_uber_hoje').value) || 0;
+            const bruto = b99 + bUber;
             const km = parseFloat(document.getElementById('km_dia').value) || 0;
 
-            if (bruto <= 0 || km <= 0) { alert('Preencha faturamento e KM.'); return; }
+            if (bruto <= 0 || km <= 0) { alert('Preencha faturamento bruto e KM!'); return; }
 
             config.tripOleo = (parseFloat(config.tripOleo) || 0) + km;
             config.tripGeral = (parseFloat(config.tripGeral) || 0) + km;
@@ -728,10 +730,24 @@
             if (!pendenteUber.itens) pendenteUber.itens = {};
 
             pendente99.totalBrutoAcumulado = (pendente99.totalBrutoAcumulado || 0) + b99;
-            pendente99.dinheiro = (pendente99.dinheiro || 0) + d99;
+            pendenteUber.totalBrutoAcumulado = (pendenteUber.totalBrutoAcumulado || 0) + bUber;
 
-            pendenteUber.totalBrutoAcumulado = (pendenteUber.totalBrutoAcumulado || 0) + uber;
-            pendenteUber.dinheiro = (pendenteUber.dinheiro || 0) + dUber;
+            // Cálculo por diferença usando o saldo da carteira informada vs saldo inicial / anterior
+            if (carteira99Hoje > 0) {
+                let baseIni99 = pendente99.ultimaCarteiraApp || config.saldoInicial99 || 0;
+                let subidaApp99 = Math.max(0, carteira99Hoje - baseIni99);
+                let dinheiro99Hoje = Math.max(0, b99 - subidaApp99);
+                pendente99.dinheiro = (pendente99.dinheiro || 0) + dinheiro99Hoje;
+                pendente99.ultimaCarteiraApp = carteira99Hoje;
+            }
+
+            if (carteiraUberHoje > 0) {
+                let baseIniUber = pendenteUber.ultimaCarteiraApp || config.saldoInicialUber || 0;
+                let subidaAppUber = Math.max(0, carteiraUberHoje - baseIniUber);
+                let dinheiroUberHoje = Math.max(0, bUber - subidaAppUber);
+                pendenteUber.dinheiro = (pendenteUber.dinheiro || 0) + dinheiroUberHoje;
+                pendenteUber.ultimaCarteiraApp = carteiraUberHoje;
+            }
 
             if (b99 > 0) {
                 ativos.forEach(g => {
@@ -740,9 +756,9 @@
                 });
             }
 
-            if (uber > 0) {
+            if (bUber > 0) {
                 ativos.forEach(g => {
-                    let itemProp = (custosDiaItens[g.id] || 0) * (uber / bruto);
+                    let itemProp = (custosDiaItens[g.id] || 0) * (bUber / bruto);
                     pendenteUber.itens[g.id] = (pendenteUber.itens[g.id] || 0) + itemProp;
                 });
             }
@@ -762,12 +778,12 @@
             renderTable();
 
             document.getElementById('bruto_99').value = '';
-            document.getElementById('dinheiro_99').value = '';
+            document.getElementById('carteira_99_hoje').value = '';
             document.getElementById('bruto_uber').value = '';
-            document.getElementById('dinheiro_uber').value = '';
+            document.getElementById('carteira_uber_hoje').value = '';
             document.getElementById('km_dia').value = '';
             document.getElementById('bruto').value = '';
-            alert('Lançamento registrado e salvo no Firebase com sucesso!');
+            alert('Lançamento registrado e acumulado com sucesso!');
         }
 
         function baixarCaixas99() {
@@ -775,7 +791,7 @@
                 const val = parseFloat(document.getElementById(`edit-99-${g.id}`).value) || 0;
                 cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
             });
-            pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {} };
+            pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
             alert('Baixa da 99 concluída!');
@@ -786,7 +802,7 @@
                 const val = parseFloat(document.getElementById(`edit-ub-${g.id}`).value) || 0;
                 cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
             });
-            pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {} };
+            pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
             alert('Baixa da Uber concluída!');
@@ -794,8 +810,8 @@
 
         function zerarCaixasPendentesManualmente() {
             if(confirm('Zerar pendências?')) {
-                pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {} };
-                pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {} };
+                pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
+                pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
                 ultimoLancamento = { itens: {}, lucro: 0 };
                 salvarNoFirebase();
                 atualizarInterfaceDinamica();
@@ -813,8 +829,8 @@
                 db.splice(i, 1);
                 if (db.length === 0) {
                     ultimoLancamento = { itens: {}, lucro: 0 };
-                    pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {} };
-                    pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {} };
+                    pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
+                    pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
                 }
                 salvarNoFirebase();
                 atualizarInterfaceDinamica();
