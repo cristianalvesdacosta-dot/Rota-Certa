@@ -91,13 +91,14 @@
         .mode-box { background: #1a1a1a; padding: 12px; border-radius: 10px; border: 1px solid #333; margin-bottom: 12px; }
         .ai-card { background: #131c24; border: 1px solid #1f3544; padding: 12px; border-radius: 10px; margin-bottom: 12px; font-size: 11px; line-height: 1.4; color: #d0dbe3; }
         .ai-card strong { color: var(--accent); }
+        .compare-box { background: #111; border: 1px solid #222; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 11px; }
 
         #sync-status { position: fixed; bottom: 6px; right: 6px; background: rgba(18,18,18,0.9); border: 1px solid #333; color: var(--green); padding: 4px 8px; font-size: 8px; border-radius: 6px; z-index: 1000; backdrop-filter: blur(5px); }
     </style>
 </head>
 <body>
 
-    <div id="sync-status">Conectando ao Firebase...</div>
+    <div id="sync-status">Conectando Firebase...</div>
 
     <div class="tab-bar">
         <button class="tab-btn active" onclick="trocarTab('diario', event)">Lançamento</button>
@@ -115,8 +116,8 @@
                     <input type="number" id="bruto_99" step="0.01" placeholder="0,00" oninput="calcularBrutoTotal()">
                 </div>
                 <div>
-                    <label>Carteira App 99 Hoje</label>
-                    <input type="number" id="carteira_99_hoje" step="0.01" placeholder="Ex: 22.50">
+                    <label>Dinheiro 99 (Opcional)</label>
+                    <input type="number" id="dinheiro_99" step="0.01" placeholder="0,00">
                 </div>
             </div>
 
@@ -126,8 +127,8 @@
                     <input type="number" id="bruto_uber" step="0.01" placeholder="0,00" oninput="calcularBrutoTotal()">
                 </div>
                 <div>
-                    <label>Carteira App Uber Hoje</label>
-                    <input type="number" id="carteira_uber_hoje" step="0.01" placeholder="Ex: 52.00">
+                    <label>Esp/Pix Uber (Opcional)</label>
+                    <input type="number" id="dinheiro_uber" step="0.01" placeholder="0,00">
                 </div>
             </div>
 
@@ -163,7 +164,7 @@
                 <!-- PAINEL DA 99 -->
                 <div class="bg-acumulado-99">
                     <strong style="color: var(--green); font-size: 12px; display: block; margin-bottom: 8px;">💵 CAIXINHAS 99 (PENDENTE)</strong>
-                    <div class="linha-acumulado"><span>Saldo App 99:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);" oninput="calcularEspeciePorDiferenca('99')"></div>
+                    <div class="linha-acumulado"><span>Saldo App 99:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);" placeholder="Digite saldo app" oninput="calcularEspeciePorDiferenca('99')"></div>
                     <div class="linha-acumulado"><span>💵 Espécie Calc:</span> <input type="number" id="edit-99-dinheiro" step="0.01" readonly style="color:var(--accent); background:#111; border:1px dashed #444; font-weight:bold;"></div>
                     
                     <div class="saldo-restante-box" id="restante-99-box">Restante Espécie: R$ <span id="restante-99">0.00</span></div>
@@ -175,7 +176,7 @@
                 <!-- PAINEL DA UBER -->
                 <div class="bg-acumulado-uber">
                     <strong style="color: var(--accent); font-size: 12px; display: block; margin-bottom: 8px;">📅 CAIXINHAS UBER (PENDENTE)</strong>
-                    <div class="linha-acumulado"><span>Saldo App Uber:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" oninput="calcularEspeciePorDiferenca('uber')"></div>
+                    <div class="linha-acumulado"><span>Saldo App Uber:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" placeholder="Digite saldo app" oninput="calcularEspeciePorDiferenca('uber')"></div>
                     <div class="linha-acumulado"><span>💵 Esp/Pix Calc:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" readonly style="color:var(--accent); background:#111; border:1px dashed #444; font-weight:bold;"></div>
                     
                     <div class="saldo-restante-box" id="restante-uber-box">Restante Espécie: R$ <span id="restante-uber">0.00</span></div>
@@ -214,8 +215,8 @@
         </div>
 
         <div class="card">
-            <label style="color: var(--accent);">📊 EVOLUÇÃO SEMANAL DA CARTEIRA</label>
-            <div class="compare-box" id="evolucao-carteira-conteudo" style="font-size: 11px; color: #ccc;">Acompanhe o acumulado dia a dia de segunda a sábado.</div>
+            <label style="color: var(--accent);">📊 COMPARATIVO MENSAL</label>
+            <div class="compare-box" id="comparativo-conteudo">Carregando comparativo...</div>
         </div>
 
         <div class="card">
@@ -390,12 +391,11 @@
 
         let db = [];
         let cofresGerais = { 1: 0, 2: 0, 3: 0, 4: 0 };
-        let pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
-        let pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
+        let pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {} };
+        let pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {} };
         let ultimoLancamento = { itens: {}, lucro: 0 };
         let contasCadastradas = [];
         let historicoSaidas = [];
-        let evolucaoDiasSemana = {};
 
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
@@ -409,7 +409,6 @@
                 if (data.ultimoLancamento) ultimoLancamento = data.ultimoLancamento;
                 if (data.contasCadastradas) contasCadastradas = data.contasCadastradas;
                 if (data.historicoSaidas) historicoSaidas = data.historicoSaidas;
-                if (data.evolucaoDiasSemana) evolucaoDiasSemana = data.evolucaoDiasSemana;
             }
             carregarConfigNaTela();
             renderPainelGastos();
@@ -417,11 +416,14 @@
             atualizarInterfaceDinamica();
 
             document.getElementById('sync-status').innerText = "Conectado ☁️";
-            document.getElementById('sync-status').style.color = "#2ecc71';
+            document.getElementById('sync-status').style.color = "#2ecc71";
+        }, (error) => {
+            document.getElementById('sync-status').innerText = "Erro ⚠️";
+            document.getElementById('sync-status').style.color = "#e74c3c";
         });
 
         function salvarNoFirebase() {
-            dbRef.set({ config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, ultimoLancamento, contasCadastradas, historicoSaidas, evolucaoDiasSemana });
+            dbRef.set({ config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, ultimoLancamento, contasCadastradas, historicoSaidas });
         }
 
         function carregarConfigNaTela() {
@@ -451,9 +453,9 @@
             const totalGastosMes = ativos.reduce((acc, g) => acc + g.valor, 0);
 
             let fator = 1, nomePeriodo = "Mês";
-            if(periodo === 'dia') { fator = 1 / 30; nomePeriodo = "Diário"; }
-            else if(periodo === 'semana') { fator = 7 / 30; nomePeriodo = "Semanal"; }
-            else if(periodo === 'quinzena') { fator = 15 / 30; nomePeriodo = "Quinzenal"; }
+            if(periodo === 'dia') { fator = 1 / 30; nomePeriodo = "Dia"; }
+            else if(periodo === 'semana') { fator = 7 / 30; nomePeriodo = "Semana"; }
+            else if(periodo === 'quinzena') { fator = 15 / 30; nomePeriodo = "Quinzena"; }
 
             const kmPeriodo = kmMes * fator;
             const custoPeriodo = totalGastosMes * fator;
@@ -597,11 +599,13 @@
         function preencherValoresPendentesNaTela() {
             const e99Tot = document.getElementById('edit-99-tot');
             if(e99Tot) e99Tot.value = (pendente99.totalBrutoAcumulado || 0).toFixed(2);
+            
             const e99Din = document.getElementById('edit-99-dinheiro');
             if(e99Din) e99Din.value = (pendente99.dinheiro || 0).toFixed(2);
 
             const eUbTot = document.getElementById('edit-ub-tot');
             if(eUbTot) eUbTot.value = (pendenteUber.totalBrutoAcumulado || 0).toFixed(2);
+
             const eUbDin = document.getElementById('edit-ub-dinheiro');
             if(eUbDin) eUbDin.value = (pendenteUber.dinheiro || 0).toFixed(2);
 
@@ -612,17 +616,22 @@
         function calcularEspeciePorDiferenca(plat) {
             const prefixo = plat === '99' ? '99' : 'ub';
             const pendenteObj = plat === '99' ? pendente99 : pendenteUber;
+            
             const inputAppVal = parseFloat(document.getElementById(`edit-${prefixo}-tot`).value) || 0;
             const brutoAcumulado = pendenteObj.totalBrutoAcumulado || 0;
+
             let especieCalculada = Math.max(0, brutoAcumulado - inputAppVal);
+            
             document.getElementById(`edit-${prefixo}-dinheiro`).value = especieCalculada.toFixed(2);
             pendenteObj.dinheiro = especieCalculada;
+
             atualizarValoresDigitados(plat);
         }
 
         function atualizarValoresDigitados(plat) {
             const prefixo = plat === '99' ? '99' : 'ub';
             const dinheiroTotalEmEspecie = parseFloat(document.getElementById(`edit-${prefixo}-dinheiro`).value) || 0;
+            
             let totalJaBaixadoEspecie = 0;
             const ativos = gastosMensais.filter(g => g.ativo);
             
@@ -630,15 +639,25 @@
                 const btn = document.getElementById(`btn-check-${prefixo}-${g.id}`);
                 const inp = document.getElementById(`edit-${prefixo}-${g.id}`);
                 const valorCaixa = parseFloat(inp ? inp.value : 0) || 0;
-                if (btn && btn.classList.contains('checked')) totalJaBaixadoEspecie += valorCaixa;
+
+                if (btn && btn.classList.contains('checked')) {
+                    totalJaBaixadoEspecie += valorCaixa;
+                }
             });
 
             let saldoRestanteNaMao = dinheiroTotalEmEspecie - totalJaBaixadoEspecie;
             const spanRestante = document.getElementById(`restante-${plat}`);
             const boxRestante = document.getElementById(`restante-${plat}-box`);
+            
             if(spanRestante) {
                 spanRestante.innerText = saldoRestanteNaMao.toFixed(2);
-                boxRestante.style.color = saldoRestanteNaMao < 0 ? "var(--red)" : (saldoRestanteNaMao === 0 && dinheiroTotalEmEspecie > 0 ? "var(--green)" : "var(--accent)");
+                if (saldoRestanteNaMao < 0) {
+                    boxRestante.style.color = "var(--red)";
+                } else if (saldoRestanteNaMao === 0 && dinheiroTotalEmEspecie > 0) {
+                    boxRestante.style.color = "var(--green)";
+                } else {
+                    boxRestante.style.color = "var(--accent)";
+                }
             }
         }
 
@@ -658,8 +677,10 @@
                 btn.classList.remove('checked');
                 btn.innerText = "✔ Baixa";
             }
+
             salvarNoFirebase();
             atualizarValoresDigitados(plat);
+            
             const gerRes = document.getElementById(`ger-res-${idGasto}`);
             if(gerRes) gerRes.innerText = "R$ " + (cofresGerais[idGasto] || 0).toFixed(2);
         }
@@ -672,23 +693,26 @@
 
         function registrar() {
             const b99 = parseFloat(document.getElementById('bruto_99').value) || 0;
-            const carteira99Hoje = parseFloat(document.getElementById('carteira_99_hoje').value) || 0;
-            const bUber = parseFloat(document.getElementById('bruto_uber').value) || 0;
-            const carteiraUberHoje = parseFloat(document.getElementById('carteira_uber_hoje').value) || 0;
-            const bruto = b99 + bUber;
+            const d99 = parseFloat(document.getElementById('dinheiro_99').value) || 0;
+            const uber = parseFloat(document.getElementById('bruto_uber').value) || 0;
+            const dUber = parseFloat(document.getElementById('dinheiro_uber').value) || 0;
+            const bruto = b99 + uber;
             const km = parseFloat(document.getElementById('km_dia').value) || 0;
 
-            if (bruto <= 0 || km <= 0) { alert('Preencha pelo menos o faturamento bruto e o KM!'); return; }
+            if (bruto <= 0 || km <= 0) { alert('Preencha faturamento e KM.'); return; }
 
             config.tripOleo = (parseFloat(config.tripOleo) || 0) + km;
             config.tripGeral = (parseFloat(config.tripGeral) || 0) + km;
 
+            const kmMes = config.kmMes > 0 ? config.kmMes : 3000;
             const ativos = gastosMensais.filter(g => g.ativo);
+            const modoAuto = config.modoAuto !== false;
+
             let custosDiaItens = {}, totalCustosGerais = 0;
             let somaGastos = ativos.reduce((acc, g) => acc + g.valor, 0);
 
             ativos.forEach(g => {
-                let custoKmItem = (parseFloat(config.custoTotalAuto) || 0.55) * (somaGastos > 0 ? g.valor / somaGastos : 1 / ativos.length);
+                let custoKmItem = modoAuto ? ((parseFloat(config.custoTotalAuto) || 0.55) * (somaGastos > 0 ? g.valor / somaGastos : 1 / ativos.length)) : ((config.taxasManuais && config.taxasManuais[g.id]) || (g.valor / kmMes));
                 let valorItemDia = km * custoKmItem;
                 custosDiaItens[g.id] = valorItemDia;
                 totalCustosGerais += valorItemDia;
@@ -697,29 +721,17 @@
             const lucroTotalDia = bruto - totalCustosGerais;
             const eficiencia = km > 0 ? (bruto / km) : 0;
             document.getElementById('res-eficiencia').innerText = `R$ ${eficiencia.toFixed(2)} / km`;
+
             ultimoLancamento = { itens: custosDiaItens, lucro: lucroTotalDia };
 
-            // Lógica de cálculo por diferença acumulada da carteira do app
             if (!pendente99.itens) pendente99.itens = {};
             if (!pendenteUber.itens) pendenteUber.itens = {};
 
             pendente99.totalBrutoAcumulado = (pendente99.totalBrutoAcumulado || 0) + b99;
-            pendenteUber.totalBrutoAcumulado = (pendenteUber.totalBrutoAcumulado || 0) + bUber;
+            pendente99.dinheiro = (pendente99.dinheiro || 0) + d99;
 
-            // Calcula entrada na carteira por diferença se preenchido
-            if (carteira99Hoje > 0) {
-                let subidaApp99 = Math.max(0, carteira99Hoje - (pendente99.ultimaCarteiraApp || 0));
-                let dinheiro99Hoje = Math.max(0, b99 - subidaApp99);
-                pendente99.dinheiro = (pendente99.dinheiro || 0) + dinheiro99Hoje;
-                pendente99.ultimaCarteiraApp = carteira99Hoje;
-            }
-
-            if (carteiraUberHoje > 0) {
-                let subidaAppUber = Math.max(0, carteiraUberHoje - (pendenteUber.ultimaCarteiraApp || 0));
-                let dinheiroUberHoje = Math.max(0, bUber - subidaAppUber);
-                pendenteUber.dinheiro = (pendenteUber.dinheiro || 0) + dinheiroUberHoje;
-                pendenteUber.ultimaCarteiraApp = carteiraUberHoje;
-            }
+            pendenteUber.totalBrutoAcumulado = (pendenteUber.totalBrutoAcumulado || 0) + uber;
+            pendenteUber.dinheiro = (pendenteUber.dinheiro || 0) + dUber;
 
             if (b99 > 0) {
                 ativos.forEach(g => {
@@ -728,9 +740,9 @@
                 });
             }
 
-            if (bUber > 0) {
+            if (uber > 0) {
                 ativos.forEach(g => {
-                    let itemProp = (custosDiaItens[g.id] || 0) * (bUber / bruto);
+                    let itemProp = (custosDiaItens[g.id] || 0) * (uber / bruto);
                     pendenteUber.itens[g.id] = (pendenteUber.itens[g.id] || 0) + itemProp;
                 });
             }
@@ -739,23 +751,23 @@
             let obsTexto = eficiencia < custoCfg ? "RUIM" : (eficiencia < (custoCfg * 1.5) ? "MÉDIO" : "EXCELENTE");
             document.getElementById('obs').value = obsTexto;
 
-            const dataHoje = new Date().toLocaleDateString('pt-BR');
-            db.unshift({ id: Date.now(), data: dataHoje, bruto: bruto.toFixed(2), km, eficiencia: eficiencia.toFixed(2), obs: obsTexto });
-
-            // Salva na evolução da semana
-            evolucaoDiasSemana[dataHoje] = { bruto, km, carteira99: carteira99Hoje, carteiraUber: carteiraUberHoje };
+            db.unshift({ 
+                id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), 
+                mesAno: `${String(new Date().getMonth() + 1).padStart(2, '0')}/${new Date().getFullYear()}`,
+                bruto: bruto.toFixed(2), km, eficiencia: eficiencia.toFixed(2), obs: obsTexto
+            });
 
             salvarNoFirebase();
             atualizarInterfaceDinamica();
             renderTable();
 
             document.getElementById('bruto_99').value = '';
-            document.getElementById('carteira_99_hoje').value = '';
+            document.getElementById('dinheiro_99').value = '';
             document.getElementById('bruto_uber').value = '';
-            document.getElementById('carteira_uber_hoje').value = '';
+            document.getElementById('dinheiro_uber').value = '';
             document.getElementById('km_dia').value = '';
             document.getElementById('bruto').value = '';
-            alert('Lançamento registrado com sucesso!');
+            alert('Lançamento registrado e salvo no Firebase com sucesso!');
         }
 
         function baixarCaixas99() {
@@ -763,7 +775,7 @@
                 const val = parseFloat(document.getElementById(`edit-99-${g.id}`).value) || 0;
                 cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
             });
-            pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
+            pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {} };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
             alert('Baixa da 99 concluída!');
@@ -774,7 +786,7 @@
                 const val = parseFloat(document.getElementById(`edit-ub-${g.id}`).value) || 0;
                 cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
             });
-            pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
+            pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {} };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
             alert('Baixa da Uber concluída!');
@@ -782,8 +794,8 @@
 
         function zerarCaixasPendentesManualmente() {
             if(confirm('Zerar pendências?')) {
-                pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
-                pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
+                pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {} };
+                pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {} };
                 ultimoLancamento = { itens: {}, lucro: 0 };
                 salvarNoFirebase();
                 atualizarInterfaceDinamica();
@@ -799,6 +811,11 @@
                     config.tripGeral = Math.max(0, config.tripGeral - item.km);
                 }
                 db.splice(i, 1);
+                if (db.length === 0) {
+                    ultimoLancamento = { itens: {}, lucro: 0 };
+                    pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {} };
+                    pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {} };
+                }
                 salvarNoFirebase();
                 atualizarInterfaceDinamica();
                 renderTable();
@@ -830,10 +847,13 @@
             const cofreId = document.getElementById('saida_cofre').value;
             const desc = document.getElementById('saida_desc').value.trim();
             const valor = parseFloat(document.getElementById('saida_valor').value);
+
             if(!desc || isNaN(valor) || valor <= 0) { alert('Preencha descrição e valor!'); return; }
             if (valor > (cofresGerais[cofreId] || 0)) { alert('Saldo insuficiente no cofre!'); return; }
+
             cofresGerais[cofreId] = Math.max(0, cofresGerais[cofreId] - valor);
             const gInfo = gastosMensais.find(x => x.id == cofreId);
+
             historicoSaidas.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), cofreNome: gInfo ? `${gInfo.emoji} ${gInfo.nome}` : 'Caixa', desc, valor });
             salvarNoFirebase();
             atualizarInterfaceDinamica();
@@ -851,7 +871,9 @@
             const mesAno = document.getElementById('conta_mes_ano').value;
             const vencimento = parseInt(document.getElementById('conta_vencimento').value) || 1;
             const parcelas = parseInt(document.getElementById('conta_parcelas').value) || 1;
+
             if(!nome || isNaN(valor) || valor <= 0 || !mesAno) { alert('Preencha os dados da conta!'); return; }
+
             contasCadastradas.push({ id: Date.now(), tipo, cofreId, nome, valor, mesAnoRef: mesAno, vencimento, parcelaAtual: 1, totalParcelas: parcelas, paga: false });
             salvarNoFirebase();
             renderGerenciador();
@@ -864,10 +886,12 @@
             const c = contasCadastradas.find(x => x.id === id);
             if(!c) return;
             if(c.valor > (cofresGerais[c.cofreId] || 0)) { alert('Saldo insuficiente no cofre!'); return; }
+
             if(confirm(`Pagar "${c.nome}"?`)) {
                 cofresGerais[c.cofreId] = Math.max(0, cofresGerais[c.cofreId] - c.valor);
                 const gInfo = gastosMensais.find(x => x.id == c.cofreId);
                 historicoSaidas.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), cofreNome: gInfo ? `${gInfo.emoji} ${gInfo.nome}` : 'Caixa', desc: `Pago: ${c.nome}`, valor: c.valor });
+
                 c.paga = true;
                 salvarNoFirebase();
                 atualizarInterfaceDinamica();
@@ -918,19 +942,6 @@
                 `).join('') : '<tr><td colspan="5" style="color:var(--text-muted);">Sem retiradas.</td></tr>';
             }
 
-            // Renderiza evolução semanal
-            const evolContainer = document.getElementById('evolucao-carteira-conteudo');
-            if(evolContainer) {
-                let htmlEvol = Object.keys(evolucaoDiasSemana).length ? Object.entries(evolucaoDiasSemana).map(([dia, info]) => `
-                    <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #222;">
-                        <span>📅 ${dia}</span>
-                        <span>Bruto: <strong style="color:var(--green);">R$ ${info.bruto.toFixed(2)}</strong></span>
-                        <span>App Uber: <strong style="color:var(--accent);">R$ ${info.carteiraUber.toFixed(2)}</strong></span>
-                    </div>
-                `).join('') : 'Nenhum dia lançado na semana ainda.';
-                evolContainer.innerHTML = htmlEvol;
-            }
-
             gerarDiagnosticoIA();
         }
 
@@ -940,6 +951,7 @@
             const metaOleo = parseFloat(config.metaOleo) || 3000;
             const tripOleo = parseFloat(config.tripOleo) || 0;
             let msgs = [];
+
             if (tripOleo >= metaOleo) {
                 msgs.push(`🚨 <strong style="color:var(--red);">Óleo Vencido!</strong> (${tripOleo.toFixed(1)} km).`);
             } else {
@@ -949,7 +961,7 @@
         }
 
         function exportarBackup() {
-            const dados = { config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, ultimoLancamento, contasCadastradas, historicoSaidas, evolucaoDiasSemana };
+            const dados = { config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, ultimoLancamento, contasCadastradas, historicoSaidas };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dados));
             const a = document.createElement('a'); a.href = dataStr; a.download = "backup_motoboy_elite.json";
             document.body.appendChild(a); a.click(); a.remove();
@@ -968,9 +980,8 @@
                     if(c.gastosMensais) gastosMensais = c.gastosMensais;
                     if(c.db) db = c.db;
                     if(c.cofresGerais) cofresGerais = c.cofresGerais;
-                    if(c.evolucaoDiasSemana) evolucaoDiasSemana = c.evolucaoDiasSemana;
                     salvarNoFirebase();
-                    alert('Backup restaurado!');
+                    alert('Backup restaurado e sincronizado com o Firebase!');
                     location.reload();
                 } catch(err) { alert('Erro ao carregar backup.'); }
             };
