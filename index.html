@@ -956,7 +956,6 @@
                 `).join('') : '<tr><td colspan="5" style="color:var(--text-muted);">Sem retiradas.</td></tr>';
             }
 
-            // Renderiza comparativo mensal
             const compContainer = document.getElementById('comparativo-conteudo');
             if(compContainer) {
                 let totalBrutoMes = db.reduce((acc, item) => acc + parseFloat(item.bruto || 0), 0);
