@@ -150,7 +150,7 @@
                 <span id="res-eficiencia" class="metric-val">R$ 0,00 / km</span>
             </div>
 
-            <!-- CARD VISUAL DO ÚLTIMO LANÇAMENTO -->
+            <!-- CARD VISUAL DO ÚLTIMO LANÇAMENTO (COMO ERA ANTES) -->
             <div id="card-ultimo-lancamento" class="card" style="margin-top: 10px; border: 1px dashed rgba(241, 196, 15, 0.3); background: #121212; padding: 12px;">
                 <label style="color: var(--accent); text-align: center; font-size: 10px; margin-bottom: 6px;">📊 DISTRIBUIÇÃO DO ÚLTIMO LANÇAMENTO</label>
                 <div id="grid-envelopes-ultimo" class="envelopes" style="margin-top: 4px;"></div>
@@ -783,12 +783,10 @@
                     cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
                 }
             });
-            // ZERA TUDO DA 99 E O ÚLTIMO LANÇAMENTO DA TELA
             pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
-            ultimoLancamento = { itens: {}, lucro: 0 };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
-            alert('Baixa da 99 concluída e tudo zerado!');
+            alert('Baixa da 99 concluída e zerada!');
         }
 
         function receberRepasseUber() {
@@ -798,22 +796,20 @@
                     cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
                 }
             });
-            // ZERA TUDO DA UBER E O ÚLTIMO LANÇAMENTO DA TELA
             pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
-            ultimoLancamento = { itens: {}, lucro: 0 };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
-            alert('Baixa da Uber concluída e tudo zerado!');
+            alert('Baixa da Uber concluída e zerada!');
         }
 
         function zerarCaixasPendentesManualmente() {
-            if(confirm('Zerar todas as pendências e o último lançamento?')) {
+            if(confirm('Zerar todas as pendências?')) {
                 pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
                 pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
                 ultimoLancamento = { itens: {}, lucro: 0 };
                 salvarNoFirebase();
                 atualizarInterfaceDinamica();
-                alert('Tudo limpo e zerado com sucesso!');
+                alert('Pendências zeradas com sucesso!');
             }
         }
 
