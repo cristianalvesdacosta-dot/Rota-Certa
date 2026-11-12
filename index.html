@@ -664,6 +664,7 @@
 
             if (valInformado <= 0) { alert('Valor zerado ou inválido nesta caixinha.'); return; }
 
+            // CORREÇÃO: Soma o valor nos cofres oficiais para não sumir!
             cofresGerais[idGasto] = (cofresGerais[idGasto] || 0) + valInformado;
 
             if (plat === '99') {
@@ -678,7 +679,7 @@
 
             salvarNoFirebase();
             atualizarInterfaceDinamica();
-            alert('Baixa parcial efetuada e abatida com sucesso!');
+            alert('Baixa parcial efetuada, somada aos cofres e abatida com sucesso!');
         }
 
         function calcularBrutoTotal() {
@@ -718,7 +719,6 @@
             const eficiencia = km > 0 ? (bruto / km) : 0;
             document.getElementById('res-eficiencia').innerText = `R$ ${eficiencia.toFixed(2)} / km`;
 
-            // Acumula os valores nos cards coloridos gerais
             if (!acumuladoLancamentos.itens) acumuladoLancamentos.itens = {};
             ativos.forEach(g => {
                 acumuladoLancamentos.itens[g.id] = (acumuladoLancamentos.itens[g.id] || 0) + (custosDiaItens[g.id] || 0);
@@ -765,7 +765,6 @@
             let obsTexto = eficiencia < custoCfg ? "RUIM" : (eficiencia < (custoCfg * 1.5) ? "MÉDIO" : "EXCELENTE");
             document.getElementById('obs').value = obsTexto;
 
-            // Salva os dados do dia no histórico contendo os detalhes para possível exclusão correta
             db.unshift({ 
                 id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), 
                 mesAno: `${String(new Date().getMonth() + 1).padStart(2, '0')}/${new Date().getFullYear()}`,
@@ -796,7 +795,7 @@
             pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
-            alert('Baixa da 99 concluída e zerada!');
+            alert('Baixa da 99 concluída, somada aos cofres e zerada!');
         }
 
         function receberRepasseUber() {
@@ -809,7 +808,7 @@
             pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
-            alert('Baixa da Uber concluída e zerada!');
+            alert('Baixa da Uber concluída, somada aos cofres e zerada!');
         }
 
         function zerarCaixasPendentesManualmente() {
