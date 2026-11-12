@@ -150,9 +150,9 @@
                 <span id="res-eficiencia" class="metric-val">R$ 0,00 / km</span>
             </div>
 
-            <!-- CARD VISUAL DO ÚLTIMO LANÇAMENTO (COMO ERA ANTES) -->
-            <div id="card-ultimo-lancamento" class="card" style="margin-top: 10px; border: 1px dashed rgba(241, 196, 15, 0.3); background: #121212; padding: 12px;">
-                <label style="color: var(--accent); text-align: center; font-size: 10px; margin-bottom: 6px;">📊 DISTRIBUIÇÃO DO ÚLTIMO LANÇAMENTO</label>
+            <!-- CARD VISUAL DE SALDO ACUMULADO NAS CAIXINHAS -->
+            <div id="card-ultimo-lancamento" class="card" style="margin-top: 10px; border: 1px dashed rgba(46, 204, 113, 0.4); background: #121212; padding: 12px;">
+                <label style="color: var(--green); text-align: center; font-size: 10px; margin-bottom: 6px;">📊 SALDO ACUMULADO NAS CAIXINHAS</label>
                 <div id="grid-envelopes-ultimo" class="envelopes" style="margin-top: 4px;"></div>
             </div>
 
@@ -161,8 +161,8 @@
                 <!-- PAINEL DA 99 -->
                 <div class="bg-acumulado-99">
                     <strong style="color: var(--green); font-size: 12px; display: block; margin-bottom: 8px;">💵 CAIXINHAS 99 (PENDENTE)</strong>
-                    <div class="linha-acumulado"><span>Total Bruto Acumulado:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);" readonly style="background:#111;"></div>
-                    <div class="linha-acumulado"><span>💵 Espécie / PIX:</span> <input type="number" id="edit-99-dinheiro" step="0.01" readonly style="color:var(--accent); background:#111; font-weight:bold;"></div>
+                    <div class="linha-acumulado"><span>Total Bruto Acumulado:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);" readonly></div>
+                    <div class="linha-acumulado"><span>💵 Espécie / PIX:</span> <input type="number" id="edit-99-dinheiro" step="0.01" readonly style="color:var(--accent); font-weight:bold;"></div>
                     
                     <div class="saldo-restante-box" id="restante-99-box">Restante Espécie: R$ <span id="restante-99">0.00</span></div>
 
@@ -173,8 +173,8 @@
                 <!-- PAINEL DA UBER -->
                 <div class="bg-acumulado-uber">
                     <strong style="color: var(--accent); font-size: 12px; display: block; margin-bottom: 8px;">📅 CAIXINHAS UBER (PENDENTE)</strong>
-                    <div class="linha-acumulado"><span>Total Bruto Acumulado:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" readonly style="background:#111;"></div>
-                    <div class="linha-acumulado"><span>💵 Esp / PIX Calc:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" readonly style="color:var(--accent); background:#111; font-weight:bold;"></div>
+                    <div class="linha-acumulado"><span>Total Bruto Acumulado:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" readonly></div>
+                    <div class="linha-acumulado"><span>💵 Esp / PIX Calc:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" readonly style="color:var(--accent); font-weight:bold;"></div>
                     
                     <div class="saldo-restante-box" id="restante-uber-box">Restante Espécie: R$ <span id="restante-uber">0.00</span></div>
 
@@ -403,7 +403,7 @@
         let cofresGerais = { 1: 0, 2: 0, 3: 0, 4: 0 };
         let pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
         let pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
-        let ultimoLancamento = { itens: {}, lucro: 0 };
+        let acumuladoLancamentos = { itens: {}, lucro: 0 };
         let contasCadastradas = [];
         let historicoSaidas = [];
 
@@ -416,7 +416,7 @@
                 if (data.cofresGerais) cofresGerais = data.cofresGerais;
                 if (data.pendente99) pendente99 = data.pendente99;
                 if (data.pendenteUber) pendenteUber = data.pendenteUber;
-                if (data.ultimoLancamento) ultimoLancamento = data.ultimoLancamento;
+                if (data.acumuladoLancamentos) acumuladoLancamentos = data.acumuladoLancamentos;
                 if (data.contasCadastradas) contasCadastradas = data.contasCadastradas;
                 if (data.historicoSaidas) historicoSaidas = data.historicoSaidas;
             }
@@ -434,7 +434,7 @@
         });
 
         function salvarNoFirebase() {
-            dbRef.set({ config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, ultimoLancamento, contasCadastradas, historicoSaidas });
+            dbRef.set({ config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, acumuladoLancamentos, contasCadastradas, historicoSaidas });
         }
 
         function carregarConfigNaTela() {
@@ -562,12 +562,15 @@
 
             const gridEnv = document.getElementById('grid-envelopes-ultimo');
             if(gridEnv) {
-                gridEnv.innerHTML = ativos.map(g => `
-                    <div class="env" style="border-left: 3px solid ${g.cor};">
-                        ${g.emoji} ${g.nome.toUpperCase()} 
-                        <strong id="card-res-${g.id}" style="color:${g.cor};">R$ ${(ultimoLancamento.itens && ultimoLancamento.itens[g.id] ? ultimoLancamento.itens[g.id] : 0).toFixed(2)}</strong>
-                    </div>
-                `).join('') + `<div class="env" style="grid-column: span 2; background:#112518; border:1px solid #1b4d3e;">💰 LUCRO LÍQUIDO <strong id="card-res-lucro" style="font-size:14px; color:var(--green);">R$ ${(ultimoLancamento.lucro || 0).toFixed(2)}</strong></div>`;
+                gridEnv.innerHTML = ativos.map(g => {
+                    let valAcumulado = (acumuladoLancamentos.itens && acumuladoLancamentos.itens[g.id] ? acumuladoLancamentos.itens[g.id] : 0);
+                    return `
+                        <div class="env" style="border-left: 3px solid ${g.cor};">
+                            ${g.emoji} ${g.nome.toUpperCase()} 
+                            <strong id="card-res-${g.id}" style="color:${g.cor};">R$ ${valAcumulado.toFixed(2)}</strong>
+                        </div>
+                    `;
+                }).join('') + `<div class="env" style="grid-column: span 2; background:#112518; border:1px solid #1b4d3e;">💰 LUCRO LÍQUIDO ACUMULADO <strong id="card-res-lucro" style="font-size:14px; color:var(--green);">R$ ${(acumuladoLancamentos.lucro || 0).toFixed(2)}</strong></div>`;
             }
 
             const lin99 = document.getElementById('linhas-dinamicas-99');
@@ -715,7 +718,12 @@
             const eficiencia = km > 0 ? (bruto / km) : 0;
             document.getElementById('res-eficiencia').innerText = `R$ ${eficiencia.toFixed(2)} / km`;
 
-            ultimoLancamento = { itens: custosDiaItens, lucro: lucroTotalDia };
+            // Acumula os valores nos cards coloridos gerais
+            if (!acumuladoLancamentos.itens) acumuladoLancamentos.itens = {};
+            ativos.forEach(g => {
+                acumuladoLancamentos.itens[g.id] = (acumuladoLancamentos.itens[g.id] || 0) + (custosDiaItens[g.id] || 0);
+            });
+            acumuladoLancamentos.lucro = (acumuladoLancamentos.lucro || 0) + lucroTotalDia;
 
             if (!pendente99.itens) pendente99.itens = {};
             if (!pendenteUber.itens) pendenteUber.itens = {};
@@ -757,10 +765,12 @@
             let obsTexto = eficiencia < custoCfg ? "RUIM" : (eficiencia < (custoCfg * 1.5) ? "MÉDIO" : "EXCELENTE");
             document.getElementById('obs').value = obsTexto;
 
+            // Salva os dados do dia no histórico contendo os detalhes para possível exclusão correta
             db.unshift({ 
                 id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), 
                 mesAno: `${String(new Date().getMonth() + 1).padStart(2, '0')}/${new Date().getFullYear()}`,
-                bruto: bruto.toFixed(2), km, eficiencia: eficiencia.toFixed(2), obs: obsTexto
+                bruto: bruto.toFixed(2), km, eficiencia: eficiencia.toFixed(2), obs: obsTexto,
+                itensDia: custosDiaItens, lucroDia: lucroTotalDia, b99, bUber
             });
 
             salvarNoFirebase();
@@ -806,7 +816,7 @@
             if(confirm('Zerar todas as pendências?')) {
                 pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
                 pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
-                ultimoLancamento = { itens: {}, lucro: 0 };
+                acumuladoLancamentos = { itens: {}, lucro: 0 };
                 salvarNoFirebase();
                 atualizarInterfaceDinamica();
                 alert('Pendências zeradas com sucesso!');
@@ -816,13 +826,25 @@
         function deletarItem(i) {
             if (confirm('Desfazer lançamento?')) {
                 const item = db[i];
-                if(item && item.km) {
-                    config.tripOleo = Math.max(0, config.tripOleo - item.km);
-                    config.tripGeral = Math.max(0, config.tripGeral - item.km);
+                if(item) {
+                    if(item.km) {
+                        config.tripOleo = Math.max(0, config.tripOleo - item.km);
+                        config.tripGeral = Math.max(0, config.tripGeral - item.km);
+                    }
+                    if(item.itensDia) {
+                        for(let id in item.itensDia) {
+                            if(acumuladoLancamentos.itens && acumuladoLancamentos.itens[id]) {
+                                acumuladoLancamentos.itens[id] = Math.max(0, acumuladoLancamentos.itens[id] - item.itensDia[id]);
+                            }
+                        }
+                    }
+                    if(item.lucroDia) {
+                        acumuladoLancamentos.lucro = Math.max(0, (acumuladoLancamentos.lucro || 0) - item.lucroDia);
+                    }
                 }
                 db.splice(i, 1);
                 if (db.length === 0) {
-                    ultimoLancamento = { itens: {}, lucro: 0 };
+                    acumuladoLancamentos = { itens: {}, lucro: 0 };
                     pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
                     pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
                 }
@@ -978,7 +1000,7 @@
         }
 
         function exportarBackup() {
-            const dados = { config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, ultimoLancamento, contasCadastradas, historicoSaidas };
+            const dados = { config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, acumuladoLancamentos, contasCadastradas, historicoSaidas };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dados));
             const a = document.createElement('a'); a.href = dataStr; a.download = "backup_motoboy_elite.json";
             document.body.appendChild(a); a.click(); a.remove();
@@ -997,6 +1019,7 @@
                     if(c.gastosMensais) gastosMensais = c.gastosMensais;
                     if(c.db) db = c.db;
                     if(c.cofresGerais) cofresGerais = c.cofresGerais;
+                    if(c.acumuladoLancamentos) acumuladoLancamentos = c.acumuladoLancamentos;
                     salvarNoFirebase();
                     alert('Backup restaurado e sincronizado com o Firebase!');
                     location.reload();
