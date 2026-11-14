@@ -46,9 +46,59 @@
 
         .card { background: var(--card-bg); padding: 16px; border-radius: 14px; border: 1px solid var(--card-border); margin-bottom: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
         
-        label { display: block; font-size: 10px; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        label { display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
         input, select { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #333; background: #202020; color: #fff; box-sizing: border-box; margin-bottom: 10px; text-align: left; font-size: 14px; outline: none; transition: border-color 0.2s; }
         input:focus, select:focus { border-color: var(--green); }
+
+        /* ÍCONE DE INFORMAÇÃO (i) */
+        .info-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            background: rgba(52, 152, 219, 0.15);
+            border: 1px solid var(--blue);
+            color: var(--blue);
+            font-size: 10px;
+            font-weight: 800;
+            font-style: italic;
+            font-family: Georgia, serif;
+            cursor: pointer;
+            text-transform: lowercase;
+            flex-shrink: 0;
+            transition: 0.2s;
+        }
+        .info-btn:active { transform: scale(0.9); background: var(--blue); color: #fff; }
+
+        /* MODAL DE AJUDA */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #1a1a1a;
+            border: 1px solid var(--blue);
+            border-radius: 14px;
+            padding: 18px;
+            max-width: 360px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            animation: popIn 0.18s ease-out;
+        }
+        @keyframes popIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-title { font-size: 13px; font-weight: 800; color: var(--blue); text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .modal-text { font-size: 12px; color: #ddd; line-height: 1.5; margin-bottom: 14px; }
+        .modal-close { width: 100%; padding: 10px; background: var(--blue); border: none; border-radius: 8px; color: #fff; font-weight: 700; font-size: 12px; text-transform: uppercase; cursor: pointer; }
 
         .btn-main { width: 100%; padding: 14px; background: var(--green); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 6px; }
         .btn-sec { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 6px; }
@@ -86,6 +136,15 @@
 
     <div id="sync-status">Carregando...</div>
 
+    <!-- MODAL DE AJUDA (POP-UP DO ÍCONE i) -->
+    <div id="modal-ajuda" class="modal-overlay" onclick="fecharAjuda(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-title">ℹ️ <span id="modal-ajuda-titulo">Informação</span></div>
+            <div class="modal-text" id="modal-ajuda-texto">Explicação aqui...</div>
+            <button class="modal-close" onclick="fecharAjuda()">Entendi</button>
+        </div>
+    </div>
+
     <!-- TELA 1: APRESENTAÇÃO E LOGIN / CADASTRO -->
     <div id="tela-auth" class="auth-screen active">
         <div class="hero-title">🚀 Rota Certa Pro</div>
@@ -108,7 +167,7 @@
             <div class="termo-box">
                 <strong>TERMOS DE USO E RESPONSABILIDADE:</strong> O "Rota Certa Pro" é uma ferramenta de apoio e cálculo auxiliar baseada estritamente nos dados informados pelo usuário. O criador do software não se responsabiliza por eventuais perdas de dados decorrentes de falhas de rede, instabilidade em servidores de terceiros (Firebase/GitHub) ou mau uso da plataforma. O acesso é fornecido "no estado em que se encontra".
             </div>
-            <label class="checkbox-container">
+            <label class="checkbox-container" style="justify-content: flex-start;">
                 <input type="checkbox" id="aceite-termos">
                 <span>Li e concordo com os termos de uso e isenção de responsabilidade acima.</span>
             </label>
@@ -125,7 +184,7 @@
         <div class="hero-subtitle" id="mensagem-bloqueio-sub">Seu período de testes de 6 dias expirou ou sua assinatura precisa ser renovada. Faça o Pix mensal para liberar o acesso contínuo.</div>
         
         <div class="card" style="text-align: center;">
-            <label style="color:var(--accent); margin-bottom: 6px;">CHAVE PIX PARA PAGAMENTO (CELULAR)</label>
+            <label style="color:var(--accent); margin-bottom: 6px; justify-content: center;">CHAVE PIX PARA PAGAMENTO (CELULAR)</label>
             
             <div style="background: #111; border: 1px dashed var(--green); padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; color: var(--green); user-select: all; margin-bottom: 6px;">
                 19997648211
@@ -191,7 +250,7 @@
                 </div>
 
                 <div class="card" style="margin-top: 10px; border: 1px dashed rgba(46, 204, 113, 0.4); background: #121212; padding: 12px;">
-                    <label style="color: var(--green); text-align: center; font-size: 10px; margin-bottom: 6px;">📊 SALDO ACUMULADO NAS CAIXINHAS</label>
+                    <label style="color: var(--green); justify-content: center; font-size: 10px; margin-bottom: 6px;">📊 SALDO ACUMULADO NAS CAIXINHAS</label>
                     <div id="grid-envelopes-ultimo" class="envelopes" style="margin-top: 4px;"></div>
                 </div>
             </div>
@@ -225,24 +284,43 @@
             </div>
         </div>
 
-        <!-- ABA GASTOS MENSAIS -->
+        <!-- ABA GASTOS MENSAIS (COM ÍCONES DE AJUDA) -->
         <div id="gastos" class="container">
             <div class="card">
-                <label style="color: var(--accent);">⚙️ GERENCIAR CAIXINHAS & DESPESAS</label>
-                <label>Nome da Caixinha</label>
-                <input type="text" id="gasto_nome" placeholder="Ex: Gasolina, Parcela Moto">
+                <label style="color: var(--accent); margin-bottom: 8px;">
+                    <span>⚙️ GERENCIAR CAIXINHAS & DESPESAS</span>
+                    <span class="info-btn" onclick="abrirAjuda('caixinhas_geral')">i</span>
+                </label>
+
+                <label>
+                    <span>Nome da Caixinha</span>
+                    <span class="info-btn" onclick="abrirAjuda('gasto_nome')">i</span>
+                </label>
+                <input type="text" id="gasto_nome" placeholder="Ex: Gasolina, Parcela Moto, Óleo">
+
                 <div style="display: flex; gap: 8px;">
                     <div style="flex: 1;">
-                        <label>Emoji</label>
+                        <label>
+                            <span>Emoji</span>
+                            <span class="info-btn" onclick="abrirAjuda('gasto_emoji')">i</span>
+                        </label>
                         <input type="text" id="gasto_emoji" placeholder="⛽" maxlength="4" style="text-align: center;">
                     </div>
                     <div style="flex: 1;">
-                        <label>Cor</label>
+                        <label>
+                            <span>Cor</span>
+                            <span class="info-btn" onclick="abrirAjuda('gasto_cor')">i</span>
+                        </label>
                         <input type="color" id="gasto_cor" value="#2ecc71" style="height: 40px; width: 100%; padding: 2px; cursor: pointer; background: #202020; border-radius: 8px;">
                     </div>
                 </div>
-                <label>Valor Mensal Estimado (R$)</label>
+
+                <label>
+                    <span>Valor Mensal Estimado (R$)</span>
+                    <span class="info-btn" onclick="abrirAjuda('gasto_valor')">i</span>
+                </label>
                 <input type="number" id="gasto_valor" step="0.01" placeholder="0,00">
+
                 <button class="btn-main" onclick="adicionarGasto()">➕ Adicionar / Atualizar</button>
                 
                 <table id="tabela-gastos" style="margin-top: 12px;">
@@ -252,24 +330,41 @@
             </div>
         </div>
 
-        <!-- ABA CONFIGURAÇÕES & BACKUP -->
+        <!-- ABA CONFIGURAÇÕES & BACKUP (COM ÍCONES DE AJUDA) -->
         <div id="config" class="container">
             <div class="card">
-                <label style="color: var(--accent);">🏍️ DADOS DO VEÍCULO & CUSTO POR KM</label>
-                <label>Modelo da Moto</label>
+                <label style="color: var(--accent); margin-bottom: 8px;">
+                    <span>🏍️ DADOS DO VEÍCULO & CUSTO POR KM</span>
+                    <span class="info-btn" onclick="abrirAjuda('config_geral')">i</span>
+                </label>
+
+                <label>
+                    <span>Modelo da Moto</span>
+                    <span class="info-btn" onclick="abrirAjuda('cfg_moto')">i</span>
+                </label>
                 <input type="text" id="cfg_moto_modelo" placeholder="Ex: Yamaha Lander 250">
-                <label>Média KM Rodado por Mês</label>
+
+                <label>
+                    <span>Média KM Rodado por Mês</span>
+                    <span class="info-btn" onclick="abrirAjuda('cfg_km_mes')">i</span>
+                </label>
                 <input type="number" id="cfg_km_mes" step="1" value="3000" oninput="calcularCustoKmDinamico()">
                 
                 <div class="metric-box" style="margin-top: 10px; background: #111;">
-                    <span style="font-size: 11px;">Custo Calculado por KM:</span>
+                    <span style="font-size: 11px; display: flex; align-items: center; gap: 6px;">
+                        Custo Calculado por KM:
+                        <span class="info-btn" onclick="abrirAjuda('cfg_custo_km')">i</span>
+                    </span>
                     <span id="cfg_custo_km_calculado" class="metric-val" style="color:var(--accent);">R$ 0,44 / km</span>
                 </div>
 
                 <button class="btn-main" onclick="salvarConfig()" style="margin-top: 14px;">Salvar Configurações</button>
                 
                 <hr style="border: 0; border-top: 1px solid #222; margin: 15px 0;">
-                <label>Gerenciamento de Dados</label>
+                <label>
+                    <span>Gerenciamento de Dados</span>
+                    <span class="info-btn" onclick="abrirAjuda('cfg_backup')">i</span>
+                </label>
                 <button class="btn-backup" onclick="exportarBackup()">Exportar Backup (JSON)</button>
                 <button class="btn-restore" onclick="importarBackupClick()">Restaurar Backup</button>
                 <input type="file" id="fileInput" style="display:none" onchange="importarBackup(event)">
@@ -278,6 +373,62 @@
     </div>
 
     <script>
+        // DICIONÁRIO DE AJUDAS DOS BOTÕES (i)
+        const textosAjuda = {
+            caixinhas_geral: {
+                titulo: "O que são as Caixinhas?",
+                texto: "Aqui você cadastra todas as suas despesas fixas e variáveis do mês (gasolina, parcela da moto, troca de óleo, pneu, internet). O sistema usa a soma dessas caixinhas para calcular quanto custa cada KM rodado da sua moto e separa o dinheiro automaticamente todo dia."
+            },
+            gasto_nome: {
+                titulo: "Nome da Caixinha",
+                texto: "Dê um nome claro para a despesa que você quer separar dinheiro. Exemplos: 'Gasolina', 'Parcela da Moto', 'Manutenção / Óleo', 'Conta de Celular'."
+            },
+            gasto_emoji: {
+                titulo: "Emoji de Identificação",
+                texto: "Escolha um ícone do teclado do seu celular (ex: ⛽, 🏍️, 🛢️) para identificar rápido essa caixinha nos seus painéis e relatórios."
+            },
+            gasto_cor: {
+                titulo: "Cor da Caixinha",
+                texto: "Toque no quadrado colorido para escolher uma cor de destaque para essa despesa na sua tela de saldo."
+            },
+            gasto_valor: {
+                titulo: "Valor Mensal Estimado (R$)",
+                texto: "Coloque quanto você gasta por mês com essa despesa. Exemplo: se você gasta R$ 150 de gasolina por semana, coloque 600 no mês. É esse valor que define quanto vai ser reservado a cada KM que você rodar."
+            },
+            config_geral: {
+                titulo: "Configuração do Veículo",
+                texto: "Nesta tela você amarra a quilometragem que costuma rodar por mês. Juntando isso com as suas caixinhas de despesas, o app descobre o custo real da sua moto por KM."
+            },
+            cfg_moto: {
+                titulo: "Modelo da Moto",
+                texto: "Digite o modelo da sua motocicleta (ex: Lander 250, CG 160, Bros) apenas para personalizar e identificar o seu cadastro."
+            },
+            cfg_km_mes: {
+                titulo: "Média KM Rodado por Mês",
+                texto: "Informe quantos quilômetros você roda, em média, durante um mês inteiro de trabalho. Dica: se você roda cerca de 120 km por dia, 25 dias no mês, coloque 3000. Quanto mais exato esse número, mais preciso será o seu custo por KM."
+            },
+            cfg_custo_km: {
+                titulo: "Custo Calculado por KM",
+                texto: "Este valor é gerado automaticamente! O sistema soma todas as suas caixinhas ativas na aba 'Meus Gastos' e divide pela sua 'Média KM por Mês'. Toda corrida que pagar abaixo desse valor dá prejuízo; acima dele é lucro líquido real."
+            },
+            cfg_backup: {
+                titulo: "Backup e Restauração",
+                texto: "Seus dados já ficam salvos na nuvem da sua conta, mas aqui você pode baixar uma cópia de segurança (arquivo JSON) no seu celular ou restaurar um backup antigo quando precisar."
+            }
+        };
+
+        function abrirAjuda(chave) {
+            const info = textosAjuda[chave];
+            if (!info) return;
+            document.getElementById('modal-ajuda-titulo').innerText = info.titulo;
+            document.getElementById('modal-ajuda-texto').innerText = info.texto;
+            document.getElementById('modal-ajuda').classList.add('active');
+        }
+
+        function fecharAjuda(event) {
+            document.getElementById('modal-ajuda').classList.remove('active');
+        }
+
         // CONFIGURAÇÃO DO FIREBASE COM AS SUAS CREDENCIAIS OFICIAIS
         const firebaseConfig = {
             apiKey: "AIzaSyCCX1k0PN_yOd3QWauBQhwX0FRwqhn7Clo",
@@ -448,7 +599,12 @@
             document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            if (evt && evt.currentTarget) evt.currentTarget.classList.add('active');
+            if (evt && evt.currentTarget) {
+                evt.currentTarget.classList.add('active');
+            } else {
+                const idx = tabId === 'diario' ? 0 : tabId === 'gerenciar' ? 1 : tabId === 'gastos' ? 2 : 3;
+                document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+            }
         }
 
         function adicionarGasto() {
@@ -464,6 +620,7 @@
             renderPainelGastos();
             atualizarInterfaceDinamica();
             document.getElementById('gasto_nome').value = '';
+            document.getElementById('gasto_emoji').value = '';
             document.getElementById('gasto_valor').value = '';
         }
 
