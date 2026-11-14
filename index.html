@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROTA CERTA PRO - Sistema Profissional para Motoboys</title>
+    <title>SISTEMA MOTOBOY ELITE</title>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
     <style>
@@ -24,19 +23,7 @@
         
         body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--dark); color: var(--text); padding: 0; margin: 0; padding-bottom: 80px; -webkit-font-smoothing: antialiased; }
         
-        .auth-screen { display: none; padding: 20px; max-width: 480px; margin: auto; min-height: 100vh; box-sizing: border-box; flex-direction: column; justify-content: center; }
-        .auth-screen.active { display: flex; }
-        
-        .hero-title { font-size: 24px; font-weight: 800; color: var(--green); text-align: center; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-        .hero-subtitle { font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 20px; line-height: 1.4; }
-        
-        .feature-box { background: #141414; border: 1px solid #222; padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 11px; line-height: 1.4; }
-        .feature-box strong { color: var(--accent); display: block; margin-bottom: 2px; }
-
-        .termo-box { background: #111; border: 1px solid #333; padding: 10px; border-radius: 8px; font-size: 10px; color: #aaa; max-height: 90px; overflow-y: auto; margin-bottom: 8px; line-height: 1.3; }
-        .checkbox-container { display: flex; align-items: flex-start; gap: 8px; font-size: 11px; color: #ccc; margin-bottom: 12px; cursor: pointer; }
-        .checkbox-container input { width: 16px; height: 16px; margin-top: 2px; accent-color: var(--green); flex-shrink: 0; }
-
+        /* BARRA DE ABAS PREMIUM */
         .tab-bar { display: flex; background: #121212; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #222; backdrop-filter: blur(10px); }
         .tab-btn { flex: 1; padding: 14px 4px; border: none; background: none; color: var(--text-muted); font-weight: 600; cursor: pointer; font-size: 10px; text-transform: uppercase; text-align: center; letter-spacing: 0.5px; transition: 0.2s; }
         .tab-btn.active { color: var(--green); border-bottom: 2px solid var(--green); background: rgba(46, 204, 113, 0.05); }
@@ -44,19 +31,24 @@
         .container { padding: 12px; max-width: 480px; margin: auto; display: none; }
         .container.active { display: block; }
 
+        /* CARDS E FORMULÁRIOS ESTILO APP */
         .card { background: var(--card-bg); padding: 16px; border-radius: 14px; border: 1px solid var(--card-border); margin-bottom: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
         
         label { display: block; font-size: 10px; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
         input, select { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #333; background: #202020; color: #fff; box-sizing: border-box; margin-bottom: 10px; text-align: left; font-size: 14px; outline: none; transition: border-color 0.2s; }
         input:focus, select:focus { border-color: var(--green); }
 
-        .btn-main { width: 100%; padding: 14px; background: var(--green); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 6px; }
-        .btn-sec { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 6px; }
-        .btn-pix { width: 100%; padding: 14px; background: #1b4d3e; border: 1px solid var(--green); color: var(--green); font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 13px; text-transform: uppercase; margin-top: 10px; }
-
+        /* BOTÕES MODERNOS */
+        .btn-add { width: 100%; padding: 14px; background: var(--green); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
         .btn-backup { width: 100%; padding: 10px; background: var(--blue); border: none; color: #fff; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 8px; }
         .btn-restore { width: 100%; padding: 10px; background: var(--accent); border: none; color: #000; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 8px; }
         
+        .btn-limpar-pendentes { width: 100%; padding: 10px; background: #252525; border: 1px solid #444; color: #aaa; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 12px; }
+        .btn-baixar-99 { width: 100%; padding: 11px; background: var(--green); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 10px; }
+        .btn-receber-uber { width: 100%; padding: 11px; background: var(--accent); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 10px; }
+        
+        .btn-check { background-color: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid var(--green); padding: 6px 10px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 11px; text-transform: uppercase; transition: 0.2s; white-space: nowrap; }
+
         .metric-box { display: flex; justify-content: space-between; align-items: center; background: #202020; padding: 10px 14px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #2a2a2a; }
         .metric-val { color: var(--green); font-weight: 700; font-size: 15px; }
 
@@ -64,381 +56,443 @@
         .env { padding: 8px 10px; border-radius: 8px; font-size: 10px; text-align: center; border: 1px solid #333; background: #1a1a1a; }
         .env strong { display: block; font-size: 13px; margin-top: 2px; }
         
+        .painel-vertical-container { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
+        .bg-acumulado-99 { background: #11221c; border: 1px solid #1b4d3e; padding: 14px; border-radius: 12px; font-size: 11px; text-align: left; }
+        .bg-acumulado-uber { background: #1b242a; border: 1px solid #283c48; padding: 14px; border-radius: 12px; font-size: 11px; text-align: left; }
+        
+        .linha-acumulado { display: flex; justify-content: space-between; align-items: center; margin: 6px 0; background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 8px; font-size: 11px; gap: 8px; }
+        .linha-acumulado span { flex: 1; color: #ddd; font-weight: 600; }
+        .linha-acumulado input { width: 90px; padding: 6px; font-size: 12px; margin: 0; background: #111; border: 1px solid #333; color: #fff; text-align: right; border-radius: 6px; }
+
+        .saldo-restante-box { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); padding: 8px; border-radius: 6px; text-align: center; margin: 8px 0; font-size: 11px; color: var(--accent); font-weight: 700; }
+
         .historico-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 14px; margin-top: 16px; }
-        .historico-titulo { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+        .historico-titulo { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; letter-spacing: 0.5px; }
         
         table { width: 100%; border-collapse: collapse; font-size: 11px; }
-        th { background: #111; color: var(--green); padding: 8px 4px; border-bottom: 2px solid #262626; text-transform: uppercase; font-size: 9px; }
+        th { background: #111; color: var(--green); padding: 8px 4px; border-bottom: 2px solid #262626; text-transform: uppercase; font-size: 9px; letter-spacing: 0.5px; }
         td { border-bottom: 1px solid #222; padding: 8px 4px; text-align: center; color: #ccc; }
-        
+        tr:hover { background: rgba(255,255,255,0.01); }
+
         .badge-obs { padding: 3px 6px; border-radius: 4px; font-weight: 700; font-size: 8px; text-transform: uppercase; display: inline-block; }
         .badge-ruim { background: rgba(231, 76, 60, 0.15); color: var(--red); border: 1px solid rgba(231, 76, 60, 0.3); }
         .badge-medio { background: rgba(241, 196, 15, 0.15); color: var(--accent); border: 1px solid rgba(241, 196, 15, 0.3); }
         .badge-excelente { background: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid rgba(46, 204, 113, 0.3); }
         
-        .btn-del { background: rgba(231, 76, 60, 0.2); color: var(--red); border: 1px solid rgba(231, 76, 60, 0.4); width: 22px; height: 22px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; }
+        .btn-del { background: rgba(231, 76, 60, 0.2); color: var(--red); border: 1px solid rgba(231, 76, 60, 0.4); width: 22px; height: 22px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-del:hover { background: var(--red); color: #fff; }
 
-        #sync-status { position: fixed; bottom: 6px; right: 6px; background: rgba(18,18,18,0.9); border: 1px solid #333; color: var(--green); padding: 4px 8px; font-size: 8px; border-radius: 6px; z-index: 1000; }
-        .user-header { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 8px 12px; font-size: 11px; border-bottom: 1px solid #222; }
+        .total-box { background: #141414; border: 1px dashed rgba(46, 204, 113, 0.4); padding: 10px; border-radius: 8px; margin-top: 12px; font-size: 11px; text-align: center; color: var(--text-muted); }
+        .total-box strong { font-size: 14px; color: var(--green); display: block; margin-top: 2px; }
+
+        .mode-box { background: #1a1a1a; padding: 12px; border-radius: 10px; border: 1px solid #333; margin-bottom: 12px; }
+        .ai-card { background: #131c24; border: 1px solid #1f3544; padding: 12px; border-radius: 10px; margin-bottom: 12px; font-size: 11px; line-height: 1.4; color: #d0dbe3; }
+        .ai-card strong { color: var(--accent); }
+        .compare-box { background: #111; border: 1px solid #222; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 11px; }
+
+        #sync-status { position: fixed; bottom: 6px; right: 6px; background: rgba(18,18,18,0.9); border: 1px solid #333; color: var(--green); padding: 4px 8px; font-size: 8px; border-radius: 6px; z-index: 1000; backdrop-filter: blur(5px); }
     </style>
 </head>
 <body>
 
-    <div id="sync-status">Carregando...</div>
+    <div id="sync-status">Conectando Firebase...</div>
 
-    <!-- TELA 1: APRESENTAÇÃO E LOGIN / CADASTRO -->
-    <div id="tela-auth" class="auth-screen active">
-        <div class="hero-title">🚀 Rota Certa Pro</div>
-        <div class="hero-subtitle">O sistema financeiro definitivo para motoboys e motoristas de aplicativo. Calcule seu lucro líquido real por KM rodado.</div>
-
-        <div class="feature-box">
-            🎁 <strong>6 Dias de Teste Grátis:</strong> Crie sua conta e teste todas as funcionalidades livremente por uma semana antes de assinar.
-        </div>
-        <div class="feature-box">
-            🎯 <strong>Custo Real por KM:</strong> Descubra quanto sua moto gasta com base nas suas despesas mensais reais.
-        </div>
-
-        <div class="card" style="margin-top: 5px;">
-            <label>E-mail de Acesso</label>
-            <input type="email" id="auth-email" placeholder="seu-email@gmail.com">
-            <label>Senha</label>
-            <input type="password" id="auth-senha" placeholder="Sua senha secreta">
-            
-            <label>Termo de Uso e Isenção</label>
-            <div class="termo-box">
-                <strong>TERMOS DE USO E RESPONSABILIDADE:</strong> O "Rota Certa Pro" é uma ferramenta de apoio e cálculo auxiliar baseada estritamente nos dados informados pelo usuário. O criador do software não se responsabiliza por eventuais perdas de dados decorrentes de falhas de rede, instabilidade em servidores de terceiros (Firebase/GitHub) ou mau uso da plataforma. O acesso é fornecido "no estado em que se encontra".
-            </div>
-            <label class="checkbox-container">
-                <input type="checkbox" id="aceite-termos">
-                <span>Li e concordo com os termos de uso e isenção de responsabilidade acima.</span>
-            </label>
-
-            <button class="btn-main" onclick="fazerLogin()">Entrar na minha Conta</button>
-            <button class="btn-sec" onclick="fazerCadastro()">Criar Nova Conta (6 Dias Grátis)</button>
-            <button class="btn-pix" onclick="mostrarTelaPix()">💎 Assinar / Regularizar Acesso (Pix)</button>
-        </div>
+    <div class="tab-bar">
+        <button class="tab-btn active" onclick="trocarTab('diario', event)">Lançamento</button>
+        <button class="tab-btn" onclick="trocarTab('gerenciar', event)">Gerenciar</button>
+        <button class="tab-btn" onclick="trocarTab('gastos', event)">Meus Gastos</button>
+        <button class="tab-btn" onclick="trocarTab('config', event)">Configurar</button>
     </div>
 
-    <!-- TELA 2: BLOQUEIO / PAGAMENTO PIX (CHAVE FIXA SEGURA) -->
-    <div id="tela-pix" class="auth-screen">
-        <div class="hero-title">💎 Rota Certa Pro - Assinatura</div>
-        <div class="hero-subtitle" id="mensagem-bloqueio-sub">Seu período de testes de 6 dias expirou ou sua assinatura precisa ser renovada. Faça o Pix mensal para liberar o acesso contínuo.</div>
+    <!-- ABA DIÁRIO -->
+    <div id="diario" class="container active">
+        <div class="card">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <label>Bruto 99 (R$)</label>
+                    <input type="number" id="bruto_99" step="0.01" placeholder="0,00" oninput="calcularBrutoTotal()">
+                </div>
+                <div>
+                    <label>Saldo Carteira 99 Hoje</label>
+                    <input type="number" id="carteira_99_hoje" step="0.01" placeholder="Ex: 22.50">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <label>Bruto Uber (R$)</label>
+                    <input type="number" id="bruto_uber" step="0.01" placeholder="0,00" oninput="calcularBrutoTotal()">
+                </div>
+                <div>
+                    <label>Saldo Carteira Uber Hoje</label>
+                    <input type="number" id="carteira_uber_hoje" step="0.01" placeholder="Ex: 52.00">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <label>Total Geral do Dia</label>
+                    <input type="number" id="bruto" step="0.01" placeholder="0,00" readonly style="color: var(--accent); background: #111;">
+                </div>
+                <div>
+                    <label>KM Rodado</label>
+                    <input type="number" id="km_dia" step="0.1" placeholder="0 km">
+                </div>
+            </div>
+
+            <label>Avaliação Automática</label>
+            <input type="text" id="obs" placeholder="Aguardando dados..." readonly style="color: var(--accent); background: #111; font-weight: 600;">
+            
+            <button class="btn-add" onclick="registrar()">REGISTRAR LANÇAMENTO</button>
+
+            <div class="metric-box" style="margin-top: 10px;">
+                <span style="font-size: 11px; color: var(--text-muted);">Eficiência Média:</span>
+                <span id="res-eficiencia" class="metric-val">R$ 0,00 / km</span>
+            </div>
+
+            <!-- CARD VISUAL DE SALDO ACUMULADO NAS CAIXINHAS -->
+            <div id="card-ultimo-lancamento" class="card" style="margin-top: 10px; border: 1px dashed rgba(46, 204, 113, 0.4); background: #121212; padding: 12px;">
+                <label style="color: var(--green); text-align: center; font-size: 10px; margin-bottom: 6px;">📊 SALDO ACUMULADO NAS CAIXINHAS</label>
+                <div id="grid-envelopes-ultimo" class="envelopes" style="margin-top: 4px;"></div>
+            </div>
+
+            <!-- PAINÉIS EMPILHADOS VERTICALMENTE -->
+            <div class="painel-vertical-container">
+                <!-- PAINEL DA 99 -->
+                <div class="bg-acumulado-99">
+                    <strong style="color: var(--green); font-size: 12px; display: block; margin-bottom: 8px;">💵 CAIXINHAS 99 (PENDENTE)</strong>
+                    <div class="linha-acumulado"><span>Total Bruto Acumulado:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green);" readonly></div>
+                    <div class="linha-acumulado"><span>💵 Espécie / PIX:</span> <input type="number" id="edit-99-dinheiro" step="0.01" readonly style="color:var(--accent); font-weight:bold;"></div>
+                    
+                    <div class="saldo-restante-box" id="restante-99-box">Restante Espécie: R$ <span id="restante-99">0.00</span></div>
+
+                    <div id="linhas-dinamicas-99"></div>
+                    <button class="btn-baixar-99" onclick="baixarCaixas99()">✅ Baixar / Zerar 99</button>
+                </div>
+
+                <!-- PAINEL DA UBER -->
+                <div class="bg-acumulado-uber">
+                    <strong style="color: var(--accent); font-size: 12px; display: block; margin-bottom: 8px;">📅 CAIXINHAS UBER (PENDENTE)</strong>
+                    <div class="linha-acumulado"><span>Total Bruto Acumulado:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" readonly></div>
+                    <div class="linha-acumulado"><span>💵 Esp / PIX Calc:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" readonly style="color:var(--accent); font-weight:bold;"></div>
+                    
+                    <div class="saldo-restante-box" id="restante-uber-box">Restante Espécie: R$ <span id="restante-uber">0.00</span></div>
+
+                    <div id="linhas-dinamicas-uber"></div>
+                    <button class="btn-receber-uber" onclick="receberRepasseUber()">💰 Baixar / Zerar Uber</button>
+                </div>
+
+                <button class="btn-limpar-pendentes" onclick="zerarCaixasPendentesManualmente()">🧹 Zerar Caixas Pendentes (99 & Uber)</button>
+            </div>
+        </div>
         
-        <div class="card" style="text-align: center;">
-            <label style="color:var(--accent); margin-bottom: 6px;">CHAVE PIX PARA PAGAMENTO (CELULAR)</label>
-            
-            <!-- CHAVE FIXA NÃO EDITÁVEL -->
-            <div style="background: #111; border: 1px dashed var(--green); padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; color: var(--green); user-select: all; margin-bottom: 6px;">
-                19997648211
+        <!-- RESUMO / HISTÓRICO DE LANÇAMENTOS -->
+        <div class="historico-card">
+            <div class="historico-titulo">
+                <span>📋 Histórico</span>
+                <span style="font-size: 8px; color: var(--text-muted);">Toque no X para desfazer</span>
             </div>
-            <p style="font-size: 9px; color: var(--text-muted); margin-bottom: 12px;">(Toque no número acima para selecionar e copiar)</p>
-
-            <p style="font-size:11px; color:#aaa; margin:10px 0;">Após realizar o pagamento da mensalidade, envie o comprovante no WhatsApp para ativação imediata do seu acesso.</p>
-            
-            <a href="https://wa.me/5519997648211?text=Olá!%20Fiz%20o%20Pix%20da%20mensalidade%20do%20Rota%20Certa%20Pro." target="_blank" style="text-decoration:none;">
-                <button class="btn-main" style="background:#25d366; color:#000;">📲 Enviar Comprovante no WhatsApp</button>
-            </a>
-            <button class="btn-sec" onclick="voltarParaLogin()" style="margin-top:10px;">Voltar ao Login / Sair</button>
+            <table id="tabela">
+                <thead><tr><th>Data</th><th>Bruto</th><th>R$/Km</th><th>Avaliação</th><th>X</th></tr></thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 
-    <!-- APLICATIVO PRINCIPAL (APÓS LOGIN E VALIDAÇÃO) -->
-    <div id="app-principal" style="display:none;">
-        <div class="user-header">
-            <span id="user-display" style="color:var(--accent); font-weight:600;"></span>
-            <button onclick="fazerLogout()" style="background:none; border:1px solid #444; color:#aaa; padding:3px 8px; border-radius:4px; font-size:9px; cursor:pointer;">Sair</button>
+    <!-- ABA GERENCIAR COFRES E DESPESAS -->
+    <div id="gerenciar" class="container">
+        <div class="ai-card">
+            🤖 <strong>Assistente de Manutenção:</strong>
+            <div id="ai-feedback" style="margin-top: 4px;">Analisando quilometragem...</div>
         </div>
 
-        <div class="tab-bar">
-            <button class="tab-btn active" onclick="trocarTab('diario', event)">Lançamento</button>
-            <button class="tab-btn" onclick="trocarTab('gerenciar', event)">Gerenciar</button>
-            <button class="tab-btn" onclick="trocarTab('gastos', event)">Meus Gastos</button>
-            <button class="tab-btn" onclick="trocarTab('config', event)">Configurar</button>
+        <div class="card">
+            <label style="color: var(--accent);">💰 SALDO DOS COFRES OFICIAIS</label>
+            <div id="grid-cofres-geral" class="envelopes" style="margin-top: 4px; grid-template-columns: 1fr 1fr;"></div>
         </div>
 
-        <!-- ABA DIÁRIO -->
-        <div id="diario" class="container active">
-            <div class="card">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <div>
-                        <label>Bruto App 1 (ex: 99 / iFood)</label>
-                        <input type="number" id="bruto_99" step="0.01" placeholder="0,00" oninput="calcularBrutoTotal()">
-                    </div>
-                    <div>
-                        <label>Bruto App 2 (ex: Uber / Outro)</label>
-                        <input type="number" id="bruto_uber" step="0.01" placeholder="0,00" oninput="calcularBrutoTotal()">
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;">
-                    <div>
-                        <label>Total Geral do Dia</label>
-                        <input type="number" id="bruto" step="0.01" placeholder="0,00" readonly style="color: var(--accent); background: #111;">
-                    </div>
-                    <div>
-                        <label>KM Rodado</label>
-                        <input type="number" id="km_dia" step="0.1" placeholder="0 km">
-                    </div>
-                </div>
-
-                <label style="margin-top:8px;">Avaliação de Eficiência</label>
-                <input type="text" id="obs" placeholder="Aguardando dados..." readonly style="color: var(--accent); background: #111; font-weight: 600;">
-                
-                <button class="btn-main" onclick="registrar()">REGISTRAR LANÇAMENTO</button>
-
-                <div class="metric-box" style="margin-top: 10px;">
-                    <span style="font-size: 11px; color: var(--text-muted);">Eficiência Média:</span>
-                    <span id="res-eficiencia" class="metric-val">R$ 0,00 / km</span>
-                </div>
-
-                <div class="card" style="margin-top: 10px; border: 1px dashed rgba(46, 204, 113, 0.4); background: #121212; padding: 12px;">
-                    <label style="color: var(--green); text-align: center; font-size: 10px; margin-bottom: 6px;">📊 SALDO ACUMULADO NAS CAIXINHAS</label>
-                    <div id="grid-envelopes-ultimo" class="envelopes" style="margin-top: 4px;"></div>
-                </div>
-            </div>
-            
-            <div class="historico-card">
-                <div class="historico-titulo">
-                    <span>📋 Histórico de Corridas</span>
-                </div>
-                <table id="tabela">
-                    <thead><tr><th>Data</th><th>Bruto</th><th>R$/Km</th><th>Avaliação</th><th>X</th></tr></thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+        <div class="card">
+            <label style="color: var(--accent);">📊 COMPARATIVO MENSAL</label>
+            <div class="compare-box" id="comparativo-conteudo">Carregando comparativo...</div>
         </div>
 
-        <!-- ABA GERENCIAR COFRES -->
-        <div id="gerenciar" class="container">
-            <div class="card">
-                <label style="color: var(--accent);">💰 SALDO DOS COFRES OFICIAIS</label>
-                <div id="grid-cofres-geral" class="envelopes" style="margin-top: 4px;"></div>
-            </div>
-
-            <div class="card">
-                <label style="color: var(--accent);">💸 LANÇAR RETIRADA RÁPIDA</label>
-                <select id="saida_cofre"></select>
-                <label>Descrição</label>
-                <input type="text" id="saida_desc" placeholder="Ex: Calibragem Pneu">
-                <label>Valor (R$)</label>
-                <input type="number" id="saida_valor" step="0.01" placeholder="0,00">
-                <button class="btn-main" style="background: var(--red); color: #fff;" onclick="lançarSaidaCofre()">CONFIRMAR RETIRADA</button>
-            </div>
+        <div class="card">
+            <label style="color: var(--accent);">💸 LANÇAR RETIRADA RÁPIDA</label>
+            <select id="saida_cofre"></select>
+            <label>Descrição</label>
+            <input type="text" id="saida_desc" placeholder="Ex: Calibragem Pneu">
+            <label>Valor (R$)</label>
+            <input type="number" id="saida_valor" step="0.01" placeholder="0,00">
+            <button class="btn-add" style="background: var(--red); color: #fff;" onclick="lançarSaidaCofre()">CONFIRMAR RETIRADA</button>
         </div>
 
-        <!-- ABA GASTOS MENSAIS -->
-        <div id="gastos" class="container">
-            <div class="card">
-                <label style="color: var(--accent);">⚙️ GERENCIAR CAIXINHAS & DESPESAS</label>
-                <label>Nome da Caixinha</label>
-                <input type="text" id="gasto_nome" placeholder="Ex: Gasolina, Parcela Moto">
-                <div style="display: flex; gap: 8px;">
-                    <div style="flex: 1;">
-                        <label>Emoji</label>
-                        <input type="text" id="gasto_emoji" placeholder="⛽" maxlength="4" style="text-align: center;">
-                    </div>
-                    <div style="flex: 1;">
-                        <label>Cor</label>
-                        <input type="color" id="gasto_cor" value="#2ecc71" style="height: 40px; width: 100%; padding: 2px; cursor: pointer; background: #202020; border-radius: 8px;">
-                    </div>
-                </div>
-                <label>Valor Mensal Estimado (R$)</label>
-                <input type="number" id="gasto_valor" step="0.01" placeholder="0,00">
-                <button class="btn-main" onclick="adicionarGasto()">➕ Adicionar / Atualizar</button>
-                
-                <table id="tabela-gastos" style="margin-top: 12px;">
-                    <thead><tr><th>Caixinha</th><th>Valor</th><th>Ativa</th><th>X</th></tr></thead>
-                    <tbody></tbody>
-                </table>
+        <div class="card">
+            <label>📌 CADASTRAR CONTA OU BOLETO</label>
+            <label style="margin-top: 6px;">Tipo</label>
+            <select id="conta_tipo" onchange="mudarTipoContaForm()">
+                <option value="recorrente">🔄 Recorrente (Contínua)</option>
+                <option value="parcelada">💳 Parcelada</option>
+                <option value="unica">⚡ Única / Casual</option>
+            </select>
+            <label>Cofre Destino</label>
+            <select id="conta_cofre"></select>
+            <label>Nome da Conta</label>
+            <input type="text" id="conta_nome" placeholder="Ex: Internet Wi-Fi">
+            <label>Valor (R$)</label>
+            <input type="number" id="conta_valor" step="0.01" placeholder="0,00">
+            <label>Mês de Referência</label>
+            <input type="month" id="conta_mes_ano" style="text-align: center;">
+            <label>Dia Vencimento</label>
+            <input type="number" id="conta_vencimento" min="1" max="31" placeholder="1 a 31">
+            <div id="bloco_qtd_parcelas" style="display:none;">
+                <label>Total de Parcelas</label>
+                <input type="number" id="conta_parcelas" value="1" min="1">
             </div>
+            <button class="btn-add" style="background: var(--blue); color: #fff;" onclick="cadastrarConta()">SALVAR CONTA</button>
         </div>
 
-        <!-- ABA CONFIGURAÇÕES & BACKUP -->
-        <div id="config" class="container">
-            <div class="card">
-                <label style="color: var(--accent);">🏍️ DADOS DO VEÍCULO & CUSTO POR KM</label>
-                <label>Modelo da Moto</label>
-                <input type="text" id="cfg_moto_modelo" placeholder="Ex: Yamaha Lander 250">
-                <label>Média KM Rodado por Mês</label>
-                <input type="number" id="cfg_km_mes" step="1" value="3000" oninput="calcularCustoKmDinamico()">
-                
-                <div class="metric-box" style="margin-top: 10px; background: #111;">
-                    <span style="font-size: 11px;">Custo Calculado por KM:</span>
-                    <span id="cfg_custo_km_calculado" class="metric-val" style="color:var(--accent);">R$ 0,44 / km</span>
-                </div>
+        <div class="card">
+            <label>📋 CONTAS PENDENTES</label>
+            <table id="tabela-contas">
+                <thead><tr><th>Conta</th><th>Cofre</th><th>Valor</th><th>Venc</th><th>Ação</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
 
-                <button class="btn-main" onclick="salvarConfig()" style="margin-top: 14px;">Salvar Configurações</button>
-                
-                <hr style="border: 0; border-top: 1px solid #222; margin: 15px 0;">
-                <label>Gerenciamento de Dados</label>
-                <button class="btn-backup" onclick="exportarBackup()">Exportar Backup (JSON)</button>
-                <button class="btn-restore" onclick="importarBackupClick()">Restaurar Backup</button>
-                <input type="file" id="fileInput" style="display:none" onchange="importarBackup(event)">
+        <div class="card">
+            <label>📜 HISTÓRICO DE RETIRADAS</label>
+            <table id="tabela-saidas">
+                <thead><tr><th>Data</th><th>Cofre</th><th>Desc</th><th>Valor</th><th>X</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ABA GASTOS MENSAIS (CAIXINHAS DINÂMICAS) -->
+    <div id="gastos" class="container">
+        <div class="card">
+            <label style="color: var(--accent);">⚙️ GERENCIAR CAIXINHAS</label>
+            <label>Nome da Caixinha</label>
+            <input type="text" id="gasto_nome" placeholder="Ex: Gasolina, Seguro">
+            <div style="display: flex; gap: 8px;">
+                <div style="flex: 1;">
+                    <label>Emoji</label>
+                    <input type="text" id="gasto_emoji" placeholder="⛽" maxlength="4" style="text-align: center;">
+                </div>
+                <div style="flex: 1;">
+                    <label>Cor</label>
+                    <input type="color" id="gasto_cor" value="#2ecc71" style="height: 40px; width: 100%; padding: 2px; cursor: pointer; background: #202020; border: 1px solid #333; border-radius: 8px;">
+                </div>
             </div>
+            <label>Valor Mensal Estimado (R$)</label>
+            <input type="number" id="gasto_valor" step="0.01" placeholder="0,00">
+            <button class="btn-add" onclick="adicionarGasto()">➕ Adicionar / Atualizar</button>
+            <hr style="border: 0; border-top: 1px solid #222; margin: 15px 0;">
+            <label>Caixinhas Ativas</label>
+            <table id="tabela-gastos" style="margin-top: 8px;">
+                <thead><tr><th>Caixinha</th><th>Valor</th><th>Ativa</th><th>X</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ABA CONFIGURAÇÕES -->
+    <div id="config" class="container">
+        <div class="card">
+            <label style="color: var(--accent);">🏍️ SALDO INICIAL NA CARTEIRA (APPS)</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <label>Saldo Inicial Uber (R$)</label>
+                    <input type="number" id="cfg_saldo_uber" step="0.01" placeholder="0,00">
+                </div>
+                <div>
+                    <label>Saldo Inicial 99 (R$)</label>
+                    <input type="number" id="cfg_saldo_99" step="0.01" placeholder="0,00">
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #222; margin: 15px 0;">
+            <label style="color: var(--accent);">🏍️ VEÍCULO & METAS</label>
+            <label>Modelo da Moto</label>
+            <input type="text" id="cfg_moto_modelo" placeholder="Yamaha Lander 250">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <label>Km / Litro</label>
+                    <input type="number" id="cfg_km_litro" step="0.1" placeholder="30">
+                </div>
+                <div>
+                    <label>Preço Litro (R$)</label>
+                    <input type="number" id="cfg_preco_litro" step="0.01" placeholder="5.89">
+                </div>
+            </div>
+            <label>Média KM por Mês</label>
+            <input type="number" id="cfg_km_mes" step="1" value="3000" oninput="atualizarPreviewConfig()">
+            <label style="margin-top: 8px; color: var(--accent);">🎯 PERÍODO DE PLANEJAMENTO</label>
+            <select id="cfg_periodo" onchange="atualizarPreviewConfig()">
+                <option value="dia">📅 Diário</option>
+                <option value="semana">📆 Semanal</option>
+                <option value="quinzena">🗓️ Quinzena</option>
+                <option value="mes" selected>📊 Mensal (30 dias)</option>
+            </select>
+            <div id="painel-metas-periodo" class="total-box" style="margin: 10px 0; text-align: left; padding: 10px; font-size: 10px;"></div>
+            <div class="mode-box">
+                <label>MODO DE CÁLCULO POR KM</label>
+                <div class="toggle-container" style="margin-top: 6px;">
+                    <span style="font-size: 10px;">Modo Automático Proporcional</span>
+                    <input type="checkbox" id="cfg_modo_auto" checked onchange="mudarModoConfig()">
+                </div>
+            </div>
+            <div id="bloco-auto">
+                <label>Custo Total por KM (R$)</label>
+                <input type="number" id="cfg_custo_total_auto" step="0.01" value="0.55" oninput="atualizarPreviewConfig()">
+                <div id="preview-auto-km" style="margin-bottom: 10px;"></div>
+            </div>
+            <hr style="border: 0; border-top: 1px solid #222; margin: 15px 0;">
+            <label style="color: var(--accent);">⚙️ CONTROLE DE ÓLEO & TRIPS</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <label>Meta Óleo (Km)</label>
+                    <input type="number" id="cfg_meta_oleo" step="100" placeholder="3000">
+                </div>
+                <div>
+                    <label>Trip Óleo Atual</label>
+                    <input type="number" id="cfg_trip_oleo" step="0.1" placeholder="0">
+                </div>
+            </div>
+            <label>Trip Geral / Peças</label>
+            <input type="number" id="cfg_trip_geral" step="0.1" placeholder="0">
+            <button class="btn-add" onclick="salvarConfig()">Salvar Configurações</button>
+            <hr style="border: 0; border-top: 1px solid #222; margin: 15px 0;">
+            <label>Backup de Dados</label>
+            <button class="btn-backup" onclick="exportarBackup()">Exportar Backup (JSON)</button>
+            <button class="btn-restore" onclick="importarBackupClick()">Restaurar Backup</button>
+            <input type="file" id="fileInput" style="display:none" onchange="importarBackup(event)">
         </div>
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO FIREBASE (Coloque suas credenciais reais aqui)
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "seu-projeto.firebaseapp.com",
-            databaseURL: "https://seu-projeto-default-rtdb.firebaseio.com",
-            projectId: "seu-projeto",
-            storageBucket: "seu-projeto.appspot.com",
-            messagingSenderId: "SEU_SENDER_ID",
-            appId: "SEU_APP_ID"
+            apiKey: "AIzaSyCCX1k0PN_yOd3QWauBQhwX0FRwqhn7Clo",
+            authDomain: "gestao-financeira-motoboy.firebaseapp.com",
+            databaseURL: "https://gestao-financeira-motoboy-default-rtdb.firebaseio.com",
+            projectId: "gestao-financeira-motoboy",
+            storageBucket: "gestao-financeira-motoboy.firebasestorage.app",
+            messagingSenderId: "107405414927",
+            appId: "1:107405414927:web:71eae0a1917ce9e512897a",
+            measurementId: "G-M6XG8S0KBX"
         };
 
         try { if (!firebase.apps.length) firebase.initializeApp(firebaseConfig); } catch(e) { console.error(e); }
 
-        const auth = firebase.auth();
-        const database = firebase.database();
+        const dbRef = firebase.database().ref('motoboy_elite');
 
-        let usuarioAtualUid = null;
-        let dbRef = null;
+        let config = {
+            motoModelo: "Yamaha Lander 250", kmLitro: 30, precoLitro: 5.89, kmMes: 3000,
+            periodoMeta: "mes", modoAuto: true, custoTotalAuto: 0.55, taxasManuais: {},
+            metaOleo: 3000, tripOleo: 0, tripGeral: 0, saldoInicialUber: 0, saldoInicial99: 0
+        };
 
-        let config = { motoModelo: "Yamaha Lander 250", kmMes: 3000 };
         let gastosMensais = [
             { id: 1, nome: "Gasolina", emoji: "⛽", cor: "#b71c1c", valor: 660, ativo: true },
             { id: 2, nome: "Parcela Moto", emoji: "🏍️", cor: "#e65100", valor: 500, ativo: true },
-            { id: 3, nome: "Manutenção", emoji: "🛢️", cor: "#004d40", valor: 180, ativo: true }
+            { id: 3, nome: "Manutenção", emoji: "🛢️", cor: "#004d40", valor: 180, ativo: true },
+            { id: 4, nome: "Contas Fixas", emoji: "📄", cor: "#01579b", valor: 300, ativo: true }
         ];
+
         let db = [];
-        let cofresGerais = { 1: 0, 2: 0, 3: 0 };
+        let cofresGerais = { 1: 0, 2: 0, 3: 0, 4: 0 };
+        let pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
+        let pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
         let acumuladoLancamentos = { itens: {}, lucro: 0 };
+        let contasCadastradas = [];
         let historicoSaidas = [];
 
-        // VERIFICAÇÃO DE AUTH E DIAS DE TESTE (6 DIAS)
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                usuarioAtualUid = user.uid;
-                
-                const perfilRef = database.ref(`usuarios/${usuarioAtualUid}/perfil`);
-                const snapshot = await perfilRef.once('value');
-                let perfil = snapshot.val();
-
-                const agora = Date.now();
-
-                if (!perfil) {
-                    const expiraEm = agora + (6 * 24 * 60 * 60 * 1000);
-                    perfil = { email: user.email, criadoEm: agora, expiraEm: expiraEm, status: "teste" };
-                    await perfilRef.set(perfil);
-                }
-
-                if (perfil.status !== "ativo" && agora > perfil.expiraEm) {
-                    document.getElementById('tela-auth').classList.remove('active');
-                    document.getElementById('app-principal').style.display = 'none';
-                    document.getElementById('tela-pix').classList.add('active');
-                    document.getElementById('mensagem-bloqueio-sub').innerText = "O seu período de testes de 6 dias expirou! Regularize sua assinatura mensal via Pix para continuar utilizando o Rota Certa Pro.";
-                    document.getElementById('sync-status').innerText = "Bloqueado ⚠️";
-                    document.getElementById('sync-status').style.color = "#e74c3c";
-                    return;
-                }
-
-                document.getElementById('user-display').innerText = user.email;
-                document.getElementById('tela-auth').classList.remove('active');
-                document.getElementById('tela-pix').classList.remove('active');
-                document.getElementById('app-principal').style.display = 'block';
-                
-                dbRef = database.ref(`usuarios/${usuarioAtualUid}`);
-                escutarBancoDeDados();
-            } else {
-                usuarioAtualUid = null;
-                document.getElementById('app-principal').style.display = 'none';
-                document.getElementById('tela-pix').classList.remove('active');
-                document.getElementById('tela-auth').classList.add('active');
-                document.getElementById('sync-status').innerText = "Aguardando login 🔒";
+        dbRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                if (data.config) config = data.config;
+                if (data.gastosMensais) gastosMensais = data.gastosMensais;
+                if (data.db) db = data.db;
+                if (data.cofresGerais) cofresGerais = data.cofresGerais;
+                if (data.pendente99) pendente99 = data.pendente99;
+                if (data.pendenteUber) pendenteUber = data.pendenteUber;
+                if (data.acumuladoLancamentos) acumuladoLancamentos = data.acumuladoLancamentos;
+                if (data.contasCadastradas) contasCadastradas = data.contasCadastradas;
+                if (data.historicoSaidas) historicoSaidas = data.historicoSaidas;
             }
+            carregarConfigNaTela();
+            renderPainelGastos();
+            renderTable();
+            renderGerenciador();
+            atualizarInterfaceDinamica();
+
+            document.getElementById('sync-status').innerText = "Conectado ☁️";
+            document.getElementById('sync-status').style.color = "#2ecc71";
+        }, (error) => {
+            document.getElementById('sync-status').innerText = "Erro ⚠️";
+            document.getElementById('sync-status').style.color = "#e74c3c";
         });
 
-        function fazerLogin() {
-            const email = document.getElementById('auth-email').value.trim();
-            const senha = document.getElementById('auth-senha').value;
-            if(!email || !senha) { alert('Preencha e-mail e senha!'); return; }
-            auth.signInWithEmailAndPassword(email, senha).catch(err => alert('Erro no login: ' + err.message));
-        }
-
-        function fazerCadastro() {
-            const email = document.getElementById('auth-email').value.trim();
-            const senha = document.getElementById('auth-senha').value;
-            const aceite = document.getElementById('aceite-termos').checked;
-
-            if(!email || !senha) { alert('Preencha e-mail e senha!'); return; }
-            if(!aceite) { alert('Você precisa concordar com os Termos de Uso e Isenção de Responsabilidade para criar a conta.'); return; }
-
-            auth.createUserWithEmailAndPassword(email, senha).then((cred) => {
-                const agora = Date.now();
-                const expiraEm = agora + (6 * 24 * 60 * 60 * 1000);
-                database.ref(`usuarios/${cred.user.uid}/perfil`).set({
-                    email: email,
-                    criadoEm: agora,
-                    expiraEm: expiraEm,
-                    status: "teste"
-                });
-            }).catch(err => alert('Erro ao cadastrar: ' + err.message));
-        }
-
-        function fazerLogout() { auth.signOut(); }
-
-        function mostrarTelaPix() {
-            document.getElementById('tela-auth').classList.remove('active');
-            document.getElementById('tela-pix').classList.add('active');
-            document.getElementById('mensagem-bloqueio-sub').innerText = "Faça o Pix no valor da assinatura mensal para liberar o seu acesso completo ao aplicativo.";
-        }
-
-        function voltarParaLogin() {
-            auth.signOut();
-            document.getElementById('tela-pix').classList.remove('active');
-            document.getElementById('tela-auth').classList.add('active');
-        }
-
-        function escutarBancoDeDados() {
-            dbRef.on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    if (data.config) config = data.config;
-                    if (data.gastosMensais) gastosMensais = data.gastosMensais;
-                    if (data.db) db = data.db;
-                    if (data.cofresGerais) cofresGerais = data.cofresGerais;
-                    if (data.acumuladoLancamentos) acumuladoLancamentos = data.acumuladoLancamentos;
-                    if (data.historicoSaidas) historicoSaidas = data.historicoSaidas;
-                }
-                carregarConfigNaTela();
-                renderPainelGastos();
-                renderTable();
-                renderGerenciador();
-                atualizarInterfaceDinamica();
-
-                document.getElementById('sync-status').innerText = "Sincronizado ☁️";
-                document.getElementById('sync-status').style.color = "#2ecc71";
-            });
-        }
-
         function salvarNoFirebase() {
-            if(dbRef) {
-                dbRef.set({ config, gastosMensais, db, cofresGerais, acumuladoLancamentos, historicoSaidas });
-            }
-        }
-
-        function calcularCustoKmDinamico() {
-            const kmMes = parseFloat(document.getElementById('cfg_km_mes').value) || 3000;
-            const totalGastos = gastosMensais.filter(g => g.ativo).reduce((acc, g) => acc + g.valor, 0);
-            const custoPorKm = kmMes > 0 ? (totalGastos / kmMes) : 0;
-            const el = document.getElementById('cfg_custo_km_calculado');
-            if(el) el.innerText = `R$ ${custoPorKm.toFixed(2)} / km`;
-            return custoPorKm;
+            dbRef.set({ config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, acumuladoLancamentos, contasCadastradas, historicoSaidas });
         }
 
         function carregarConfigNaTela() {
             document.getElementById('cfg_moto_modelo').value = config.motoModelo || "";
+            document.getElementById('cfg_km_litro').value = config.kmLitro || 30;
+            document.getElementById('cfg_preco_litro').value = config.precoLitro || 5.89;
             document.getElementById('cfg_km_mes').value = config.kmMes || 3000;
-            calcularCustoKmDinamico();
+            document.getElementById('cfg_periodo').value = config.periodoMeta || "mes";
+            document.getElementById('cfg_modo_auto').checked = config.modoAuto !== false;
+            document.getElementById('cfg_custo_total_auto').value = config.custoTotalAuto || 0.55;
+            document.getElementById('cfg_meta_oleo').value = config.metaOleo || 3000;
+            document.getElementById('cfg_trip_oleo').value = config.tripOleo || 0;
+            document.getElementById('cfg_trip_geral').value = config.tripGeral || 0;
+            document.getElementById('cfg_saldo_uber').value = config.saldoInicialUber || 0;
+            document.getElementById('cfg_saldo_99').value = config.saldoInicial99 || 0;
+            mudarModoConfig();
+        }
+
+        function mudarModoConfig() {
+            const auto = document.getElementById('cfg_modo_auto').checked;
+            document.getElementById('bloco-auto').style.display = auto ? 'block' : 'none';
+            atualizarPreviewConfig();
+        }
+
+        function atualizarPreviewConfig() {
+            const kmMes = parseFloat(document.getElementById('cfg_km_mes').value) || 3000;
+            const periodo = document.getElementById('cfg_periodo').value;
+            const ativos = gastosMensais.filter(g => g.ativo);
+            const totalGastosMes = ativos.reduce((acc, g) => acc + g.valor, 0);
+
+            let fator = 1, nomePeriodo = "Mês";
+            if(periodo === 'dia') { fator = 1 / 30; nomePeriodo = "Dia"; }
+            else if(periodo === 'semana') { fator = 7 / 30; nomePeriodo = "Semana"; }
+            else if(periodo === 'quinzena') { fator = 15 / 30; nomePeriodo = "Quinzena"; }
+
+            const kmPeriodo = kmMes * fator;
+            const custoPeriodo = totalGastosMes * fator;
+
+            const elMetas = document.getElementById('painel-metas-periodo');
+            if(elMetas) {
+                elMetas.innerHTML = `🎯 <strong>META (${nomePeriodo.toUpperCase()}):</strong><br>Custos: <strong style="color:var(--accent);">R$ ${custoPeriodo.toFixed(2)}</strong> | KM: <strong style="color:var(--green);">${kmPeriodo.toFixed(1)} km</strong>`;
+            }
         }
 
         function salvarConfig() {
             config.motoModelo = document.getElementById('cfg_moto_modelo').value;
+            config.kmLitro = parseFloat(document.getElementById('cfg_km_litro').value) || 30;
+            config.precoLitro = parseFloat(document.getElementById('cfg_preco_litro').value) || 5.89;
             config.kmMes = parseFloat(document.getElementById('cfg_km_mes').value) || 3000;
+            config.periodoMeta = document.getElementById('cfg_periodo').value;
+            config.modoAuto = document.getElementById('cfg_modo_auto').checked;
+            config.custoTotalAuto = parseFloat(document.getElementById('cfg_custo_total_auto').value) || 0.55;
+            config.metaOleo = parseFloat(document.getElementById('cfg_meta_oleo').value) || 3000;
+            config.tripOleo = parseFloat(document.getElementById('cfg_trip_oleo').value) || 0;
+            config.tripGeral = parseFloat(document.getElementById('cfg_trip_geral').value) || 0;
+            config.saldoInicialUber = parseFloat(document.getElementById('cfg_saldo_uber').value) || 0;
+            config.saldoInicial99 = parseFloat(document.getElementById('cfg_saldo_99').value) || 0;
+
             salvarNoFirebase();
             alert('Configurações salvas!');
             trocarTab('diario');
@@ -448,7 +502,14 @@
             document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            if (evt && evt.currentTarget) evt.currentTarget.classList.add('active');
+            if (evt && evt.currentTarget) {
+                evt.currentTarget.classList.add('active');
+            } else {
+                const idx = tabId === 'diario' ? 0 : tabId === 'gerenciar' ? 1 : tabId === 'gastos' ? 2 : 3;
+                document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+            }
+            if(tabId === 'config') carregarConfigNaTela();
+            if(tabId === 'gerenciar') renderGerenciador();
         }
 
         function adicionarGasto() {
@@ -464,6 +525,7 @@
             renderPainelGastos();
             atualizarInterfaceDinamica();
             document.getElementById('gasto_nome').value = '';
+            document.getElementById('gasto_emoji').value = '';
             document.getElementById('gasto_valor').value = '';
         }
 
@@ -493,17 +555,50 @@
                     </tr>
                 `).join('');
             }
-            calcularCustoKmDinamico();
         }
 
         function atualizarInterfaceDinamica() {
             const ativos = gastosMensais.filter(g => g.ativo);
+
             const gridEnv = document.getElementById('grid-envelopes-ultimo');
             if(gridEnv) {
                 gridEnv.innerHTML = ativos.map(g => {
                     let valAcumulado = (acumuladoLancamentos.itens && acumuladoLancamentos.itens[g.id] ? acumuladoLancamentos.itens[g.id] : 0);
-                    return `<div class="env" style="border-left: 3px solid ${g.cor};">${g.emoji} ${g.nome.toUpperCase()}<strong style="color:${g.cor};">R$ ${valAcumulado.toFixed(2)}</strong></div>`;
-                }).join('') + `<div class="env" style="grid-column: span 2; background:#112518; border:1px solid #1b4d3e;">💰 LUCRO LÍQUIDO<strong style="font-size:14px; color:var(--green);">R$ ${(acumuladoLancamentos.lucro || 0).toFixed(2)}</strong></div>`;
+                    return `
+                        <div class="env" style="border-left: 3px solid ${g.cor};">
+                            ${g.emoji} ${g.nome.toUpperCase()} 
+                            <strong id="card-res-${g.id}" style="color:${g.cor};">R$ ${valAcumulado.toFixed(2)}</strong>
+                        </div>
+                    `;
+                }).join('') + `<div class="env" style="grid-column: span 2; background:#112518; border:1px solid #1b4d3e;">💰 LUCRO LÍQUIDO ACUMULADO <strong id="card-res-lucro" style="font-size:14px; color:var(--green);">R$ ${(acumuladoLancamentos.lucro || 0).toFixed(2)}</strong></div>`;
+            }
+
+            const lin99 = document.getElementById('linhas-dinamicas-99');
+            if(lin99) {
+                lin99.innerHTML = ativos.map(g => {
+                    let valItem = (pendente99.itens && pendente99.itens[g.id] ? pendente99.itens[g.id] : 0);
+                    return `
+                        <div class="linha-acumulado">
+                            <span>${g.emoji} ${g.nome}:</span> 
+                            <input type="number" id="edit-99-${g.id}" step="0.01" value="${valItem.toFixed(2)}">
+                            <button class="btn-check" onclick="darCheckItem('99', ${g.id})">✔ Baixa</button>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            const linUb = document.getElementById('linhas-dinamicas-uber');
+            if(linUb) {
+                linUb.innerHTML = ativos.map(g => {
+                    let valItem = (pendenteUber.itens && pendenteUber.itens[g.id] ? pendenteUber.itens[g.id] : 0);
+                    return `
+                        <div class="linha-acumulado">
+                            <span>${g.emoji} ${g.nome}:</span> 
+                            <input type="number" id="edit-ub-${g.id}" step="0.01" value="${valItem.toFixed(2)}">
+                            <button class="btn-check" onclick="darCheckItem('uber', ${g.id})">✔ Baixa</button>
+                        </div>
+                    `;
+                }).join('');
             }
 
             const gridCofres = document.getElementById('grid-cofres-geral');
@@ -511,43 +606,116 @@
                 gridCofres.innerHTML = ativos.map(g => `
                     <div class="env" style="border-left: 3px solid ${g.cor};">
                         ${g.emoji} ${g.nome.toUpperCase()} 
-                        <strong style="color:${g.cor};">R$ ${(cofresGerais[g.id] || 0).toFixed(2)}</strong>
+                        <strong id="ger-res-${g.id}" style="color:${g.cor};">R$ ${(cofresGerais[g.id] || 0).toFixed(2)}</strong>
                     </div>
                 `).join('');
             }
 
             const saidaCofre = document.getElementById('saida_cofre');
             if(saidaCofre) saidaCofre.innerHTML = ativos.map(g => `<option value="${g.id}">${g.emoji} ${g.nome}</option>`).join('');
+            
+            const contaCofre = document.getElementById('conta_cofre');
+            if(contaCofre) contaCofre.innerHTML = ativos.map(g => `<option value="${g.id}">${g.emoji} ${g.nome}</option>`).join('');
+
+            preencherValoresPendentesNaTela();
+        }
+
+        function preencherValoresPendentesNaTela() {
+            const e99Tot = document.getElementById('edit-99-tot');
+            if(e99Tot) e99Tot.value = (pendente99.totalBrutoAcumulado || 0).toFixed(2);
+            
+            const e99Din = document.getElementById('edit-99-dinheiro');
+            if(e99Din) e99Din.value = (pendente99.dinheiro || 0).toFixed(2);
+
+            const eUbTot = document.getElementById('edit-ub-tot');
+            if(eUbTot) eUbTot.value = (pendenteUber.totalBrutoAcumulado || 0).toFixed(2);
+
+            const eUbDin = document.getElementById('edit-ub-dinheiro');
+            if(eUbDin) eUbDin.value = (pendenteUber.dinheiro || 0).toFixed(2);
+
+            atualizarValoresDigitados('99');
+            atualizarValoresDigitados('uber');
+        }
+
+        function atualizarValoresDigitados(plat) {
+            const prefixo = plat === '99' ? '99' : 'ub';
+            const dinheiroTotalEmEspecie = parseFloat(document.getElementById(`edit-${prefixo}-dinheiro`).value) || 0;
+            
+            let saldoRestanteNaMao = dinheiroTotalEmEspecie;
+            const spanRestante = document.getElementById(`restante-${plat}`);
+            const boxRestante = document.getElementById(`restante-${plat}-box`);
+            
+            if(spanRestante) {
+                spanRestante.innerText = saldoRestanteNaMao.toFixed(2);
+                if (saldoRestanteNaMao < 0) {
+                    boxRestante.style.color = "var(--red)";
+                } else if (saldoRestanteNaMao === 0 && dinheiroTotalEmEspecie > 0) {
+                    boxRestante.style.color = "var(--green)";
+                } else {
+                    boxRestante.style.color = "var(--accent)";
+                }
+            }
+        }
+
+        function darCheckItem(plat, idGasto) {
+            const prefixo = plat === '99' ? '99' : 'ub';
+            const inp = document.getElementById(`edit-${prefixo}-${idGasto}`);
+            const valInformado = parseFloat(inp ? inp.value : 0) || 0;
+
+            if (valInformado <= 0) { alert('Valor zerado ou inválido nesta caixinha.'); return; }
+
+            // CORREÇÃO: Soma o valor nos cofres oficiais para não sumir!
+            cofresGerais[idGasto] = (cofresGerais[idGasto] || 0) + valInformado;
+
+            if (plat === '99') {
+                if (pendente99.itens && pendente99.itens[idGasto]) {
+                    pendente99.itens[idGasto] = Math.max(0, pendente99.itens[idGasto] - valInformado);
+                }
+            } else {
+                if (pendenteUber.itens && pendenteUber.itens[idGasto]) {
+                    pendenteUber.itens[idGasto] = Math.max(0, pendenteUber.itens[idGasto] - valInformado);
+                }
+            }
+
+            salvarNoFirebase();
+            atualizarInterfaceDinamica();
+            alert('Baixa parcial efetuada, somada aos cofres e abatida com sucesso!');
         }
 
         function calcularBrutoTotal() {
-            const b1 = parseFloat(document.getElementById('bruto_99').value) || 0;
-            const b2 = parseFloat(document.getElementById('bruto_uber').value) || 0;
-            document.getElementById('bruto').value = (b1 + b2) > 0 ? (b1 + b2).toFixed(2) : '';
+            const b99 = parseFloat(document.getElementById('bruto_99').value) || 0;
+            const uber = parseFloat(document.getElementById('bruto_uber').value) || 0;
+            document.getElementById('bruto').value = (b99 + uber) > 0 ? (b99 + uber).toFixed(2) : '';
         }
 
         function registrar() {
-            const b1 = parseFloat(document.getElementById('bruto_99').value) || 0;
-            const b2 = parseFloat(document.getElementById('bruto_uber').value) || 0;
-            const bruto = b1 + b2;
+            const b99 = parseFloat(document.getElementById('bruto_99').value) || 0;
+            const carteira99Hoje = parseFloat(document.getElementById('carteira_99_hoje').value) || 0;
+            const bUber = parseFloat(document.getElementById('bruto_uber').value) || 0;
+            const carteiraUberHoje = parseFloat(document.getElementById('carteira_uber_hoje').value) || 0;
+            const bruto = b99 + bUber;
             const km = parseFloat(document.getElementById('km_dia').value) || 0;
 
             if (bruto <= 0 || km <= 0) { alert('Preencha faturamento bruto e KM!'); return; }
 
-            const custoPorKmDinamico = calcularCustoKmDinamico();
+            config.tripOleo = (parseFloat(config.tripOleo) || 0) + km;
+            config.tripGeral = (parseFloat(config.tripGeral) || 0) + km;
+
+            const kmMes = config.kmMes > 0 ? config.kmMes : 3000;
             const ativos = gastosMensais.filter(g => g.ativo);
-            const somaGastos = ativos.reduce((acc, g) => acc + g.valor, 0);
+            const modoAuto = config.modoAuto !== false;
 
             let custosDiaItens = {}, totalCustosGerais = 0;
+            let somaGastos = ativos.reduce((acc, g) => acc + g.valor, 0);
+
             ativos.forEach(g => {
-                let custoKmItem = custoPorKmDinamico * (somaGastos > 0 ? g.valor / somaGastos : 1 / ativos.length);
+                let custoKmItem = modoAuto ? ((parseFloat(config.custoTotalAuto) || 0.55) * (somaGastos > 0 ? g.valor / somaGastos : 1 / ativos.length)) : ((config.taxasManuais && config.taxasManuais[g.id]) || (g.valor / kmMes));
                 let valorItemDia = km * custoKmItem;
                 custosDiaItens[g.id] = valorItemDia;
                 totalCustosGerais += valorItemDia;
-                cofresGerais[g.id] = (cofresGerais[g.id] || 0) + valorItemDia;
             });
 
-            const lucroDia = bruto - totalCustosGerais;
+            const lucroTotalDia = bruto - totalCustosGerais;
             const eficiencia = km > 0 ? (bruto / km) : 0;
             document.getElementById('res-eficiencia').innerText = `R$ ${eficiencia.toFixed(2)} / km`;
 
@@ -555,22 +723,134 @@
             ativos.forEach(g => {
                 acumuladoLancamentos.itens[g.id] = (acumuladoLancamentos.itens[g.id] || 0) + (custosDiaItens[g.id] || 0);
             });
-            acumuladoLancamentos.lucro = (acumuladoLancamentos.lucro || 0) + lucroDia;
+            acumuladoLancamentos.lucro = (acumuladoLancamentos.lucro || 0) + lucroTotalDia;
 
-            let obsTexto = eficiencia < custoPorKmDinamico ? "RUIM" : (eficiencia < (custoPorKmDinamico * 1.5) ? "MÉDIO" : "EXCELENTE");
+            if (!pendente99.itens) pendente99.itens = {};
+            if (!pendenteUber.itens) pendenteUber.itens = {};
+
+            pendente99.totalBrutoAcumulado = (pendente99.totalBrutoAcumulado || 0) + b99;
+            pendenteUber.totalBrutoAcumulado = (pendenteUber.totalBrutoAcumulado || 0) + bUber;
+
+            if (carteira99Hoje > 0) {
+                let baseIni99 = pendente99.ultimaCarteiraApp || config.saldoInicial99 || 0;
+                let subidaApp99 = Math.max(0, carteira99Hoje - baseIni99);
+                let dinheiro99Hoje = Math.max(0, b99 - subidaApp99);
+                pendente99.dinheiro = (pendente99.dinheiro || 0) + dinheiro99Hoje;
+                pendente99.ultimaCarteiraApp = carteira99Hoje;
+            }
+
+            if (carteiraUberHoje > 0) {
+                let baseIniUber = pendenteUber.ultimaCarteiraApp || config.saldoInicialUber || 0;
+                let subidaAppUber = Math.max(0, carteiraUberHoje - baseIniUber);
+                let dinheiroUberHoje = Math.max(0, bUber - subidaAppUber);
+                pendenteUber.dinheiro = (pendenteUber.dinheiro || 0) + dinheiroUberHoje;
+                pendenteUber.ultimaCarteiraApp = carteiraUberHoje;
+            }
+
+            if (b99 > 0) {
+                ativos.forEach(g => {
+                    let itemProp = (custosDiaItens[g.id] || 0) * (b99 / bruto);
+                    pendente99.itens[g.id] = (pendente99.itens[g.id] || 0) + itemProp;
+                });
+            }
+
+            if (bUber > 0) {
+                ativos.forEach(g => {
+                    let itemProp = (custosDiaItens[g.id] || 0) * (bUber / bruto);
+                    pendenteUber.itens[g.id] = (pendenteUber.itens[g.id] || 0) + itemProp;
+                });
+            }
+
+            let custoCfg = parseFloat(config.custoTotalAuto) || 0.55;
+            let obsTexto = eficiencia < custoCfg ? "RUIM" : (eficiencia < (custoCfg * 1.5) ? "MÉDIO" : "EXCELENTE");
             document.getElementById('obs').value = obsTexto;
 
-            db.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), bruto: bruto.toFixed(2), km, eficiencia: eficiencia.toFixed(2), obs: obsTexto });
+            db.unshift({ 
+                id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), 
+                mesAno: `${String(new Date().getMonth() + 1).padStart(2, '0')}/${new Date().getFullYear()}`,
+                bruto: bruto.toFixed(2), km, eficiencia: eficiencia.toFixed(2), obs: obsTexto,
+                itensDia: custosDiaItens, lucroDia: lucroTotalDia, b99, bUber
+            });
 
             salvarNoFirebase();
             atualizarInterfaceDinamica();
             renderTable();
 
             document.getElementById('bruto_99').value = '';
+            document.getElementById('carteira_99_hoje').value = '';
             document.getElementById('bruto_uber').value = '';
+            document.getElementById('carteira_uber_hoje').value = '';
             document.getElementById('km_dia').value = '';
             document.getElementById('bruto').value = '';
-            alert('Lançamento registrado com sucesso!');
+            alert('Lançamento registrado e acumulado com sucesso!');
+        }
+
+        function baixarCaixas99() {
+            gastosMensais.filter(g => g.ativo).forEach(g => {
+                const val = parseFloat(document.getElementById(`edit-99-${g.id}`)?.value) || 0;
+                if (val > 0) {
+                    cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
+                }
+            });
+            pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
+            salvarNoFirebase();
+            atualizarInterfaceDinamica();
+            alert('Baixa da 99 concluída, somada aos cofres e zerada!');
+        }
+
+        function receberRepasseUber() {
+            gastosMensais.filter(g => g.ativo).forEach(g => {
+                const val = parseFloat(document.getElementById(`edit-ub-${g.id}`)?.value) || 0;
+                if (val > 0) {
+                    cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
+                }
+            });
+            pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
+            salvarNoFirebase();
+            atualizarInterfaceDinamica();
+            alert('Baixa da Uber concluída, somada aos cofres e zerada!');
+        }
+
+        function zerarCaixasPendentesManualmente() {
+            if(confirm('Zerar todas as pendências?')) {
+                pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
+                pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
+                acumuladoLancamentos = { itens: {}, lucro: 0 };
+                salvarNoFirebase();
+                atualizarInterfaceDinamica();
+                alert('Pendências zeradas com sucesso!');
+            }
+        }
+
+        function deletarItem(i) {
+            if (confirm('Desfazer lançamento?')) {
+                const item = db[i];
+                if(item) {
+                    if(item.km) {
+                        config.tripOleo = Math.max(0, config.tripOleo - item.km);
+                        config.tripGeral = Math.max(0, config.tripGeral - item.km);
+                    }
+                    if(item.itensDia) {
+                        for(let id in item.itensDia) {
+                            if(acumuladoLancamentos.itens && acumuladoLancamentos.itens[id]) {
+                                acumuladoLancamentos.itens[id] = Math.max(0, acumuladoLancamentos.itens[id] - item.itensDia[id]);
+                            }
+                        }
+                    }
+                    if(item.lucroDia) {
+                        acumuladoLancamentos.lucro = Math.max(0, (acumuladoLancamentos.lucro || 0) - item.lucroDia);
+                    }
+                }
+                db.splice(i, 1);
+                if (db.length === 0) {
+                    acumuladoLancamentos = { itens: {}, lucro: 0 };
+                    pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
+                    pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
+                }
+                salvarNoFirebase();
+                atualizarInterfaceDinamica();
+                renderTable();
+            }
         }
 
         function renderTable() {
@@ -580,7 +860,7 @@
                     let badgeClass = item.obs === 'RUIM' ? 'badge-ruim' : (item.obs === 'MÉDIO' ? 'badge-medio' : 'badge-excelente');
                     return `<tr>
                         <td><strong>${item.data}</strong></td>
-                        <td style="color:var(--green);">R$ ${item.bruto}</td>
+                        <td style="color:var(--green); font-weight:700;">R$ ${item.bruto}</td>
                         <td>R$ ${item.eficiencia}</td>
                         <td><span class="badge-obs ${badgeClass}">${item.obs}</span></td>
                         <td><button class="btn-del" onclick="deletarItem(${i})">✕</button></td>
@@ -589,37 +869,143 @@
             }
         }
 
-        function deletarItem(i) {
-            if(confirm('Desfazer lançamento?')) {
-                db.splice(i, 1);
-                salvarNoFirebase();
-                renderTable();
-            }
+        function mudarTipoContaForm() {
+            const bloco = document.getElementById('bloco_qtd_parcelas');
+            if(bloco) bloco.style.display = (document.getElementById('conta_tipo').value === 'parcelada') ? 'block' : 'none';
         }
 
         function lançarSaidaCofre() {
             const cofreId = document.getElementById('saida_cofre').value;
             const desc = document.getElementById('saida_desc').value.trim();
             const valor = parseFloat(document.getElementById('saida_valor').value);
+
             if(!desc || isNaN(valor) || valor <= 0) { alert('Preencha descrição e valor!'); return; }
-            if(valor > (cofresGerais[cofreId] || 0)) { alert('Saldo insuficiente no cofre!'); return; }
+            if (valor > (cofresGerais[cofreId] || 0)) { alert('Saldo insuficiente no cofre!'); return; }
 
             cofresGerais[cofreId] = Math.max(0, cofresGerais[cofreId] - valor);
+            const gInfo = gastosMensais.find(x => x.id == cofreId);
+
+            historicoSaidas.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), cofreNome: gInfo ? `${gInfo.emoji} ${gInfo.nome}` : 'Caixa', desc, valor });
             salvarNoFirebase();
             atualizarInterfaceDinamica();
+            renderGerenciador();
+            document.getElementById('saida_desc').value = '';
+            document.getElementById('saida_valor').value = '';
             alert('Retirada registrada!');
         }
 
-        function renderGerenciador() { atualizarInterfaceDinamica(); }
+        function cadastrarConta() {
+            const tipo = document.getElementById('conta_tipo').value;
+            const cofreId = document.getElementById('conta_cofre').value;
+            const nome = document.getElementById('conta_nome').value.trim();
+            const valor = parseFloat(document.getElementById('conta_valor').value);
+            const mesAno = document.getElementById('conta_mes_ano').value;
+            const vencimento = parseInt(document.getElementById('conta_vencimento').value) || 1;
+            const parcelas = parseInt(document.getElementById('conta_parcelas').value) || 1;
+
+            if(!nome || isNaN(valor) || valor <= 0 || !mesAno) { alert('Preencha os dados da conta!'); return; }
+
+            contasCadastradas.push({ id: Date.now(), tipo, cofreId, nome, valor, mesAnoRef: mesAno, vencimento, parcelaAtual: 1, totalParcelas: parcelas, paga: false });
+            salvarNoFirebase();
+            renderGerenciador();
+            document.getElementById('conta_nome').value = '';
+            document.getElementById('conta_valor').value = '';
+            alert('Conta cadastrada!');
+        }
+
+        function pagarConta(id) {
+            const c = contasCadastradas.find(x => x.id === id);
+            if(!c) return;
+            if(c.valor > (cofresGerais[c.cofreId] || 0)) { alert('Saldo insuficiente no cofre!'); return; }
+
+            if(confirm(`Pagar "${c.nome}"?`)) {
+                cofresGerais[c.cofreId] = Math.max(0, cofresGerais[c.cofreId] - c.valor);
+                const gInfo = gastosMensais.find(x => x.id == c.cofreId);
+                historicoSaidas.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), cofreNome: gInfo ? `${gInfo.emoji} ${gInfo.nome}` : 'Caixa', desc: `Pago: ${c.nome}`, valor: c.valor });
+
+                c.paga = true;
+                salvarNoFirebase();
+                atualizarInterfaceDinamica();
+                renderGerenciador();
+                alert('Conta paga!');
+            }
+        }
+
+        function excluirConta(id) {
+            if(confirm('Excluir conta?')) { contasCadastradas = contasCadastradas.filter(x => x.id !== id); salvarNoFirebase(); renderGerenciador(); }
+        }
+
+        function deletarSaida(id) {
+            historicoSaidas = historicoSaidas.filter(x => x.id !== id);
+            salvarNoFirebase();
+            renderGerenciador();
+        }
+
+        function renderGerenciador() {
+            const tbodyContas = document.querySelector('#tabela-contas tbody');
+            const pendentes = contasCadastradas.filter(x => !x.paga);
+            if(tbodyContas) {
+                tbodyContas.innerHTML = pendentes.length ? pendentes.map(c => {
+                    const gInfo = gastosMensais.find(x => x.id == c.cofreId);
+                    return `<tr>
+                        <td><strong>${c.nome}</strong></td>
+                        <td>${gInfo ? gInfo.emoji : '-'}</td>
+                        <td>R$ ${c.valor.toFixed(2)}</td>
+                        <td>Dia ${c.vencimento}</td>
+                        <td>
+                            <button onclick="pagarConta(${c.id})" style="background:var(--green); border:none; padding:3px 6px; border-radius:4px; font-weight:700; cursor:pointer; font-size:9px;">Pagar</button>
+                            <button onclick="excluirConta(${c.id})" style="background:var(--red); color:#fff; border:none; padding:3px 6px; border-radius:4px; font-weight:700; cursor:pointer; font-size:9px; margin-top:2px;">✕</button>
+                        </td>
+                    </tr>`;
+                }).join('') : '<tr><td colspan="5" style="color:var(--text-muted);">Nenhuma conta pendente.</td></tr>';
+            }
+
+            const tbodySaidas = document.querySelector('#tabela-saidas tbody');
+            if(tbodySaidas) {
+                tbodySaidas.innerHTML = historicoSaidas.length ? historicoSaidas.slice(0, 8).map(s => `
+                    <tr>
+                        <td>${s.data}</td>
+                        <td>${s.cofreNome}</td>
+                        <td>${s.desc}</td>
+                        <td style="color:var(--red);">R$ ${s.valor.toFixed(2)}</td>
+                        <td><button class="btn-del" onclick="deletarSaida(${s.id})">✕</button></td>
+                    </tr>
+                `).join('') : '<tr><td colspan="5" style="color:var(--text-muted);">Sem retiradas.</td></tr>';
+            }
+
+            const compContainer = document.getElementById('comparativo-conteudo');
+            if(compContainer) {
+                let totalBrutoMes = db.reduce((acc, item) => acc + parseFloat(item.bruto || 0), 0);
+                let totalKmMes = db.reduce((acc, item) => acc + parseFloat(item.km || 0), 0);
+                compContainer.innerHTML = `📅 Total Faturado no Histórico: <strong style="color:var(--green);">R$ ${totalBrutoMes.toFixed(2)}</strong><br>🏍️ Total KM Rodado: <strong style="color:var(--accent);">${totalKmMes.toFixed(1)} km</strong>`;
+            }
+
+            gerarDiagnosticoIA();
+        }
+
+        function gerarDiagnosticoIA() {
+            const aiElem = document.getElementById('ai-feedback');
+            if(!aiElem) return;
+            const metaOleo = parseFloat(config.metaOleo) || 3000;
+            const tripOleo = parseFloat(config.tripOleo) || 0;
+            let msgs = [];
+
+            if (tripOleo >= metaOleo) {
+                msgs.push(`🚨 <strong style="color:var(--red);">Óleo Vencido!</strong> (${tripOleo.toFixed(1)} km).`);
+            } else {
+                msgs.push(`🛢️ <strong>Óleo:</strong> ${tripOleo.toFixed(1)} / ${metaOleo} km.`);
+            }
+            aiElem.innerHTML = msgs.join('<br>');
+        }
 
         function exportarBackup() {
-            const dados = { config, gastosMensais, db, cofresGerais, acumuladoLancamentos };
+            const dados = { config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, acumuladoLancamentos, contasCadastradas, historicoSaidas };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dados));
-            const a = document.createElement('a'); a.href = dataStr; a.download = "backup_rota_certa_pro.json";
+            const a = document.createElement('a'); a.href = dataStr; a.download = "backup_motoboy_elite.json";
             document.body.appendChild(a); a.click(); a.remove();
         }
 
-        function importarBackupClick() { document.getElementById('fileInput').click(); }
+        function importarBackupClick() { const el = document.getElementById('fileInput'); if(el) el.click(); }
 
         function importarBackup(event) {
             const file = event.target.files[0];
@@ -634,9 +1020,9 @@
                     if(c.cofresGerais) cofresGerais = c.cofresGerais;
                     if(c.acumuladoLancamentos) acumuladoLancamentos = c.acumuladoLancamentos;
                     salvarNoFirebase();
-                    alert('Backup restaurado com sucesso na sua conta!');
+                    alert('Backup restaurado e sincronizado com o Firebase!');
                     location.reload();
-                } catch(err) { alert('Erro ao ler o arquivo de backup.'); }
+                } catch(err) { alert('Erro ao carregar backup.'); }
             };
             reader.readAsText(file);
         }
