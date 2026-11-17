@@ -145,6 +145,12 @@
             
             <button class="btn-add" onclick="registrar()">REGISTRAR LANÇAMENTO</button>
 
+            <!-- AVISO DE AVALIAÇÃO DO DIA (RITMO DE METAS) -->
+            <div id="feedback-diario-card" style="display:none; margin-top: 10px; background: #11221c; border: 1px solid #1b4d3e; padding: 10px 12px; border-radius: 8px; font-size: 11px; line-height: 1.4;">
+                <strong style="color: var(--green); display: block; margin-bottom: 2px;">⚡ AVALIAÇÃO DO DIA:</strong>
+                <span id="texto-feedback-diario"></span>
+            </div>
+
             <div class="metric-box" style="margin-top: 10px;">
                 <span style="font-size: 11px; color: var(--text-muted);">Eficiência Média:</span>
                 <span id="res-eficiencia" class="metric-val">R$ 0,00 / km</span>
@@ -601,7 +607,6 @@
         function atualizarInterfaceDinamica() {
             const ativos = gastosMensais.filter(g => g.ativo);
 
-            // Cálculos para o ritmo de progresso nas caixinhas
             const hoje = new Date();
             const diaAtual = hoje.getDate();
             const ultimoDiaDoMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
@@ -648,7 +653,6 @@
                 }).join('');
             }
 
-            // --- GRID DE COFRES GERAIS COM BARRA DE PROGRESSO & STATUS INTELIGENTE ---
             const gridCofres = document.getElementById('grid-cofres-geral');
             if(gridCofres) {
                 gridCofres.innerHTML = ativos.map(g => {
@@ -845,6 +849,27 @@
             let custoCfg = parseFloat(config.custoTotalAuto) || 0.55;
             let obsTexto = eficiencia < custoCfg ? "RUIM" : (eficiencia < (custoCfg * 1.5) ? "MÉDIO" : "EXCELENTE");
             document.getElementById('obs').value = obsTexto;
+
+            // --- AVALIAÇÃO INTELIGENTE DO DIA (COMPARAÇÃO COM A META DIÁRIA IDEAL) ---
+            const metaMensalTotal = ativos.reduce((acc, g) => acc + g.valor, 0);
+            const metaDiariaIdeal = metaMensalTotal / 30; // Média diária para bater o mês
+            const diferencaMetaDiaria = lucroTotalDia - metaDiariaIdeal;
+
+            const cardFeedback = document.getElementById('feedback-diario-card');
+            const textoFeedback = document.getElementById('texto-feedback-diario');
+            if (cardFeedback && textoFeedback) {
+                cardFeedback.style.display = 'block';
+                if (diferencaMetaDiaria >= 0) {
+                    textoFeedback.innerHTML = `🟢 <strong>Parabéns!</strong> Seu lucro líquido hoje (R$ ${lucroTotalDia.toFixed(2)}) superou a meta diária ideal (R$ ${metaDiariaIdeal.toFixed(2)}). Você está gerando folga nas caixinhas!`;
+                    cardFeedback.style.background = "#11221c";
+                    cardFeedback.style.borderColor = "#1b4d3e";
+                } else {
+                    let faltaFaturar = Math.abs(diferencaMetaDiaria);
+                    textoFeedback.innerHTML = `🟡 <strong>Atenção ao ritmo:</strong> Seu lucro líquido hoje foi de R$ ${lucroTotalDia.toFixed(2)} (abaixo da média diária de R$ ${metaDiariaIdeal.toFixed(2)}). Faltaram cerca de R$ ${faltaFaturar.toFixed(2)} para cobrir o ritmo ideal do dia. Force um pouco mais amanhã!`;
+                    cardFeedback.style.background = "#262211";
+                    cardFeedback.style.borderColor = "#4d3e1b";
+                }
+            }
 
             db.unshift({ 
                 id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), 
@@ -1086,7 +1111,7 @@
             document.body.appendChild(a); a.click(); a.remove();
         }
 
-        function importBackupClick() { const el = document.getElementById('fileInput'); if(el) el.click(); }
+        function importarBackupClick() { const el = document.getElementById('fileInput'); if(el) el.click(); }
 
         function importarBackup(event) {
             const file = event.target.files[0];
