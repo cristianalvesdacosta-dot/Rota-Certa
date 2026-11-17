@@ -207,8 +207,8 @@
         </div>
 
         <div class="card">
-            <label style="color: var(--accent);">💰 SALDO DOS COFRES OFICIAIS</label>
-            <div id="grid-cofres-geral" class="envelopes" style="margin-top: 4px; grid-template-columns: 1fr 1fr;"></div>
+            <label style="color: var(--accent);">💰 SALDO DOS COFRES & RITMO DE METAS</label>
+            <div id="grid-cofres-geral" style="margin-top: 8px;"></div>
         </div>
 
         <div class="card">
@@ -601,6 +601,12 @@
         function atualizarInterfaceDinamica() {
             const ativos = gastosMensais.filter(g => g.ativo);
 
+            // Cálculos para o ritmo de progresso nas caixinhas
+            const hoje = new Date();
+            const diaAtual = hoje.getDate();
+            const ultimoDiaDoMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
+            const progressoTempoMes = diaAtual / ultimoDiaDoMes;
+
             const gridEnv = document.getElementById('grid-envelopes-ultimo');
             if(gridEnv) {
                 gridEnv.innerHTML = ativos.map(g => {
@@ -642,14 +648,49 @@
                 }).join('');
             }
 
+            // --- GRID DE COFRES GERAIS COM BARRA DE PROGRESSO & STATUS INTELIGENTE ---
             const gridCofres = document.getElementById('grid-cofres-geral');
             if(gridCofres) {
-                gridCofres.innerHTML = ativos.map(g => `
-                    <div class="env" style="border-left: 3px solid ${g.cor};">
-                        ${g.emoji} ${g.nome.toUpperCase()} 
-                        <strong id="ger-res-${g.id}" style="color:${g.cor};">R$ ${(cofresGerais[g.id] || 0).toFixed(2)}</strong>
-                    </div>
-                `).join('');
+                gridCofres.innerHTML = ativos.map(g => {
+                    const saldoAtual = cofresGerais[g.id] || 0;
+                    const metaMensal = g.valor || 1;
+                    let percentual = (saldoAtual / metaMensal) * 100;
+                    if(percentual > 100) percentual = 100;
+
+                    const metaIdealHoje = metaMensal * progressoTempoMes;
+                    const diferenca = saldoAtual - metaIdealHoje;
+
+                    let statusTexto = "";
+                    let corStatus = "";
+
+                    if (saldoAtual >= metaMensal) {
+                        statusTexto = "🏆 Meta mensal batida!";
+                        corStatus = "var(--green)";
+                    } else if (diferenca >= 0) {
+                        statusTexto = "🟢 No ritmo ideal para o mês";
+                        corStatus = "var(--green)";
+                    } else {
+                        let faltaAportar = Math.abs(diferenca);
+                        statusTexto = `🟡 Atenção: aporte R$ ${faltaAportar.toFixed(2)} a mais para o ritmo`;
+                        corStatus = "var(--accent)";
+                    }
+
+                    return `
+                        <div class="env" style="border-left: 4px solid ${g.cor}; text-align: left; padding: 10px 12px; margin-bottom: 8px; background: #1a1a1a;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <span style="font-weight: 700; font-size: 11px; color: #fff;">${g.emoji} ${g.nome.toUpperCase()}</span>
+                                <strong style="color: ${g.cor}; font-size: 12px;">R$ ${saldoAtual.toFixed(2)} <span style="font-size: 9px; color: #888;">/ R$ ${metaMensal.toFixed(2)}</span></strong>
+                            </div>
+                            <!-- Barra de Progresso -->
+                            <div style="width: 100%; background: #222; height: 6px; border-radius: 4px; overflow: hidden; margin: 6px 0;">
+                                <div style="width: ${percentual}%; background: ${g.cor}; height: 100%; transition: width 0.4s ease;"></div>
+                            </div>
+                            <div style="font-size: 9px; color: ${corStatus}; font-weight: 600; margin-top: 4px;">
+                                ${statusTexto}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
             }
 
             const saidaCofre = document.getElementById('saida_cofre');
@@ -1045,7 +1086,7 @@
             document.body.appendChild(a); a.click(); a.remove();
         }
 
-        function importarBackupClick() { const el = document.getElementById('fileInput'); if(el) el.click(); }
+        function importBackupClick() { const el = document.getElementById('fileInput'); if(el) el.click(); }
 
         function importarBackup(event) {
             const file = event.target.files[0];
