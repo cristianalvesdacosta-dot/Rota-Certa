@@ -292,11 +292,18 @@
             </div>
             <label>Valor Mensal Estimado (R$)</label>
             <input type="number" id="gasto_valor" step="0.01" placeholder="0,00">
-            <button class="btn-add" onclick="adicionarGasto()">➕ Adicionar / Atualizar</button>
+            <div style="margin-top: 8px;">
+                <label>Tipo de Caixinha</label>
+                <select id="gasto_tipo_acumulo">
+                    <option value="mensal">🔄 Cíclica (Zera/Renova todo Mês - Ex: Gasolina, Contas)</option>
+                    <option value="acumulativa">🏦 Acumulativa (Guarda para o Futuro - Ex: Reserva, IPVA)</option>
+                </select>
+            </div>
+            <button class="btn-add" onclick="adicionarGasto()" style="margin-top: 8px;">➕ Adicionar / Atualizar</button>
             <hr style="border: 0; border-top: 1px solid #222; margin: 15px 0;">
             <label>Caixinhas Ativas</label>
             <table id="tabela-gastos" style="margin-top: 8px;">
-                <thead><tr><th>Caixinha</th><th>Valor</th><th>Ativa</th><th>X</th></tr></thead>
+                <thead><tr><th>Caixinha</th><th>Valor</th><th>Tipo</th><th>Ativa</th><th>X</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
@@ -332,7 +339,7 @@
                 </div>
             </div>
             <label>Média KM por Mês</label>
-            <input type="number" id="cfg_km_mes" step="1" value="3000" oninput="atualizarPreviewConfig()">
+            <input type="number" id="cfg_km_mes" step="1" value="2860" oninput="atualizarPreviewConfig()">
             <label style="margin-top: 8px; color: var(--accent);">🎯 PERÍODO DE PLANEJAMENTO</label>
             <select id="cfg_periodo" onchange="atualizarPreviewConfig()">
                 <option value="dia">📅 Diário</option>
@@ -350,7 +357,7 @@
             </div>
             <div id="bloco-auto">
                 <label>Custo Total por KM (R$)</label>
-                <input type="number" id="cfg_custo_total_auto" step="0.01" value="0.55" oninput="atualizarPreviewConfig()">
+                <input type="number" id="cfg_custo_total_auto" step="0.01" value="0.50" oninput="atualizarPreviewConfig()">
                 <div id="preview-auto-km" style="margin-bottom: 10px;"></div>
             </div>
             <div id="bloco-manual-caixinhas" style="display: none; background: #161616; border: 1px solid #333; padding: 12px; border-radius: 10px; margin-bottom: 12px;"></div>
@@ -394,16 +401,16 @@
         const dbRef = firebase.database().ref('motoboy_elite');
 
         let config = {
-            motoModelo: "Yamaha Lander 250", kmLitro: 30, precoLitro: 5.89, kmMes: 3000,
-            periodoMeta: "mes", modoAuto: true, custoTotalAuto: 0.55, taxasManuais: {},
+            motoModelo: "Yamaha Lander 250", kmLitro: 30, precoLitro: 5.89, kmMes: 2860,
+            periodoMeta: "mes", modoAuto: true, custoTotalAuto: 0.50, taxasManuais: {},
             metaOleo: 3000, tripOleo: 0, tripGeral: 0, saldoInicialUber: 0, saldoInicial99: 0
         };
 
         let gastosMensais = [
-            { id: 1, nome: "Gasolina", emoji: "⛽", cor: "#b71c1c", valor: 660, ativo: true },
-            { id: 2, nome: "Parcela Moto", emoji: "🏍️", cor: "#e65100", valor: 500, ativo: true },
-            { id: 3, nome: "Manutenção", emoji: "🛢️", cor: "#004d40", valor: 180, ativo: true },
-            { id: 4, nome: "Contas Fixas", emoji: "📄", cor: "#01579b", valor: 300, ativo: true }
+            { id: 1, nome: "Gasolina", emoji: "⛽", cor: "#b71c1c", valor: 660, tipo: "mensal", ativo: true },
+            { id: 2, nome: "Parcela Moto", emoji: "🏍️", cor: "#e65100", valor: 500, tipo: "mensal", ativo: true },
+            { id: 3, nome: "Manutenção", emoji: "🛢️", cor: "#004d40", valor: 180, tipo: "mensal", ativo: true },
+            { id: 4, nome: "Contas Fixas", emoji: "📄", cor: "#01579b", valor: 300, tipo: "mensal", ativo: true }
         ];
 
         let db = [];
@@ -448,10 +455,10 @@
             document.getElementById('cfg_moto_modelo').value = config.motoModelo || "";
             document.getElementById('cfg_km_litro').value = config.kmLitro || 30;
             document.getElementById('cfg_preco_litro').value = config.precoLitro || 5.89;
-            document.getElementById('cfg_km_mes').value = config.kmMes || 3000;
+            document.getElementById('cfg_km_mes').value = config.kmMes || 2860;
             document.getElementById('cfg_periodo').value = config.periodoMeta || "mes";
             document.getElementById('cfg_modo_auto').checked = config.modoAuto !== false;
-            document.getElementById('cfg_custo_total_auto').value = config.custoTotalAuto || 0.55;
+            document.getElementById('cfg_custo_total_auto').value = config.custoTotalAuto || 0.50;
             document.getElementById('cfg_meta_oleo').value = config.metaOleo || 3000;
             document.getElementById('cfg_trip_oleo').value = config.tripOleo || 0;
             document.getElementById('cfg_trip_geral').value = config.tripGeral || 0;
@@ -469,7 +476,7 @@
                 if (!auto) {
                     blocoManual.style.display = 'block';
                     const ativos = gastosMensais.filter(g => g.ativo);
-                    const kmMes = parseFloat(document.getElementById('cfg_km_mes').value) || 3000;
+                    const kmMes = parseFloat(document.getElementById('cfg_km_mes').value) || 2860;
                     
                     blocoManual.innerHTML = `
                         <label style="color: var(--accent); margin-bottom: 6px;">⚙️ DISTRIBUIÇÃO MANUAL DE CUSTO POR KM</label>
@@ -496,7 +503,7 @@
         }
 
         function atualizarPreviewConfig() {
-            const kmMes = parseFloat(document.getElementById('cfg_km_mes').value) || 3000;
+            const kmMes = parseFloat(document.getElementById('cfg_km_mes').value) || 2860;
             const periodo = document.getElementById('cfg_periodo').value;
             const ativos = gastosMensais.filter(g => g.ativo);
             const totalGastosMes = ativos.reduce((acc, g) => acc + g.valor, 0);
@@ -519,10 +526,10 @@
             config.motoModelo = document.getElementById('cfg_moto_modelo').value;
             config.kmLitro = parseFloat(document.getElementById('cfg_km_litro').value) || 30;
             config.precoLitro = parseFloat(document.getElementById('cfg_preco_litro').value) || 5.89;
-            config.kmMes = parseFloat(document.getElementById('cfg_km_mes').value) || 3000;
+            config.kmMes = parseFloat(document.getElementById('cfg_km_mes').value) || 2860;
             config.periodoMeta = document.getElementById('cfg_periodo').value;
             config.modoAuto = document.getElementById('cfg_modo_auto').checked;
-            config.custoTotalAuto = parseFloat(document.getElementById('cfg_custo_total_auto').value) || 0.55;
+            config.custoTotalAuto = parseFloat(document.getElementById('cfg_custo_total_auto').value) || 0.50;
             
             if (!config.modoAuto) {
                 if (!config.taxasManuais) config.taxasManuais = {};
@@ -564,9 +571,11 @@
             const emoji = document.getElementById('gasto_emoji').value.trim() || "📌";
             const cor = document.getElementById('gasto_cor').value;
             const valor = parseFloat(document.getElementById('gasto_valor').value);
+            const tipo = document.getElementById('gasto_tipo_acumulo').value;
+
             if(!nome || isNaN(valor)) { alert('Preencha nome e valor!'); return; }
             const novoId = Date.now();
-            gastosMensais.push({ id: novoId, nome, emoji, cor, valor, ativo: true });
+            gastosMensais.push({ id: novoId, nome, emoji, cor, valor, tipo, ativo: true });
             if(cofresGerais[novoId] === undefined) cofresGerais[novoId] = 0;
             salvarNoFirebase();
             renderPainelGastos();
@@ -597,6 +606,7 @@
                     <tr>
                         <td><span style="color:${g.cor};">${g.emoji}</span> <strong>${g.nome}</strong></td>
                         <td>R$ ${g.valor.toFixed(2)}</td>
+                        <td><span style="font-size:9px; color:${g.tipo === 'acumulativa' ? 'var(--accent)' : 'var(--green);'}">${g.tipo === 'acumulativa' ? '🏦 Acumula' : '🔄 Cíclica'}</span></td>
                         <td><input type="checkbox" ${g.ativo ? 'checked' : ''} onchange="alternarGastoAtivo(${g.id})" style="width:16px; height:16px; accent-color:var(--green);"></td>
                         <td><button class="btn-del" onclick="removerGasto(${g.id})">✕</button></td>
                     </tr>
@@ -658,6 +668,8 @@
                 gridCofres.innerHTML = ativos.map(g => {
                     const saldoAtual = cofresGerais[g.id] || 0;
                     const metaMensal = g.valor || 1;
+                    
+                    // Se for acumulativa, o progresso considera o saldo absoluto. Se for cíclica, avalia o ritmo do mês.
                     let percentual = (saldoAtual / metaMensal) * 100;
                     if(percentual > 100) percentual = 100;
 
@@ -667,7 +679,10 @@
                     let statusTexto = "";
                     let corStatus = "";
 
-                    if (saldoAtual >= metaMensal) {
+                    if (g.tipo === 'acumulativa') {
+                        statusTexto = `🏦 Reserva Acumulativa (Total Guardado)`;
+                        corStatus = "var(--accent)";
+                    } else if (saldoAtual >= metaMensal) {
                         statusTexto = "🏆 Meta mensal batida!";
                         corStatus = "var(--green)";
                     } else if (diferenca >= 0) {
@@ -682,7 +697,7 @@
                     return `
                         <div class="env" style="border-left: 4px solid ${g.cor}; text-align: left; padding: 10px 12px; margin-bottom: 8px; background: #1a1a1a;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <span style="font-weight: 700; font-size: 11px; color: #fff;">${g.emoji} ${g.nome.toUpperCase()}</span>
+                                <span style="font-weight: 700; font-size: 11px; color: #fff;">${g.emoji} ${g.nome.toUpperCase()} <span style="font-size:8px; color:#888;">(${g.tipo === 'acumulativa' ? 'Acumula' : 'Cíclica'})</span></span>
                                 <strong style="color: ${g.cor}; font-size: 12px;">R$ ${saldoAtual.toFixed(2)} <span style="font-size: 9px; color: #888;">/ R$ ${metaMensal.toFixed(2)}</span></strong>
                             </div>
                             <!-- Barra de Progresso -->
@@ -786,7 +801,7 @@
             config.tripOleo = (parseFloat(config.tripOleo) || 0) + km;
             config.tripGeral = (parseFloat(config.tripGeral) || 0) + km;
 
-            const kmMes = config.kmMes > 0 ? config.kmMes : 3000;
+            const kmMes = config.kmMes > 0 ? config.kmMes : 2860;
             const ativos = gastosMensais.filter(g => g.ativo);
             const modoAuto = config.modoAuto !== false;
 
@@ -794,7 +809,7 @@
             let somaGastos = ativos.reduce((acc, g) => acc + g.valor, 0);
 
             ativos.forEach(g => {
-                let custoKmItem = modoAuto ? ((parseFloat(config.custoTotalAuto) || 0.55) * (somaGastos > 0 ? g.valor / somaGastos : 1 / ativos.length)) : ((config.taxasManuais && config.taxasManuais[g.id] !== undefined) ? config.taxasManuais[g.id] : (g.valor / kmMes));
+                let custoKmItem = modoAuto ? ((parseFloat(config.custoTotalAuto) || 0.50) * (somaGastos > 0 ? g.valor / somaGastos : 1 / ativos.length)) : ((config.taxasManuais && config.taxasManuais[g.id] !== undefined) ? config.taxasManuais[g.id] : (g.valor / kmMes));
                 let valorItemDia = km * custoKmItem;
                 custosDiaItens[g.id] = valorItemDia;
                 totalCustosGerais += valorItemDia;
@@ -846,13 +861,11 @@
                 });
             }
 
-            let custoCfg = parseFloat(config.custoTotalAuto) || 0.55;
-            let obsTexto = eficiencia < custoCfg ? "RUIM" : (eficiencia < (custoCfg * 1.5) ? "MÉDIO" : "EXCELENTE");
+            let obsTexto = eficiencia < 1.50 ? "RUIM" : (eficiencia < 2.00 ? "MÉDIO" : "EXCELENTE");
             document.getElementById('obs').value = obsTexto;
 
-            // --- AVALIAÇÃO INTELIGENTE DO DIA (COMPARAÇÃO COM A META DIÁRIA IDEAL) ---
             const metaMensalTotal = ativos.reduce((acc, g) => acc + g.valor, 0);
-            const metaDiariaIdeal = metaMensalTotal / 30; // Média diária para bater o mês
+            const metaDiariaIdeal = metaMensalTotal / 30; 
             const diferencaMetaDiaria = lucroTotalDia - metaDiariaIdeal;
 
             const cardFeedback = document.getElementById('feedback-diario-card');
