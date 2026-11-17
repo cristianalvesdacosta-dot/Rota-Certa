@@ -347,6 +347,7 @@
                 <input type="number" id="cfg_custo_total_auto" step="0.01" value="0.55" oninput="atualizarPreviewConfig()">
                 <div id="preview-auto-km" style="margin-bottom: 10px;"></div>
             </div>
+            <div id="bloco-manual-caixinhas" style="display: none; background: #161616; border: 1px solid #333; padding: 12px; border-radius: 10px; margin-bottom: 12px;"></div>
             <hr style="border: 0; border-top: 1px solid #222; margin: 15px 0;">
             <label style="color: var(--accent);">⚙️ CONTROLE DE ÓLEO & TRIPS</label>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
@@ -456,6 +457,35 @@
         function mudarModoConfig() {
             const auto = document.getElementById('cfg_modo_auto').checked;
             document.getElementById('bloco-auto').style.display = auto ? 'block' : 'none';
+            
+            const blocoManual = document.getElementById('bloco-manual-caixinhas');
+            if (blocoManual) {
+                if (!auto) {
+                    blocoManual.style.display = 'block';
+                    const ativos = gastosMensais.filter(g => g.ativo);
+                    const kmMes = parseFloat(document.getElementById('cfg_km_mes').value) || 3000;
+                    
+                    blocoManual.innerHTML = `
+                        <label style="color: var(--accent); margin-bottom: 6px;">⚙️ DISTRIBUIÇÃO MANUAL DE CUSTO POR KM</label>
+                        <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 8px;">Defina quanto cada caixinha consome por KM rodado com base em ${kmMes} km/mês:</div>
+                        ${ativos.map(g => {
+                            let valAtual = (config.taxasManuais && config.taxasManuais[g.id] !== undefined) ? config.taxasManuais[g.id] : (g.valor / kmMes);
+                            return `
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; background:#202020; padding:6px 8px; border-radius:6px;">
+                                    <span style="font-size:11px; color:${g.cor};">${g.emoji} ${g.nome}</span>
+                                    <div style="display:flex; align-items:center; gap:4px;">
+                                        <span style="font-size:10px; color:#aaa;">R$</span>
+                                        <input type="number" id="manual_taxa_${g.id}" step="0.001" value="${valAtual.toFixed(3)}" style="width:80px; padding:4px; font-size:11px; margin:0; text-align:right;">
+                                        <span style="font-size:10px; color:#aaa;">/km</span>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    `;
+                } else {
+                    blocoManual.style.display = 'none';
+                }
+            }
             atualizarPreviewConfig();
         }
 
@@ -487,6 +517,17 @@
             config.periodoMeta = document.getElementById('cfg_periodo').value;
             config.modoAuto = document.getElementById('cfg_modo_auto').checked;
             config.custoTotalAuto = parseFloat(document.getElementById('cfg_custo_total_auto').value) || 0.55;
+            
+            if (!config.modoAuto) {
+                if (!config.taxasManuais) config.taxasManuais = {};
+                gastosMensais.filter(g => g.ativo).forEach(g => {
+                    const inp = document.getElementById(`manual_taxa_${g.id}`);
+                    if (inp) {
+                        config.taxasManuais[g.id] = parseFloat(inp.value) || 0;
+                    }
+                });
+            }
+
             config.metaOleo = parseFloat(document.getElementById('cfg_meta_oleo').value) || 3000;
             config.tripOleo = parseFloat(document.getElementById('cfg_trip_oleo').value) || 0;
             config.tripGeral = parseFloat(document.getElementById('cfg_trip_geral').value) || 0;
@@ -664,7 +705,6 @@
 
             if (valInformado <= 0) { alert('Valor zerado ou inválido nesta caixinha.'); return; }
 
-            // CORREÇÃO: Soma o valor nos cofres oficiais para não sumir!
             cofresGerais[idGasto] = (cofresGerais[idGasto] || 0) + valInformado;
 
             if (plat === '99') {
@@ -709,7 +749,7 @@
             let somaGastos = ativos.reduce((acc, g) => acc + g.valor, 0);
 
             ativos.forEach(g => {
-                let custoKmItem = modoAuto ? ((parseFloat(config.custoTotalAuto) || 0.55) * (somaGastos > 0 ? g.valor / somaGastos : 1 / ativos.length)) : ((config.taxasManuais && config.taxasManuais[g.id]) || (g.valor / kmMes));
+                let custoKmItem = modoAuto ? ((parseFloat(config.custoTotalAuto) || 0.55) * (somaGastos > 0 ? g.valor / somaGastos : 1 / ativos.length)) : ((config.taxasManuais && config.taxasManuais[g.id] !== undefined) ? config.taxasManuais[g.id] : (g.valor / kmMes));
                 let valorItemDia = km * custoKmItem;
                 custosDiaItens[g.id] = valorItemDia;
                 totalCustosGerais += valorItemDia;
