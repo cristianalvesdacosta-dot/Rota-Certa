@@ -114,7 +114,6 @@
         .btn-check { background-color: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid var(--green); padding: 6px 10px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 10px; text-transform: uppercase; transition: 0.2s; white-space: nowrap; }
         .btn-check:hover { background: var(--green); color: #000; }
 
-        /* CALENDÁRIO VISUAL PRIME INTERATIVO */
         .calendario-nav { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 14px; margin-bottom: 12px; }
         .calendario-nav button { background: #0d0d0f; color: var(--green); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 10px; text-transform: uppercase; }
         .calendario-nav span { color: var(--green); font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -127,11 +126,9 @@
         .bolinha-lancamento { width: 4px; height: 4px; background: var(--green); border-radius: 50%; margin-top: 2px; }
         .bolinha-conta { width: 4px; height: 4px; background: var(--accent); border-radius: 50%; margin-top: 1px; }
 
-        /* MODAL DE DETALHES DO DIA NO CALENDÁRIO */
         #modal-dia { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10001; justify-content:center; align-items:center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(5px); }
         .modal-conteudo { background: var(--bg-card); border: 1px solid var(--green); padding: 22px; border-radius: 18px; width: 100%; max-width: 380px; text-align: left; box-shadow: 0 20px 40px rgba(0,0,0,0.9); }
 
-        /* MODAL CUSTOMIZADO DE EXCLUSÃO DE CONTA */
         #modal-excluir-conta { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10002; justify-content:center; align-items:center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(5px); }
 
         .metric-box { display: flex; justify-content: space-between; align-items: center; background: #0d0d0f; padding: 12px 16px; border-radius: 10px; margin-bottom: 10px; border: 1px solid var(--border-color); }
@@ -344,7 +341,6 @@
                 <button onclick="mudarMesNavegacao(1)">Próximo ▶</button>
             </div>
 
-            <!-- CALENDÁRIO VISUAL INTEGRADO COM OS LANÇAMENTOS -->
             <div class="card">
                 <label style="color: var(--accent); margin-bottom: 8px;">📅 CALENDÁRIO DE PRODUTIVIDADE & VENCIMENTOS</label>
                 <span style="font-size: 10px; color: var(--text-muted); display: block; margin-bottom: 8px;">Toque em qualquer dia marcado para ver o resumo completo!</span>
@@ -507,7 +503,7 @@
                     <div><label>Meta Mensal Uber (R$)</label><input type="number" id="cfg_meta_uber" step="0.01" placeholder="0,00" oninput="atualizarPreviewConfig()"></div>
                     <div><label>Meta Mensal 99 (R$)</label><input type="number" id="cfg_meta_99" step="0.01" placeholder="0,00" oninput="atualizarPreviewConfig()"></div>
                 </div>
-                <label>Forma de Apuração / Período da Meta</label>
+                <label>Período da Caixinha, KM e Meta</label>
                 <select id="cfg_periodo_meta" onchange="atualizarPreviewConfig()">
                     <option value="diaria">📅 Diária (Base: 26 dias úteis no mês)</option>
                     <option value="semanal">📆 Semanal (Base: 4 semanas)</option>
@@ -542,7 +538,7 @@
 
                 <div id="painel-assistente-metas" class="ai-card" style="margin-top: 12px;">
                     🎯 <strong>Análise Estratégica do Assistente:</strong>
-                    <div id="texto-assistente-metas" style="margin-top: 6px; line-height: 1.5;">Calculando metas e projeção de lucro...</div>
+                    <div id="texto-assistente-metas" style="margin-top: 6px; line-height: 1.5;">Calculando caixinhas, KM e metas...</div>
                 </div>
 
                 <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 16px 0;">
@@ -809,39 +805,45 @@
             
             const elPreview = document.getElementById('preview-custo-automatico');
             if(elPreview) {
-                elPreview.innerHTML = `📊 <strong>Cálculo Automático por Caixinhas:</strong> R$ ${custoAutoKm.toFixed(3)} / km<br><span style="font-size:10px; color:var(--text-muted);">Baseado em R$ ${totalGastosMes.toFixed(2)} de custos mensais divididos por ${kmMes} km.</span>`;
+                elPreview.innerHTML = `📊 <strong>Cálculo Automático por Caixinhas:</strong> R$ ${custoAutoKm.toFixed(3)} / km<br><span style="font-size:10px; color:var(--text-muted);">Baseado em R$ ${totalGastosMes.toFixed(2)}/mês nas caixinhas divididos por ${kmMes} km/mês.</span>`;
             }
 
             const msgManual = document.getElementById('mensagem-assistente-manual');
             if(msgManual) {
                 let sugerido = custoAutoKm.toFixed(2);
-                msgManual.innerHTML = `💡 <strong>Dica do Assistente Inteligente:</strong> O ideal recomendado pelo seu perfil e caixinhas é de <strong>R$ ${sugerido} / km</strong>. Caso defina abaixo disso, você corre o risco de não cobrir as manutenções futuras da sua <strong>${config.motoModelo || 'moto'}</strong>.`;
+                msgManual.innerHTML = `💡 <strong>Dica do Assistente Inteligente:</strong> O ideal recomendado pelas suas caixinhas é de <strong>R$ ${sugerido} / km</strong>. Abaixo disso, você não cobre as reservas e manutenções da sua <strong>${config.motoModelo || 'moto'}</strong>.`;
             }
 
-            // Análise Inteligente Cruzando Metas, Caixinhas e Período Escolhido
-            const metaUber = parseFloat(document.getElementById('cfg_meta_uber').value) || 0;
-            const meta99 = parseFloat(document.getElementById('cfg_meta_99').value) || 0;
-            const metaTotalMensal = metaUber + meta99;
+            const metaUberInput = parseFloat(document.getElementById('cfg_meta_uber').value) || 0;
+            const meta99Input = parseFloat(document.getElementById('cfg_meta_99').value) || 0;
             const periodo = document.getElementById('cfg_periodo_meta').value;
 
             let divisor = 1;
+            let rotuloPeriodo = "Mês";
             let nomePeriodo = "Mensal";
-            if(periodo === 'diaria') { divisor = 26; nomePeriodo = "Diária (26 dias úteis)"; }
-            else if(periodo === 'semanal') { divisor = 4; nomePeriodo = "Semanal"; }
-            else if(periodo === 'quinzenal') { divisor = 2; nomePeriodo = "Quinzenal"; }
+            if(periodo === 'diaria') { divisor = 26; rotuloPeriodo = "Dia"; nomePeriodo = "Diária (26 dias)"; }
+            else if(periodo === 'semanal') { divisor = 4; rotuloPeriodo = "Semana"; nomePeriodo = "Semanal (4 sem.)"; }
+            else if(periodo === 'quinzenal') { divisor = 2; rotuloPeriodo = "Quinzena"; nomePeriodo = "Quinzenal (2 quinz.)"; }
 
-            let metaPeriodo = metaTotalMensal / divisor;
-            let custoTotalPeriodo = totalGastosMes / divisor;
-            let lucroLiquidoPeriodo = metaPeriodo - custoTotalPeriodo;
-            let kmPeriodo = kmMes / divisor;
+            // 1. Caixinha e KM calculados com base no período escolhido
+            const caixinhaPeriodo = totalGastosMes / divisor;
+            const kmPeriodo = kmMes / divisor;
+
+            // 2. Meta pessoal no período escolhido
+            const metaUberPeriodo = metaUberInput / divisor;
+            const meta99Periodo = meta99Input / divisor;
+            const metaTotalPeriodo = metaUberPeriodo + meta99Periodo;
+
+            // 3. Desconta a parte da caixinha da meta para mostrar o lucro restante
+            const lucroRestante = metaTotalPeriodo - caixinhaPeriodo;
 
             const textoMetas = document.getElementById('texto-assistente-metas');
             if(textoMetas) {
                 textoMetas.innerHTML = `
-                    🎯 <strong>Meta ${nomePeriodo}:</strong> R$ ${metaPeriodo.toFixed(2)} (Uber: R$ ${(metaUber/divisor).toFixed(2)} | 99: R$ ${(meta99/divisor).toFixed(2)})<br>
-                    🛣️ <strong>KM Recomendado (${nomePeriodo}):</strong> ${kmPeriodo.toFixed(0)} km<br>
-                    💸 <strong>Custos / Caixinhas (${nomePeriodo}):</strong> R$ ${custoTotalPeriodo.toFixed(2)}<br>
-                    💰 <strong>Lucro Líquido Previsto (${nomePeriodo}):</strong> <strong style="color:var(--green);">R$ ${lucroLiquidoPeriodo.toFixed(2)}</strong>
+                    📦 <strong>Caixinha no ${rotuloPeriodo} (${nomePeriodo}):</strong> <strong style="color:var(--accent);">R$ ${caixinhaPeriodo.toFixed(2)}</strong> <span style="font-size:10px; color:var(--text-muted);">(Total mensal: R$ ${totalGastosMes.toFixed(2)})</span><br>
+                    🛣️ <strong>KM no ${rotuloPeriodo}:</strong> <strong>${kmPeriodo.toFixed(0)} km</strong> <span style="font-size:10px; color:var(--text-muted);">(Base mensal: ${kmMes} km)</span><br>
+                    🎯 <strong>Meta no ${rotuloPeriodo}:</strong> <strong>R$ ${metaTotalPeriodo.toFixed(2)}</strong> (Uber: R$ ${metaUberPeriodo.toFixed(2)} | 99: R$ ${meta99Periodo.toFixed(2)})<br>
+                    💰 <strong>Lucro Após Caixinha (${rotuloPeriodo}):</strong> <strong style="color:${lucroRestante >= 0 ? 'var(--green)' : 'var(--red)'};">R$ ${lucroRestante.toFixed(2)}</strong> <span style="font-size:10px; color:var(--text-muted);">(R$ ${metaTotalPeriodo.toFixed(2)} − R$ ${caixinhaPeriodo.toFixed(2)})</span>
                 `;
             }
         }
@@ -879,6 +881,9 @@
                 document.getElementById('conta_ano_inicio').value = anoAtualNav;
                 renderGerenciador();
             }
+            if(tabId === 'config') {
+                atualizarPreviewConfig();
+            }
         }
 
         function salvarGasto() {
@@ -900,7 +905,7 @@
                 if(cofresGerais[novoId] === undefined) cofresGerais[novoId] = 0;
                 alert('Caixinha criada!');
             }
-            cancelarEdicaoGasto(); salvarNoFirebase(); renderPainelGastos(); atualizarInterfaceDinamica();
+            cancelarEdicaoGasto(); salvarNoFirebase(); renderPainelGastos(); atualizarInterfaceDinamica(); atualizarPreviewConfig();
         }
 
         function editarGasto(id) {
@@ -932,19 +937,19 @@
             const temp = gastosMensais[index];
             gastosMensais[index] = gastosMensais[novoIndex];
             gastosMensais[novoIndex] = temp;
-            salvarNoFirebase(); renderPainelGastos(); atualizarInterfaceDinamica();
+            salvarNoFirebase(); renderPainelGastos(); atualizarInterfaceDinamica(); atualizarPreviewConfig();
         }
 
         function removerGasto(id) {
             if(confirm('Excluir caixinha?')) {
                 gastosMensais = gastosMensais.filter(g => g.id !== id);
-                salvarNoFirebase(); renderPainelGastos(); atualizarInterfaceDinamica();
+                salvarNoFirebase(); renderPainelGastos(); atualizarInterfaceDinamica(); atualizarPreviewConfig();
             }
         }
 
         function alternarGastoAtivo(id) {
             const g = gastosMensais.find(x => x.id === id);
-            if(g) { g.ativo = !g.ativo; salvarNoFirebase(); atualizarInterfaceDinamica(); }
+            if(g) { g.ativo = !g.ativo; salvarNoFirebase(); atualizarInterfaceDinamica(); atualizarPreviewConfig(); }
         }
 
         function renderPainelGastos() {
