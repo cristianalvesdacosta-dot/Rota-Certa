@@ -290,10 +290,7 @@
             </div>
 
             <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <label style="color: var(--accent); margin:0;">💰 SALDO DOS COFRES & METAS</label>
-                    <button onclick="realizarViradaDeMes()" style="background: rgba(46, 204, 113, 0.2); color: var(--green); border: 1px solid var(--green); padding: 4px 8px; font-size: 9px; border-radius: 6px; cursor: pointer; font-weight: bold;">🔄 Avançar Mês</button>
-                </div>
+                <label style="color: var(--accent); margin:0;">💰 SALDO DOS COFRES & METAS</label>
                 <div id="grid-cofres-geral" style="margin-top: 8px;"></div>
             </div>
 
@@ -324,22 +321,22 @@
                 <label>📌 CADASTRAR CONTA OU BOLETO</label>
                 <label style="margin-top: 6px;">Tipo</label>
                 <select id="conta_tipo" onchange="mudarTipoContaForm()">
-                    <option value="recorrente">🔄 Recorrente (Contínua)</option>
-                    <option value="parcelada">💳 Parcelada</option>
-                    <option value="unica">⚡ Única / Casual</option>
+                    <option value="recorrente">🔄 Recorrente (Contínua todo mês)</option>
+                    <option value="parcelada">💳 Parcelada (Ex: 5 vezes)</option>
+                    <option value="unica">⚡ Única / Casual (Só deste mês)</option>
                 </select>
                 <label>Cofre Destino</label>
                 <select id="conta_cofre"></select>
                 <label>Nome da Conta</label>
-                <input type="text" id="conta_nome" placeholder="Ex: Internet Wi-Fi">
+                <input type="text" id="conta_nome" placeholder="Ex: Internet Wi-Fi / Parcela Moto">
                 <label>Valor (R$)</label>
                 <input type="number" id="conta_valor" step="0.01" placeholder="0,00">
-                <label>Mês de Referência</label>
+                <label>Mês Inicial de Referência</label>
                 <input type="month" id="conta_mes_ano" style="text-align: center;">
                 <label>Dia Vencimento</label>
                 <input type="number" id="conta_vencimento" min="1" max="31" placeholder="1 a 31">
                 <div id="bloco_qtd_parcelas" style="display:none;">
-                    <label>Total de Parcelas</label>
+                    <label>Total de Parcelas (Ex: 5)</label>
                     <input type="number" id="conta_parcelas" value="1" min="1">
                 </div>
                 <button class="btn-add" style="background: var(--blue); color: #fff;" onclick="cadastrarConta()">SALVAR CONTA</button>
@@ -385,8 +382,8 @@
                 <div style="margin-top: 8px;">
                     <label>Tipo de Caixinha</label>
                     <select id="gasto_tipo_acumulo">
-                        <option value="mensal">🔄 Cíclica (Zera/Renova todo Mês - Ex: Gasolina, Contas)</option>
-                        <option value="acumulativa">🏦 Acumulativa (Guarda para o Futuro - Ex: Reserva, IPVA)</option>
+                        <option value="mensal">🔄 Cíclica (Gasolina, Contas)</option>
+                        <option value="acumulativa">🏦 Acumulativa (Reserva, IPVA)</option>
                     </select>
                 </div>
                 <button class="btn-add" id="btn-salvar-gasto" onclick="salvarGasto()" style="margin-top: 8px;">➕ Adicionar Caixinha</button>
@@ -526,7 +523,6 @@
         let contasCadastradas = [];
         let historicoSaidas = [];
 
-        // Mês ativo selecionado no painel (ex: "12/2026" ou "11/2026")
         let mesSelecionadoGlobal = "";
 
         globalRef.on('value', (snapshot) => {
@@ -651,7 +647,6 @@
                     if (data.historicoSaidas) historicoSaidas = data.historicoSaidas;
                 }
 
-                // Inicializa o mês selecionado global com o mês atual se estiver vazio
                 if (!mesSelecionadoGlobal) {
                     const agora = new Date();
                     mesSelecionadoGlobal = `${String(agora.getMonth() + 1).padStart(2, '0')}/${agora.getFullYear()}`;
@@ -679,17 +674,10 @@
             const select = document.getElementById('seletor-mes-global');
             if (!select) return;
 
-            // Extrai todos os meses únicos presentes no histórico de lançamentos e contas
             let mesesSet = new Set();
             mesesSet.add(mesSelecionadoGlobal);
             db.forEach(item => { if (item.mesAno) mesesSet.add(item.mesAno); });
-            contasCadastradas.forEach(c => {
-                if (c.mesAnoRef) {
-                    // Converte de YYYY-MM para MM/YYYY se necessário
-                    let partes = c.mesAnoRef.split('-');
-                    if (partes.length === 2) mesesSet.add(`${partes[1]}/${partes[0]}`);
-                }
-            });
+            contasCadastradas.forEach(c => { if (c.mesAnoRef) mesesSet.add(c.mesAnoRef); });
 
             let mesesArr = Array.from(mesesSet).sort().reverse();
             select.innerHTML = mesesArr.map(m => `<option value="${m}" ${m === mesSelecionadoGlobal ? 'selected' : ''}>📅 Mês de Referência: ${m}</option>`).join('');
@@ -700,6 +688,7 @@
             if (select) {
                 mesSelecionadoGlobal = select.value;
                 renderGerenciador();
+                renderTable();
             }
         }
 
@@ -890,29 +879,6 @@
                         </td>
                     </tr>
                 `).join('');
-            }
-        }
-
-        // AVANÇAR MÊS INTELIGENTE (Zera cíclicas e prepara o novo ciclo)
-        function realizarViradaDeMes() {
-            if (confirm(`Deseja avançar para o próximo mês? Isso vai zerar as caixinhas Cíclicas do ciclo atual e manter as Reservas Acumulativas.`)) {
-                gastosMensais.forEach(g => {
-                    if (g.tipo !== 'acumulativa') {
-                        cofresGerais[g.id] = 0;
-                    }
-                });
-                
-                // Calcula automaticamente o próximo mês baseado no mesSelecionadoGlobal (MM/YYYY)
-                let [mes, ano] = mesSelecionadoGlobal.split('/').map(Number);
-                mes++;
-                if (mes > 12) { mes = 1; ano++; }
-                mesSelecionadoGlobal = `${String(mes).padStart(2, '0')}/${ano}`;
-
-                salvarNoFirebase();
-                popularSeletorMeses();
-                atualizarInterfaceDinamica();
-                renderGerenciador();
-                alert(`Virada concluída com sucesso! Agora você está no mês de referência: ${mesSelecionadoGlobal}`);
             }
         }
 
@@ -1204,7 +1170,7 @@
 
             db.unshift({ 
                 id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), 
-                mesAno: mesSelecionadoGlobal, // Associa ao mês de referência atual ativo
+                mesAno: mesSelecionadoGlobal, 
                 bruto: bruto.toFixed(2), km, eficiencia: eficiencia.toFixed(2), obs: obsTexto,
                 itensDia: custosDiaItens, lucroDia: lucroTotalDia, b99, bUber
             });
@@ -1220,7 +1186,7 @@
             document.getElementById('carteira_uber_hoje').value = '';
             document.getElementById('km_dia').value = '';
             document.getElementById('bruto').value = '';
-            alert('Lançamento registrado e acumulado no mês de referência ' + mesSelecionadoGlobal + '!');
+            alert('Lançamento registrado no mês de referência ' + mesSelecionadoGlobal + '!');
         }
 
         function enviarRelatorioWhatsApp() {
@@ -1263,7 +1229,6 @@
 
         function renderTable() {
             const tbody = document.querySelector('#tabela tbody');
-            // Filtra o histórico exibido pelo mês selecionado global
             const dbFiltrado = db.filter(item => item.mesAno === mesSelecionadoGlobal);
             if(tbody) {
                 tbody.innerHTML = dbFiltrado.length ? dbFiltrado.map((item, i) => {
@@ -1281,8 +1246,9 @@
         }
 
         function mudarTipoContaForm() {
+            const tipo = document.getElementById('conta_tipo').value;
             const bloco = document.getElementById('bloco_qtd_parcelas');
-            if(bloco) bloco.style.display = (document.getElementById('conta_tipo').value === 'parcelada') ? 'block' : 'none';
+            if(bloco) bloco.style.display = (tipo === 'parcelada') ? 'block' : 'none';
         }
 
         function lançarSaidaCofre() {
@@ -1305,28 +1271,67 @@
             alert('Retirada registrada!');
         }
 
+        // CADASTRO INTELIGENTE DE CONTAS (Gera parcelas automaticamente mês a mês se for parcelada)
         function cadastrarConta() {
             const tipo = document.getElementById('conta_tipo').value;
             const cofreId = document.getElementById('conta_cofre').value;
-            const nome = document.getElementById('conta_nome').value.trim();
+            const nomeOriginal = document.getElementById('conta_nome').value.trim();
             const valor = parseFloat(document.getElementById('conta_valor').value);
             const mesAno = document.getElementById('conta_mes_ano').value; // formato YYYY-MM
             const vencimento = parseInt(document.getElementById('conta_vencimento').value) || 1;
             const parcelas = parseInt(document.getElementById('conta_parcelas').value) || 1;
 
-            if(!nome || isNaN(valor) || valor <= 0 || !mesAno) { alert('Preencha os dados da conta!'); return; }
+            if(!nomeOriginal || isNaN(valor) || valor <= 0 || !mesAno) { alert('Preencha os dados da conta!'); return; }
 
-            // Converte YYYY-MM para MM/YYYY para bater com o seletor global
-            let partes = mesAno.split('-');
-            let mesAnoFormatado = `${partes[1]}/${partes[0]}`;
+            let [anoStr, mesStr] = mesAno.split('-');
+            let ano = parseInt(anoStr);
+            let mes = parseInt(mesStr);
 
-            contasCadastradas.push({ id: Date.now(), tipo, cofreId, nome, valor, mesAnoRef: mesAnoFormatado, vencimento, parcelaAtual: 1, totalParcelas: parcelas, paga: false });
+            if (tipo === 'parcelada' && parcelas > 1) {
+                // Gera automaticamente todas as parcelas nos meses seguintes
+                for (let i = 0; i < parcelas; i++) {
+                    let mesRefFormatado = `${String(mes).padStart(2, '0')}/${ano}`;
+                    let nomeComParcela = `${nomeOriginal} (${i + 1}/${parcelas})`;
+
+                    contasCadastradas.push({
+                        id: Date.now() + i,
+                        tipo: 'parcelada',
+                        cofreId,
+                        nome: nomeComParcela,
+                        valor,
+                        mesAnoRef: mesRefFormatado,
+                        vencimento,
+                        parcelaAtual: i + 1,
+                        totalParcelas: parcelas,
+                        paga: false
+                    });
+
+                    mes++;
+                    if (mes > 12) { mes = 1; ano++; }
+                }
+                alert(`Sucesso! As ${parcelas} parcelas foram geradas e distribuídas nos meses correspondentes.`);
+            } else {
+                let mesRefFormatado = `${String(mes).padStart(2, '0')}/${ano}`;
+                contasCadastradas.push({
+                    id: Date.now(),
+                    tipo,
+                    cofreId,
+                    nome: nomeOriginal,
+                    valor,
+                    mesAnoRef: mesRefFormatado,
+                    vencimento,
+                    parcelaAtual: 1,
+                    totalParcelas: 1,
+                    paga: false
+                });
+                alert('Conta cadastrada com sucesso!');
+            }
+
             salvarNoFirebase();
             popularSeletorMeses();
             renderGerenciador();
             document.getElementById('conta_nome').value = '';
             document.getElementById('conta_valor').value = '';
-            alert('Conta cadastrada para o mês ' + mesAnoFormatado + '!');
         }
 
         function pagarConta(id) {
@@ -1341,14 +1346,13 @@
 
                 c.paga = true;
                 
-                // Se for recorrente, gera automaticamente a mesma conta para o mês seguinte!
+                // Se for recorrente (fixa contínua), gera automaticamente para o mês seguinte
                 if (c.tipo === 'recorrente' && c.mesAnoRef) {
                     let [mes, ano] = c.mesAnoRef.split('/').map(Number);
                     mes++;
                     if (mes > 12) { mes = 1; ano++; }
                     let proximoMesRef = `${String(mes).padStart(2, '0')}/${ano}`;
                     
-                    // Verifica se já não existe conta igual no mês seguinte para evitar duplicidade
                     let jaExiste = contasCadastradas.some(x => x.nome === c.nome && x.mesAnoRef === proximoMesRef && !x.paga);
                     if (!jaExiste) {
                         contasCadastradas.push({
@@ -1370,7 +1374,7 @@
                 popularSeletorMeses();
                 atualizarInterfaceDinamica();
                 renderGerenciador();
-                alert('Conta paga com sucesso! (Recorrentes foram repassadas para o próximo mês automaticamente).');
+                alert('Conta paga com sucesso!');
             }
         }
 
@@ -1388,7 +1392,7 @@
             const lblFechamento = document.getElementById('lbl-mes-fechamento');
             if (lblFechamento) lblFechamento.innerText = mesSelecionadoGlobal;
 
-            // Filtra contas pendentes do mês ativo
+            // Filtra contas pendentes APENAS do mês ativo selecionado
             const tbodyContas = document.querySelector('#tabela-contas tbody');
             const pendentes = contasCadastradas.filter(x => !x.paga && x.mesAnoRef === mesSelecionadoGlobal);
             if(tbodyContas) {
@@ -1407,7 +1411,6 @@
                 }).join('') : `<tr><td colspan="5" style="color:var(--text-muted);">Nenhuma conta pendente para ${mesSelecionadoGlobal}.</td></tr>`;
             }
 
-            // Histórico de saídas do mês ativo
             const tbodySaidas = document.querySelector('#tabela-saidas tbody');
             const saidasMes = historicoSaidas.filter(s => !s.mesAno || s.mesAno === mesSelecionadoGlobal);
             if(tbodySaidas) {
@@ -1422,7 +1425,6 @@
                 `).join('') : `<tr><td colspan="5" style="color:var(--text-muted);">Sem retiradas em ${mesSelecionadoGlobal}.</td></tr>`;
             }
 
-            // Painel de Fechamento Inteligente do Mês
             const painelFechamento = document.getElementById('painel-fechamento-mes');
             if (painelFechamento) {
                 let lancamentosMes = db.filter(item => item.mesAno === mesSelecionadoGlobal);
