@@ -1074,7 +1074,8 @@
                     mes++; if (mes > 12) { mes = 1; ano++; }
                     let proxMesRef = `${String(mes).padStart(2, '0')}/${ano}`;
                     
-                    if (!contasCadastradas.some(x => x.nome === c.nome && x.mesAnoRef === proxMesRef)) {
+                    let nomeBase = c.nome.replace(/\s\(\d+\/\d+\)$/, '');
+                    if (!contasCadastradas.some(x => x.nome.replace(/\s\(\d+\/\d+\)$/, '') === nomeBase && x.mesAnoRef === proxMesRef)) {
                         contasCadastradas.push({ id: Date.now() + 1, tipo: 'recorrente', cofreId: c.cofreId, nome: c.nome, valor: c.valor, mesAnoRef: proxMesRef, vencimento: c.vencimento, paga: false });
                     }
                 }
@@ -1087,8 +1088,26 @@
             }
         }
 
+        // ESCOLHER SE APAGA SÓ DO MÊS OU COMPLETO (TODAS AS OCORRÊNCIAS COM O MESMO NOME)
         function excluirConta(id) {
-            if(confirm('Excluir conta?')) { contasCadastradas = contasCadastradas.filter(x => x.id !== id); salvarNoFirebase(); renderGerenciador(); }
+            const c = contasCadastradas.find(x => x.id === id);
+            if(!c) return;
+
+            let nomeBase = c.nome.replace(/\s\(\d+\/\d+\)$/, '');
+            let opcao = confirm(`Deseja apagar "${c.nome}"?\n\n• OK = Apagar APENAS deste mês (${c.mesAnoRef})\n• Cancelar = Apagar COMPLETO (remover de todos os meses / cancelar recorrência)`);
+
+            if (opcao) {
+                // Apagar apenas o item deste ID específico
+                contasCadastradas = contasCadastradas.filter(x => x.id !== id);
+                alert('Conta removida apenas deste mês!');
+            } else {
+                // Apagar completo (todas que compartilham o mesmo nome base)
+                contasCadastradas = contasCadastradas.filter(x => x.nome.replace(/\s\(\d+\/\d+\)$/, '') !== nomeBase);
+                alert('Conta excluída por completo!');
+            }
+
+            salvarNoFirebase();
+            renderGerenciador();
         }
 
         function deletarSaida(id) {
