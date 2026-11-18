@@ -679,7 +679,7 @@
             db.forEach(item => { if (item.mesAno) mesesSet.add(item.mesAno); });
             contasCadastradas.forEach(c => { if (c.mesAnoRef) mesesSet.add(c.mesAnoRef); });
 
-            let mesesArr = Array.from(mesesSet).sort().reverse();
+            let mesesArr = Array.from(mesesSet).sort();
             select.innerHTML = mesesArr.map(m => `<option value="${m}" ${m === mesSelecionadoGlobal ? 'selected' : ''}>📅 Mês de Referência: ${m}</option>`).join('');
         }
 
@@ -1271,7 +1271,7 @@
             alert('Retirada registrada!');
         }
 
-        // CADASTRO SEGURO E ESTÁVEL DE CONTAS
+        // CADASTRO INTELIGENTE E PRECISO POR MÊS
         function cadastrarConta() {
             const tipo = document.getElementById('conta_tipo').value;
             const cofreId = document.getElementById('conta_cofre').value;
@@ -1288,6 +1288,7 @@
             let mes = parseInt(mesStr);
 
             if (tipo === 'parcelada' && parcelas > 1) {
+                // Gera parcelas mês a mês certinho
                 for (let i = 0; i < parcelas; i++) {
                     let mesRefFormatado = `${String(mes).padStart(2, '0')}/${ano}`;
                     let nomeComParcela = `${nomeOriginal} (${i + 1}/${parcelas})`;
@@ -1311,7 +1312,7 @@
                     mes++;
                     if (mes > 12) { mes = 1; ano++; }
                 }
-                alert(`Sucesso! As ${parcelas} parcelas foram geradas.`);
+                alert(`Sucesso! As ${parcelas} parcelas foram geradas nos meses correspondentes.`);
             } else {
                 let mesRefFormatado = `${String(mes).padStart(2, '0')}/${ano}`;
                 let jaExiste = contasCadastradas.some(x => x.nome === nomeOriginal && x.mesAnoRef === mesRefFormatado);
@@ -1354,7 +1355,7 @@
 
                 c.paga = true;
                 
-                // Se for recorrente, ao pagar, gera automaticamente para o mês seguinte
+                // Se for recorrente (fixa contínua), ao pagar, gera automaticamente para o mês seguinte
                 if (c.tipo === 'recorrente' && c.mesAnoRef) {
                     let [mes, ano] = c.mesAnoRef.split('/').map(Number);
                     mes++;
@@ -1400,8 +1401,10 @@
             const lblFechamento = document.getElementById('lbl-mes-fechamento');
             if (lblFechamento) lblFechamento.innerText = mesSelecionadoGlobal;
 
+            // Filtra contas pendentes EXATAMENTE do mês selecionado no seletor global
             const tbodyContas = document.querySelector('#tabela-contas tbody');
             const pendentes = contasCadastradas.filter(x => !x.paga && x.mesAnoRef === mesSelecionadoGlobal);
+            
             if(tbodyContas) {
                 tbodyContas.innerHTML = pendentes.length ? pendentes.map(c => {
                     const gInfo = gastosMensais.find(x => x.id == c.cofreId);
@@ -1470,7 +1473,7 @@
             if (tripOleo >= metaOleo) {
                 msgs.push(`🚨 <strong style="color:var(--red);">Óleo Vencido!</strong> (${tripOleo.toFixed(1)} km).`);
             } else {
-                msgs.push(`🛢️ <strong>Óleo:</strong> ${tripOleo.toFixed(1)} / ${metaOlean || metaOleo} km.`);
+                msgs.push(`🛢️ <strong>Óleo:</strong> ${tripOleo.toFixed(1)} / ${metaOleo} km.`);
             }
             aiElem.innerHTML = msgs.join('<br>');
         }
