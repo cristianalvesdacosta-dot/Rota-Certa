@@ -502,14 +502,21 @@
                 <input type="text" id="cfg_moto_modelo" placeholder="Yamaha Lander 250">
 
                 <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 16px 0;">
-                <label style="color: var(--accent);">🏍️ SALDO INICIAL NA CARTEIRA (APPS)</label>
+                <label style="color: var(--accent);">🎯 METAS DE FATURAMENTO (APPS)</label>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <div><label>Saldo Inicial Uber (R$)</label><input type="number" id="cfg_saldo_uber" step="0.01" placeholder="0,00"></div>
-                    <div><label>Saldo Inicial 99 (R$)</label><input type="number" id="cfg_saldo_99" step="0.01" placeholder="0,00"></div>
+                    <div><label>Meta Mensal Uber (R$)</label><input type="number" id="cfg_meta_uber" step="0.01" placeholder="0,00" oninput="atualizarPreviewConfig()"></div>
+                    <div><label>Meta Mensal 99 (R$)</label><input type="number" id="cfg_meta_99" step="0.01" placeholder="0,00" oninput="atualizarPreviewConfig()"></div>
                 </div>
+                <label>Forma de Apuração / Período da Meta</label>
+                <select id="cfg_periodo_meta" onchange="atualizarPreviewConfig()">
+                    <option value="diaria">📅 Diária (Base: 26 dias úteis no mês)</option>
+                    <option value="semanal">📆 Semanal (Base: 4 semanas)</option>
+                    <option value="quinzenal">🗓️ Quinzenal (Base: 2 quinzenas)</option>
+                    <option value="mensal" selected>📊 Mensal Fechada</option>
+                </select>
 
                 <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 16px 0;">
-                <label style="color: var(--accent);">🎯 METAS & CUSTO POR KM</label>
+                <label style="color: var(--accent);">🎯 CUSTO POR KM & EFICIÊNCIA</label>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                     <div><label>Km / Litro</label><input type="number" id="cfg_km_litro" step="0.1" placeholder="30"></div>
                     <div><label>Preço Litro (R$)</label><input type="number" id="cfg_preco_litro" step="0.01" placeholder="5.89"></div>
@@ -531,6 +538,11 @@
                     <label>Custo por KM Manual (R$)</label>
                     <input type="number" id="cfg_custo_manual" step="0.01" value="0.50">
                     <div id="mensagem-assistente-manual" style="font-size: 10px; color: var(--accent); margin-top: 6px; line-height: 1.4; background: #070707; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color);"></div>
+                </div>
+
+                <div id="painel-assistente-metas" class="ai-card" style="margin-top: 12px;">
+                    🎯 <strong>Análise Estratégica do Assistente:</strong>
+                    <div id="texto-assistente-metas" style="margin-top: 6px; line-height: 1.5;">Calculando metas e projeção de lucro...</div>
                 </div>
 
                 <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 16px 0;">
@@ -573,7 +585,7 @@
 
         let config = {
             tipoVeiculo: "Moto", condutor: "", motoModelo: "", kmLitro: 30, precoLitro: 5.89, kmMes: 2860,
-            modoAuto: true, custoManual: 0.50, metaOleo: 3000, tripOleo: 0, tripGeral: 0, saldoInicialUber: 0, saldoInicial99: 0
+            modoAuto: true, custoManual: 0.50, metaOleo: 3000, tripOleo: 0, tripGeral: 0, metaUber: 0, meta99: 0, periodoMeta: "mensal"
         };
 
         let gastosMensais = [
@@ -765,8 +777,9 @@
             document.getElementById('cfg_meta_oleo').value = config.metaOleo || 3000;
             document.getElementById('cfg_trip_oleo').value = config.tripOleo || 0;
             document.getElementById('cfg_trip_geral').value = config.tripGeral || 0;
-            document.getElementById('cfg_saldo_uber').value = config.saldoInicialUber || 0;
-            document.getElementById('cfg_saldo_99').value = config.saldoInicial99 || 0;
+            document.getElementById('cfg_meta_uber').value = config.metaUber || 0;
+            document.getElementById('cfg_meta_99').value = config.meta99 || 0;
+            document.getElementById('cfg_periodo_meta').value = config.periodoMeta || "mensal";
 
             const icone = config.tipoVeiculo === 'Carro' ? '🚗' : '🏍️';
             const lblTopo = document.getElementById('label-moto-topo');
@@ -804,6 +817,33 @@
                 let sugerido = custoAutoKm.toFixed(2);
                 msgManual.innerHTML = `💡 <strong>Dica do Assistente Inteligente:</strong> O ideal recomendado pelo seu perfil e caixinhas é de <strong>R$ ${sugerido} / km</strong>. Caso defina abaixo disso, você corre o risco de não cobrir as manutenções futuras da sua <strong>${config.motoModelo || 'moto'}</strong>.`;
             }
+
+            // Análise Inteligente Cruzando Metas, Caixinhas e Período Escolhido
+            const metaUber = parseFloat(document.getElementById('cfg_meta_uber').value) || 0;
+            const meta99 = parseFloat(document.getElementById('cfg_meta_99').value) || 0;
+            const metaTotalMensal = metaUber + meta99;
+            const periodo = document.getElementById('cfg_periodo_meta').value;
+
+            let divisor = 1;
+            let nomePeriodo = "Mensal";
+            if(periodo === 'diaria') { divisor = 26; nomePeriodo = "Diária (26 dias úteis)"; }
+            else if(periodo === 'semanal') { divisor = 4; nomePeriodo = "Semanal"; }
+            else if(periodo === 'quinzenal') { divisor = 2; nomePeriodo = "Quinzenal"; }
+
+            let metaPeriodo = metaTotalMensal / divisor;
+            let custoTotalPeriodo = totalGastosMes / divisor;
+            let lucroLiquidoPeriodo = metaPeriodo - custoTotalPeriodo;
+            let kmPeriodo = kmMes / divisor;
+
+            const textoMetas = document.getElementById('texto-assistente-metas');
+            if(textoMetas) {
+                textoMetas.innerHTML = `
+                    🎯 <strong>Meta ${nomePeriodo}:</strong> R$ ${metaPeriodo.toFixed(2)} (Uber: R$ ${(metaUber/divisor).toFixed(2)} | 99: R$ ${(meta99/divisor).toFixed(2)})<br>
+                    🛣️ <strong>KM Recomendado (${nomePeriodo}):</strong> ${kmPeriodo.toFixed(0)} km<br>
+                    💸 <strong>Custos / Caixinhas (${nomePeriodo}):</strong> R$ ${custoTotalPeriodo.toFixed(2)}<br>
+                    💰 <strong>Lucro Líquido Previsto (${nomePeriodo}):</strong> <strong style="color:var(--green);">R$ ${lucroLiquidoPeriodo.toFixed(2)}</strong>
+                `;
+            }
         }
 
         function salvarConfig() {
@@ -818,9 +858,11 @@
             config.metaOleo = parseFloat(document.getElementById('cfg_meta_oleo').value) || 3000;
             config.tripOleo = parseFloat(document.getElementById('cfg_trip_oleo').value) || 0;
             config.tripGeral = parseFloat(document.getElementById('cfg_trip_geral').value) || 0;
-            config.saldoInicialUber = parseFloat(document.getElementById('cfg_saldo_uber').value) || 0;
-            config.saldoInicial99 = parseFloat(document.getElementById('cfg_saldo_99').value) || 0;
-            salvarNoFirebase(); alert('Configurações salvas!'); trocarTab('diario');
+            config.metaUber = parseFloat(document.getElementById('cfg_meta_uber').value) || 0;
+            config.meta99 = parseFloat(document.getElementById('cfg_meta_99').value) || 0;
+            config.periodoMeta = document.getElementById('cfg_periodo_meta').value;
+
+            salvarNoFirebase(); alert('Configurações e Metas salvas!'); trocarTab('diario');
         }
 
         function trocarTab(tabId, evt) {
@@ -1040,12 +1082,12 @@
             pendenteUber.totalBrutoAcumulado = (pendenteUber.totalBrutoAcumulado || 0) + bUber;
 
             if (carteira99Hoje > 0) {
-                let sub = Math.max(0, carteira99Hoje - (pendente99.ultimaCarteiraApp || config.saldoInicial99 || 0));
+                let sub = Math.max(0, carteira99Hoje - (pendente99.ultimaCarteiraApp || 0));
                 pendente99.dinheiro = (pendente99.dinheiro || 0) + Math.max(0, b99 - sub);
                 pendente99.ultimaCarteiraApp = carteira99Hoje;
             }
             if (carteiraUberHoje > 0) {
-                let sub = Math.max(0, carteiraUberHoje - (pendenteUber.ultimaCarteiraApp || config.saldoInicialUber || 0));
+                let sub = Math.max(0, carteiraUberHoje - (pendenteUber.ultimaCarteiraApp || 0));
                 pendenteUber.dinheiro = (pendenteUber.dinheiro || 0) + Math.max(0, bUber - sub);
                 pendenteUber.ultimaCarteiraApp = carteiraUberHoje;
             }
@@ -1315,7 +1357,6 @@
             }
             gridDias.innerHTML = htmlDias;
 
-            // Assistente Inteligente de Manutenção (Óleo, Pneus e Pastilhas baseados no modelo e KM)
             const elAi = document.getElementById('ai-feedback');
             if (elAi) {
                 let modeloMoto = config.motoModelo || "Sua Moto";
@@ -1332,8 +1373,7 @@
                     alertaOleo = `✅ <strong style="color:var(--green);">Óleo da ${modeloMoto} em dia. Faltam ${kmFaltantesOleo} km para a próxima troca (${tripOleo}/${metaOleo} km).</strong>`;
                 }
 
-                let desgastePneuPastilha = `ℹ️ <em>Monitoramento Preventivo (${modeloMoto}):</em> Com base na rodagem geral, verifique o sulco dos pneus Metzeler/Tourance e a espessura das pastilhas de freio a cada 10.000 km rodados.`;
-
+                let desgastePneuPastilha = `ℹ️ <em>Monitoramento Preventivo (${modeloMoto}):</em> Verifique sulcos de pneus e pastilhas a cada 10.000 km.`;
                 elAi.innerHTML = `${alertaOleo}<br><br>${desgastePneuPastilha}`;
             }
 
