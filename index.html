@@ -13,10 +13,7 @@
         :root { 
             --bg-primary: #070707;
             --bg-card: #121214;
-            --bg-card-hover: #18181b;
             --border-color: #27272a;
-            --border-glow: rgba(46, 204, 113, 0.3);
-            
             --green: #2ecc71; 
             --green-glow: rgba(46, 204, 113, 0.2);
             --blue: #3b82f6; 
@@ -45,15 +42,10 @@
         }
         
         .landing-card { 
-            background: var(--bg-card); 
-            border: 1px solid var(--border-color); 
-            padding: 28px; 
-            border-radius: 20px; 
-            width: 100%; 
-            max-width: 420px; 
+            background: var(--bg-card); border: 1px solid var(--border-color); padding: 28px; 
+            border-radius: 20px; width: 100%; max-width: 420px; 
             box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(46, 204, 113, 0.05); 
-            text-align: center; 
-            position: relative; 
+            text-align: center; position: relative; 
         }
         
         .gear-btn { 
@@ -86,14 +78,9 @@
         .container.active { display: block; }
 
         .card { 
-            background: var(--bg-card); 
-            padding: 18px; 
-            border-radius: 16px; 
-            border: 1px solid var(--border-color); 
-            margin-bottom: 14px; 
-            box-shadow: 0 8px 30px rgba(0,0,0,0.5); 
-            position: relative;
-            overflow: hidden;
+            background: var(--bg-card); padding: 18px; border-radius: 16px; 
+            border: 1px solid var(--border-color); margin-bottom: 14px; 
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden;
         }
         .card::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 1px;
@@ -105,7 +92,7 @@
         input, select, textarea { 
             width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border-color); 
             background: #0d0d0f; color: #fff; box-sizing: border-box; margin-bottom: 12px; text-align: left; 
-            font-size: 13px; outline: None; transition: all 0.2s ease; 
+            font-size: 13px; outline: none; transition: all 0.2s ease; 
         }
         input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-glow); }
 
@@ -116,7 +103,7 @@
         }
         .btn-add:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
-        .btn-whatsapp { width: 100%; padding: 12px; background: #10b981; border: none; color: #000; font-weight: 800; border-radius: 10px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 8px; letter-spacing: 0.5px; }
+        .btn-whatsapp { width: 100%; padding: 12px; background: #10b981; border: none; color: #000; font-weight: 800; border-radius: 10px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 8px; }
         .btn-backup { width: 100%; padding: 10px; background: rgba(59, 130, 246, 0.15); border: 1px solid var(--blue); color: var(--blue); font-weight: 700; border-radius: 10px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 8px; }
         .btn-restore { width: 100%; padding: 10px; background: rgba(245, 158, 11, 0.15); border: 1px solid var(--accent); color: var(--accent); font-weight: 700; border-radius: 10px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 8px; }
         
@@ -127,16 +114,22 @@
         .btn-check { background-color: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid var(--green); padding: 6px 10px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 10px; text-transform: uppercase; transition: 0.2s; white-space: nowrap; }
         .btn-check:hover { background: var(--green); color: #000; }
 
-        /* CALENDÁRIO VISUAL PRIME */
+        /* CALENDÁRIO VISUAL PRIME INTERATIVO */
         .calendario-nav { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 14px; margin-bottom: 12px; }
         .calendario-nav button { background: #0d0d0f; color: var(--green); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 10px; text-transform: uppercase; }
-        .calendario-nav button:hover { border-color: var(--green); }
         .calendario-nav span { color: var(--green); font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
 
         .grid-dias-mes { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
-        .dia-celula { background: #0d0d0f; border: 1px solid var(--border-color); text-align: center; padding: 8px 2px; border-radius: 8px; font-size: 11px; font-weight: 600; position: relative; min-height: 32px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .dia-celula.tem-conta { border-color: var(--accent); background: rgba(245, 158, 11, 0.08); color: var(--accent); }
-        .dia-celula .bolinha-conta { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; margin-top: 3px; box-shadow: 0 0 6px var(--accent); }
+        .dia-celula { background: #0d0d0f; border: 1px solid var(--border-color); text-align: center; padding: 8px 2px; border-radius: 8px; font-size: 11px; font-weight: 600; position: relative; min-height: 36px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+        .dia-celula:hover { border-color: var(--green); background: rgba(46, 204, 113, 0.05); }
+        .dia-celula.tem-lancamento { border-color: var(--green); background: rgba(46, 204, 113, 0.1); color: var(--green); }
+        .dia-celula.tem-conta { border-color: var(--accent); }
+        .bolinha-lancamento { width: 4px; height: 4px; background: var(--green); border-radius: 50%; margin-top: 2px; }
+        .bolinha-conta { width: 4px; height: 4px; background: var(--accent); border-radius: 50%; margin-top: 1px; }
+
+        /* MODAL DE DETALHES DO DIA NO CALENDÁRIO */
+        #modal-dia { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10001; justify-content:center; align-items:center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(5px); }
+        .modal-conteudo { background: var(--bg-card); border: 1px solid var(--green); padding: 22px; border-radius: 18px; width: 100%; max-width: 380px; text-align: left; box-shadow: 0 20px 40px rgba(0,0,0,0.9); }
 
         .metric-box { display: flex; justify-content: space-between; align-items: center; background: #0d0d0f; padding: 12px 16px; border-radius: 10px; margin-bottom: 10px; border: 1px solid var(--border-color); }
         .metric-val { color: var(--green); font-weight: 800; font-size: 15px; }
@@ -155,16 +148,16 @@
         .historico-titulo { font-size: 10px; font-weight: 800; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; letter-spacing: 0.8px; }
         
         table { width: 100%; border-collapse: collapse; font-size: 11px; }
-        th { background: #0d0d0f; color: var(--green); padding: 10px 6px; border-bottom: 2px solid var(--border-color); text-transform: uppercase; font-size: 9px; letter-spacing: 0.8px; font-weight: 800; }
+        th { background: #0d0d0f; color: var(--green); padding: 10px 6px; border-bottom: 2px solid var(--border-color); text-transform: uppercase; font-size: 9px; font-weight: 800; }
         td { border-bottom: 1px solid var(--border-color); padding: 10px 6px; text-align: center; color: #d4d4d8; }
         tr:hover { background: rgba(255,255,255,0.01); }
 
-        .badge-obs { padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 8px; text-transform: uppercase; display: inline-block; letter-spacing: 0.5px; }
+        .badge-obs { padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 8px; text-transform: uppercase; display: inline-block; }
         .badge-ruim { background: rgba(239, 68, 68, 0.15); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.3); }
         .badge-medio { background: rgba(245, 158, 11, 0.15); color: var(--accent); border: 1px solid rgba(245, 158, 11, 0.3); }
         .badge-excelente { background: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid rgba(46, 204, 113, 0.3); }
         
-        .btn-del { background: rgba(239, 68, 68, 0.15); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.3); width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-del { background: rgba(239, 68, 68, 0.15); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.3); width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; }
         .btn-del:hover { background: var(--red); color: #fff; }
 
         .total-box { background: #0d0d0f; border: 1px dashed rgba(46, 204, 113, 0.3); padding: 12px; border-radius: 10px; margin-top: 12px; font-size: 11px; text-align: center; color: var(--text-muted); }
@@ -172,10 +165,9 @@
 
         .mode-box { background: #0d0d0f; padding: 14px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 12px; }
         .ai-card { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); padding: 14px; border-radius: 12px; margin-bottom: 14px; font-size: 11px; line-height: 1.5; color: #e0f2fe; }
-        .ai-card strong { color: var(--accent); }
         .compare-box { background: #0d0d0f; border: 1px solid var(--border-color); padding: 12px; border-radius: 10px; margin-top: 8px; font-size: 11px; line-height: 1.6; }
 
-        #sync-status { position: fixed; bottom: 8px; right: 8px; background: rgba(18,18,20,0.95); border: 1px solid var(--border-color); color: var(--green); padding: 6px 10px; font-size: 9px; font-weight: 700; border-radius: 8px; z-index: 1000; backdrop-filter: blur(8px); box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        #sync-status { position: fixed; bottom: 8px; right: 8px; background: rgba(18,18,20,0.95); border: 1px solid var(--border-color); color: var(--green); padding: 6px 10px; font-size: 9px; font-weight: 700; border-radius: 8px; z-index: 1000; backdrop-filter: blur(8px); }
     </style>
 </head>
 <body>
@@ -187,7 +179,7 @@
         <div class="landing-card">
             <button class="gear-btn" onclick="abrirPainelMestre()" title="Painel Mestre">⚙️</button>
 
-            <h2 id="vitrine-titulo" style="color: var(--green); margin-bottom: 6px; font-size: 19px; font-weight: 800; letter-spacing: 0.5px;">🚀 SISTEMA GESTÃO ELITE</h2>
+            <h2 id="vitrine-titulo" style="color: var(--green); margin-bottom: 6px; font-size: 19px; font-weight: 800;">🚀 SISTEMA GESTÃO ELITE</h2>
             <p id="vitrine-subtitulo" style="font-size: 11px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5;">Controle financeiro inteligente por KM para Carros e Motos (Apps e Entregas).</p>
             
             <div id="vitrine-descricao" style="font-size: 11px; color: #d4d4d8; text-align: left; background: #0d0d0f; border: 1px solid var(--border-color); padding: 12px; border-radius: 10px; margin-bottom: 12px; line-height: 1.5;">
@@ -204,13 +196,22 @@
             <input type="password" id="auth-senha" placeholder="Sua senha" style="margin-bottom: 14px;">
             
             <button class="btn-add" onclick="fazerLogin()" style="margin-bottom: 8px;">ENTRAR NA MINHA CONTA</button>
-            <button class="btn-backup" onclick="fazerCadastro()" style="background: rgba(245, 158, 11, 0.15); border-color: var(--accent); color: var(--accent); margin-top: 0;">CRIAR MINHA CONTA</button>
+            <button class="btn-backup" onclick="fazerCadastro()" style="background: rgba(245, 158, 11, 0.15); border-color: var(--accent); color: var(--accent);">CRIAR MINHA CONTA</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE DETALHES DO DIA NO CALENDÁRIO -->
+    <div id="modal-dia">
+        <div class="modal-conteudo">
+            <h3 id="modal-dia-titulo" style="color:var(--green); margin-top:0; font-size:15px; font-weight:800;">📅 DETALHES DO DIA</h3>
+            <div id="modal-dia-corpo" style="font-size: 11px; line-height: 1.6; color: #d4d4d8; margin-bottom: 14px;"></div>
+            <button onclick="fecharModalDia()" style="width:100%; background:#18181b; color:#fff; border:1px solid var(--border-color); padding:10px; border-radius:10px; cursor:pointer; font-weight:700; font-size:11px;">FECHAR</button>
         </div>
     </div>
 
     <!-- MODAL DE EDIÇÃO MESTRE -->
     <div id="modal-mestre" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10000; justify-content:center; align-items:center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(5px);">
-        <div style="background:var(--bg-card); border:1px solid var(--accent); padding:22px; border-radius:18px; width:100%; max-width:400px; text-align:left; box-shadow: 0 20px 40px rgba(0,0,0,0.8);">
+        <div style="background:var(--bg-card); border:1px solid var(--accent); padding:22px; border-radius:18px; width:100%; max-width:400px; text-align:left;">
             <h3 style="color:var(--accent); margin-top:0; font-size:15px; font-weight:800;">🔐 PAINEL MESTRE DE EDIÇÃO</h3>
             <div id="bloco-senha-mestre">
                 <label>Digite a Senha Mestre</label>
@@ -247,42 +248,24 @@
         <!-- ABA DIÁRIO -->
         <div id="diario" class="container active">
             <div class="card" style="text-align: center; background: linear-gradient(135deg, #121214, #0d1b15); border: 1px solid rgba(46, 204, 113, 0.3); display: flex; justify-content: space-between; align-items: center; padding: 12px 16px;">
-                <span id="label-moto-topo" style="font-size: 11px; color: var(--green); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">🏍️ Veículo...</span>
+                <span id="label-moto-topo" style="font-size: 11px; color: var(--green); font-weight: 800; text-transform: uppercase;">🏍️ Veículo...</span>
                 <button onclick="fazerLogout()" style="background: rgba(239, 68, 68, 0.15); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.3); padding: 5px 10px; font-size: 9px; border-radius: 8px; cursor: pointer; font-weight: 800; text-transform: uppercase;">Sair</button>
             </div>
 
             <div class="card">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <div>
-                        <label>Bruto 99 (R$)</label>
-                        <input type="number" id="bruto_99" step="0.01" placeholder="0,00" oninput="calcularBrutoTotal()">
-                    </div>
-                    <div>
-                        <label>Saldo Carteira 99 Hoje</label>
-                        <input type="number" id="carteira_99_hoje" step="0.01" placeholder="Ex: 22.50">
-                    </div>
+                    <div><label>Bruto 99 (R$)</label><input type="number" id="bruto_99" step="0.01" placeholder="0,00" oninput="calcularBrutoTotal()"></div>
+                    <div><label>Saldo Carteira 99 Hoje</label><input type="number" id="carteira_99_hoje" step="0.01" placeholder="Ex: 22.50"></div>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <div>
-                        <label>Bruto Uber (R$)</label>
-                        <input type="number" id="bruto_uber" step="0.01" placeholder="0,00" oninput="calcularBrutoTotal()">
-                    </div>
-                    <div>
-                        <label>Saldo Carteira Uber Hoje</label>
-                        <input type="number" id="carteira_uber_hoje" step="0.01" placeholder="Ex: 52.00">
-                    </div>
+                    <div><label>Bruto Uber (R$)</label><input type="number" id="bruto_uber" step="0.01" placeholder="0,00" oninput="calcularBrutoTotal()"></div>
+                    <div><label>Saldo Carteira Uber Hoje</label><input type="number" id="carteira_uber_hoje" step="0.01" placeholder="Ex: 52.00"></div>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <div>
-                        <label>Total Geral do Dia</label>
-                        <input type="number" id="bruto" step="0.01" placeholder="0,00" readonly style="color: var(--accent); background: #070707; font-weight: 800;">
-                    </div>
-                    <div>
-                        <label>KM Rodado</label>
-                        <input type="number" id="km_dia" step="0.1" placeholder="0 km">
-                    </div>
+                    <div><label>Total Geral do Dia</label><input type="number" id="bruto" step="0.01" placeholder="0,00" readonly style="color: var(--accent); background: #070707; font-weight: 800;"></div>
+                    <div><label>KM Rodado</label><input type="number" id="km_dia" step="0.1" placeholder="0 km"></div>
                 </div>
 
                 <label>Avaliação Automática</label>
@@ -298,21 +281,21 @@
 
                 <div class="painel-vertical-container">
                     <div class="bg-acumulado-99">
-                        <strong style="color: var(--green); font-size: 11px; display: block; margin-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">💵 CAIXINHAS 99 (PENDENTE)</strong>
+                        <strong style="color: var(--green); font-size: 11px; display: block; margin-bottom: 6px; font-weight: 800; text-transform: uppercase;">💵 CAIXINHAS 99 (PENDENTE)</strong>
                         <div class="linha-acumulado"><span>Total Bruto Acumulado:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green); font-weight:700;" readonly></div>
                         <div class="linha-acumulado"><span>💵 Espécie / PIX:</span> <input type="number" id="edit-99-dinheiro" step="0.01" readonly style="color:var(--accent); font-weight:800;"></div>
                         <div class="saldo-restante-box" id="restante-99-box">Restante Espécie: R$ <span id="restante-99">0.00</span></div>
                         <div id="linhas-dinamicas-99"></div>
-                        <button class="btn-baixar-geral-99" onclick="baixarGeral99()">✅ Baixar e Distribuir Tudo da 99</button>
+                        <button class="btn-baixar-geral-99" onclick="baixarGeral99()">✅ OK / Baixar Tudo da 99</button>
                     </div>
 
                     <div class="bg-acumulado-uber">
-                        <strong style="color: var(--accent); font-size: 11px; display: block; margin-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">📅 CAIXINHAS UBER (PENDENTE)</strong>
+                        <strong style="color: var(--accent); font-size: 11px; display: block; margin-bottom: 6px; font-weight: 800; text-transform: uppercase;">📅 CAIXINHAS UBER (PENDENTE)</strong>
                         <div class="linha-acumulado"><span>Total Bruto Acumulado:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent); font-weight:700;" readonly></div>
                         <div class="linha-acumulado"><span>💵 Esp / PIX Calc:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" readonly style="color:var(--accent); font-weight:800;"></div>
                         <div class="saldo-restante-box" id="restante-uber-box">Restante Espécie: R$ <span id="restante-uber">0.00</span></div>
                         <div id="linhas-dinamicas-uber"></div>
-                        <button class="btn-baixar-geral-uber" onclick="baixarGeralUber()">💰 Baixar e Distribuir Tudo da Uber</button>
+                        <button class="btn-baixar-geral-uber" onclick="baixarGeralUber()">💰 OK / Baixar Tudo da Uber</button>
                     </div>
 
                     <button class="btn-limpar-pendentes" onclick="zerarCaixasPendentesManualmente()">🧹 Limpar / Zerar Todas as Pendências</button>
@@ -322,7 +305,7 @@
             <div class="historico-card">
                 <div class="historico-titulo">
                     <span>📋 Histórico de Lançamentos</span>
-                    <span style="font-size: 8px; color: var(--text-muted);">Toque no X para desfazer</span>
+                    <span style="font-size: 8px; color: var(--text-muted);">Toque no X para desfazer (remove do calendário)</span>
                 </div>
                 <table id="tabela">
                     <thead><tr><th>Data</th><th>Bruto</th><th>R$/Km</th><th>Avaliação</th><th>X</th></tr></thead>
@@ -331,19 +314,19 @@
             </div>
         </div>
 
-        <!-- ABA GERENCIAR COM NAVEGAÇÃO DE MÊS E CALENDÁRIO VISUAL -->
+        <!-- ABA GERENCIAR COM CALENDÁRIO INTERATIVO -->
         <div id="gerenciar" class="container">
             
-            <!-- NAVEGAÇÃO DO MÊS COM SETINHAS -->
             <div class="calendario-nav">
                 <button onclick="mudarMesNavegacao(-1)">◀ Anterior</button>
                 <span id="label-mes-navegacao">NOVEMBRO / 2026</span>
                 <button onclick="mudarMesNavegacao(1)">Próximo ▶</button>
             </div>
 
-            <!-- CALENDÁRIO VISUAL DO MÊS COM DIAS MARCADOS -->
+            <!-- CALENDÁRIO VISUAL INTEGRADO COM OS LANÇAMENTOS -->
             <div class="card">
-                <label style="color: var(--accent); margin-bottom: 8px;">📅 CALENDÁRIO DE VENCIMENTOS</label>
+                <label style="color: var(--accent); margin-bottom: 8px;">📅 CALENDÁRIO DE PRODUTIVIDADE & VENCIMENTOS</label>
+                <span style="font-size: 10px; color: var(--text-muted); display: block; margin-bottom: 8px;">Toque em qualquer dia marcado para ver o resumo completo!</span>
                 <div class="grid-dias-mes" id="grid-calendario-dias"></div>
             </div>
 
@@ -429,14 +412,8 @@
                 <label>Nome da Caixinha</label>
                 <input type="text" id="gasto_nome" placeholder="Ex: Gasolina, Reserva">
                 <div style="display: flex; gap: 8px;">
-                    <div style="flex: 1;">
-                        <label>Emoji</label>
-                        <input type="text" id="gasto_emoji" placeholder="⛽" maxlength="4" style="text-align: center;">
-                    </div>
-                    <div style="flex: 1;">
-                        <label>Cor</label>
-                        <input type="color" id="gasto_cor" value="#2ecc71" style="height: 42px; width: 100%; padding: 3px; cursor: pointer; background: #0d0d0f; border: 1px solid var(--border-color); border-radius: 10px;">
-                    </div>
+                    <div style="flex: 1;"><label>Emoji</label><input type="text" id="gasto_emoji" placeholder="⛽" maxlength="4" style="text-align: center;"></div>
+                    <div style="flex: 1;"><label>Cor</label><input type="color" id="gasto_cor" value="#2ecc71" style="height: 42px; width: 100%; padding: 3px; cursor: pointer; background: #0d0d0f; border: 1px solid var(--border-color); border-radius: 10px;"></div>
                 </div>
                 <label>Valor Mensal Estimado (R$)</label>
                 <input type="number" id="gasto_valor" step="0.01" placeholder="0,00">
@@ -729,9 +706,7 @@
             config.tripGeral = parseFloat(document.getElementById('cfg_trip_geral').value) || 0;
             config.saldoInicialUber = parseFloat(document.getElementById('cfg_saldo_uber').value) || 0;
             config.saldoInicial99 = parseFloat(document.getElementById('cfg_saldo_99').value) || 0;
-            salvarNoFirebase();
-            alert('Configurações salvas!');
-            trocarTab('diario');
+            salvarNoFirebase(); alert('Configurações salvas!'); trocarTab('diario');
         }
 
         function trocarTab(tabId, evt) {
@@ -765,10 +740,7 @@
                 if(cofresGerais[novoId] === undefined) cofresGerais[novoId] = 0;
                 alert('Caixinha criada!');
             }
-            cancelarEdicaoGasto();
-            salvarNoFirebase();
-            renderPainelGastos();
-            atualizarInterfaceDinamica();
+            cancelarEdicaoGasto(); salvarNoFirebase(); renderPainelGastos(); atualizarInterfaceDinamica();
         }
 
         function editarGasto(id) {
@@ -800,17 +772,13 @@
             const temp = gastosMensais[index];
             gastosMensais[index] = gastosMensais[novoIndex];
             gastosMensais[novoIndex] = temp;
-            salvarNoFirebase();
-            renderPainelGastos();
-            atualizarInterfaceDinamica();
+            salvarNoFirebase(); renderPainelGastos(); atualizarInterfaceDinamica();
         }
 
         function removerGasto(id) {
             if(confirm('Excluir caixinha?')) {
                 gastosMensais = gastosMensais.filter(g => g.id !== id);
-                salvarNoFirebase();
-                renderPainelGastos();
-                atualizarInterfaceDinamica();
+                salvarNoFirebase(); renderPainelGastos(); atualizarInterfaceDinamica();
             }
         }
 
@@ -843,7 +811,7 @@
             if(lin99) {
                 lin99.innerHTML = ativos.map(g => {
                     let valItem = (pendente99.itens && pendente99.itens[g.id] ? pendente99.itens[g.id] : 0);
-                    return `<div class="linha-acumulado"><span>${g.emoji} ${g.nome}:</span> <input type="number" id="edit-99-${g.id}" step="0.01" value="${valItem.toFixed(2)}"><button class="btn-check" onclick="darCheckItem('99', ${g.id})">✔ Baixa</button></div>`;
+                    return `<div class="linha-acumulado"><span>${g.emoji} ${g.nome}:</span> <input type="number" id="edit-99-${g.id}" step="0.01" value="${valItem.toFixed(2)}"><button class="btn-check" onclick="darCheckItem('99', ${g.id})">OK</button></div>`;
                 }).join('');
             }
 
@@ -851,7 +819,7 @@
             if(linUb) {
                 linUb.innerHTML = ativos.map(g => {
                     let valItem = (pendenteUber.itens && pendenteUber.itens[g.id] ? pendenteUber.itens[g.id] : 0);
-                    return `<div class="linha-acumulado"><span>${g.emoji} ${g.nome}:</span> <input type="number" id="edit-ub-${g.id}" step="0.01" value="${valItem.toFixed(2)}"><button class="btn-check" onclick="darCheckItem('uber', ${g.id})">✔ Baixa</button></div>`;
+                    return `<div class="linha-acumulado"><span>${g.emoji} ${g.nome}:</span> <input type="number" id="edit-ub-${g.id}" step="0.01" value="${valItem.toFixed(2)}"><button class="btn-check" onclick="darCheckItem('uber', ${g.id})">OK</button></div>`;
                 }).join('');
             }
 
@@ -893,7 +861,7 @@
             cofresGerais[idGasto] = (cofresGerais[idGasto] || 0) + val;
             if (plat === '99' && pendente99.itens?.[idGasto]) pendente99.itens[idGasto] = Math.max(0, pendente99.itens[idGasto] - val);
             if (plat === 'uber' && pendenteUber.itens?.[idGasto]) pendenteUber.itens[idGasto] = Math.max(0, pendenteUber.itens[idGasto] - val);
-            salvarNoFirebase(); atualizarInterfaceDinamica(); alert('Baixa efetuada!');
+            salvarNoFirebase(); atualizarInterfaceDinamica(); alert('Confirmado!');
         }
 
         function baixarGeral99() {
@@ -902,7 +870,7 @@
                 if (val > 0) cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
             });
             pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
-            salvarNoFirebase(); atualizarInterfaceDinamica(); alert('Baixa geral 99 realizada!');
+            salvarNoFirebase(); atualizarInterfaceDinamica(); alert('Baixa e zeragem da 99 realizada com sucesso!');
         }
 
         function baixarGeralUber() {
@@ -911,7 +879,7 @@
                 if (val > 0) cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
             });
             pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
-            salvarNoFirebase(); atualizarInterfaceDinamica(); alert('Baixa geral Uber realizada!');
+            salvarNoFirebase(); atualizarInterfaceDinamica(); alert('Baixa e zeragem da Uber realizada com sucesso!');
         }
 
         function calcularBrutoTotal() {
@@ -967,17 +935,32 @@
             let obsTexto = eficiencia < 1.50 ? "RUIM" : (eficiencia < 2.00 ? "MÉDIO" : "EXCELENTE");
             document.getElementById('obs').value = obsTexto;
 
+            let agoraData = new Date();
+            let diaDoMes = agoraData.getDate();
             let mesRefStr = `${String(mesAtualNav).padStart(2, '0')}/${anoAtualNav}`;
-            db.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), mesAno: mesRefStr, bruto: bruto.toFixed(2), km, eficiencia: eficiencia.toFixed(2), obs: obsTexto, lucroDia: lucroTotalDia });
+
+            db.unshift({ 
+                id: Date.now(), 
+                data: agoraData.toLocaleDateString('pt-BR'), 
+                diaNum: diaDoMes,
+                mesAno: mesRefStr, 
+                bruto: bruto.toFixed(2), 
+                km, 
+                eficiencia: eficiencia.toFixed(2), 
+                obs: obsTexto, 
+                lucroDia: lucroTotalDia,
+                b99, bUber
+            });
 
             salvarNoFirebase();
             atualizarInterfaceDinamica();
             renderTable();
             renderGerenciador();
+
             document.getElementById('bruto_99').value = ''; document.getElementById('carteira_99_hoje').value = '';
             document.getElementById('bruto_uber').value = ''; document.getElementById('carteira_uber_hoje').value = '';
             document.getElementById('km_dia').value = ''; document.getElementById('bruto').value = '';
-            alert('Lançamento registrado!');
+            alert('Lançamento registrado e integrado ao calendário!');
         }
 
         function enviarRelatorioWhatsApp() {
@@ -995,7 +978,12 @@
         }
 
         function deletarItem(i) {
-            if(confirm('Excluir?')) { db.splice(i, 1); salvarNoFirebase(); renderTable(); renderGerenciador(); }
+            if(confirm('Excluir lançamento? Ele também será removido do calendário.')) {
+                db.splice(i, 1);
+                salvarNoFirebase();
+                renderTable();
+                renderGerenciador();
+            }
         }
 
         function renderTable() {
@@ -1066,8 +1054,7 @@
                 }
             }
 
-            salvarNoFirebase();
-            renderGerenciador();
+            salvarNoFirebase(); renderGerenciador();
             document.getElementById('conta_nome').value = '';
             document.getElementById('conta_valor').value = '';
             document.getElementById('conta_vencimento').value = '';
@@ -1088,16 +1075,7 @@
                     let proxMesRef = `${String(mes).padStart(2, '0')}/${ano}`;
                     
                     if (!contasCadastradas.some(x => x.nome === c.nome && x.mesAnoRef === proxMesRef)) {
-                        contasCadastradas.push({
-                            id: Date.now() + 1,
-                            tipo: 'recorrente',
-                            cofreId: c.cofreId,
-                            nome: c.nome,
-                            valor: c.valor,
-                            mesAnoRef: proxMesRef,
-                            vencimento: c.vencimento,
-                            paga: false
-                        });
+                        contasCadastradas.push({ id: Date.now() + 1, tipo: 'recorrente', cofreId: c.cofreId, nome: c.nome, valor: c.valor, mesAnoRef: proxMesRef, vencimento: c.vencimento, paga: false });
                     }
                 }
 
@@ -1105,9 +1083,7 @@
                 let gInfo = gastosMensais.find(x => x.id == c.cofreId);
                 historicoSaidas.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), mesAno: mesRefStr, cofreNome: gInfo ? `${gInfo.emoji} ${gInfo.nome}` : 'Caixa', desc: `Pago: ${c.nome}`, valor: c.valor });
 
-                salvarNoFirebase();
-                renderGerenciador();
-                alert('Conta paga com sucesso!');
+                salvarNoFirebase(); renderGerenciador(); alert('Conta paga com sucesso!');
             }
         }
 
@@ -1120,23 +1096,65 @@
             salvarNoFirebase(); renderGerenciador();
         }
 
+        // CLICAR NO DIA DO CALENDÁRIO PARA VER O RESUMO
+        function abrirDetalhesDia(dia, lancamentoDoDia) {
+            const modal = document.getElementById('modal-dia');
+            const titulo = document.getElementById('modal-dia-titulo');
+            const corpo = document.getElementById('modal-dia-corpo');
+
+            titulo.innerText = `📅 RESUMO DO DIA ${dia}/${nomesMeses[mesAtualNav]}`;
+            
+            if (lancamentoDoDia) {
+                corpo.innerHTML = `
+                    💰 Faturamento Bruto: <strong style="color:var(--green);">R$ ${lancamentoDoDia.bruto}</strong><br>
+                    🚗 99: R$ ${parseFloat(lancamentoDoDia.b99 || 0).toFixed(2)} | 🚕 Uber: R$ ${parseFloat(lancamentoDoDia.bUber || 0).toFixed(2)}<br>
+                    🛣️ Quilometragem: <strong style="color:var(--accent);">${lancamentoDoDia.km} km</strong><br>
+                    📊 Eficiência: <strong style="color:var(--green);">R$ ${lancamentoDoDia.eficiencia} / km</strong><br>
+                    💵 Lucro Líquido: <strong style="color:var(--green);">R$ ${parseFloat(lancamentoDoDia.lucroDia || 0).toFixed(2)}</strong><br>
+                    ⭐ Avaliação: <span class="badge-obs ${lancamentoDoDia.obs === 'RUIM' ? 'badge-ruim' : (lancamentoDoDia.obs === 'MÉDIO' ? 'badge-medio' : 'badge-excelente')}">${lancamentoDoDia.obs}</span>
+                `;
+            } else {
+                corpo.innerHTML = `Nenhum lançamento registrado neste dia.`;
+            }
+            modal.style.display = 'flex';
+        }
+
+        function fecharModalDia() {
+            document.getElementById('modal-dia').style.display = 'none';
+        }
+
         function renderGerenciador() {
             document.getElementById('label-mes-navegacao').innerText = `${nomesMeses[mesAtualNav]} / ${anoAtualNav}`;
             document.getElementById('lbl-mes-fechamento').innerText = `${nomesMeses[mesAtualNav]} / ${anoAtualNav}`;
 
             let mesRefStr = `${String(mesAtualNav).padStart(2, '0')}/${anoAtualNav}`;
 
+            // Calendário Visual com Lançamentos e Vencimentos Integrados
             const gridDias = document.getElementById('grid-calendario-dias');
             let ultimoDia = new Date(anoAtualNav, mesAtualNav, 0).getDate();
+            
             let contasDoMes = contasCadastradas.filter(c => c.mesAnoRef === mesRefStr);
             let diasComContas = new Set(contasDoMes.map(c => c.vencimento));
+            
+            let lancamentosDoMes = db.filter(item => item.mesAno === mesRefStr);
+            let mapaLancamentos = {};
+            lancamentosDoMes.forEach(item => {
+                let dNum = item.diaNum || parseInt(item.data.split('/')[0]);
+                mapaLancamentos[dNum] = item;
+            });
 
             let htmlDias = '';
             for (let d = 1; d <= ultimoDia; d++) {
-                let temBolinha = diasComContas.has(d);
-                htmlDias += `<div class="dia-celula ${temBolinha ? 'tem-conta' : ''}">
+                let temLanc = mapaLancamentos[d] !== undefined;
+                let temConta = diasComContas.has(d);
+                let classeCss = temLanc ? 'tem-lancamento' : (temConta ? 'tem-conta' : '');
+
+                let lancJson = temLanc ? JSON.stringify(mapaLancamentos[d]).replace(/"/g, '&quot;') : 'null';
+
+                htmlDias += `<div class="dia-celula ${classeCss}" onclick='abrirDetalhesDia(${d}, ${lancJson})'>
                     <span>${d}</span>
-                    ${temBolinha ? '<div class="bolinha-conta" title="Conta a vencer"></div>' : ''}
+                    ${temLanc ? '<div class="bolinha-lancamento" title="Lançamento feito"></div>' : ''}
+                    ${temConta ? '<div class="bolinha-conta" title="Conta a vencer"></div>' : ''}
                 </div>`;
             }
             gridDias.innerHTML = htmlDias;
@@ -1170,10 +1188,9 @@
 
             const painelFechamento = document.getElementById('painel-fechamento-mes');
             if (painelFechamento) {
-                let lancamentosMes = db.filter(item => item.mesAno === mesRefStr);
-                let brutoMes = lancamentosMes.reduce((acc, item) => acc + parseFloat(item.bruto || 0), 0);
-                let kmMes = lancamentosMes.reduce((acc, item) => acc + parseFloat(item.km || 0), 0);
-                let lucroMes = lancamentosMes.reduce((acc, item) => acc + parseFloat(item.lucroDia || 0), 0);
+                let brutoMes = lancamentosDoMes.reduce((acc, item) => acc + parseFloat(item.bruto || 0), 0);
+                let kmMes = lancamentosDoMes.reduce((acc, item) => acc + parseFloat(item.km || 0), 0);
+                let lucroMes = lancamentosDoMes.reduce((acc, item) => acc + parseFloat(item.lucroDia || 0), 0);
                 let mediaKm = kmMes > 0 ? (brutoMes / kmMes) : 0;
                 let contasPagas = contasDoMes.filter(c => c.paga).length;
 
