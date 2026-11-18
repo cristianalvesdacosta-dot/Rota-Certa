@@ -1271,7 +1271,7 @@
             alert('Retirada registrada!');
         }
 
-        // CADASTRO INTELIGENTE DE CONTAS (Gera parcelas automaticamente mês a mês se for parcelada)
+        // CADASTRO INTELIGENTE DE CONTAS (Gera parcelas e garante recorrência mês a mês)
         function cadastrarConta() {
             const tipo = document.getElementById('conta_tipo').value;
             const cofreId = document.getElementById('conta_cofre').value;
@@ -1293,18 +1293,21 @@
                     let mesRefFormatado = `${String(mes).padStart(2, '0')}/${ano}`;
                     let nomeComParcela = `${nomeOriginal} (${i + 1}/${parcelas})`;
 
-                    contasCadastradas.push({
-                        id: Date.now() + i,
-                        tipo: 'parcelada',
-                        cofreId,
-                        nome: nomeComParcela,
-                        valor,
-                        mesAnoRef: mesRefFormatado,
-                        vencimento,
-                        parcelaAtual: i + 1,
-                        totalParcelas: parcelas,
-                        paga: false
-                    });
+                    let jaExiste = contasCadastradas.some(x => x.nome === nomeComParcela && x.mesAnoRef === mesRefFormatado);
+                    if (!jaExiste) {
+                        contasCadastradas.push({
+                            id: Date.now() + i,
+                            tipo: 'parcelada',
+                            cofreId,
+                            nome: nomeComParcela,
+                            valor,
+                            mesAnoRef: mesRefFormatado,
+                            vencimento,
+                            parcelaAtual: i + 1,
+                            totalParcelas: parcelas,
+                            paga: false
+                        });
+                    }
 
                     mes++;
                     if (mes > 12) { mes = 1; ano++; }
@@ -1312,19 +1315,25 @@
                 alert(`Sucesso! As ${parcelas} parcelas foram geradas e distribuídas nos meses correspondentes.`);
             } else {
                 let mesRefFormatado = `${String(mes).padStart(2, '0')}/${ano}`;
-                contasCadastradas.push({
-                    id: Date.now(),
-                    tipo,
-                    cofreId,
-                    nome: nomeOriginal,
-                    valor,
-                    mesAnoRef: mesRefFormatado,
-                    vencimento,
-                    parcelaAtual: 1,
-                    totalParcelas: 1,
-                    paga: false
-                });
-                alert('Conta cadastrada com sucesso!');
+                let jaExiste = contasCadastradas.some(x => x.nome === nomeOriginal && x.mesAnoRef === mesRefFormatado);
+                if (!jaExiste) {
+                    contasCadastradas.push({
+                        id: Date.now(),
+                        tipo,
+                        cofreId,
+                        nome: nomeOriginal,
+                        valor,
+                        mesAnoRef: mesRefFormatado,
+                        vencimento,
+                        parcelaAtual: 1,
+                        totalParcelas: 1,
+                        paga: false
+                    });
+                    alert('Conta cadastrada com sucesso!');
+                } else {
+                    alert('Já existe uma conta com este nome cadastrada para este mesmo mês!');
+                    return;
+                }
             }
 
             salvarNoFirebase();
@@ -1346,14 +1355,14 @@
 
                 c.paga = true;
                 
-                // Se for recorrente (fixa contínua), gera automaticamente para o mês seguinte
+                // Se for recorrente (fixa contínua), gera automaticamente para o mês seguinte se já não existir
                 if (c.tipo === 'recorrente' && c.mesAnoRef) {
                     let [mes, ano] = c.mesAnoRef.split('/').map(Number);
                     mes++;
                     if (mes > 12) { mes = 1; ano++; }
                     let proximoMesRef = `${String(mes).padStart(2, '0')}/${ano}`;
                     
-                    let jaExiste = contasCadastradas.some(x => x.nome === c.nome && x.mesAnoRef === proximoMesRef && !x.paga);
+                    let jaExiste = contasCadastradas.some(x => x.nome === c.nome && x.mesAnoRef === proximoMesRef);
                     if (!jaExiste) {
                         contasCadastradas.push({
                             id: Date.now() + 1,
