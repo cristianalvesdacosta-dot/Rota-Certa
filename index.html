@@ -385,18 +385,47 @@
 
             <div class="card">
                 <label>📌 CADASTRAR CONTA OU BOLETO</label>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div>
+                        <label>Mês de Início</label>
+                        <select id="conta_mes_inicio">
+                            <option value="1">Janeiro</option>
+                            <option value="2">Fevereiro</option>
+                            <option value="3">Março</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Maio</option>
+                            <option value="6">Junho</option>
+                            <option value="7">Julho</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Setembro</option>
+                            <option value="10">Outubro</option>
+                            <option value="11">Novembro</option>
+                            <option value="12">Dezembro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Ano de Início</label>
+                        <input type="number" id="conta_ano_inicio" placeholder="2026">
+                    </div>
+                </div>
+
                 <label style="margin-top: 6px;">Tipo</label>
                 <select id="conta_tipo" onchange="mudarTipoContaForm()">
                     <option value="recorrente">🔄 Recorrente (Vem todo mês infinitamente)</option>
                     <option value="parcelada">💳 Parcelada (Ex: 3 vezes)</option>
                     <option value="unica">⚡ Única / Casual (Só deste mês)</option>
                 </select>
+                
                 <label>Cofre Destino</label>
                 <select id="conta_cofre"></select>
+                
                 <label>Nome da Conta</label>
                 <input type="text" id="conta_nome" placeholder="Ex: Internet Wi-Fi / Parcela Moto">
+                
                 <label>Valor (R$)</label>
                 <input type="number" id="conta_valor" step="0.01" placeholder="0,00">
+                
                 <label>Dia Vencimento (1 a 31)</label>
                 <input type="number" id="conta_vencimento" min="1" max="31" placeholder="Ex: 10">
                 
@@ -404,6 +433,7 @@
                     <label>Total de Parcelas (Ex: 3)</label>
                     <input type="number" id="conta_parcelas" value="1" min="1">
                 </div>
+                
                 <button class="btn-add" style="background: var(--blue); color: #fff;" onclick="cadastrarConta()">SALVAR CONTA</button>
             </div>
 
@@ -675,42 +705,48 @@
             renderTable();
         }
 
-        // Garante que contas recorrentes apareçam nos meses navegados automaticamente
+        // Garante geração automática para o mês navegado se houver recorrência ativa
         function verificarEGerarRecorrenciasAutomaticas() {
             let alterou = false;
             let mesRefStr = `${String(mesAtualNav).padStart(2, '0')}/${anoAtualNav}`;
             
-            // Pega todas as contas recorrentes base ativas
             let recorrentesBase = {};
             contasCadastradas.forEach(c => {
                 if (c.tipo === 'recorrente') {
                     let nomeBase = c.nome.replace(/\s\(\d+\/\d+\)$/, '');
                     if (!recorrentesBase[nomeBase]) {
-                        recorrentesBase[nomeBase] = { cofreId: c.cofreId, valor: c.valor, vencimento: c.vencimento };
+                        recorrentesBase[nomeBase] = { cofreId: c.cofreId, valor: c.valor, vencimento: c.vencimento, mesAnoCriacao: c.mesAnoRef || mesRefStr };
                     }
                 }
             });
 
-            // Para cada recorrência, verifica se já existe o registro no mês atual da navegação
             for (let nomeBase in recorrentesBase) {
                 let info = recorrentesBase[nomeBase];
-                let existeNoMes = contasCadastradas.some(x => {
-                    let nBase = x.nome.replace(/\s\(\d+\/\d+\)$/, '');
-                    return nBase === nomeBase && x.mesAnoRef === mesRefStr;
-                });
+                
+                // Só gera para o mês navegado se o mês navegado for igual ou posterior ao mês de criação da conta
+                let [cMes, cAno] = info.mesAnoCriacao.split('/').map(Number);
+                let criacaoVal = cAno * 12 + cMes;
+                let atualVal = anoAtualNav * 12 + mesAtualNav;
 
-                if (!existeNoMes) {
-                    contasCadastradas.push({
-                        id: Date.now() + Math.random(),
-                        tipo: 'recorrente',
-                        cofreId: info.cofreId,
-                        nome: nomeBase,
-                        valor: info.valor,
-                        mesAnoRef: mesRefStr,
-                        vencimento: info.vencimento,
-                        paga: false
+                if (atualVal >= criacaoVal) {
+                    let existeNoMes = contasCadastradas.some(x => {
+                        let nBase = x.nome.replace(/\s\(\d+\/\d+\)$/, '');
+                        return nBase === nomeBase && x.mesAnoRef === mesRefStr;
                     });
-                    alterou = true;
+
+                    if (!existeNoMes) {
+                        contasCadastradas.push({
+                            id: Date.now() + Math.random(),
+                            tipo: 'recorrente',
+                            cofreId: info.cofreId,
+                            nome: nomeBase,
+                            valor: info.valor,
+                            mesAnoRef: mesRefStr,
+                            vencimento: info.vencimento,
+                            paga: false
+                        });
+                        alterou = true;
+                    }
                 }
             }
 
@@ -789,7 +825,12 @@
                 const idx = tabId === 'diario' ? 0 : tabId === 'gerenciar' ? 1 : tabId === 'gastos' ? 2 : 3;
                 document.querySelectorAll('.tab-btn')[idx].classList.add('active');
             }
-            if(tabId === 'gerenciar') renderGerenciador();
+            if(tabId === 'gerenciar') {
+                // Inicializa o seletor de mês/ano de início com o mês atual da tela
+                document.getElementById('conta_mes_inicio').value = mesAtualNav;
+                document.getElementById('conta_ano_inicio').value = anoAtualNav;
+                renderGerenciador();
+            }
         }
 
         function salvarGasto() {
@@ -1098,11 +1139,11 @@
             const valor = parseFloat(document.getElementById('conta_valor').value);
             const vencimento = parseInt(document.getElementById('conta_vencimento').value) || 1;
             const parcelas = parseInt(document.getElementById('conta_parcelas').value) || 1;
+            
+            const mesInicio = parseInt(document.getElementById('conta_mes_inicio').value) || mesAtualNav;
+            const anoInicio = parseInt(document.getElementById('conta_ano_inicio').value) || anoAtualNav;
 
             if(!nomeOriginal || isNaN(valor) || valor <= 0 || isNaN(vencimento)) { alert('Preencha todos os campos!'); return; }
-
-            let mesInicio = mesAtualNav;
-            let anoInicio = anoAtualNav;
 
             if (tipo === 'parcelada' && parcelas > 1) {
                 let m = mesInicio, a = anoInicio;
@@ -1116,7 +1157,6 @@
                 }
                 alert(`${parcelas} parcelas geradas com sucesso!`);
             } else if (tipo === 'recorrente') {
-                // Cadastra no mês atual e garante que o sistema gere para frente ao navegar
                 let mesRef = `${String(mesInicio).padStart(2, '0')}/${anoInicio}`;
                 if (!contasCadastradas.some(x => x.nome === nomeOriginal && x.mesAnoRef === mesRef)) {
                     contasCadastradas.push({ id: Date.now(), tipo: 'recorrente', cofreId, nome: nomeOriginal, valor, mesAnoRef: mesRef, vencimento, paga: false });
@@ -1125,7 +1165,6 @@
                     alert('Já existe uma conta com este nome neste mês!'); return;
                 }
             } else {
-                // Conta única
                 let mesRef = `${String(mesInicio).padStart(2, '0')}/${anoInicio}`;
                 if (!contasCadastradas.some(x => x.nome === nomeOriginal && x.mesAnoRef === mesRef)) {
                     contasCadastradas.push({ id: Date.now(), tipo: 'unica', cofreId, nome: nomeOriginal, valor, mesAnoRef: mesRef, vencimento, paga: false });
@@ -1169,13 +1208,12 @@
             }
         }
 
-        // ABRIR MODAL CUSTOMIZADO DE EXCLUSÃO
         function excluirConta(id) {
             const c = contasCadastradas.find(x => x.id === id);
             if(!c) return;
             contaParaExcluirId = id;
             document.getElementById('check-apagar-tudo').checked = false;
-            document.getElementById('modal-excluir-texto').innerHTML = `Deseja excluir a conta <strong>"${c.nome}"</strong> (${c.mesAnoRef})?<br><br>• <strong>Sem marcar a caixinha</strong> = Apaga APENAS deste mês.<br>• <strong>Marcando a caixinha</strong> = Apaga POR COMPLETO (todos os meses).`;
+            document.getElementById('modal-excluir-texto').innerHTML = `Deseja excluir a conta <strong>"${c.nome}"</strong> (${c.mesAnoRef})?<br><br>• <strong>Sem marcar a caixinha</strong> = Apaga APENAS deste mês (${c.mesAnoRef}).<br>• <strong>Marcando a caixinha</strong> = Apaga POR COMPLETO (todos os meses e cancela a recorrência).`;
             document.getElementById('modal-excluir-conta').style.display = 'flex';
         }
 
@@ -1192,10 +1230,12 @@
             const apagarTudo = document.getElementById('check-apagar-tudo').checked;
 
             if (apagarTudo) {
+                // Apaga todas as ocorrências que possuem o mesmo nome base
                 let nomeBase = c.nome.replace(/\s\(\d+\/\d+\)$/, '');
                 contasCadastradas = contasCadastradas.filter(x => x.nome.replace(/\s\(\d+\/\d+\)$/, '') !== nomeBase);
                 alert('Conta excluída por completo!');
             } else {
+                // Apaga estritamente o ID correspondente àquele mês específico
                 contasCadastradas = contasCadastradas.filter(x => x.id !== contaParaExcluirId);
                 alert('Conta removida apenas deste mês!');
             }
@@ -1210,7 +1250,6 @@
             salvarNoFirebase(); renderGerenciador();
         }
 
-        // CLICAR NO DIA DO CALENDÁRIO PARA VER O RESUMO
         function abrirDetalhesDia(dia, lancamentoDoDia) {
             const modal = document.getElementById('modal-dia');
             const titulo = document.getElementById('modal-dia-titulo');
@@ -1243,7 +1282,6 @@
 
             let mesRefStr = `${String(mesAtualNav).padStart(2, '0')}/${anoAtualNav}`;
 
-            // Calendário Visual com Lançamentos e Vencimentos Integrados
             const gridDias = document.getElementById('grid-calendario-dias');
             let ultimoDia = new Date(anoAtualNav, mesAtualNav, 0).getDate();
             
