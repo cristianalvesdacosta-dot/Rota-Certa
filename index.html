@@ -352,8 +352,8 @@
             </div>
 
             <div class="ai-card">
-                🤖 <strong>Assistente de Manutenção:</strong>
-                <div id="ai-feedback" style="margin-top: 4px;">Analisando quilometragem...</div>
+                🤖 <strong>Assistente Inteligente & Manutenção:</strong>
+                <div id="ai-feedback" style="margin-top: 6px; line-height: 1.5;">Analisando quilometragem e manual do veículo...</div>
             </div>
 
             <div class="card">
@@ -530,6 +530,7 @@
                 <div id="bloco-manual-km" style="display: none;">
                     <label>Custo por KM Manual (R$)</label>
                     <input type="number" id="cfg_custo_manual" step="0.01" value="0.50">
+                    <div id="mensagem-assistente-manual" style="font-size: 10px; color: var(--accent); margin-top: 6px; line-height: 1.4; background: #070707; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color);"></div>
                 </div>
 
                 <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 16px 0;">
@@ -705,7 +706,6 @@
             renderTable();
         }
 
-        // Garante geração automática para o mês navegado se houver recorrência ativa
         function verificarEGerarRecorrenciasAutomaticas() {
             let alterou = false;
             let mesRefStr = `${String(mesAtualNav).padStart(2, '0')}/${anoAtualNav}`;
@@ -722,8 +722,6 @@
 
             for (let nomeBase in recorrentesBase) {
                 let info = recorrentesBase[nomeBase];
-                
-                // Só gera para o mês navegado se o mês navegado for igual ou posterior ao mês de criação da conta
                 let [cMes, cAno] = info.mesAnoCriacao.split('/').map(Number);
                 let criacaoVal = cAno * 12 + cMes;
                 let atualVal = anoAtualNav * 12 + mesAtualNav;
@@ -795,8 +793,17 @@
             const ativos = gastosMensais.filter(g => g.ativo);
             const totalGastosMes = ativos.reduce((acc, g) => acc + g.valor, 0);
             const custoAutoKm = kmMes > 0 ? (totalGastosMes / kmMes) : 0;
+            
             const elPreview = document.getElementById('preview-custo-automatico');
-            if(elPreview) elPreview.innerHTML = `📊 <strong>Cálculo Automático:</strong> R$ ${custoAutoKm.toFixed(3)} / km`;
+            if(elPreview) {
+                elPreview.innerHTML = `📊 <strong>Cálculo Automático por Caixinhas:</strong> R$ ${custoAutoKm.toFixed(3)} / km<br><span style="font-size:10px; color:var(--text-muted);">Baseado em R$ ${totalGastosMes.toFixed(2)} de custos mensais divididos por ${kmMes} km.</span>`;
+            }
+
+            const msgManual = document.getElementById('mensagem-assistente-manual');
+            if(msgManual) {
+                let sugerido = custoAutoKm.toFixed(2);
+                msgManual.innerHTML = `💡 <strong>Dica do Assistente Inteligente:</strong> O ideal recomendado pelo seu perfil e caixinhas é de <strong>R$ ${sugerido} / km</strong>. Caso defina abaixo disso, você corre o risco de não cobrir as manutenções futuras da sua <strong>${config.motoModelo || 'moto'}</strong>.`;
+            }
         }
 
         function salvarConfig() {
@@ -826,7 +833,6 @@
                 document.querySelectorAll('.tab-btn')[idx].classList.add('active');
             }
             if(tabId === 'gerenciar') {
-                // Inicializa o seletor de mês/ano de início com o mês atual da tela
                 document.getElementById('conta_mes_inicio').value = mesAtualNav;
                 document.getElementById('conta_ano_inicio').value = anoAtualNav;
                 renderGerenciador();
@@ -1072,7 +1078,7 @@
             document.getElementById('bruto_99').value = ''; document.getElementById('carteira_99_hoje').value = '';
             document.getElementById('bruto_uber').value = ''; document.getElementById('carteira_uber_hoje').value = '';
             document.getElementById('km_dia').value = ''; document.getElementById('bruto').value = '';
-            alert('Lançamento registrado e integrado ao calendário!');
+            alert('Lançamento registrado, KM acumulado e manutenção atualizada!');
         }
 
         function enviarRelatorioWhatsApp() {
@@ -1230,12 +1236,10 @@
             const apagarTudo = document.getElementById('check-apagar-tudo').checked;
 
             if (apagarTudo) {
-                // Apaga todas as ocorrências que possuem o mesmo nome base
                 let nomeBase = c.nome.replace(/\s\(\d+\/\d+\)$/, '');
                 contasCadastradas = contasCadastradas.filter(x => x.nome.replace(/\s\(\d+\/\d+\)$/, '') !== nomeBase);
                 alert('Conta excluída por completo!');
             } else {
-                // Apaga estritamente o ID correspondente àquele mês específico
                 contasCadastradas = contasCadastradas.filter(x => x.id !== contaParaExcluirId);
                 alert('Conta removida apenas deste mês!');
             }
@@ -1310,6 +1314,28 @@
                 </div>`;
             }
             gridDias.innerHTML = htmlDias;
+
+            // Assistente Inteligente de Manutenção (Óleo, Pneus e Pastilhas baseados no modelo e KM)
+            const elAi = document.getElementById('ai-feedback');
+            if (elAi) {
+                let modeloMoto = config.motoModelo || "Sua Moto";
+                let metaOleo = parseFloat(config.metaOleo) || 3000;
+                let tripOleo = parseFloat(config.tripOleo) || 0;
+                let kmFaltantesOleo = metaOleo - tripOleo;
+                
+                let alertaOleo = "";
+                if (kmFaltantesOleo <= 0) {
+                    alertaOleo = `⚠️ <strong style="color:var(--red);">URGENTE: Troca de óleo da ${modeloMoto} vencida! (${Math.abs(kmFaltantesOleo)} km acima dos ${metaOleo} km).</strong>`;
+                } else if (kmFaltantesOleo <= 300) {
+                    alertaOleo = `⚠️ <strong style="color:var(--accent);">Atenção: Falta apenas ${kmFaltantesOleo} km para a troca de óleo da ${modeloMoto}. Programe-se!</strong>`;
+                } else {
+                    alertaOleo = `✅ <strong style="color:var(--green);">Óleo da ${modeloMoto} em dia. Faltam ${kmFaltantesOleo} km para a próxima troca (${tripOleo}/${metaOleo} km).</strong>`;
+                }
+
+                let desgastePneuPastilha = `ℹ️ <em>Monitoramento Preventivo (${modeloMoto}):</em> Com base na rodagem geral, verifique o sulco dos pneus Metzeler/Tourance e a espessura das pastilhas de freio a cada 10.000 km rodados.`;
+
+                elAi.innerHTML = `${alertaOleo}<br><br>${desgastePneuPastilha}`;
+            }
 
             const tbodyContas = document.querySelector('#tabela-contas tbody');
             const pendentes = contasDoMes.filter(x => !x.paga);
