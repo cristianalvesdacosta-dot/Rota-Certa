@@ -206,7 +206,7 @@
     <!-- MODAL CUSTOMIZADO DE EXCLUSÃO DE CONTA -->
     <div id="modal-excluir-conta">
         <div class="modal-conteudo" style="border-color: var(--red);">
-            <h3 style="color:var(--red); margin-top:0; font-size:14px; font-weight:800;">🗑️ GERenciar EXCLUSÃO DE CONTA</h3>
+            <h3 style="color:var(--red); margin-top:0; font-size:14px; font-weight:800;">🗑️ GERENCIAR EXCLUSÃO DE CONTA</h3>
             <div id="modal-excluir-texto" style="font-size:11px; color:#d4d4d8; margin-bottom:12px; line-height:1.5;"></div>
             
             <label style="display:flex; align-items:center; gap:8px; cursor:pointer; background:#0d0d0f; padding:10px; border-radius:8px; border:1px solid var(--border-color); margin-bottom:12px;">
@@ -646,7 +646,10 @@
                     if (data.cofresGerais) cofresGerais = data.cofresGerais;
                     if (data.pendente99) pendente99 = data.pendente99;
                     if (data.pendenteUber) pendenteUber = data.pendenteUber;
-                    if (data.contasCadastradas) contasCadastradas = data.contasCadastradas;
+                    if (data.contasCadastradas) {
+                        contasCadastradas = data.contasCadastradas;
+                        verificarEGerarRecorrenciasAutomaticas();
+                    }
                     if (data.historicoSaidas) historicoSaidas = data.historicoSaidas;
                 }
                 carregarConfigNaTela();
@@ -667,8 +670,53 @@
             mesAtualNav += direcao;
             if (mesAtualNav > 12) { mesAtualNav = 1; anoAtualNav++; }
             else if (mesAtualNav < 1) { mesAtualNav = 12; anoAtualNav--; }
+            verificarEGerarRecorrenciasAutomaticas();
             renderGerenciador();
             renderTable();
+        }
+
+        // Garante que contas recorrentes apareçam nos meses navegados automaticamente
+        function verificarEGerarRecorrenciasAutomaticas() {
+            let alterou = false;
+            let mesRefStr = `${String(mesAtualNav).padStart(2, '0')}/${anoAtualNav}`;
+            
+            // Pega todas as contas recorrentes base ativas
+            let recorrentesBase = {};
+            contasCadastradas.forEach(c => {
+                if (c.tipo === 'recorrente') {
+                    let nomeBase = c.nome.replace(/\s\(\d+\/\d+\)$/, '');
+                    if (!recorrentesBase[nomeBase]) {
+                        recorrentesBase[nomeBase] = { cofreId: c.cofreId, valor: c.valor, vencimento: c.vencimento };
+                    }
+                }
+            });
+
+            // Para cada recorrência, verifica se já existe o registro no mês atual da navegação
+            for (let nomeBase in recorrentesBase) {
+                let info = recorrentesBase[nomeBase];
+                let existeNoMes = contasCadastradas.some(x => {
+                    let nBase = x.nome.replace(/\s\(\d+\/\d+\)$/, '');
+                    return nBase === nomeBase && x.mesAnoRef === mesRefStr;
+                });
+
+                if (!existeNoMes) {
+                    contasCadastradas.push({
+                        id: Date.now() + Math.random(),
+                        tipo: 'recorrente',
+                        cofreId: info.cofreId,
+                        nome: nomeBase,
+                        valor: info.valor,
+                        mesAnoRef: mesRefStr,
+                        vencimento: info.vencimento,
+                        paga: false
+                    });
+                    alterou = true;
+                }
+            }
+
+            if (alterou) {
+                salvarNoFirebase();
+            }
         }
 
         function carregarConfigNaTela() {
@@ -1067,11 +1115,21 @@
                     m++; if (m > 12) { m = 1; a++; }
                 }
                 alert(`${parcelas} parcelas geradas com sucesso!`);
-            } else {
+            } else if (tipo === 'recorrente') {
+                // Cadastra no mês atual e garante que o sistema gere para frente ao navegar
                 let mesRef = `${String(mesInicio).padStart(2, '0')}/${anoInicio}`;
                 if (!contasCadastradas.some(x => x.nome === nomeOriginal && x.mesAnoRef === mesRef)) {
-                    contasCadastradas.push({ id: Date.now(), tipo, cofreId, nome: nomeOriginal, valor, mesAnoRef: mesRef, vencimento, paga: false });
-                    alert('Conta cadastrada com sucesso!');
+                    contasCadastradas.push({ id: Date.now(), tipo: 'recorrente', cofreId, nome: nomeOriginal, valor, mesAnoRef: mesRef, vencimento, paga: false });
+                    alert('Conta recorrente cadastrada com sucesso!');
+                } else {
+                    alert('Já existe uma conta com este nome neste mês!'); return;
+                }
+            } else {
+                // Conta única
+                let mesRef = `${String(mesInicio).padStart(2, '0')}/${anoInicio}`;
+                if (!contasCadastradas.some(x => x.nome === nomeOriginal && x.mesAnoRef === mesRef)) {
+                    contasCadastradas.push({ id: Date.now(), tipo: 'unica', cofreId, nome: nomeOriginal, valor, mesAnoRef: mesRef, vencimento, paga: false });
+                    alert('Conta única cadastrada com sucesso!');
                 } else {
                     alert('Já existe uma conta com este nome neste mês!'); return;
                 }
@@ -1099,7 +1157,7 @@
                     
                     let nomeBase = c.nome.replace(/\s\(\d+\/\d+\)$/, '');
                     if (!contasCadastradas.some(x => x.nome.replace(/\s\(\d+\/\d+\)$/, '') === nomeBase && x.mesAnoRef === proxMesRef)) {
-                        contasCadastradas.push({ id: Date.now() + 1, tipo: 'recorrente', cofreId: c.cofreId, nome: c.nome, valor: c.valor, mesAnoRef: proxMesRef, vencimento: c.vencimento, paga: false });
+                        contasCadastradas.push({ id: Date.now() + 1, tipo: 'recorrente', cofreId: c.cofreId, nome: nomeBase, valor: c.valor, mesAnoRef: proxMesRef, vencimento: c.vencimento, paga: false });
                     }
                 }
 
