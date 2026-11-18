@@ -652,9 +652,6 @@
                     mesSelecionadoGlobal = `${String(agora.getMonth() + 1).padStart(2, '0')}/${agora.getFullYear()}`;
                 }
 
-                // Geração automática de recorrências futuras para os próximos 6 meses com base nas contas cadastradas
-                projetarContasRecorrentesAutomaticamente();
-
                 carregarConfigNaTela();
                 popularSeletorMeses();
                 renderPainelGastos();
@@ -670,54 +667,6 @@
         function salvarNoFirebase() {
             if(dbRef) {
                 dbRef.set({ config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, contasCadastradas, historicoSaidas });
-            }
-        }
-
-        // FUNÇÃO INTELIGENTE: Projeta contas recorrentes automaticamente para os meses seguintes
-        function projetarContasRecorrentesAutomaticamente() {
-            let houveMudanca = false;
-            let novasContas = [];
-
-            // Pega todas as contas recorrentes base
-            const recorrentes = contasCadastradas.filter(c => c.tipo === 'recorrente');
-
-            recorrentes.forEach(c => {
-                if (!c.mesAnoRef) return;
-                let [mesStr, anoStr] = c.mesAnoRef.split('/');
-                let mes = parseInt(mesStr);
-                let ano = parseInt(anoStr);
-
-                // Projeta os próximos 6 meses à frente
-                for (let i = 1; i <= 6; i++) {
-                    mes++;
-                    if (mes > 12) { mes = 1; ano++; }
-                    let mesFuturoRef = `${String(mes).padStart(2, '0')}/${ano}`;
-
-                    // Verifica se já existe essa conta exata nesse mês futuro (seja paga ou pendente)
-                    let jaExiste = contasCadastradas.some(x => x.nome === c.nome && x.mesAnoRef === mesFuturoRef) ||
-                                   novasContas.some(x => x.nome === c.nome && x.mesAnoRef === mesFuturoRef);
-
-                    if (!jaExiste) {
-                        novasContas.push({
-                            id: Date.now() + Math.random(),
-                            tipo: 'recorrente',
-                            cofreId: c.cofreId,
-                            nome: c.nome,
-                            valor: c.valor,
-                            mesAnoRef: mesFuturoRef,
-                            vencimento: c.vencimento,
-                            parcelaAtual: 1,
-                            totalParcelas: 1,
-                            paga: false
-                        });
-                        houveMudanca = true;
-                    }
-                }
-            });
-
-            if (houveMudanca) {
-                contasCadastradas = contasCadastradas.concat(novasContas);
-                salvarNoFirebase();
             }
         }
 
@@ -1322,7 +1271,7 @@
             alert('Retirada registrada!');
         }
 
-        // CADASTRO INTELIGENTE DE CONTAS (Gera parcelas e garante recorrência automática)
+        // CADASTRO SEGURO E ESTÁVEL DE CONTAS
         function cadastrarConta() {
             const tipo = document.getElementById('conta_tipo').value;
             const cofreId = document.getElementById('conta_cofre').value;
@@ -1339,7 +1288,6 @@
             let mes = parseInt(mesStr);
 
             if (tipo === 'parcelada' && parcelas > 1) {
-                // Gera automaticamente todas as parcelas nos meses seguintes
                 for (let i = 0; i < parcelas; i++) {
                     let mesRefFormatado = `${String(mes).padStart(2, '0')}/${ano}`;
                     let nomeComParcela = `${nomeOriginal} (${i + 1}/${parcelas})`;
@@ -1363,56 +1311,14 @@
                     mes++;
                     if (mes > 12) { mes = 1; ano++; }
                 }
-                alert(`Sucesso! As ${parcelas} parcelas foram geradas e distribuídas nos meses correspondentes.`);
-            } else if (tipo === 'recorrente') {
-                // Se for recorrente, cadastra o mês inicial e a função automática já replica para frente
-                let mesRefFormatado = `${String(mes).padStart(2, '0')}/${ano}`;
-                let jaExiste = contasCadastradas.some(x => x.nome === nomeOriginal && x.mesAnoRef === mesRefFormatado);
-                if (!jaExiste) {
-                    contasCadastradas.push({
-                        id: Date.now(),
-                        tipo: 'recorrente',
-                        cofreId,
-                        nome: nomeOriginal,
-                        valor,
-                        mesAnoRef: mesRefFormatado,
-                        vencimento,
-                        parcelaAtual: 1,
-                        totalParcelas: 1,
-                        paga: false
-                    });
-                    
-                    // Força a projeção imediata
-                    let mProx = mes + 1, aProx = ano;
-                    if (mProx > 12) { mProx = 1; aProx++; }
-                    let mesProxRef = `${String(mProx).padStart(2, '0')}/${aProx}`;
-                    if (!contasCadastradas.some(x => x.nome === nomeOriginal && x.mesAnoRef === mesProxRef)) {
-                        contasCadastradas.push({
-                            id: Date.now() + 99,
-                            tipo: 'recorrente',
-                            cofreId,
-                            nome: nomeOriginal,
-                            valor,
-                            mesAnoRef: mesProxRef,
-                            vencimento,
-                            parcelaAtual: 1,
-                            totalParcelas: 1,
-                            paga: false
-                        });
-                    }
-
-                    alert('Conta recorrente cadastrada e projetada para os próximos meses!');
-                } else {
-                    alert('Já existe uma conta com este nome cadastrada para este mesmo mês!');
-                    return;
-                }
+                alert(`Sucesso! As ${parcelas} parcelas foram geradas.`);
             } else {
                 let mesRefFormatado = `${String(mes).padStart(2, '0')}/${ano}`;
                 let jaExiste = contasCadastradas.some(x => x.nome === nomeOriginal && x.mesAnoRef === mesRefFormatado);
                 if (!jaExiste) {
                     contasCadastradas.push({
                         id: Date.now(),
-                        tipo: 'unica',
+                        tipo,
                         cofreId,
                         nome: nomeOriginal,
                         valor,
@@ -1422,7 +1328,7 @@
                         totalParcelas: 1,
                         paga: false
                     });
-                    alert('Conta única cadastrada com sucesso!');
+                    alert('Conta cadastrada com sucesso!');
                 } else {
                     alert('Já existe uma conta com este nome cadastrada para este mesmo mês!');
                     return;
@@ -1448,7 +1354,7 @@
 
                 c.paga = true;
                 
-                // Se for recorrente (fixa contínua), garante a geração para o mês seguinte se já não existir
+                // Se for recorrente, ao pagar, gera automaticamente para o mês seguinte
                 if (c.tipo === 'recorrente' && c.mesAnoRef) {
                     let [mes, ano] = c.mesAnoRef.split('/').map(Number);
                     mes++;
@@ -1494,7 +1400,6 @@
             const lblFechamento = document.getElementById('lbl-mes-fechamento');
             if (lblFechamento) lblFechamento.innerText = mesSelecionadoGlobal;
 
-            // Filtra contas pendentes APENAS do mês ativo selecionado
             const tbodyContas = document.querySelector('#tabela-contas tbody');
             const pendentes = contasCadastradas.filter(x => !x.paga && x.mesAnoRef === mesSelecionadoGlobal);
             if(tbodyContas) {
@@ -1565,7 +1470,7 @@
             if (tripOleo >= metaOleo) {
                 msgs.push(`🚨 <strong style="color:var(--red);">Óleo Vencido!</strong> (${tripOleo.toFixed(1)} km).`);
             } else {
-                msgs.push(`🛢️ <strong>Óleo:</strong> ${tripOleo.toFixed(1)} / ${metaOleo} km.`);
+                msgs.push(`🛢️ <strong>Óleo:</strong> ${tripOleo.toFixed(1)} / ${metaOlean || metaOleo} km.`);
             }
             aiElem.innerHTML = msgs.join('<br>');
         }
@@ -1577,7 +1482,7 @@
             document.body.appendChild(a); a.click(); a.remove();
         }
 
-        function importarBackupClick() { const el =document.getElementById('fileInput'); if(el) el.click(); }
+        function importarBackupClick() { const el = document.getElementById('fileInput'); if(el) el.click(); }
 
         function importarBackup(event) {
             const file = event.target.files[0];
