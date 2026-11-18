@@ -24,17 +24,14 @@
         
         body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--dark); color: var(--text); padding: 0; margin: 0; padding-bottom: 80px; -webkit-font-smoothing: antialiased; }
         
-        /* TELA DE APRESENTAÇÃO / LANDING PAGE */
         #landing-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark); z-index: 9999; overflow-y: auto; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .landing-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 24px; border-radius: 16px; width: 100%; max-width: 440px; box-shadow: 0 8px 30px rgba(0,0,0,0.6); text-align: center; position: relative; }
         .gear-btn { position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 18px; cursor: pointer; color: var(--text-muted); transition: 0.2s; }
         .gear-btn:hover { color: var(--accent); }
 
-        /* BOTÃO LINK PIX NA VITRINE */
         .btn-pix-clicavel { display: block; width: 100%; background: rgba(46, 204, 113, 0.15); border: 1px solid var(--green); color: var(--green); padding: 12px; border-radius: 8px; font-weight: 700; font-size: 12px; text-transform: uppercase; cursor: pointer; margin: 12px 0; transition: 0.2s; text-decoration: none; box-sizing: border-box; text-align: center; }
         .btn-pix-clicavel:hover { background: var(--green); color: #000; }
 
-        /* BARRA DE ABAS PREMIUM */
         .tab-bar { display: flex; background: #121212; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #222; backdrop-filter: blur(10px); }
         .tab-btn { flex: 1; padding: 14px 4px; border: none; background: none; color: var(--text-muted); font-weight: 600; cursor: pointer; font-size: 10px; text-transform: uppercase; text-align: center; letter-spacing: 0.5px; transition: 0.2s; }
         .tab-btn.active { color: var(--green); border-bottom: 2px solid var(--green); background: rgba(46, 204, 113, 0.05); }
@@ -42,14 +39,12 @@
         .container { padding: 12px; max-width: 480px; margin: auto; display: none; }
         .container.active { display: block; }
 
-        /* CARDS E FORMULÁRIOS ESTILO APP */
         .card { background: var(--card-bg); padding: 16px; border-radius: 14px; border: 1px solid var(--card-border); margin-bottom: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
         
         label { display: block; font-size: 10px; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
         input, select, textarea { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #333; background: #202020; color: #fff; box-sizing: border-box; margin-bottom: 10px; text-align: left; font-size: 14px; outline: none; transition: border-color 0.2s; }
         input:focus, select:focus, textarea:focus { border-color: var(--green); }
 
-        /* BOTÕES MODERNOS */
         .btn-add { width: 100%; padding: 14px; background: var(--green); border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
         .btn-whatsapp { width: 100%; padding: 12px; background: #25d366; border: none; color: #000; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 10px; }
         .btn-backup { width: 100%; padding: 10px; background: var(--blue); border: none; color: #fff; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; margin-top: 8px; }
@@ -64,10 +59,6 @@
         .metric-box { display: flex; justify-content: space-between; align-items: center; background: #202020; padding: 10px 14px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #2a2a2a; }
         .metric-val { color: var(--green); font-weight: 700; font-size: 15px; }
 
-        .envelopes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
-        .env { padding: 8px 10px; border-radius: 8px; font-size: 10px; text-align: center; border: 1px solid #333; background: #1a1a1a; }
-        .env strong { display: block; font-size: 13px; margin-top: 2px; }
-        
         .painel-vertical-container { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
         .bg-acumulado-99 { background: #11221c; border: 1px solid #1b4d3e; padding: 14px; border-radius: 12px; font-size: 11px; text-align: left; }
         .bg-acumulado-uber { background: #1b242a; border: 1px solid #283c48; padding: 14px; border-radius: 12px; font-size: 11px; text-align: left; }
@@ -112,7 +103,6 @@
     <!-- TELA DE APRESENTAÇÃO / LANDING PAGE -->
     <div id="landing-screen">
         <div class="landing-card">
-            <!-- BOTÃO DA ENGRENAGEM MESTRE -->
             <button class="gear-btn" onclick="abrirPainelMestre()" title="Painel Mestre">⚙️</button>
 
             <h2 id="vitrine-titulo" style="color: var(--green); margin-bottom: 4px; font-size: 18px;">🚀 SISTEMA GESTÃO ELITE</h2>
@@ -124,7 +114,6 @@
                 ✅ Ideal para motoristas de aplicativo e entregadores.
             </div>
 
-            <!-- BOTÃO LINK PIX (DIRETO PARA O BANCO) -->
             <a id="vitrine-pix-btn" href="https://link.mercadopago.com.br" target="_blank" class="btn-pix-clicavel">☕ Apoiar Projeto via PIX</a>
 
             <hr style="border: 0; border-top: 1px solid #222; margin: 12px 0;">
@@ -137,7 +126,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE EDIÇÃO MESTRE (ABRE COM A SENHA) -->
+    <!-- MODAL DE EDIÇÃO MESTRE -->
     <div id="modal-mestre" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10000; justify-content:center; align-items:center; padding: 20px; box-sizing: border-box;">
         <div style="background:var(--card-bg); border:1px solid var(--accent); padding:20px; border-radius:14px; width:100%; max-width:400px; text-align:left;">
             <h3 style="color:var(--accent); margin-top:0; font-size:15px;">🔐 PAINEL MESTRE DE EDIÇÃO</h3>
@@ -155,7 +144,7 @@
                 <input type="text" id="edit-subtitulo">
                 <label>Texto Descritivo / Benefícios</label>
                 <textarea id="edit-descricao" rows="4"></textarea>
-                <label>Link de Pagamento PIX (Ex: Link do Mercado Pago, PagBank, etc.)</label>
+                <label>Link de Pagamento PIX</label>
                 <input type="text" id="edit-pix" placeholder="https://link.mercadopago.com.br/seulink">
                 
                 <button class="btn-add" onclick="salvarAlteracoesVitrine()" style="margin-bottom: 8px; background:var(--accent); color:#000;">SALVAR ALTERAÇÕES NA VITRINE</button>
@@ -220,7 +209,6 @@
                 <button class="btn-add" onclick="registrar()">REGISTRAR LANÇAMENTO</button>
                 <button class="btn-whatsapp" onclick="enviarRelatorioWhatsApp()">💬 Enviar Relatório no WhatsApp</button>
 
-                <!-- AVISO DE AVALIAÇÃO DO DIA (RITMO DE METAS) -->
                 <div id="feedback-diario-card" style="display:none; margin-top: 10px; background: #11221c; border: 1px solid #1b4d3e; padding: 10px 12px; border-radius: 8px; font-size: 11px; line-height: 1.4;">
                     <strong style="color: var(--green); display: block; margin-bottom: 2px;">⚡ AVALIAÇÃO DO DIA:</strong>
                     <span id="texto-feedback-diario"></span>
@@ -231,9 +219,7 @@
                     <span id="res-eficiencia" class="metric-val">R$ 0,00 / km</span>
                 </div>
 
-                <!-- PAINÉIS COM BAIXA INDIVIDUAL E BAIXA GERAL -->
                 <div class="painel-vertical-container">
-                    <!-- PAINEL DA 99 -->
                     <div class="bg-acumulado-99">
                         <strong style="color: var(--green); font-size: 12px; display: block; margin-bottom: 4px;">💵 CAIXINHAS 99 (PENDENTE)</strong>
                         <span style="font-size: 10px; color: #888; display: block; margin-bottom: 8px;">Dê baixa individual por caixinha ou tudo de uma vez.</span>
@@ -246,10 +232,9 @@
                         <button class="btn-baixar-geral-99" onclick="baixarGeral99()">✅ Baixar e Distribuir Tudo da 99</button>
                     </div>
 
-                    <!-- PAINEL DA UBER -->
                     <div class="bg-acumulado-uber">
                         <strong style="color: var(--accent); font-size: 12px; display: block; margin-bottom: 4px;">📅 CAIXINHAS UBER (PENDENTE)</strong>
-                        <span style="font-size: 10px; color: #888; display: block; margin-bottom: 8px;">Acumulando aqui até você decidir baixar (semanal ou diário).</span>
+                        <span style="font-size: 10px; color: #888; display: block; margin-bottom: 8px;">Acumulando aqui até você decidir baixar.</span>
                         <div class="linha-acumulado"><span>Total Bruto Acumulado:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent);" readonly></div>
                         <div class="linha-acumulado"><span>💵 Esp / PIX Calc:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" readonly style="color:var(--accent); font-weight:bold;"></div>
                         
@@ -263,7 +248,6 @@
                 </div>
             </div>
             
-            <!-- RESUMO / HISTÓRICO DE LANÇAMENTOS -->
             <div class="historico-card">
                 <div class="historico-titulo">
                     <span>📋 Histórico</span>
@@ -276,9 +260,9 @@
             </div>
         </div>
 
-        <!-- ABA GERENCIAR COFRES E DESPESAS -->
+        <!-- ABA GERENCIAR -->
         <div id="gerenciar" class="container">
-            <!-- SELETOR DE MÊS GLOBAL -->
+            <!-- SELETOR DE MÊS CORRIGIDO (LIMPO E EXATO) -->
             <div class="card" style="background: #121915; border: 1px solid var(--green);">
                 <label style="color: var(--green);">📅 MÊS DE REFERÊNCIA ATUAL</label>
                 <select id="seletor-mes-global" onchange="mudarMesReferencia()" style="background:#111; color:var(--green); font-weight:bold; margin-bottom:0;"></select>
@@ -294,7 +278,6 @@
                 <div id="grid-cofres-geral" style="margin-top: 8px;"></div>
             </div>
 
-            <!-- PAINEL DE FECHAMENTO INTELIGENTE DO MÊS SELECIONADO -->
             <div class="card" style="border: 1px dashed var(--accent);">
                 <label style="color: var(--accent);">📑 RESUMO DE FECHAMENTO (<span id="lbl-mes-fechamento">Mês</span>)</label>
                 <div id="painel-fechamento-mes" style="font-size: 11px; margin-top: 8px; line-height: 1.5; color: #ddd;">
@@ -359,7 +342,7 @@
             </div>
         </div>
 
-        <!-- ABA GASTOS MENSAIS (CAIXINHAS DINÂMICAS) -->
+        <!-- ABA GASTOS MENSAIS -->
         <div id="gastos" class="container">
             <div class="card">
                 <label style="color: var(--accent);">⚙️ GERENCIAR CAIXINHAS (EDITAR E ORGANIZAR)</label>
@@ -390,7 +373,7 @@
                 <button id="btn-cancelar-edicao" onclick="cancelarEdicaoGasto()" style="display:none; width:100%; background:#333; color:#fff; border:none; padding:10px; border-radius:8px; cursor:pointer; font-weight:600; font-size:11px; margin-top:6px;">CANCELAR EDIÇÃO</button>
 
                 <hr style="border: 0; border-top: 1px solid #222; margin: 15px 0;">
-                <label>Caixinhas Ativas (Toque em ✏️ para editar ou nas setas ⬆️ ⬇️ para ordenar)</label>
+                <label>Caixinhas Ativas</label>
                 <table id="tabela-gastos" style="margin-top: 8px;">
                     <thead><tr><th>Caixinha</th><th>Valor</th><th>Ações</th></tr></thead>
                     <tbody></tbody>
@@ -670,16 +653,31 @@
             }
         }
 
+        // CORREÇÃO EXATA DO SELETOR: APENAS MESES REAIS QUE TÊM REGISTRO OU CONTAS
         function popularSeletorMeses() {
             const select = document.getElementById('seletor-mes-global');
             if (!select) return;
 
             let mesesSet = new Set();
-            mesesSet.add(mesSelecionadoGlobal);
+            
+            // Garante o mês atual sempre visível
+            const agora = new Date();
+            const mesAtualStr = `${String(agora.getMonth() + 1).padStart(2, '0')}/${agora.getFullYear()}`;
+            mesesSet.add(mesAtualStr);
+            if(mesSelecionadoGlobal) mesesSet.add(mesSelecionadoGlobal);
+
+            // Adiciona apenas os meses que possuem lançamentos ou contas criadas (sem gerar anos fictícios)
             db.forEach(item => { if (item.mesAno) mesesSet.add(item.mesAno); });
             contasCadastradas.forEach(c => { if (c.mesAnoRef) mesesSet.add(c.mesAnoRef); });
 
-            let mesesArr = Array.from(mesesSet).sort();
+            // Ordena os meses cronologicamente pelo ano e mês
+            let mesesArr = Array.from(mesesSet).sort((a, b) => {
+                let [m1, a1] = a.split('/').map(Number);
+                let [m2, a2] = b.split('/').map(Number);
+                if (a1 !== a2) return a1 - a2;
+                return m1 - m2;
+            });
+
             select.innerHTML = mesesArr.map(m => `<option value="${m}" ${m === mesSelecionadoGlobal ? 'selected' : ''}>📅 Mês de Referência: ${m}</option>`).join('');
         }
 
@@ -739,16 +737,6 @@
             const elPreview = document.getElementById('preview-custo-automatico');
             if(elPreview) {
                 elPreview.innerHTML = `📊 <strong>Cálculo Automático pelas Caixinhas:</strong><br>Total Caixinhas: R$ ${totalGastosMes.toFixed(2)} ÷ ${kmMes} km<br>Custo por KM Calculado: <strong style="color:var(--green);">R$ ${custoAutoKm.toFixed(3)} / km</strong>`;
-            }
-
-            const custoManualInput = parseFloat(document.getElementById('cfg_custo_manual')?.value) || 0.50;
-            const aviso = document.getElementById('aviso-divergencia');
-            if(aviso) {
-                if(custoManualInput < custoAutoKm) {
-                    aviso.innerHTML = `⚠️ Atenção: Seu valor manual (R$ ${custoManualInput.toFixed(2)}) está <strong>abaixo</strong> do calculado pelas caixinhas (R$ ${custoAutoKm.toFixed(2)}).`;
-                } else {
-                    aviso.innerHTML = `✅ Seu valor manual cobre perfeitamente o custo automático das caixinhas.`;
-                }
             }
         }
 
@@ -868,14 +856,12 @@
                 tbody.innerHTML = gastosMensais.map((g, idx) => `
                     <tr>
                         <td><span style="color:${g.cor};">${g.emoji}</span> <strong>${g.nome}</strong><br><span style="font-size:8px; color:#888;">R$ ${g.valor.toFixed(2)} | ${g.tipo === 'acumulativa' ? '🏦 Acumula' : '🔄 Cíclica'}</span></td>
+                        <td><input type="checkbox" ${g.ativo ? 'checked' : ''} onchange="alternarGastoAtivo(${g.id})" style="width:14px; height:14px; accent-color:var(--green); vertical-align:middle;"></td>
                         <td>
-                            <input type="checkbox" ${g.ativo ? 'checked' : ''} onchange="alternarGastoAtivo(${g.id})" title="Ativa/Inativa" style="width:14px; height:14px; accent-color:var(--green); vertical-align:middle;">
-                        </td>
-                        <td>
-                            <button onclick="moverGasto(${idx}, -1)" style="background:#222; color:#fff; border:none; padding:3px 6px; border-radius:4px; cursor:pointer;" title="Subir">⬆️</button>
-                            <button onclick="moverGasto(${idx}, 1)" style="background:#222; color:#fff; border:none; padding:3px 6px; border-radius:4px; cursor:pointer;" title="Descer">⬇️</button>
-                            <button onclick="editarGasto(${g.id})" style="background:var(--blue); color:#fff; border:none; padding:3px 6px; border-radius:4px; cursor:pointer;" title="Editar">✏️</button>
-                            <button class="btn-del" onclick="removerGasto(${g.id})" title="Excluir">✕</button>
+                            <button onclick="moverGasto(${idx}, -1)" style="background:#222; color:#fff; border:none; padding:3px 6px; border-radius:4px; cursor:pointer;">⬆️</button>
+                            <button onclick="moverGasto(${idx}, 1)" style="background:#222; color:#fff; border:none; padding:3px 6px; border-radius:4px; cursor:pointer;">⬇️</button>
+                            <button onclick="editarGasto(${g.id})" style="background:var(--blue); color:#fff; border:none; padding:3px 6px; border-radius:4px; cursor:pointer;">✏️</button>
+                            <button class="btn-del" onclick="removerGasto(${g.id})">✕</button>
                         </td>
                     </tr>
                 `).join('');
@@ -884,11 +870,6 @@
 
         function atualizarInterfaceDinamica() {
             const ativos = gastosMensais.filter(g => g.ativo);
-
-            const hoje = new Date();
-            const diaAtual = hoje.getDate();
-            const ultimoDiaDoMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
-            const progressoTempoMes = diaAtual / ultimoDiaDoMes;
 
             const lin99 = document.getElementById('linhas-dinamicas-99');
             if(lin99) {
@@ -923,42 +904,17 @@
                 gridCofres.innerHTML = ativos.map(g => {
                     const saldoAtual = cofresGerais[g.id] || 0;
                     const metaMensal = g.valor || 1;
-                    
                     let percentual = (saldoAtual / metaMensal) * 100;
                     if(percentual > 100) percentual = 100;
-
-                    const metaIdealHoje = metaMensal * progressoTempoMes;
-                    const diferenca = saldoAtual - metaIdealHoje;
-
-                    let statusTexto = "";
-                    let corStatus = "";
-
-                    if (g.tipo === 'acumulativa') {
-                        statusTexto = `🏦 Reserva Acumulativa (Total Guardado)`;
-                        corStatus = "var(--accent)";
-                    } else if (saldoAtual >= metaMensal) {
-                        statusTexto = "🏆 Meta mensal batida!";
-                        corStatus = "var(--green)";
-                    } else if (diferenca >= 0) {
-                        statusTexto = "🟢 No ritmo ideal para o mês";
-                        corStatus = "var(--green)";
-                    } else {
-                        let faltaAportar = Math.abs(diferenca);
-                        statusTexto = `🟡 Atenção: aporte R$ ${faltaAportar.toFixed(2)} a mais para o ritmo`;
-                        corStatus = "var(--accent)";
-                    }
 
                     return `
                         <div class="env" style="border-left: 4px solid ${g.cor}; text-align: left; padding: 10px 12px; margin-bottom: 8px; background: #1a1a1a;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <span style="font-weight: 700; font-size: 11px; color: #fff;">${g.emoji} ${g.nome.toUpperCase()} <span style="font-size:8px; color:#888;">(${g.tipo === 'acumulativa' ? 'Acumula' : 'Cíclica'})</span></span>
-                                <strong style="color: ${g.cor}; font-size: 12px;">R$ ${saldoAtual.toFixed(2)} <span style="font-size: 9px; color: #888;">/ R$ ${metaMensal.toFixed(2)}</span></strong>
+                                <span style="font-weight: 700; font-size: 11px; color: #fff;">${g.emoji} ${g.nome.toUpperCase()}</span>
+                                <strong style="color: ${g.cor}; font-size: 12px;">R$ ${saldoAtual.toFixed(2)} / R$ ${metaMensal.toFixed(2)}</strong>
                             </div>
                             <div style="width: 100%; background: #222; height: 6px; border-radius: 4px; overflow: hidden; margin: 6px 0;">
-                                <div style="width: ${percentual}%; background: ${g.cor}; height: 100%; transition: width 0.4s ease;"></div>
-                            </div>
-                            <div style="font-size: 9px; color: ${corStatus}; font-weight: 600; margin-top: 4px;">
-                                ${statusTexto}
+                                <div style="width: ${percentual}%; background: ${g.cor}; height: 100%;"></div>
                             </div>
                         </div>
                     `;
@@ -977,96 +933,53 @@
         function preencherValoresPendentesNaTela() {
             const e99Tot = document.getElementById('edit-99-tot');
             if(e99Tot) e99Tot.value = (pendente99.totalBrutoAcumulado || 0).toFixed(2);
-            
             const e99Din = document.getElementById('edit-99-dinheiro');
             if(e99Din) e99Din.value = (pendente99.dinheiro || 0).toFixed(2);
-
             const eUbTot = document.getElementById('edit-ub-tot');
             if(eUbTot) eUbTot.value = (pendenteUber.totalBrutoAcumulado || 0).toFixed(2);
-
             const eUbDin = document.getElementById('edit-ub-dinheiro');
             if(eUbDin) eUbDin.value = (pendenteUber.dinheiro || 0).toFixed(2);
-
-            atualizarValoresDigitados('99');
-            atualizarValoresDigitados('uber');
-        }
-
-        function atualizarValoresDigitados(plat) {
-            const prefixo = plat === '99' ? '99' : 'ub';
-            const dinheiroTotalEmEspecie = parseFloat(document.getElementById(`edit-${prefixo}-dinheiro`).value) || 0;
-            
-            let saldoRestanteNaMao = dinheiroTotalEmEspecie;
-            const spanRestante = document.getElementById(`restante-${plat}`);
-            const boxRestante = document.getElementById(`restante-${plat}-box`);
-            
-            if(spanRestante) {
-                spanRestante.innerText = saldoRestanteNaMao.toFixed(2);
-                if (saldoRestanteNaMao < 0) {
-                    boxRestante.style.color = "var(--red)";
-                } else if (saldoRestanteNaMao === 0 && dinheiroTotalEmEspecie > 0) {
-                    boxRestante.style.color = "var(--green)";
-                } else {
-                    boxRestante.style.color = "var(--accent)";
-                }
-            }
         }
 
         function darCheckItem(plat, idGasto) {
             const prefixo = plat === '99' ? '99' : 'ub';
             const inp = document.getElementById(`edit-${prefixo}-${idGasto}`);
             const valInformado = parseFloat(inp ? inp.value : 0) || 0;
-
-            if (valInformado <= 0) { alert('Valor zerado ou inválido nesta caixinha.'); return; }
-
+            if (valInformado <= 0) { alert('Valor zerado ou inválido.'); return; }
             cofresGerais[idGasto] = (cofresGerais[idGasto] || 0) + valInformado;
 
-            if (plat === '99') {
-                if (pendente99.itens && pendente99.itens[idGasto]) {
-                    pendente99.itens[idGasto] = Math.max(0, pendente99.itens[idGasto] - valInformado);
-                }
-            } else {
-                if (pendenteUber.itens && pendenteUber.itens[idGasto]) {
-                    pendenteUber.itens[idGasto] = Math.max(0, pendenteUber.itens[idGasto] - valInformado);
-                }
+            if (plat === '99' && pendente99.itens?.[idGasto]) {
+                pendente99.itens[idGasto] = Math.max(0, pendente99.itens[idGasto] - valInformado);
+            } else if (plat === 'uber' && pendenteUber.itens?.[idGasto]) {
+                pendenteUber.itens[idGasto] = Math.max(0, pendenteUber.itens[idGasto] - valInformado);
             }
-
             salvarNoFirebase();
             atualizarInterfaceDinamica();
-            alert('Baixa parcial efetuada, somada aos cofres e abatida com sucesso!');
+            alert('Baixa efetuada com sucesso!');
         }
 
         function baixarGeral99() {
             const ativos = gastosMensais.filter(g => g.ativo);
-            let baixouAlgum = false;
             ativos.forEach(g => {
                 const val = parseFloat(document.getElementById(`edit-99-${g.id}`)?.value) || 0;
-                if (val > 0) {
-                    cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
-                    baixouAlgum = true;
-                }
+                if (val > 0) cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
             });
-            if (!baixouAlgum) { alert('Nenhum valor pendente na 99 para baixar.'); return; }
             pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
-            alert('Baixa geral da 99 realizada com sucesso! Valores distribuídos para os cofres.');
+            alert('Baixa geral da 99 realizada!');
         }
 
         function baixarGeralUber() {
             const ativos = gastosMensais.filter(g => g.ativo);
-            let baixouAlgum = false;
             ativos.forEach(g => {
                 const val = parseFloat(document.getElementById(`edit-ub-${g.id}`)?.value) || 0;
-                if (val > 0) {
-                    cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
-                    baixouAlgum = true;
-                }
+                if (val > 0) cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
             });
-            if (!baixouAlgum) { alert('Nenhum valor pendente na Uber para baixar.'); return; }
             pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
             salvarNoFirebase();
             atualizarInterfaceDinamica();
-            alert('Baixa geral da Uber realizada com sucesso! Valores distribuídos para os cofres.');
+            alert('Baixa geral da Uber realizada!');
         }
 
         function calcularBrutoTotal() {
@@ -1088,19 +1001,15 @@
             config.tripOleo = (parseFloat(config.tripOleo) || 0) + km;
             config.tripGeral = (parseFloat(config.tripGeral) || 0) + km;
 
-            const kmMes = config.kmMes > 0 ? config.kmMes : 2860;
             const ativos = gastosMensais.filter(g => g.ativo);
-            const modoAuto = config.modoAuto !== false;
-
-            let custoKmUtilizado = modoAuto ? calcularCustoKmAutomatico() : (parseFloat(config.custoManual) || 0.50);
+            let custoKmUtilizado = config.modoAuto !== false ? calcularCustoKmAutomatico() : (parseFloat(config.custoManual) || 0.50);
             
             let custosDiaItens = {}, totalCustosGerais = 0;
             let somaGastos = ativos.reduce((acc, g) => acc + g.valor, 0);
 
             ativos.forEach(g => {
                 let proporcao = somaGastos > 0 ? (g.valor / somaGastos) : (1 / ativos.length);
-                let custoKmItem = custoKmUtilizado * proporcao;
-                let valorItemDia = km * custoKmItem;
+                let valorItemDia = km * (custoKmUtilizado * proporcao);
                 custosDiaItens[g.id] = valorItemDia;
                 totalCustosGerais += valorItemDia;
             });
@@ -1118,55 +1027,19 @@
             if (carteira99Hoje > 0) {
                 let baseIni99 = pendente99.ultimaCarteiraApp || config.saldoInicial99 || 0;
                 let subidaApp99 = Math.max(0, carteira99Hoje - baseIni99);
-                let dinheiro99Hoje = Math.max(0, b99 - subidaApp99);
-                pendente99.dinheiro = (pendente99.dinheiro || 0) + dinheiro99Hoje;
+                pendente99.dinheiro = (pendente99.dinheiro || 0) + Math.max(0, b99 - subidaApp99);
                 pendente99.ultimaCarteiraApp = carteira99Hoje;
             }
 
             if (carteiraUberHoje > 0) {
                 let baseIniUber = pendenteUber.ultimaCarteiraApp || config.saldoInicialUber || 0;
                 let subidaAppUber = Math.max(0, carteiraUberHoje - baseIniUber);
-                let dinheiroUberHoje = Math.max(0, bUber - subidaAppUber);
-                pendenteUber.dinheiro = (pendenteUber.dinheiro || 0) + dinheiroUberHoje;
+                pendenteUber.dinheiro = (pendenteUber.dinheiro || 0) + Math.max(0, bUber - subidaAppUber);
                 pendenteUber.ultimaCarteiraApp = carteiraUberHoje;
-            }
-
-            if (b99 > 0) {
-                ativos.forEach(g => {
-                    let itemProp = (custosDiaItens[g.id] || 0) * (b99 / bruto);
-                    pendente99.itens[g.id] = (pendente99.itens[g.id] || 0) + itemProp;
-                });
-            }
-
-            if (bUber > 0) {
-                ativos.forEach(g => {
-                    let itemProp = (custosDiaItens[g.id] || 0) * (bUber / bruto);
-                    pendenteUber.itens[g.id] = (pendenteUber.itens[g.id] || 0) + itemProp;
-                });
             }
 
             let obsTexto = eficiencia < 1.50 ? "RUIM" : (eficiencia < 2.00 ? "MÉDIO" : "EXCELENTE");
             document.getElementById('obs').value = obsTexto;
-
-            const metaMensalTotal = ativos.reduce((acc, g) => acc + g.valor, 0);
-            const metaDiariaIdeal = metaMensalTotal / 30; 
-            const diferencaMetaDiaria = lucroTotalDia - metaDiariaIdeal;
-
-            const cardFeedback = document.getElementById('feedback-diario-card');
-            const textoFeedback = document.getElementById('texto-feedback-diario');
-            if (cardFeedback && textoFeedback) {
-                cardFeedback.style.display = 'block';
-                if (diferencaMetaDiaria >= 0) {
-                    textoFeedback.innerHTML = `🟢 <strong>Parabéns!</strong> Seu lucro líquido hoje (R$ ${lucroTotalDia.toFixed(2)}) superou a meta diária ideal (R$ ${metaDiariaIdeal.toFixed(2)}).`;
-                    cardFeedback.style.background = "#11221c";
-                    cardFeedback.style.borderColor = "#1b4d3e";
-                } else {
-                    let faltaFaturar = Math.abs(diferencaMetaDiaria);
-                    textoFeedback.innerHTML = `🟡 <strong>Atenção ao ritmo:</strong> Seu lucro líquido hoje foi de R$ ${lucroTotalDia.toFixed(2)} (meta diária: R$ ${metaDiariaIdeal.toFixed(2)}). Faltaram cerca de R$ ${faltaFaturar.toFixed(2)}.`;
-                    cardFeedback.style.background = "#262211";
-                    cardFeedback.style.borderColor = "#4d3e1b";
-                }
-            }
 
             db.unshift({ 
                 id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), 
@@ -1186,43 +1059,30 @@
             document.getElementById('carteira_uber_hoje').value = '';
             document.getElementById('km_dia').value = '';
             document.getElementById('bruto').value = '';
-            alert('Lançamento registrado no mês de referência ' + mesSelecionadoGlobal + '!');
+            alert('Lançamento registrado!');
         }
 
         function enviarRelatorioWhatsApp() {
-            if (!db.length) { alert('Nenhum lançamento registrado para gerar relatório.'); return; }
+            if (!db.length) { alert('Nenhum lançamento.'); return; }
             const ultimo = db[0]; 
-            const veiculoNome = config.condutor || config.motoModelo || "Meu Veículo";
-
-            const texto = `🏍️ *RESUMO DIÁRIO - GESTÃO ELITE* 🏍️\n\n` +
-                          `Veículo: ${veiculoNome}\n` +
-                          `📅 Data: ${ultimo.data}\n` +
-                          `💰 Faturamento Bruto: R$ ${ultimo.bruto}\n` +
-                          `🛣️ KM Rodado: ${ultimo.km} km\n` +
-                          `📊 Eficiência: R$ ${ultimo.eficiencia} / km\n` +
-                          `⭐ Avaliação: *${ultimo.obs}*\n\n` +
-                          `🚀 _Gerenciado via Sistema Gestao Elite_`;
-
-            const urlWpp = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
-            window.open(urlWpp, '_blank');
+            const texto = `🏍️ *RESUMO DIÁRIO* 🏍️\n📅 Data: ${ultimo.data}\n💰 Bruto: R$ ${ultimo.bruto}\n🛣️ KM: ${ultimo.km} km\n📊 Eficiência: R$ ${ultimo.eficiencia}/km`;
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`, '_blank');
         }
 
         function zerarCaixasPendentesManualmente() {
-            if(confirm('Zerar todas as pendências e limpar os acumulados?')) {
+            if(confirm('Zerar pendências?')) {
                 pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
                 pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
                 salvarNoFirebase();
                 atualizarInterfaceDinamica();
-                alert('Pendências zeradas com sucesso!');
             }
         }
 
         function deletarItem(i) {
-            if (confirm('Desfazer lançamento?')) {
+            if (confirm('Desfazer?')) {
                 db.splice(i, 1);
                 salvarNoFirebase();
                 popularSeletorMeses();
-                atualizarInterfaceDinamica();
                 renderTable();
             }
         }
@@ -1247,92 +1107,57 @@
 
         function mudarTipoContaForm() {
             const tipo = document.getElementById('conta_tipo').value;
-            const bloco = document.getElementById('bloco_qtd_parcelas');
-            if(bloco) bloco.style.display = (tipo === 'parcelada') ? 'block' : 'none';
+            document.getElementById('bloco_qtd_parcelas').style.display = (tipo === 'parcelada') ? 'block' : 'none';
         }
 
         function lançarSaidaCofre() {
             const cofreId = document.getElementById('saida_cofre').value;
             const desc = document.getElementById('saida_desc').value.trim();
             const valor = parseFloat(document.getElementById('saida_valor').value);
+            if(!desc || isNaN(valor) || valor <= 0) { alert('Preencha dados!'); return; }
+            if (valor > (cofresGerais[cofreId] || 0)) { alert('Saldo insuficiente!'); return; }
 
-            if(!desc || isNaN(valor) || valor <= 0) { alert('Preencha descrição e valor!'); return; }
-            if (valor > (cofresGerais[cofreId] || 0)) { alert('Saldo insuficiente no cofre!'); return; }
-
-            cofresGerais[cofreId] = Math.max(0, cofresGerais[cofreId] - valor);
+            cofresGerais[cofreId] -= valor;
             const gInfo = gastosMensais.find(x => x.id == cofreId);
-
             historicoSaidas.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), mesAno: mesSelecionadoGlobal, cofreNome: gInfo ? `${gInfo.emoji} ${gInfo.nome}` : 'Caixa', desc, valor });
             salvarNoFirebase();
-            atualizarInterfaceDinamica();
             renderGerenciador();
             document.getElementById('saida_desc').value = '';
             document.getElementById('saida_valor').value = '';
-            alert('Retirada registrada!');
         }
 
-        // CADASTRO INTELIGENTE E PRECISO POR MÊS
         function cadastrarConta() {
             const tipo = document.getElementById('conta_tipo').value;
             const cofreId = document.getElementById('conta_cofre').value;
             const nomeOriginal = document.getElementById('conta_nome').value.trim();
             const valor = parseFloat(document.getElementById('conta_valor').value);
-            const mesAno = document.getElementById('conta_mes_ano').value; // formato YYYY-MM
+            const mesAno = document.getElementById('conta_mes_ano').value; // YYYY-MM
             const vencimento = parseInt(document.getElementById('conta_vencimento').value) || 1;
             const parcelas = parseInt(document.getElementById('conta_parcelas').value) || 1;
 
-            if(!nomeOriginal || isNaN(valor) || valor <= 0 || !mesAno) { alert('Preencha os dados da conta!'); return; }
+            if(!nomeOriginal || isNaN(valor) || valor <= 0 || !mesAno) { alert('Preencha os dados!'); return; }
 
             let [anoStr, mesStr] = mesAno.split('-');
             let ano = parseInt(anoStr);
             let mes = parseInt(mesStr);
 
             if (tipo === 'parcelada' && parcelas > 1) {
-                // Gera parcelas mês a mês certinho
                 for (let i = 0; i < parcelas; i++) {
                     let mesRefFormatado = `${String(mes).padStart(2, '0')}/${ano}`;
                     let nomeComParcela = `${nomeOriginal} (${i + 1}/${parcelas})`;
-
-                    let jaExiste = contasCadastradas.some(x => x.nome === nomeComParcela && x.mesAnoRef === mesRefFormatado);
-                    if (!jaExiste) {
-                        contasCadastradas.push({
-                            id: Date.now() + i,
-                            tipo: 'parcelada',
-                            cofreId,
-                            nome: nomeComParcela,
-                            valor,
-                            mesAnoRef: mesRefFormatado,
-                            vencimento,
-                            parcelaAtual: i + 1,
-                            totalParcelas: parcelas,
-                            paga: false
-                        });
+                    if (!contasCadastradas.some(x => x.nome === nomeComParcela && x.mesAnoRef === mesRefFormatado)) {
+                        contasCadastradas.push({ id: Date.now() + i, tipo: 'parcelada', cofreId, nome: nomeComParcela, valor, mesAnoRef: mesRefFormatado, vencimento, paga: false });
                     }
-
-                    mes++;
-                    if (mes > 12) { mes = 1; ano++; }
+                    mes++; if (mes > 12) { mes = 1; ano++; }
                 }
-                alert(`Sucesso! As ${parcelas} parcelas foram geradas nos meses correspondentes.`);
+                alert(`${parcelas} parcelas geradas!`);
             } else {
                 let mesRefFormatado = `${String(mes).padStart(2, '0')}/${ano}`;
-                let jaExiste = contasCadastradas.some(x => x.nome === nomeOriginal && x.mesAnoRef === mesRefFormatado);
-                if (!jaExiste) {
-                    contasCadastradas.push({
-                        id: Date.now(),
-                        tipo,
-                        cofreId,
-                        nome: nomeOriginal,
-                        valor,
-                        mesAnoRef: mesRefFormatado,
-                        vencimento,
-                        parcelaAtual: 1,
-                        totalParcelas: 1,
-                        paga: false
-                    });
-                    alert('Conta cadastrada com sucesso!');
+                if (!contasCadastradas.some(x => x.nome === nomeOriginal && x.mesAnoRef === mesRefFormatado)) {
+                    contasCadastradas.push({ id: Date.now(), tipo, cofreId, nome: nomeOriginal, valor, mesAnoRef: mesRefFormatado, vencimento, paga: false });
+                    alert('Conta cadastrada!');
                 } else {
-                    alert('Já existe uma conta com este nome cadastrada para este mesmo mês!');
-                    return;
+                    alert('Já existe esta conta neste mês!'); return;
                 }
             }
 
@@ -1349,46 +1174,27 @@
             if(c.valor > (cofresGerais[c.cofreId] || 0)) { alert('Saldo insuficiente no cofre!'); return; }
 
             if(confirm(`Pagar "${c.nome}"?`)) {
-                cofresGerais[c.cofreId] = Math.max(0, cofresGerais[c.cofreId] - c.valor);
-                const gInfo = gastosMensais.find(x => x.id == c.cofreId);
-                historicoSaidas.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), mesAno: mesSelecionadoGlobal, cofreNome: gInfo ? `${gInfo.emoji} ${gInfo.nome}` : 'Caixa', desc: `Pago: ${c.nome}`, valor: c.valor });
-
+                cofresGerais[c.cofreId] -= c.valor;
                 c.paga = true;
                 
-                // Se for recorrente (fixa contínua), ao pagar, gera automaticamente para o mês seguinte
                 if (c.tipo === 'recorrente' && c.mesAnoRef) {
                     let [mes, ano] = c.mesAnoRef.split('/').map(Number);
-                    mes++;
-                    if (mes > 12) { mes = 1; ano++; }
-                    let proximoMesRef = `${String(mes).padStart(2, '0')}/${ano}`;
-                    
-                    let jaExiste = contasCadastradas.some(x => x.nome === c.nome && x.mesAnoRef === proximoMesRef);
-                    if (!jaExiste) {
-                        contasCadastradas.push({
-                            id: Date.now() + 1,
-                            tipo: 'recorrente',
-                            cofreId: c.cofreId,
-                            nome: c.nome,
-                            valor: c.valor,
-                            mesAnoRef: proximoMesRef,
-                            vencimento: c.vencimento,
-                            parcelaAtual: 1,
-                            totalParcelas: 1,
-                            paga: false
-                        });
+                    mes++; if (mes > 12) { mes = 1; ano++; }
+                    let prox = `${String(mes).padStart(2, '0')}/${ano}`;
+                    if (!contasCadastradas.some(x => x.nome === c.nome && x.mesAnoRef === prox)) {
+                        contasCadastradas.push({ id: Date.now() + 1, tipo: 'recorrente', cofreId: c.cofreId, nome: c.nome, valor: c.valor, mesAnoRef: prox, vencimento: c.vencimento, paga: false });
                     }
                 }
 
                 salvarNoFirebase();
                 popularSeletorMeses();
-                atualizarInterfaceDinamica();
                 renderGerenciador();
-                alert('Conta paga com sucesso!');
+                alert('Conta paga!');
             }
         }
 
         function excluirConta(id) {
-            if(confirm('Excluir conta?')) { contasCadastradas = contasCadastradas.filter(x => x.id !== id); salvarNoFirebase(); renderGerenciador(); }
+            if(confirm('Excluir?')) { contasCadastradas = contasCadastradas.filter(x => x.id !== id); salvarNoFirebase(); renderGerenciador(); }
         }
 
         function deletarSaida(id) {
@@ -1398,10 +1204,9 @@
         }
 
         function renderGerenciador() {
-            const lblFechamento = document.getElementById('lbl-mes-fechamento');
-            if (lblFechamento) lblFechamento.innerText = mesSelecionadoGlobal;
+            const lbl = document.getElementById('lbl-mes-fechamento');
+            if (lbl) lbl.innerText = mesSelecionadoGlobal;
 
-            // Filtra contas pendentes EXATAMENTE do mês selecionado no seletor global
             const tbodyContas = document.querySelector('#tabela-contas tbody');
             const pendentes = contasCadastradas.filter(x => !x.paga && x.mesAnoRef === mesSelecionadoGlobal);
             
@@ -1442,50 +1247,27 @@
                 let kmMes = lancamentosMes.reduce((acc, item) => acc + parseFloat(item.km || 0), 0);
                 let lucroMes = lancamentosMes.reduce((acc, item) => acc + parseFloat(item.lucroDia || 0), 0);
                 let mediaKm = kmMes > 0 ? (brutoMes / kmMes) : 0;
-                let contasPagasMes = contasCadastradas.filter(c => c.paga && c.mesAnoRef === mesSelecionadoGlobal).length;
+                let contasPagas = contasCadastradas.filter(c => c.paga && c.mesAnoRef === mesSelecionadoGlobal).length;
 
                 painelFechamento.innerHTML = `
                     💰 Faturamento Bruto: <strong style="color:var(--green);">R$ ${brutoMes.toFixed(2)}</strong><br>
                     🛣️ Total Rodado: <strong style="color:var(--accent);">${kmMes.toFixed(1)} km</strong><br>
                     📊 Média da Eficiência: <strong style="color:var(--green);">R$ ${mediaKm.toFixed(2)} / km</strong><br>
                     💵 Lucro Líquido Estimado: <strong style="color:var(--green);">R$ ${lucroMes.toFixed(2)}</strong><br>
-                    ✅ Contas Quitadas no Mês: <strong>${contasPagasMes} contas</strong>
+                    ✅ Contas Quitadas no Mês: <strong>${contasPagas} contas</strong>
                 `;
             }
-
-            const compContainer = document.getElementById('comparativo-conteudo');
-            if(compContainer) {
-                let totalBrutoGeral = db.reduce((acc, item) => acc + parseFloat(item.bruto || 0), 0);
-                let totalKmGeral = db.reduce((acc, item) => acc + parseFloat(item.km || 0), 0);
-                compContainer.innerHTML = `📅 Total Geral Acumulado: <strong style="color:var(--green);">R$ ${totalBrutoGeral.toFixed(2)}</strong><br>🏍️ KM Total Histórico: <strong style="color:var(--accent);">${totalKmGeral.toFixed(1)} km</strong>`;
-            }
-
-            gerarDiagnosticoIA();
-        }
-
-        function gerarDiagnosticoIA() {
-            const aiElem = document.getElementById('ai-feedback');
-            if(!aiElem) return;
-            const metaOleo = parseFloat(config.metaOleo) || 3000;
-            const tripOleo = parseFloat(config.tripOleo) || 0;
-            let msgs = [];
-
-            if (tripOleo >= metaOleo) {
-                msgs.push(`🚨 <strong style="color:var(--red);">Óleo Vencido!</strong> (${tripOleo.toFixed(1)} km).`);
-            } else {
-                msgs.push(`🛢️ <strong>Óleo:</strong> ${tripOleo.toFixed(1)} / ${metaOleo} km.`);
-            }
-            aiElem.innerHTML = msgs.join('<br>');
         }
 
         function exportarBackup() {
             const dados = { config, gastosMensais, db, cofresGerais, pendente99, pendenteUber, contasCadastradas, historicoSaidas };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dados));
-            const a = document.createElement('a'); a.href = dataStr; a.download = "backup_motoboy_elite.json";
+            const a = document.createElement('a');
+            a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dados));
+            a.download = "backup_motoboy_elite.json";
             document.body.appendChild(a); a.click(); a.remove();
         }
 
-        function importarBackupClick() { const el = document.getElementById('fileInput'); if(el) el.click(); }
+        function importarBackupClick() { document.getElementById('fileInput').click(); }
 
         function importarBackup(event) {
             const file = event.target.files[0];
@@ -1498,10 +1280,11 @@
                     if(c.gastosMensais) gastosMensais = c.gastosMensais;
                     if(c.db) db = c.db;
                     if(c.cofresGerais) cofresGerais = c.cofresGerais;
+                    if(c.contasCadastradas) contasCadastradas = c.contasCadastradas;
                     salvarNoFirebase();
-                    alert('Backup restaurado e sincronizado com o Firebase!');
+                    alert('Backup restaurado!');
                     location.reload();
-                } catch(err) { alert('Erro ao carregar backup.'); }
+                } catch(err) { alert('Erro ao carregar.'); }
             };
             reader.readAsText(file);
         }
