@@ -685,6 +685,8 @@
                     if (data.cofresGerais) cofresGerais = data.cofresGerais;
                     if (data.pendente99) pendente99 = data.pendente99;
                     if (data.pendenteUber) pendenteUber = data.pendenteUber;
+                    if (!pendente99.itens) pendente99.itens = {};
+                    if (!pendenteUber.itens) pendenteUber.itens = {};
                     if (data.contasCadastradas) {
                         contasCadastradas = data.contasCadastradas;
                         verificarEGerarRecorrenciasAutomaticas();
@@ -818,7 +820,6 @@
             const meta99Diaria = parseFloat(document.getElementById('cfg_meta_99').value) || 0;
             const periodo = document.getElementById('cfg_periodo_meta').value;
 
-            // Base de 26 dias úteis (segunda a sábado: 6 dias/semana, 13 dias/quinzena, 26 dias/mês)
             let divisorCaixinha = 26;
             let multiplicadorMeta = 1;
             let kmPeriodo = kmMes / 26;
@@ -845,15 +846,10 @@
                 nomePeriodo = "Mensal (26 dias)";
             }
 
-            // 1. Parte da caixinha e KM no período escolhido
             const caixinhaPeriodo = totalGastosMes / divisorCaixinha;
-
-            // 2. Meta diária multiplicada pelos dias do período escolhido
             const metaUberPeriodo = metaUberDiaria * multiplicadorMeta;
             const meta99Periodo = meta99Diaria * multiplicadorMeta;
             const metaTotalPeriodo = metaUberPeriodo + meta99Periodo;
-
-            // 3. Lucro após descontar a caixinha do período
             const lucroRestante = metaTotalPeriodo - caixinhaPeriodo;
 
             const textoMetas = document.getElementById('texto-assistente-metas');
@@ -1038,32 +1034,53 @@
             const eUbDin = document.getElementById('edit-ub-dinheiro'); if(eUbDin) eUbDin.value = (pendenteUber.dinheiro || 0).toFixed(2);
         }
 
+        // Baixa APENAS o item referente ao botão OK clicado, sem mexer nas demais caixinhas
         function darCheckItem(plat, idGasto) {
-            const prefixo = plat === '99' ? '99' : 'ub';
-            const val = parseFloat(document.getElementById(`edit-${prefixo}-${idGasto}`)?.value) || 0;
-            if (val <= 0) { alert('Valor inválido.'); return; }
+            const is99 = plat === '99';
+            const prefixo = is99 ? '99' : 'ub';
+            const inputEl = document.getElementById(`edit-${prefixo}-${idGasto}`);
+            const val = parseFloat(inputEl?.value) || 0;
+
+            if (val <= 0) {
+                alert('Não há valor pendente nesta caixinha para dar baixa.');
+                return;
+            }
+
+            const alvoPendente = is99 ? pendente99 : pendenteUber;
+            if (!alvoPendente.itens) alvoPendente.itens = {};
+
             cofresGerais[idGasto] = (cofresGerais[idGasto] || 0) + val;
-            if (plat === '99' && pendente99.itens?.[idGasto]) pendente99.itens[idGasto] = Math.max(0, pendente99.itens[idGasto] - val);
-            if (plat === 'uber' && pendenteUber.itens?.[idGasto]) pendenteUber.itens[idGasto] = Math.max(0, pendenteUber.itens[idGasto] - val);
-            salvarNoFirebase(); atualizarInterfaceDinamica(); alert('Confirmado!');
+
+            const atualPendenteItem = parseFloat(alvoPendente.itens[idGasto] || 0);
+            alvoPendente.itens[idGasto] = Math.max(0, Number((atualPendenteItem - val).toFixed(2)));
+
+            if (inputEl) {
+                inputEl.value = alvoPendente.itens[idGasto].toFixed(2);
+            }
+
+            salvarNoFirebase();
+            renderGerenciador();
+            alert('Baixa confirmada apenas nesta caixinha!');
         }
 
         function baixarGeral99() {
+            if (!pendente99.itens) pendente99.itens = {};
             gastosMensais.forEach(g => {
                 const val = parseFloat(document.getElementById(`edit-99-${g.id}`)?.value) || 0;
                 if (val > 0) cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
             });
             pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
-            salvarNoFirebase(); atualizarInterfaceDinamica(); alert('Baixa e zeragem da 99 realizada com sucesso!');
+            salvarNoFirebase(); atualizarInterfaceDinamica(); renderGerenciador(); alert('Baixa e zeragem da 99 realizada com sucesso!');
         }
 
         function baixarGeralUber() {
+            if (!pendenteUber.itens) pendenteUber.itens = {};
             gastosMensais.forEach(g => {
                 const val = parseFloat(document.getElementById(`edit-ub-${g.id}`)?.value) || 0;
                 if (val > 0) cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
             });
             pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
-            salvarNoFirebase(); atualizarInterfaceDinamica(); alert('Baixa e zeragem da Uber realizada com sucesso!');
+            salvarNoFirebase(); atualizarInterfaceDinamica(); renderGerenciador(); alert('Baixa e zeragem da Uber realizada com sucesso!');
         }
 
         function calcularBrutoTotal() {
@@ -1088,20 +1105,28 @@
             const ativos = gastosMensais.filter(g => g.ativo);
             let custoKmUtilizado = config.modoAuto !== false ? calcularCustoKmAutomatico() : (parseFloat(config.custoManual) || 0.50);
             
-            let custosDiaItens = {}, totalCustosGerais = 0, somaGastos = ativos.reduce((acc, g) => acc + g.valor, 0);
+            let totalCustosGerais = 0;
+            let somaGastos = ativos.reduce((acc, g) => acc + g.valor, 0);
+
+            if (!pendente99.itens) pendente99.itens = {};
+            if (!pendenteUber.itens) pendenteUber.itens = {};
+
+            const peso99 = bruto > 0 ? (b99 / bruto) : 0;
+            const pesoUber = bruto > 0 ? (bUber / bruto) : 0;
+
             ativos.forEach(g => {
                 let proporcao = somaGastos > 0 ? (g.valor / somaGastos) : (1 / ativos.length);
                 let valorItemDia = km * (custoKmUtilizado * proporcao);
-                custosDiaItens[g.id] = valorItemDia;
                 totalCustosGerais += valorItemDia;
+
+                pendente99.itens[g.id] = Number(((pendente99.itens[g.id] || 0) + (valorItemDia * peso99)).toFixed(2));
+                pendenteUber.itens[g.id] = Number(((pendenteUber.itens[g.id] || 0) + (valorItemDia * pesoUber)).toFixed(2));
             });
 
             const lucroTotalDia = bruto - totalCustosGerais;
             const eficiencia = km > 0 ? (bruto / km) : 0;
             document.getElementById('res-eficiencia').innerText = `R$ ${eficiencia.toFixed(2)} / km`;
 
-            if (!pendente99.itens) pendente99.itens = {};
-            if (!pendenteUber.itens) pendenteUber.itens = {};
             pendente99.totalBrutoAcumulado = (pendente99.totalBrutoAcumulado || 0) + b99;
             pendenteUber.totalBrutoAcumulado = (pendenteUber.totalBrutoAcumulado || 0) + bUber;
 
@@ -1154,7 +1179,7 @@
         }
 
         function zerarCaixasPendentesManualmente() {
-            if(confirm('Zerar pendências?')) {
+            if(confirm('Zerar todas as pendências?')) {
                 pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
                 pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
                 salvarNoFirebase(); atualizarInterfaceDinamica();
