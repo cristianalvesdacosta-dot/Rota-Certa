@@ -1034,33 +1034,42 @@
             const eUbDin = document.getElementById('edit-ub-dinheiro'); if(eUbDin) eUbDin.value = (pendenteUber.dinheiro || 0).toFixed(2);
         }
 
-        // Baixa APENAS o item referente ao botão OK clicado, sem mexer nas demais caixinhas
+        // Baixa APENAS o item referente ao botão OK clicado e mantém o que foi digitado nos outros campos
         function darCheckItem(plat, idGasto) {
             const is99 = plat === '99';
             const prefixo = is99 ? '99' : 'ub';
-            const inputEl = document.getElementById(`edit-${prefixo}-${idGasto}`);
-            const val = parseFloat(inputEl?.value) || 0;
-
-            if (val <= 0) {
-                alert('Não há valor pendente nesta caixinha para dar baixa.');
-                return;
-            }
-
             const alvoPendente = is99 ? pendente99 : pendenteUber;
             if (!alvoPendente.itens) alvoPendente.itens = {};
 
-            cofresGerais[idGasto] = (cofresGerais[idGasto] || 0) + val;
+            // Captura os valores atuais digitados em todas as caixinhas daquela plataforma
+            const ativos = gastosMensais.filter(g => g.ativo);
+            ativos.forEach(g => {
+                const el = document.getElementById(`edit-${prefixo}-${g.id}`);
+                if (el) {
+                    const vDigitado = parseFloat(el.value);
+                    alvoPendente.itens[g.id] = isNaN(vDigitado) ? 0 : Number(vDigitado.toFixed(2));
+                }
+            });
 
-            const atualPendenteItem = parseFloat(alvoPendente.itens[idGasto] || 0);
-            alvoPendente.itens[idGasto] = Math.max(0, Number((atualPendenteItem - val).toFixed(2)));
+            const inputAlvo = document.getElementById(`edit-${prefixo}-${idGasto}`);
+            const valBaixar = parseFloat(inputAlvo?.value) || 0;
 
-            if (inputEl) {
-                inputEl.value = alvoPendente.itens[idGasto].toFixed(2);
+            if (valBaixar <= 0) {
+                alert('Não há valor preenchido nesta caixinha para dar baixa.');
+                return;
+            }
+
+            // Soma apenas no cofre da caixinha confirmada e zera apenas ela
+            cofresGerais[idGasto] = Number(((cofresGerais[idGasto] || 0) + valBaixar).toFixed(2));
+            alvoPendente.itens[idGasto] = 0;
+
+            if (inputAlvo) {
+                inputAlvo.value = "0.00";
             }
 
             salvarNoFirebase();
             renderGerenciador();
-            alert('Baixa confirmada apenas nesta caixinha!');
+            alert('Baixa confirmada apenas nesta caixinha! Os demais campos continuam preenchidos.');
         }
 
         function baixarGeral99() {
