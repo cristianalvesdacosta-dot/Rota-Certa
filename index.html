@@ -137,6 +137,7 @@
         .painel-vertical-container { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
         .bg-acumulado-99 { background: rgba(46, 204, 113, 0.03); border: 1px solid rgba(46, 204, 113, 0.2); padding: 14px; border-radius: 14px; font-size: 11px; text-align: left; }
         .bg-acumulado-uber { background: rgba(245, 158, 11, 0.03); border: 1px solid rgba(245, 158, 11, 0.2); padding: 14px; border-radius: 14px; font-size: 11px; text-align: left; }
+        .bg-acumulado-geral { background: rgba(59, 130, 246, 0.04); border: 1px solid rgba(59, 130, 246, 0.25); padding: 14px; border-radius: 14px; font-size: 11px; text-align: left; }
         
         .linha-acumulado { display: flex; justify-content: space-between; align-items: center; margin: 6px 0; background: rgba(0,0,0,0.4); padding: 8px 12px; border-radius: 8px; font-size: 11px; gap: 8px; border: 1px solid var(--border-color); }
         .linha-acumulado span { flex: 1; color: #e4e4e7; font-weight: 600; }
@@ -314,6 +315,14 @@
                         <div class="saldo-restante-box" id="restante-uber-box">Restante Espécie: R$ <span id="restante-uber">0.00</span></div>
                         <div id="linhas-dinamicas-uber"></div>
                         <button class="btn-baixar-geral-uber" onclick="baixarGeralUber()">💰 OK / Baixar Tudo da Uber</button>
+                    </div>
+
+                    <div class="bg-acumulado-geral">
+                        <strong style="color: var(--blue); font-size: 11px; display: block; margin-bottom: 6px; font-weight: 800; text-transform: uppercase;">📊 RESUMO DO LANÇAMENTO (SOBRAS & ABATIMENTOS)</strong>
+                        <div class="linha-acumulado"><span>📈 Lucro do Dia (Último):</span> <strong id="res-lucro-dia" style="color:var(--green); font-size:12px;">R$ 0,00</strong></div>
+                        <div class="linha-acumulado"><span>✅ Enviado p/ Cofre / Abatido:</span> <strong id="res-total-abatido-geral" style="color:var(--green); font-size:12px;">R$ 0,00</strong></div>
+                        <div class="linha-acumulado"><span>💰 Sobrou nas Caixinhas (99 + Uber):</span> <strong id="res-total-caixinhas-geral" style="color:var(--accent); font-size:12px;">R$ 0,00</strong></div>
+                        <div id="linhas-geral-caixinhas"></div>
                     </div>
 
                     <button class="btn-limpar-pendentes" onclick="zerarCaixasPendentesManualmente()">🧹 Limpar / Zerar Todas as Pendências</button>
@@ -591,8 +600,8 @@
 
         let db = [];
         let cofresGerais = { 1: 0, 2: 0 };
-        let pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
-        let pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
+        let pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, abatidos: {}, ultimaCarteiraApp: 0 };
+        let pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, abatidos: {}, ultimaCarteiraApp: 0 };
         let contasCadastradas = [];
         let historicoSaidas = [];
 
@@ -686,7 +695,9 @@
                     if (data.pendente99) pendente99 = data.pendente99;
                     if (data.pendenteUber) pendenteUber = data.pendenteUber;
                     if (!pendente99.itens) pendente99.itens = {};
+                    if (!pendente99.abatidos) pendente99.abatidos = {};
                     if (!pendenteUber.itens) pendenteUber.itens = {};
+                    if (!pendenteUber.abatidos) pendenteUber.abatidos = {};
                     if (data.contasCadastradas) {
                         contasCadastradas = data.contasCadastradas;
                         verificarEGerarRecorrenciasAutomaticas();
@@ -985,6 +996,57 @@
             }
         }
 
+        function atualizarResumoGeralCaixinhas() {
+            const ativos = gastosMensais.filter(g => g.ativo);
+            const linGeral = document.getElementById('linhas-geral-caixinhas');
+            const totalGeralEl = document.getElementById('res-total-caixinhas-geral');
+            const totalAbatidoEl = document.getElementById('res-total-abatido-geral');
+            const lucroDiaEl = document.getElementById('res-lucro-dia');
+
+            if (!pendente99.abatidos) pendente99.abatidos = {};
+            if (!pendenteUber.abatidos) pendenteUber.abatidos = {};
+
+            let somaSobrouCaixinhas = 0;
+            let somaAbatidoCaixinhas = 0;
+
+            if (linGeral) {
+                linGeral.innerHTML = ativos.map(g => {
+                    const sobra99 = parseFloat(pendente99.itens && pendente99.itens[g.id] ? pendente99.itens[g.id] : 0) || 0;
+                    const sobraUb = parseFloat(pendenteUber.itens && pendenteUber.itens[g.id] ? pendenteUber.itens[g.id] : 0) || 0;
+                    const sobraItem = sobra99 + sobraUb;
+
+                    const abat99 = parseFloat(pendente99.abatidos && pendente99.abatidos[g.id] ? pendente99.abatidos[g.id] : 0) || 0;
+                    const abatUb = parseFloat(pendenteUber.abatidos && pendenteUber.abatidos[g.id] ? pendenteUber.abatidos[g.id] : 0) || 0;
+                    const abatItem = abat99 + abatUb;
+
+                    somaSobrouCaixinhas += sobraItem;
+                    somaAbatidoCaixinhas += abatItem;
+
+                    return `<div class="linha-acumulado">
+                        <span><span style="color:${g.cor};">${g.emoji}</span> ${g.nome}:</span>
+                        <div style="text-align:right;">
+                            <strong style="color:${g.cor}; font-size:12px;">Sobrou: R$ ${sobraItem.toFixed(2)}</strong>
+                            ${abatItem > 0 ? `<br><span style="font-size:9px; color:var(--green);">Abatido p/ Cofre: R$ ${abatItem.toFixed(2)}</span>` : ''}
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            if (totalGeralEl) {
+                totalGeralEl.innerText = `R$ ${somaSobrouCaixinhas.toFixed(2)}`;
+            }
+
+            if (totalAbatidoEl) {
+                totalAbatidoEl.innerText = `R$ ${somaAbatidoCaixinhas.toFixed(2)}`;
+            }
+
+            if (lucroDiaEl) {
+                const ultimoLucro = db.length > 0 ? parseFloat(db[0].lucroDia || 0) : 0;
+                lucroDiaEl.innerText = `R$ ${ultimoLucro.toFixed(2)}`;
+                lucroDiaEl.style.color = ultimoLucro >= 0 ? 'var(--green)' : 'var(--red)';
+            }
+        }
+
         function atualizarInterfaceDinamica() {
             const ativos = gastosMensais.filter(g => g.ativo);
             const lin99 = document.getElementById('linhas-dinamicas-99');
@@ -1025,6 +1087,7 @@
             if(contaCofre) contaCofre.innerHTML = ativos.map(g => `<option value="${g.id}">${g.emoji} ${g.nome}</option>`).join('');
 
             preencherValoresPendentesNaTela();
+            atualizarResumoGeralCaixinhas();
         }
 
         function preencherValoresPendentesNaTela() {
@@ -1034,14 +1097,14 @@
             const eUbDin = document.getElementById('edit-ub-dinheiro'); if(eUbDin) eUbDin.value = (pendenteUber.dinheiro || 0).toFixed(2);
         }
 
-        // Baixa APENAS o item referente ao botão OK clicado e mantém o que foi digitado nos outros campos
+        // Abate no painel de distribuição e joga para o cofre geral
         function darCheckItem(plat, idGasto) {
             const is99 = plat === '99';
             const prefixo = is99 ? '99' : 'ub';
             const alvoPendente = is99 ? pendente99 : pendenteUber;
             if (!alvoPendente.itens) alvoPendente.itens = {};
+            if (!alvoPendente.abatidos) alvoPendente.abatidos = {};
 
-            // Captura os valores atuais digitados em todas as caixinhas daquela plataforma
             const ativos = gastosMensais.filter(g => g.ativo);
             ativos.forEach(g => {
                 const el = document.getElementById(`edit-${prefixo}-${g.id}`);
@@ -1055,12 +1118,12 @@
             const valBaixar = parseFloat(inputAlvo?.value) || 0;
 
             if (valBaixar <= 0) {
-                alert('Não há valor preenchido nesta caixinha para dar baixa.');
+                alert('Não há valor preenchido nesta caixinha para abater.');
                 return;
             }
 
-            // Soma apenas no cofre da caixinha confirmada e zera apenas ela
             cofresGerais[idGasto] = Number(((cofresGerais[idGasto] || 0) + valBaixar).toFixed(2));
+            alvoPendente.abatidos[idGasto] = Number(((alvoPendente.abatidos[idGasto] || 0) + valBaixar).toFixed(2));
             alvoPendente.itens[idGasto] = 0;
 
             if (inputAlvo) {
@@ -1068,28 +1131,39 @@
             }
 
             salvarNoFirebase();
+            atualizarResumoGeralCaixinhas();
             renderGerenciador();
-            alert('Baixa confirmada apenas nesta caixinha! Os demais campos continuam preenchidos.');
+            alert('Abatido na hora e enviado para o cofre geral!');
         }
 
+        // Abate tudo da 99 no painel de distribuição e joga para os cofres gerais
         function baixarGeral99() {
             if (!pendente99.itens) pendente99.itens = {};
+            if (!pendente99.abatidos) pendente99.abatidos = {};
             gastosMensais.forEach(g => {
                 const val = parseFloat(document.getElementById(`edit-99-${g.id}`)?.value) || 0;
-                if (val > 0) cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
+                if (val > 0) {
+                    cofresGerais[g.id] = Number(((cofresGerais[g.id] || 0) + val).toFixed(2));
+                    pendente99.abatidos[g.id] = Number(((pendente99.abatidos[g.id] || 0) + val).toFixed(2));
+                }
             });
-            pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
-            salvarNoFirebase(); atualizarInterfaceDinamica(); renderGerenciador(); alert('Baixa e zeragem da 99 realizada com sucesso!');
+            pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, abatidos: pendente99.abatidos, ultimaCarteiraApp: 0 };
+            salvarNoFirebase(); atualizarInterfaceDinamica(); renderGerenciador(); alert('Tudo da 99 foi abatido e enviado para os cofres gerais!');
         }
 
+        // Abate tudo da Uber no painel de distribuição e joga para os cofres gerais
         function baixarGeralUber() {
             if (!pendenteUber.itens) pendenteUber.itens = {};
+            if (!pendenteUber.abatidos) pendenteUber.abatidos = {};
             gastosMensais.forEach(g => {
                 const val = parseFloat(document.getElementById(`edit-ub-${g.id}`)?.value) || 0;
-                if (val > 0) cofresGerais[g.id] = (cofresGerais[g.id] || 0) + val;
+                if (val > 0) {
+                    cofresGerais[g.id] = Number(((cofresGerais[g.id] || 0) + val).toFixed(2));
+                    pendenteUber.abatidos[g.id] = Number(((pendenteUber.abatidos[g.id] || 0) + val).toFixed(2));
+                }
             });
-            pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
-            salvarNoFirebase(); atualizarInterfaceDinamica(); renderGerenciador(); alert('Baixa e zeragem da Uber realizada com sucesso!');
+            pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, abatidos: pendenteUber.abatidos, ultimaCarteiraApp: 0 };
+            salvarNoFirebase(); atualizarInterfaceDinamica(); renderGerenciador(); alert('Tudo da Uber foi abatido e enviado para os cofres gerais!');
         }
 
         function calcularBrutoTotal() {
@@ -1178,19 +1252,19 @@
             document.getElementById('bruto_99').value = ''; document.getElementById('carteira_99_hoje').value = '';
             document.getElementById('bruto_uber').value = ''; document.getElementById('carteira_uber_hoje').value = '';
             document.getElementById('km_dia').value = ''; document.getElementById('bruto').value = '';
-            alert('Lançamento registrado, KM acumulado e manutenção atualizada!');
+            alert(`Lançamento registrado! Lucro do dia: R$ ${lucroTotalDia.toFixed(2)}`);
         }
 
         function enviarRelatorioWhatsApp() {
             if (!db.length) { alert('Sem dados.'); return; }
             const u = db[0];
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`🏍️ RESUMO DIÁRIO: R$ ${u.bruto} | ${u.km} km | Eficiência: R$ ${u.eficiencia}/km`)}`, '_blank');
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`🏍️ RESUMO DIÁRIO: R$ ${u.bruto} | ${u.km} km | Eficiência: R$ ${u.eficiencia}/km | Lucro: R$ ${parseFloat(u.lucroDia || 0).toFixed(2)}`)}`, '_blank');
         }
 
         function zerarCaixasPendentesManualmente() {
-            if(confirm('Zerar todas as pendências?')) {
-                pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
-                pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, ultimaCarteiraApp: 0 };
+            if(confirm('Zerar todas as pendências e abatimentos deste lançamento?')) {
+                pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, abatidos: {}, ultimaCarteiraApp: 0 };
+                pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, abatidos: {}, ultimaCarteiraApp: 0 };
                 salvarNoFirebase(); atualizarInterfaceDinamica();
             }
         }
@@ -1201,6 +1275,7 @@
                 salvarNoFirebase();
                 renderTable();
                 renderGerenciador();
+                atualizarResumoGeralCaixinhas();
             }
         }
 
