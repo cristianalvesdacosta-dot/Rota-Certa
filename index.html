@@ -486,11 +486,11 @@
                             <strong id="res-lucro-dia" style="color:var(--green);">R$ 0,00</strong>
                         </div>
                         <div class="stat-mini-card">
-                            <span>p/ Cofre</span>
+                            <span>Enviado Cofre</span>
                             <strong id="res-total-abatido-geral" style="color:var(--green);">R$ 0,00</strong>
                         </div>
                         <div class="stat-mini-card">
-                            <span>Sobrou</span>
+                            <span>P/ Enviar</span>
                             <strong id="res-total-caixinhas-geral" style="color:var(--accent);">R$ 0,00</strong>
                         </div>
                     </div>
@@ -1233,38 +1233,40 @@
             if (!pendente99.abatidos) pendente99.abatidos = {};
             if (!pendenteUber.abatidos) pendenteUber.abatidos = {};
 
-            let somaSobrouCaixinhas = 0;
-            let somaAbatidoCaixinhas = 0;
+            let somaPendenteEnviar = 0;
+            let somaEnviadoCofre = 0;
 
             if (linGeral) {
                 linGeral.innerHTML = ativos.map(g => {
-                    const sobra99 = parseFloat(pendente99.itens && pendente99.itens[g.id] ? pendente99.itens[g.id] : 0) || 0;
-                    const sobraUb = parseFloat(pendenteUber.itens && pendenteUber.itens[g.id] ? pendenteUber.itens[g.id] : 0) || 0;
-                    const sobraItem = sobra99 + sobraUb;
+                    const pend99 = parseFloat(pendente99.itens && pendente99.itens[g.id] ? pendente99.itens[g.id] : 0) || 0;
+                    const pendUb = parseFloat(pendenteUber.itens && pendenteUber.itens[g.id] ? pendenteUber.itens[g.id] : 0) || 0;
+                    const pendenteItem = pend99 + pendUb;
 
                     const abat99 = parseFloat(pendente99.abatidos && pendente99.abatidos[g.id] ? pendente99.abatidos[g.id] : 0) || 0;
                     const abatUb = parseFloat(pendenteUber.abatidos && pendenteUber.abatidos[g.id] ? pendenteUber.abatidos[g.id] : 0) || 0;
-                    const abatItem = abat99 + abatUb;
+                    const enviadoCicloItem = abat99 + abatUb;
 
-                    somaSobrouCaixinhas += sobraItem;
-                    somaAbatidoCaixinhas += abatItem;
+                    const saldoRealCofre = parseFloat(cofresGerais[g.id] || 0) || 0;
+
+                    somaPendenteEnviar += pendenteItem;
+                    somaEnviadoCofre += enviadoCicloItem;
 
                     return `<div class="caixinha-pill-card" style="border-left: 3px solid ${g.cor};">
                         <div class="caixinha-info">
                             <span class="caixinha-nome">${g.emoji} ${g.nome}</span>
-                            <span class="caixinha-sub">Cofre: <strong style="color:var(--green);">R$ ${abatItem.toFixed(2)}</strong></span>
+                            <span class="caixinha-sub">Cofre: <strong style="color:var(--green);">R$ ${saldoRealCofre.toFixed(2)}</strong></span>
                         </div>
-                        <span class="badge-obs" style="background:rgba(245,158,11,0.12); color:var(--accent); border:1px solid rgba(245,158,11,0.3); font-size:8.5px; text-align:center;">Sobrou R$ ${sobraItem.toFixed(2)}</span>
+                        <span class="badge-obs" style="background:rgba(245,158,11,0.12); color:var(--accent); border:1px solid rgba(245,158,11,0.3); font-size:8.5px; text-align:center;">P/ Enviar R$ ${pendenteItem.toFixed(2)}</span>
                     </div>`;
                 }).join('');
             }
 
             if (totalGeralEl) {
-                totalGeralEl.innerText = `R$ ${somaSobrouCaixinhas.toFixed(2)}`;
+                totalGeralEl.innerText = `R$ ${somaPendenteEnviar.toFixed(2)}`;
             }
 
             if (totalAbatidoEl) {
-                totalAbatidoEl.innerText = `R$ ${somaAbatidoCaixinhas.toFixed(2)}`;
+                totalAbatidoEl.innerText = `R$ ${somaEnviadoCofre.toFixed(2)}`;
             }
 
             if (lucroDiaEl) {
@@ -1395,7 +1397,7 @@
             const valBaixar = parseFloat(inputAlvo?.value) || 0;
 
             if (valBaixar <= 0) {
-                alert('Não há valor preenchido nesta caixinha para abater.');
+                alert('Não há valor preenchido nesta caixinha para enviar ao cofre.');
                 return;
             }
 
@@ -1408,9 +1410,9 @@
             }
 
             salvarNoFirebase();
-            atualizarResumoGeralCaixinhas();
+            atualizarInterfaceDinamica();
             renderGerenciador();
-            alert('Abatido na hora e enviado para o cofre geral!');
+            alert('Enviado na hora para o cofre!');
         }
 
         function baixarGeral99() {
@@ -1424,7 +1426,7 @@
                 }
             });
             pendente99 = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, abatidos: pendente99.abatidos, ultimaCarteiraApp: 0 };
-            salvarNoFirebase(); atualizarInterfaceDinamica(); renderGerenciador(); alert('Tudo da 99 foi abatido e enviado para os cofres gerais!');
+            salvarNoFirebase(); atualizarInterfaceDinamica(); renderGerenciador(); alert('Tudo da 99 foi enviado para os cofres!');
         }
 
         function baixarGeralUber() {
@@ -1438,7 +1440,7 @@
                 }
             });
             pendenteUber = { totalBrutoAcumulado: 0, total: 0, dinheiro: 0, itens: {}, abatidos: pendenteUber.abatidos, ultimaCarteiraApp: 0 };
-            salvarNoFirebase(); atualizarInterfaceDinamica(); renderGerenciador(); alert('Tudo da Uber foi abatido e enviado para os cofres gerais!');
+            salvarNoFirebase(); atualizarInterfaceDinamica(); renderGerenciador(); alert('Tudo da Uber foi enviado para os cofres!');
         }
 
         function calcularBrutoTotal() {
