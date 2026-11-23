@@ -1462,6 +1462,10 @@
             config.tripOleo = (parseFloat(config.tripOleo) || 0) + km;
             config.tripGeral = (parseFloat(config.tripGeral) || 0) + km;
 
+            // Zera os abatimentos do ciclo anterior para começar limpo no novo lançamento
+            pendente99.abatidos = {};
+            pendenteUber.abatidos = {};
+
             const ativos = gastosMensais.filter(g => g.ativo);
             let custoKmUtilizado = config.modoAuto !== false ? calcularCustoKmAutomatico() : (parseFloat(config.custoManual) || 0.50);
             
