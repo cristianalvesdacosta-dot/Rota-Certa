@@ -206,8 +206,8 @@
         
         .btn-check-pill {
             background: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid rgba(46, 204, 113, 0.45);
-            padding: 7px 12px; border-radius: 999px; cursor: pointer; font-weight: 800; font-size: 10px;
-            text-transform: uppercase; transition: 0.18s; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;
+            padding: 5px 8px; border-radius: 999px; cursor: pointer; font-weight: 800; font-size: 9px;
+            text-transform: uppercase; transition: 0.18s; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px;
         }
         .btn-check-pill:active { transform: scale(0.95); background: var(--green); color: #000; }
 
@@ -238,15 +238,15 @@
         .metric-box { display: flex; justify-content: space-between; align-items: center; background: #0d0d0f; padding: 11px 14px; border-radius: 14px; margin-bottom: 10px; border: 1px solid var(--border-color); }
         .metric-val { color: var(--green); font-weight: 800; font-size: 14px; }
 
-        .painel-vertical-container { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+        .painel-vertical-container { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
         
         .bloco-plataforma {
             background: var(--bg-elevated); border: 1px solid var(--border-color);
-            padding: 13px; border-radius: 16px; font-size: 11px; text-align: left;
+            padding: 12px; border-radius: 16px; font-size: 11px; text-align: left;
         }
         .bloco-plataforma.plat-99 { border-color: rgba(46, 204, 113, 0.28); }
         .bloco-plataforma.plat-uber { border-color: rgba(245, 158, 11, 0.28); }
-        .bloco-plataforma.plat-resumo { border-color: rgba(59, 130, 246, 0.32); }
+        .bloco-plataforma.plat-resumo { border-color: rgba(59, 130, 246, 0.35); }
 
         .bloco-header {
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
@@ -260,46 +260,48 @@
         }
         .stat-mini-card {
             background: #0d0d0f; border: 1px solid var(--border-color); border-radius: 12px;
-            padding: 8px 10px; display: flex; flex-direction: column; gap: 2px;
+            padding: 8px 9px; display: flex; flex-direction: column; gap: 2px;
         }
         .stat-mini-card span { font-size: 8px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
-        .stat-mini-card strong { font-size: 12px; font-weight: 800; }
+        .stat-mini-card strong { font-size: 11px; font-weight: 800; }
 
+        /* GRADE DE 2 COLUNAS PARA AS CAIXINHAS (UM AO LADO DO OUTRO, DESCENDO EM DUPLAS) */
         .caixinha-grid {
-            display: grid; grid-template-columns: 1fr; gap: 7px; margin-top: 6px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px;
         }
 
         .caixinha-pill-card {
-            background: #0d0d0f; border: 1px solid var(--border-color); border-radius: 14px;
-            padding: 9px 11px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
-            transition: 0.18s;
+            background: #0d0d0f; border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 8px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px;
+            transition: 0.18s; min-width: 0;
         }
         .caixinha-pill-card:hover { border-color: rgba(255,255,255,0.18); background: #111115; }
 
         .caixinha-info {
-            display: flex; flex-direction: column; min-width: 0; flex: 1;
+            display: flex; flex-direction: column; min-width: 0;
         }
         .caixinha-nome {
-            font-size: 11px; font-weight: 700; color: #f4f4f5;
+            font-size: 10px; font-weight: 700; color: #f4f4f5;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .caixinha-sub {
-            font-size: 9px; color: var(--text-muted); margin-top: 2px;
+            font-size: 8.5px; color: var(--text-muted); margin-top: 2px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
         .caixinha-acoes {
-            display: flex; align-items: center; gap: 6px;
+            display: flex; align-items: center; justify-content: space-between; gap: 4px;
         }
         .input-pill-valor {
-            width: 78px !important; padding: 6px 8px !important; font-size: 11px !important;
+            flex: 1; min-width: 0; width: 100% !important; padding: 5px 6px !important; font-size: 10.5px !important;
             margin: 0 !important; background: #070707 !important; border: 1px solid var(--border-color) !important;
-            color: #fff !important; text-align: right !important; border-radius: 10px !important; font-weight: 700;
+            color: #fff !important; text-align: right !important; border-radius: 8px !important; font-weight: 700;
         }
 
         .saldo-restante-box {
             background: rgba(0,0,0,0.45); border: 1px dashed rgba(245, 158, 11, 0.35);
-            padding: 7px 10px; border-radius: 10px; text-align: center; margin: 6px 0 8px 0;
-            font-size: 10px; color: var(--accent); font-weight: 700;
+            padding: 6px 8px; border-radius: 10px; text-align: center; margin: 6px 0 8px 0;
+            font-size: 9.5px; color: var(--accent); font-weight: 700;
         }
 
         .cofre-card-compacto {
@@ -472,8 +474,31 @@
                     <span id="res-eficiencia" class="metric-val">R$ 0,00 / km</span>
                 </div>
 
+                <!-- RESUMO DO LANÇAMENTO LOGO ABAIXO DE EFICIÊNCIA MÉDIA -->
+                <div class="bloco-plataforma plat-resumo" style="margin-top: 8px;">
+                    <div class="bloco-header">
+                        <span class="bloco-titulo" style="color: var(--blue);">📊 RESUMO DO LANÇAMENTO</span>
+                        <span class="badge-obs" style="background:rgba(59,130,246,0.15); color:var(--blue); border:1px solid rgba(59,130,246,0.35);">AO VIVO</span>
+                    </div>
+                    <div class="stats-mini-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                        <div class="stat-mini-card">
+                            <span>Lucro Dia</span>
+                            <strong id="res-lucro-dia" style="color:var(--green);">R$ 0,00</strong>
+                        </div>
+                        <div class="stat-mini-card">
+                            <span>p/ Cofre</span>
+                            <strong id="res-total-abatido-geral" style="color:var(--green);">R$ 0,00</strong>
+                        </div>
+                        <div class="stat-mini-card">
+                            <span>Sobrou</span>
+                            <strong id="res-total-caixinhas-geral" style="color:var(--accent);">R$ 0,00</strong>
+                        </div>
+                    </div>
+                    <div class="caixinha-grid" id="linhas-geral-caixinhas"></div>
+                </div>
+
                 <div class="painel-vertical-container">
-                    <!-- BLOCO 99 EM BOTÕES / CARDS COMPACTOS -->
+                    <!-- BLOCO 99 EM DUPLAS (2 POR LINHA) -->
                     <div class="bloco-plataforma plat-99">
                         <div class="bloco-header">
                             <span class="bloco-titulo" style="color: var(--green);">💵 CAIXINHAS 99</span>
@@ -494,7 +519,7 @@
                         <button class="btn-baixar-geral-99" onclick="baixarGeral99()">✅ OK / Baixar Tudo da 99</button>
                     </div>
 
-                    <!-- BLOCO UBER EM BOTÕES / CARDS COMPACTOS -->
+                    <!-- BLOCO UBER EM DUPLAS (2 POR LINHA) -->
                     <div class="bloco-plataforma plat-uber">
                         <div class="bloco-header">
                             <span class="bloco-titulo" style="color: var(--accent);">📅 CAIXINHAS UBER</span>
@@ -513,29 +538,6 @@
                         <div class="saldo-restante-box" id="restante-uber-box">Restante Espécie: R$ <span id="restante-uber">0.00</span></div>
                         <div class="caixinha-grid" id="linhas-dinamicas-uber"></div>
                         <button class="btn-baixar-geral-uber" onclick="baixarGeralUber()">💰 OK / Baixar Tudo da Uber</button>
-                    </div>
-
-                    <!-- RESUMO DO LANÇAMENTO COMPACTO -->
-                    <div class="bloco-plataforma plat-resumo">
-                        <div class="bloco-header">
-                            <span class="bloco-titulo" style="color: var(--blue);">📊 RESUMO DO LANÇAMENTO</span>
-                            <span class="badge-obs" style="background:rgba(59,130,246,0.15); color:var(--blue); border:1px solid rgba(59,130,246,0.35);">AO VIVO</span>
-                        </div>
-                        <div class="stats-mini-grid" style="grid-template-columns: 1fr 1fr 1fr;">
-                            <div class="stat-mini-card">
-                                <span>Lucro Dia</span>
-                                <strong id="res-lucro-dia" style="color:var(--green);">R$ 0,00</strong>
-                            </div>
-                            <div class="stat-mini-card">
-                                <span>p/ Cofre</span>
-                                <strong id="res-total-abatido-geral" style="color:var(--green);">R$ 0,00</strong>
-                            </div>
-                            <div class="stat-mini-card">
-                                <span>Sobrou</span>
-                                <strong id="res-total-caixinhas-geral" style="color:var(--accent);">R$ 0,00</strong>
-                            </div>
-                        </div>
-                        <div class="caixinha-grid" id="linhas-geral-caixinhas"></div>
                     </div>
 
                     <button class="btn-limpar-pendentes" onclick="zerarCaixasPendentesManualmente()">🧹 Limpar / Zerar Todas as Pendências</button>
@@ -1250,11 +1252,9 @@
                     return `<div class="caixinha-pill-card" style="border-left: 3px solid ${g.cor};">
                         <div class="caixinha-info">
                             <span class="caixinha-nome">${g.emoji} ${g.nome}</span>
-                            <span class="caixinha-sub">Cofre abatido: <strong style="color:var(--green);">R$ ${abatItem.toFixed(2)}</strong></span>
+                            <span class="caixinha-sub">Cofre: <strong style="color:var(--green);">R$ ${abatItem.toFixed(2)}</strong></span>
                         </div>
-                        <div class="caixinha-acoes">
-                            <span class="badge-obs" style="background:rgba(245,158,11,0.12); color:var(--accent); border:1px solid rgba(245,158,11,0.3); font-size:9px;">Sobrou R$ ${sobraItem.toFixed(2)}</span>
-                        </div>
+                        <span class="badge-obs" style="background:rgba(245,158,11,0.12); color:var(--accent); border:1px solid rgba(245,158,11,0.3); font-size:8.5px; text-align:center;">Sobrou R$ ${sobraItem.toFixed(2)}</span>
                     </div>`;
                 }).join('');
             }
@@ -1288,7 +1288,7 @@
                         </div>
                         <div class="caixinha-acoes">
                             <input type="number" class="input-pill-valor" id="edit-99-${g.id}" step="0.01" value="${valItem.toFixed(2)}">
-                            <button class="btn-check-pill" onclick="darCheckItem('99', ${g.id})">✓ OK</button>
+                            <button class="btn-check-pill" onclick="darCheckItem('99', ${g.id})">✓</button>
                         </div>
                     </div>`;
                 }).join('');
@@ -1306,7 +1306,7 @@
                         </div>
                         <div class="caixinha-acoes">
                             <input type="number" class="input-pill-valor" id="edit-ub-${g.id}" step="0.01" value="${valItem.toFixed(2)}">
-                            <button class="btn-check-pill" onclick="darCheckItem('uber', ${g.id})">✓ OK</button>
+                            <button class="btn-check-pill" onclick="darCheckItem('uber', ${g.id})">✓</button>
                         </div>
                     </div>`;
                 }).join('');
@@ -1375,7 +1375,6 @@
             const eUbDin = document.getElementById('edit-ub-dinheiro'); if(eUbDin) eUbDin.value = (pendenteUber.dinheiro || 0).toFixed(2);
         }
 
-        // Abate no painel de distribuição e joga para o cofre geral
         function darCheckItem(plat, idGasto) {
             const is99 = plat === '99';
             const prefixo = is99 ? '99' : 'ub';
@@ -1414,7 +1413,6 @@
             alert('Abatido na hora e enviado para o cofre geral!');
         }
 
-        // Abate tudo da 99 no painel de distribuição e joga para os cofres gerais
         function baixarGeral99() {
             if (!pendente99.itens) pendente99.itens = {};
             if (!pendente99.abatidos) pendente99.abatidos = {};
@@ -1429,7 +1427,6 @@
             salvarNoFirebase(); atualizarInterfaceDinamica(); renderGerenciador(); alert('Tudo da 99 foi abatido e enviado para os cofres gerais!');
         }
 
-        // Abate tudo da Uber no painel de distribuição e joga para os cofres gerais
         function baixarGeralUber() {
             if (!pendenteUber.itens) pendenteUber.itens = {};
             if (!pendenteUber.abatidos) pendenteUber.abatidos = {};
