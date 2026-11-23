@@ -13,6 +13,7 @@
         :root { 
             --bg-primary: #070707;
             --bg-card: #121214;
+            --bg-elevated: #17171b;
             --border-color: #27272a;
             --green: #2ecc71; 
             --green-glow: rgba(46, 204, 113, 0.2);
@@ -64,7 +65,7 @@
         .btn-pix-clicavel:hover { background: var(--green); color: #000; box-shadow: 0 0 20px var(--green-glow); }
 
         .tab-bar { 
-            display: flex; background: rgba(18, 18, 20, 0.9); position: sticky; top: 0; z-index: 100; 
+            display: flex; background: rgba(18, 18, 20, 0.92); position: sticky; top: 0; z-index: 100; 
             border-bottom: 1px solid var(--border-color); backdrop-filter: blur(12px); 
         }
         .tab-btn { 
@@ -72,14 +73,14 @@
             font-weight: 600; cursor: pointer; font-size: 10px; text-transform: uppercase; text-align: center; 
             letter-spacing: 0.8px; transition: 0.2s; border-bottom: 2px solid transparent; 
         }
-        .tab-btn.active { color: var(--green); border-bottom: 2px solid var(--green); background: rgba(46, 204, 113, 0.03); }
+        .tab-btn.active { color: var(--green); border-bottom: 2px solid var(--green); background: rgba(46, 204, 113, 0.04); }
 
         .container { padding: 14px; max-width: 480px; margin: auto; display: none; }
         .container.active { display: block; }
 
         .card { 
-            background: var(--bg-card); padding: 18px; border-radius: 16px; 
-            border: 1px solid var(--border-color); margin-bottom: 14px; 
+            background: var(--bg-card); padding: 16px; border-radius: 16px; 
+            border: 1px solid var(--border-color); margin-bottom: 12px; 
             box-shadow: 0 8px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden;
         }
         .card::before {
@@ -90,39 +91,55 @@
         label { display: block; font-size: 9px; color: var(--text-muted); font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.8px; }
         
         input, select, textarea { 
-            width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border-color); 
-            background: #0d0d0f; color: #fff; box-sizing: border-box; margin-bottom: 12px; text-align: left; 
+            width: 100%; padding: 11px 13px; border-radius: 10px; border: 1px solid var(--border-color); 
+            background: #0d0d0f; color: #fff; box-sizing: border-box; margin-bottom: 10px; text-align: left; 
             font-size: 13px; outline: none; transition: all 0.2s ease; 
         }
         input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-glow); }
 
         .btn-add { 
-            width: 100%; padding: 14px; background: var(--green); border: none; color: #000; font-weight: 800; 
-            border-radius: 10px; cursor: pointer; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; 
+            width: 100%; padding: 13px; background: var(--green); border: none; color: #000; font-weight: 800; 
+            border-radius: 10px; cursor: pointer; font-size: 12px; text-transform: uppercase; letter-spacing: 0.9px; 
             transition: 0.2s; box-shadow: 0 4px 20px var(--green-glow);
         }
-        .btn-add:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-add:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
-        .btn-whatsapp { width: 100%; padding: 12px; background: #10b981; border: none; color: #000; font-weight: 800; border-radius: 10px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 8px; }
+        .btn-whatsapp { width: 100%; padding: 11px; background: #10b981; border: none; color: #000; font-weight: 800; border-radius: 10px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 8px; }
         .btn-backup { width: 100%; padding: 10px; background: rgba(59, 130, 246, 0.15); border: 1px solid var(--blue); color: var(--blue); font-weight: 700; border-radius: 10px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 8px; }
         .btn-restore { width: 100%; padding: 10px; background: rgba(245, 158, 11, 0.15); border: 1px solid var(--accent); color: var(--accent); font-weight: 700; border-radius: 10px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 8px; }
         
-        .btn-limpar-pendentes { width: 100%; padding: 10px; background: #18181b; border: 1px solid var(--border-color); color: var(--text-muted); font-weight: 700; border-radius: 10px; cursor: pointer; font-size: 10px; text-transform: uppercase; margin-top: 12px; }
-        .btn-baixar-geral-99 { width: 100%; padding: 11px; background: rgba(46, 204, 113, 0.15); border: 1px solid var(--green); color: var(--green); font-weight: 800; border-radius: 10px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 10px; }
-        .btn-baixar-geral-uber { width: 100%; padding: 11px; background: rgba(245, 158, 11, 0.15); border: 1px solid var(--accent); color: var(--accent); font-weight: 800; border-radius: 10px; cursor: pointer; font-size: 11px; text-transform: uppercase; margin-top: 10px; }
-        
-        .btn-check { background-color: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid var(--green); padding: 6px 10px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 10px; text-transform: uppercase; transition: 0.2s; white-space: nowrap; }
-        .btn-check:hover { background: var(--green); color: #000; }
+        .btn-limpar-pendentes { width: 100%; padding: 10px; background: #18181b; border: 1px solid var(--border-color); color: var(--text-muted); font-weight: 700; border-radius: 10px; cursor: pointer; font-size: 10px; text-transform: uppercase; margin-top: 10px; transition: 0.2s; }
+        .btn-limpar-pendentes:hover { border-color: var(--red); color: var(--red); }
 
-        .calendario-nav { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 14px; margin-bottom: 12px; }
+        .btn-baixar-geral-99 { width: 100%; padding: 10px; background: rgba(46, 204, 113, 0.14); border: 1px solid rgba(46, 204, 113, 0.5); color: var(--green); font-weight: 800; border-radius: 10px; cursor: pointer; font-size: 10px; text-transform: uppercase; margin-top: 8px; letter-spacing: 0.5px; transition: 0.2s; }
+        .btn-baixar-geral-99:hover { background: var(--green); color: #000; }
+
+        .btn-baixar-geral-uber { width: 100%; padding: 10px; background: rgba(245, 158, 11, 0.14); border: 1px solid rgba(245, 158, 11, 0.5); color: var(--accent); font-weight: 800; border-radius: 10px; cursor: pointer; font-size: 10px; text-transform: uppercase; margin-top: 8px; letter-spacing: 0.5px; transition: 0.2s; }
+        .btn-baixar-geral-uber:hover { background: var(--accent); color: #000; }
+        
+        .btn-check-pill {
+            background: rgba(46, 204, 113, 0.14); color: var(--green); border: 1px solid rgba(46, 204, 113, 0.45);
+            padding: 7px 12px; border-radius: 999px; cursor: pointer; font-weight: 800; font-size: 10px;
+            text-transform: uppercase; transition: 0.2s; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;
+        }
+        .btn-check-pill:hover { background: var(--green); color: #000; transform: scale(1.02); }
+
+        .btn-cofre-pill {
+            background: rgba(255, 255, 255, 0.04); color: var(--text); border: 1px solid var(--border-color);
+            padding: 6px 10px; border-radius: 999px; cursor: pointer; font-weight: 700; font-size: 9px;
+            text-transform: uppercase; transition: 0.2s; white-space: nowrap;
+        }
+        .btn-cofre-pill:hover { border-color: var(--accent); color: var(--accent); background: rgba(245, 158, 11, 0.08); }
+
+        .calendario-nav { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); padding: 11px 14px; border-radius: 14px; margin-bottom: 12px; }
         .calendario-nav button { background: #0d0d0f; color: var(--green); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 10px; text-transform: uppercase; }
         .calendario-nav span { color: var(--green); font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .grid-dias-mes { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
-        .dia-celula { background: #0d0d0f; border: 1px solid var(--border-color); text-align: center; padding: 8px 2px; border-radius: 8px; font-size: 11px; font-weight: 600; position: relative; min-height: 36px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
-        .dia-celula:hover { border-color: var(--green); background: rgba(46, 204, 113, 0.05); }
-        .dia-celula.tem-lancamento { border-color: var(--green); background: rgba(46, 204, 113, 0.1); color: var(--green); }
-        .dia-celula.tem-conta { border-color: var(--accent); }
+        .grid-dias-mes { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 8px; }
+        .dia-celula { background: #0d0d0f; border: 1px solid var(--border-color); text-align: center; padding: 7px 2px; border-radius: 8px; font-size: 11px; font-weight: 600; position: relative; min-height: 34px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+        .dia-celula:hover { border-color: var(--green); background: rgba(46, 204, 113, 0.06); }
+        .dia-celula.tem-lancamento { border-color: rgba(46, 204, 113, 0.6); background: rgba(46, 204, 113, 0.1); color: var(--green); }
+        .dia-celula.tem-conta { border-color: rgba(245, 158, 11, 0.6); }
         .bolinha-lancamento { width: 4px; height: 4px; background: var(--green); border-radius: 50%; margin-top: 2px; }
         .bolinha-conta { width: 4px; height: 4px; background: var(--accent); border-radius: 50%; margin-top: 1px; }
 
@@ -131,29 +148,93 @@
 
         #modal-excluir-conta { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10002; justify-content:center; align-items:center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(5px); }
 
-        .metric-box { display: flex; justify-content: space-between; align-items: center; background: #0d0d0f; padding: 12px 16px; border-radius: 10px; margin-bottom: 10px; border: 1px solid var(--border-color); }
-        .metric-val { color: var(--green); font-weight: 800; font-size: 15px; }
+        .metric-box { display: flex; justify-content: space-between; align-items: center; background: #0d0d0f; padding: 11px 14px; border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--border-color); }
+        .metric-val { color: var(--green); font-weight: 800; font-size: 14px; }
 
-        .painel-vertical-container { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
-        .bg-acumulado-99 { background: rgba(46, 204, 113, 0.03); border: 1px solid rgba(46, 204, 113, 0.2); padding: 14px; border-radius: 14px; font-size: 11px; text-align: left; }
-        .bg-acumulado-uber { background: rgba(245, 158, 11, 0.03); border: 1px solid rgba(245, 158, 11, 0.2); padding: 14px; border-radius: 14px; font-size: 11px; text-align: left; }
-        .bg-acumulado-geral { background: rgba(59, 130, 246, 0.04); border: 1px solid rgba(59, 130, 246, 0.25); padding: 14px; border-radius: 14px; font-size: 11px; text-align: left; }
+        .painel-vertical-container { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
         
-        .linha-acumulado { display: flex; justify-content: space-between; align-items: center; margin: 6px 0; background: rgba(0,0,0,0.4); padding: 8px 12px; border-radius: 8px; font-size: 11px; gap: 8px; border: 1px solid var(--border-color); }
-        .linha-acumulado span { flex: 1; color: #e4e4e7; font-weight: 600; }
-        .linha-acumulado input { width: 90px; padding: 6px; font-size: 12px; margin: 0; background: #070707; border: 1px solid var(--border-color); color: #fff; text-align: right; border-radius: 6px; }
+        .bloco-plataforma {
+            background: var(--bg-elevated); border: 1px solid var(--border-color);
+            padding: 13px; border-radius: 14px; font-size: 11px; text-align: left;
+        }
+        .bloco-plataforma.plat-99 { border-color: rgba(46, 204, 113, 0.28); }
+        .bloco-plataforma.plat-uber { border-color: rgba(245, 158, 11, 0.28); }
+        .bloco-plataforma.plat-resumo { border-color: rgba(59, 130, 246, 0.32); }
 
-        .saldo-restante-box { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.06); padding: 8px; border-radius: 8px; text-align: center; margin: 8px 0; font-size: 11px; color: var(--accent); font-weight: 700; }
+        .bloco-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+        }
+        .bloco-titulo {
+            font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px;
+        }
 
-        .historico-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-top: 16px; }
-        .historico-titulo { font-size: 10px; font-weight: 800; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; letter-spacing: 0.8px; }
+        .stats-mini-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;
+        }
+        .stat-mini-card {
+            background: #0d0d0f; border: 1px solid var(--border-color); border-radius: 10px;
+            padding: 8px 10px; display: flex; flex-direction: column; gap: 2px;
+        }
+        .stat-mini-card span { font-size: 8px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+        .stat-mini-card strong { font-size: 12px; font-weight: 800; }
+
+        .caixinha-grid {
+            display: grid; grid-template-columns: 1fr; gap: 7px; margin-top: 6px;
+        }
+
+        .caixinha-pill-card {
+            background: #0d0d0f; border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 9px 11px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+            transition: 0.2s;
+        }
+        .caixinha-pill-card:hover { border-color: rgba(255,255,255,0.18); background: #111115; }
+
+        .caixinha-info {
+            display: flex; flex-direction: column; min-width: 0; flex: 1;
+        }
+        .caixinha-nome {
+            font-size: 11px; font-weight: 700; color: #f4f4f5;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .caixinha-sub {
+            font-size: 9px; color: var(--text-muted); margin-top: 2px;
+        }
+
+        .caixinha-acoes {
+            display: flex; align-items: center; gap: 6px;
+        }
+        .input-pill-valor {
+            width: 78px !important; padding: 6px 8px !important; font-size: 11px !important;
+            margin: 0 !important; background: #070707 !important; border: 1px solid var(--border-color) !important;
+            color: #fff !important; text-align: right !important; border-radius: 8px !important; font-weight: 700;
+        }
+
+        .saldo-restante-box {
+            background: rgba(0,0,0,0.45); border: 1px dashed rgba(245, 158, 11, 0.35);
+            padding: 7px 10px; border-radius: 9px; text-align: center; margin: 6px 0 8px 0;
+            font-size: 10px; color: var(--accent); font-weight: 700;
+        }
+
+        .cofre-card-compacto {
+            background: #0d0d0f; border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 10px 12px; margin-bottom: 8px;
+        }
+        .cofre-topo {
+            display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px;
+        }
+        .cofre-acoes-rapidas {
+            display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;
+        }
+
+        .historico-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 14px; margin-top: 12px; }
+        .historico-titulo { font-size: 10px; font-weight: 800; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; letter-spacing: 0.8px; }
         
         table { width: 100%; border-collapse: collapse; font-size: 11px; }
-        th { background: #0d0d0f; color: var(--green); padding: 10px 6px; border-bottom: 2px solid var(--border-color); text-transform: uppercase; font-size: 9px; font-weight: 800; }
-        td { border-bottom: 1px solid var(--border-color); padding: 10px 6px; text-align: center; color: #d4d4d8; }
+        th { background: #0d0d0f; color: var(--green); padding: 9px 6px; border-bottom: 2px solid var(--border-color); text-transform: uppercase; font-size: 9px; font-weight: 800; }
+        td { border-bottom: 1px solid var(--border-color); padding: 9px 6px; text-align: center; color: #d4d4d8; }
         tr:hover { background: rgba(255,255,255,0.01); }
 
-        .badge-obs { padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 8px; text-transform: uppercase; display: inline-block; }
+        .badge-obs { padding: 3px 7px; border-radius: 999px; font-weight: 800; font-size: 8px; text-transform: uppercase; display: inline-block; }
         .badge-ruim { background: rgba(239, 68, 68, 0.15); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.3); }
         .badge-medio { background: rgba(245, 158, 11, 0.15); color: var(--accent); border: 1px solid rgba(245, 158, 11, 0.3); }
         .badge-excelente { background: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid rgba(46, 204, 113, 0.3); }
@@ -165,8 +246,8 @@
         .total-box strong { font-size: 14px; color: var(--green); display: block; margin-top: 4px; font-weight: 800; }
 
         .mode-box { background: #0d0d0f; padding: 14px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 12px; }
-        .ai-card { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); padding: 14px; border-radius: 12px; margin-bottom: 14px; font-size: 11px; line-height: 1.5; color: #e0f2fe; }
-        .compare-box { background: #0d0d0f; border: 1px solid var(--border-color); padding: 12px; border-radius: 10px; margin-top: 8px; font-size: 11px; line-height: 1.6; }
+        .ai-card { background: rgba(59, 130, 246, 0.06); border: 1px solid rgba(59, 130, 246, 0.22); padding: 13px; border-radius: 14px; margin-bottom: 12px; font-size: 11px; line-height: 1.5; color: #e0f2fe; }
+        .compare-box { background: #0d0d0f; border: 1px solid var(--border-color); padding: 12px; border-radius: 12px; margin-top: 8px; font-size: 11px; line-height: 1.6; }
 
         #sync-status { position: fixed; bottom: 8px; right: 8px; background: rgba(18,18,20,0.95); border: 1px solid var(--border-color); color: var(--green); padding: 6px 10px; font-size: 9px; font-weight: 700; border-radius: 8px; z-index: 1000; backdrop-filter: blur(8px); }
     </style>
@@ -266,9 +347,9 @@
 
         <!-- ABA DIÁRIO -->
         <div id="diario" class="container active">
-            <div class="card" style="text-align: center; background: linear-gradient(135deg, #121214, #0d1b15); border: 1px solid rgba(46, 204, 113, 0.3); display: flex; justify-content: space-between; align-items: center; padding: 12px 16px;">
+            <div class="card" style="text-align: center; background: linear-gradient(135deg, #121214, #0d1b15); border: 1px solid rgba(46, 204, 113, 0.3); display: flex; justify-content: space-between; align-items: center; padding: 11px 15px;">
                 <span id="label-moto-topo" style="font-size: 11px; color: var(--green); font-weight: 800; text-transform: uppercase;">🏍️ Veículo...</span>
-                <button onclick="fazerLogout()" style="background: rgba(239, 68, 68, 0.15); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.3); padding: 5px 10px; font-size: 9px; border-radius: 8px; cursor: pointer; font-weight: 800; text-transform: uppercase;">Sair</button>
+                <button onclick="fazerLogout()" style="background: rgba(239, 68, 68, 0.15); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.3); padding: 5px 11px; font-size: 9px; border-radius: 999px; cursor: pointer; font-weight: 800; text-transform: uppercase;">Sair</button>
             </div>
 
             <div class="card">
@@ -293,36 +374,75 @@
                 <button class="btn-add" onclick="registrar()">REGISTRAR LANÇAMENTO</button>
                 <button class="btn-whatsapp" onclick="enviarRelatorioWhatsApp()">💬 Enviar Relatório no WhatsApp</button>
 
-                <div class="metric-box" style="margin-top: 14px;">
+                <div class="metric-box" style="margin-top: 12px;">
                     <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Eficiência Média:</span>
                     <span id="res-eficiencia" class="metric-val">R$ 0,00 / km</span>
                 </div>
 
                 <div class="painel-vertical-container">
-                    <div class="bg-acumulado-99">
-                        <strong style="color: var(--green); font-size: 11px; display: block; margin-bottom: 6px; font-weight: 800; text-transform: uppercase;">💵 CAIXINHAS 99 (PENDENTE)</strong>
-                        <div class="linha-acumulado"><span>Total Bruto Acumulado:</span> <input type="number" id="edit-99-tot" step="0.01" style="color:var(--green); font-weight:700;" readonly></div>
-                        <div class="linha-acumulado"><span>💵 Espécie / PIX:</span> <input type="number" id="edit-99-dinheiro" step="0.01" readonly style="color:var(--accent); font-weight:800;"></div>
+                    <!-- BLOCO 99 EM BOTÕES / CARDS COMPACTOS -->
+                    <div class="bloco-plataforma plat-99">
+                        <div class="bloco-header">
+                            <span class="bloco-titulo" style="color: var(--green);">💵 CAIXINHAS 99</span>
+                            <span class="badge-obs badge-excelente">PENDENTE</span>
+                        </div>
+                        <div class="stats-mini-grid">
+                            <div class="stat-mini-card">
+                                <span>Bruto Acumulado</span>
+                                <input type="number" id="edit-99-tot" step="0.01" readonly style="border:none; background:transparent; padding:0; margin:0; font-size:12px; font-weight:800; color:var(--green);">
+                            </div>
+                            <div class="stat-mini-card">
+                                <span>💵 Espécie / PIX</span>
+                                <input type="number" id="edit-99-dinheiro" step="0.01" readonly style="border:none; background:transparent; padding:0; margin:0; font-size:12px; font-weight:800; color:var(--accent);">
+                            </div>
+                        </div>
                         <div class="saldo-restante-box" id="restante-99-box">Restante Espécie: R$ <span id="restante-99">0.00</span></div>
-                        <div id="linhas-dinamicas-99"></div>
+                        <div class="caixinha-grid" id="linhas-dinamicas-99"></div>
                         <button class="btn-baixar-geral-99" onclick="baixarGeral99()">✅ OK / Baixar Tudo da 99</button>
                     </div>
 
-                    <div class="bg-acumulado-uber">
-                        <strong style="color: var(--accent); font-size: 11px; display: block; margin-bottom: 6px; font-weight: 800; text-transform: uppercase;">📅 CAIXINHAS UBER (PENDENTE)</strong>
-                        <div class="linha-acumulado"><span>Total Bruto Acumulado:</span> <input type="number" id="edit-ub-tot" step="0.01" style="color:var(--accent); font-weight:700;" readonly></div>
-                        <div class="linha-acumulado"><span>💵 Esp / PIX Calc:</span> <input type="number" id="edit-ub-dinheiro" step="0.01" readonly style="color:var(--accent); font-weight:800;"></div>
+                    <!-- BLOCO UBER EM BOTÕES / CARDS COMPACTOS -->
+                    <div class="bloco-plataforma plat-uber">
+                        <div class="bloco-header">
+                            <span class="bloco-titulo" style="color: var(--accent);">📅 CAIXINHAS UBER</span>
+                            <span class="badge-obs badge-medio">PENDENTE</span>
+                        </div>
+                        <div class="stats-mini-grid">
+                            <div class="stat-mini-card">
+                                <span>Bruto Acumulado</span>
+                                <input type="number" id="edit-ub-tot" step="0.01" readonly style="border:none; background:transparent; padding:0; margin:0; font-size:12px; font-weight:800; color:var(--accent);">
+                            </div>
+                            <div class="stat-mini-card">
+                                <span>💵 Esp / PIX Calc</span>
+                                <input type="number" id="edit-ub-dinheiro" step="0.01" readonly style="border:none; background:transparent; padding:0; margin:0; font-size:12px; font-weight:800; color:var(--accent);">
+                            </div>
+                        </div>
                         <div class="saldo-restante-box" id="restante-uber-box">Restante Espécie: R$ <span id="restante-uber">0.00</span></div>
-                        <div id="linhas-dinamicas-uber"></div>
+                        <div class="caixinha-grid" id="linhas-dinamicas-uber"></div>
                         <button class="btn-baixar-geral-uber" onclick="baixarGeralUber()">💰 OK / Baixar Tudo da Uber</button>
                     </div>
 
-                    <div class="bg-acumulado-geral">
-                        <strong style="color: var(--blue); font-size: 11px; display: block; margin-bottom: 6px; font-weight: 800; text-transform: uppercase;">📊 RESUMO DO LANÇAMENTO (SOBRAS & ABATIMENTOS)</strong>
-                        <div class="linha-acumulado"><span>📈 Lucro do Dia (Último):</span> <strong id="res-lucro-dia" style="color:var(--green); font-size:12px;">R$ 0,00</strong></div>
-                        <div class="linha-acumulado"><span>✅ Enviado p/ Cofre / Abatido:</span> <strong id="res-total-abatido-geral" style="color:var(--green); font-size:12px;">R$ 0,00</strong></div>
-                        <div class="linha-acumulado"><span>💰 Sobrou nas Caixinhas (99 + Uber):</span> <strong id="res-total-caixinhas-geral" style="color:var(--accent); font-size:12px;">R$ 0,00</strong></div>
-                        <div id="linhas-geral-caixinhas"></div>
+                    <!-- RESUMO DO LANÇAMENTO COMPACTO -->
+                    <div class="bloco-plataforma plat-resumo">
+                        <div class="bloco-header">
+                            <span class="bloco-titulo" style="color: var(--blue);">📊 RESUMO DO LANÇAMENTO</span>
+                            <span class="badge-obs" style="background:rgba(59,130,246,0.15); color:var(--blue); border:1px solid rgba(59,130,246,0.35);">AO VIVO</span>
+                        </div>
+                        <div class="stats-mini-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                            <div class="stat-mini-card">
+                                <span>Lucro Dia</span>
+                                <strong id="res-lucro-dia" style="color:var(--green);">R$ 0,00</strong>
+                            </div>
+                            <div class="stat-mini-card">
+                                <span>p/ Cofre</span>
+                                <strong id="res-total-abatido-geral" style="color:var(--green);">R$ 0,00</strong>
+                            </div>
+                            <div class="stat-mini-card">
+                                <span>Sobrou</span>
+                                <strong id="res-total-caixinhas-geral" style="color:var(--accent);">R$ 0,00</strong>
+                            </div>
+                        </div>
+                        <div class="caixinha-grid" id="linhas-geral-caixinhas"></div>
                     </div>
 
                     <button class="btn-limpar-pendentes" onclick="zerarCaixasPendentesManualmente()">🧹 Limpar / Zerar Todas as Pendências</button>
@@ -332,7 +452,7 @@
             <div class="historico-card">
                 <div class="historico-titulo">
                     <span>📋 Histórico de Lançamentos</span>
-                    <span style="font-size: 8px; color: var(--text-muted);">Toque no X para desfazer (remove do calendário)</span>
+                    <span style="font-size: 8px; color: var(--text-muted);">Toque no X para desfazer</span>
                 </div>
                 <table id="tabela">
                     <thead><tr><th>Data</th><th>Bruto</th><th>R$/Km</th><th>Avaliação</th><th>X</th></tr></thead>
@@ -351,8 +471,8 @@
             </div>
 
             <div class="card">
-                <label style="color: var(--accent); margin-bottom: 8px;">📅 CALENDÁRIO DE PRODUTIVIDADE & VENCIMENTOS</label>
-                <span style="font-size: 10px; color: var(--text-muted); display: block; margin-bottom: 8px;">Toque em qualquer dia marcado para ver o resumo completo!</span>
+                <label style="color: var(--accent); margin-bottom: 6px;">📅 CALENDÁRIO DE PRODUTIVIDADE & VENCIMENTOS</label>
+                <span style="font-size: 10px; color: var(--text-muted); display: block; margin-bottom: 6px;">Toque em qualquer dia marcado para ver o resumo completo!</span>
                 <div class="grid-dias-mes" id="grid-calendario-dias"></div>
             </div>
 
@@ -362,7 +482,10 @@
             </div>
 
             <div class="card">
-                <label style="color: var(--accent); margin:0; margin-bottom: 8px;">💰 SALDO DOS COFRES & METAS</label>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+                    <label style="color: var(--accent); margin:0;">💰 COFRES EM BOTÕES & METAS</label>
+                    <span style="font-size: 9px; color: var(--text-muted);">Atalho rápido p/ retirada</span>
+                </div>
                 <div id="grid-cofres-geral"></div>
             </div>
 
@@ -378,7 +501,7 @@
                 <div class="compare-box" id="comparativo-conteudo">Carregando comparativo...</div>
             </div>
 
-            <div class="card">
+            <div class="card" id="card-retirada-rapida">
                 <label style="color: var(--accent);">💸 LANÇAR RETIRADA RÁPIDA</label>
                 <select id="saida_cofre"></select>
                 <label>Descrição</label>
@@ -1022,11 +1145,13 @@
                     somaSobrouCaixinhas += sobraItem;
                     somaAbatidoCaixinhas += abatItem;
 
-                    return `<div class="linha-acumulado">
-                        <span><span style="color:${g.cor};">${g.emoji}</span> ${g.nome}:</span>
-                        <div style="text-align:right;">
-                            <strong style="color:${g.cor}; font-size:12px;">Sobrou: R$ ${sobraItem.toFixed(2)}</strong>
-                            ${abatItem > 0 ? `<br><span style="font-size:9px; color:var(--green);">Abatido p/ Cofre: R$ ${abatItem.toFixed(2)}</span>` : ''}
+                    return `<div class="caixinha-pill-card" style="border-left: 3px solid ${g.cor};">
+                        <div class="caixinha-info">
+                            <span class="caixinha-nome">${g.emoji} ${g.nome}</span>
+                            <span class="caixinha-sub">Cofre abatido: <strong style="color:var(--green);">R$ ${abatItem.toFixed(2)}</strong></span>
+                        </div>
+                        <div class="caixinha-acoes">
+                            <span class="badge-obs" style="background:rgba(245,158,11,0.12); color:var(--accent); border:1px solid rgba(245,158,11,0.3); font-size:9px;">Sobrou R$ ${sobraItem.toFixed(2)}</span>
                         </div>
                     </div>`;
                 }).join('');
@@ -1053,7 +1178,17 @@
             if(lin99) {
                 lin99.innerHTML = ativos.map(g => {
                     let valItem = (pendente99.itens && pendente99.itens[g.id] ? pendente99.itens[g.id] : 0);
-                    return `<div class="linha-acumulado"><span>${g.emoji} ${g.nome}:</span> <input type="number" id="edit-99-${g.id}" step="0.01" value="${valItem.toFixed(2)}"><button class="btn-check" onclick="darCheckItem('99', ${g.id})">OK</button></div>`;
+                    let saldoCofre = (cofresGerais[g.id] || 0);
+                    return `<div class="caixinha-pill-card" style="border-left: 3px solid ${g.cor};">
+                        <div class="caixinha-info">
+                            <span class="caixinha-nome">${g.emoji} ${g.nome}</span>
+                            <span class="caixinha-sub">Cofre: R$ ${saldoCofre.toFixed(2)}</span>
+                        </div>
+                        <div class="caixinha-acoes">
+                            <input type="number" class="input-pill-valor" id="edit-99-${g.id}" step="0.01" value="${valItem.toFixed(2)}">
+                            <button class="btn-check-pill" onclick="darCheckItem('99', ${g.id})">✓ OK</button>
+                        </div>
+                    </div>`;
                 }).join('');
             }
 
@@ -1061,7 +1196,17 @@
             if(linUb) {
                 linUb.innerHTML = ativos.map(g => {
                     let valItem = (pendenteUber.itens && pendenteUber.itens[g.id] ? pendenteUber.itens[g.id] : 0);
-                    return `<div class="linha-acumulado"><span>${g.emoji} ${g.nome}:</span> <input type="number" id="edit-ub-${g.id}" step="0.01" value="${valItem.toFixed(2)}"><button class="btn-check" onclick="darCheckItem('uber', ${g.id})">OK</button></div>`;
+                    let saldoCofre = (cofresGerais[g.id] || 0);
+                    return `<div class="caixinha-pill-card" style="border-left: 3px solid ${g.cor};">
+                        <div class="caixinha-info">
+                            <span class="caixinha-nome">${g.emoji} ${g.nome}</span>
+                            <span class="caixinha-sub">Cofre: R$ ${saldoCofre.toFixed(2)}</span>
+                        </div>
+                        <div class="caixinha-acoes">
+                            <input type="number" class="input-pill-valor" id="edit-ub-${g.id}" step="0.01" value="${valItem.toFixed(2)}">
+                            <button class="btn-check-pill" onclick="darCheckItem('uber', ${g.id})">✓ OK</button>
+                        </div>
+                    </div>`;
                 }).join('');
             }
 
@@ -1071,12 +1216,20 @@
                     const saldoAtual = cofresGerais[g.id] || 0;
                     const metaMensal = g.valor || 1;
                     let percentual = Math.min(100, (saldoAtual / metaMensal) * 100);
-                    return `<div class="env" style="border-left: 4px solid ${g.cor}; text-align: left; padding: 12px; margin-bottom: 8px; background: #0d0d0f; border: 1px solid var(--border-color); border-radius: 10px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                            <span style="font-weight: 700; font-size: 11px; color: #fff;">${g.emoji} ${g.nome.toUpperCase()}</span>
-                            <strong style="color: ${g.cor}; font-size: 12px; font-weight: 800;">R$ ${saldoAtual.toFixed(2)} / R$ ${metaMensal.toFixed(2)}</strong>
+                    return `<div class="cofre-card-compacto" style="border-left: 4px solid ${g.cor};">
+                        <div class="cofre-topo">
+                            <span style="font-weight: 800; font-size: 11px; color: #fff;">${g.emoji} ${g.nome.toUpperCase()}</span>
+                            <strong style="color: ${g.cor}; font-size: 12px; font-weight: 800;">R$ ${saldoAtual.toFixed(2)} <span style="font-size:9px; color:var(--text-muted);">/ R$ ${metaMensal.toFixed(2)}</span></strong>
                         </div>
-                        <div style="width: 100%; background: #18181b; height: 6px; border-radius: 4px; overflow: hidden;"><div style="width: ${percentual}%; background: ${g.cor}; height: 100%;"></div></div>
+                        <div style="width: 100%; background: #18181b; height: 6px; border-radius: 999px; overflow: hidden;">
+                            <div style="width: ${percentual}%; background: ${g.cor}; height: 100%; transition: width 0.3s ease;"></div>
+                        </div>
+                        <div class="cofre-acoes-rapidas">
+                            <button class="btn-cofre-pill" onclick="prepararRetiradaCofre(${g.id}, 10)">- R$ 10</button>
+                            <button class="btn-cofre-pill" onclick="prepararRetiradaCofre(${g.id}, 20)">- R$ 20</button>
+                            <button class="btn-cofre-pill" onclick="prepararRetiradaCofre(${g.id}, 50)">- R$ 50</button>
+                            <button class="btn-cofre-pill" onclick="focarRetiradaCofre(${g.id})">💸 Retirar</button>
+                        </div>
                     </div>`;
                 }).join('');
             }
@@ -1088,6 +1241,29 @@
 
             preencherValoresPendentesNaTela();
             atualizarResumoGeralCaixinhas();
+        }
+
+        function focarRetiradaCofre(idCofre) {
+            const sel = document.getElementById('saida_cofre');
+            if (sel) sel.value = idCofre;
+            const card = document.getElementById('card-retirada-rapida');
+            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function prepararRetiradaCofre(idCofre, valorSugerido) {
+            const saldoAtual = cofresGerais[idCofre] || 0;
+            if (valorSugerido > saldoAtual) {
+                alert(`Saldo insuficiente neste cofre (Disponível: R$ ${saldoAtual.toFixed(2)}).`);
+                return;
+            }
+            const sel = document.getElementById('saida_cofre');
+            const valInput = document.getElementById('saida_valor');
+            const descInput = document.getElementById('saida_desc');
+            if (sel) sel.value = idCofre;
+            if (valInput) valInput.value = valorSugerido.toFixed(2);
+            if (descInput && !descInput.value.trim()) descInput.value = `Retirada rápida R$ ${valorSugerido.toFixed(2)}`;
+            const card = document.getElementById('card-retirada-rapida');
+            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         function preencherValoresPendentesNaTela() {
@@ -1308,7 +1484,7 @@
             const gInfo = gastosMensais.find(x => x.id == cofreId);
             let mesRefStr = `${String(mesAtualNav).padStart(2, '0')}/${anoAtualNav}`;
             historicoSaidas.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), mesAno: mesRefStr, cofreNome: gInfo ? `${gInfo.emoji} ${gInfo.nome}` : 'Caixa', desc, valor });
-            salvarNoFirebase(); renderGerenciador();
+            salvarNoFirebase(); renderGerenciador(); atualizarInterfaceDinamica();
             document.getElementById('saida_desc').value = ''; document.getElementById('saida_valor').value = '';
             alert('Retirada registrada!');
         }
@@ -1385,7 +1561,7 @@
                 let gInfo = gastosMensais.find(x => x.id == c.cofreId);
                 historicoSaidas.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), mesAno: mesRefStr, cofreNome: gInfo ? `${gInfo.emoji} ${gInfo.nome}` : 'Caixa', desc: `Pago: ${c.nome}`, valor: c.valor });
 
-                salvarNoFirebase(); renderGerenciador(); alert('Conta paga com sucesso!');
+                salvarNoFirebase(); renderGerenciador(); atualizarInterfaceDinamica(); alert('Conta paga com sucesso!');
             }
         }
 
@@ -1426,7 +1602,7 @@
 
         function deletarSaida(id) {
             historicoSaidas = historicoSaidas.filter(x => x.id !== id);
-            salvarNoFirebase(); renderGerenciador();
+            salvarNoFirebase(); renderGerenciador(); atualizarInterfaceDinamica();
         }
 
         function abrirDetalhesDia(dia, lancamentoDoDia) {
